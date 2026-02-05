@@ -253,6 +253,14 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev
+  - Version: 0.2.0-alpha.11
+  - Summary:
+    - Added Debug link to avatar menu dropdown for superusers
+    - Debug link appears after Admin Panel link in both portal and admin base templates
+    - Uses info icon (circle with exclamation mark) for visual consistency
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev
   - Version: 0.2.0-alpha.10
   - Summary:
     - Added viewport width (100vw) CSS overrides for #container to force full browser width

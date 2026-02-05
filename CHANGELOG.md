@@ -93,6 +93,7 @@ Changed:
 - Added debug view at /debug/ for system information, database info, and file paths (superuser only)
 - Added even more aggressive CSS overrides using viewport width (100vw) for #container and topbar
 - Enhanced topbar CSS to ensure it spans full browser width
+- Added Debug link to avatar menu dropdown for superusers (accessible from both portal and admin pages)
 
 Fixed:
 - Recent Actions button click handler improved (removed conflicting onclick, improved event listener attachment)
