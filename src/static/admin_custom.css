@@ -603,6 +603,13 @@ body.admin-page #container .footer {
   font-size: 13px !important;
 }
 
+/* Hide breadcrumbs on dashboard page */
+body.admin-page.dashboard .breadcrumbs,
+body.admin-page #content.dashboard-page .breadcrumbs,
+body.admin-page #content:has(.dashboard-page) .breadcrumbs {
+  display: none !important;
+}
+
 .breadcrumbs,
 .breadcrumbs * {
   color: var(--text-tertiary) !important;
@@ -1359,6 +1366,18 @@ body.admin-page #content .content-wrapper h1 {
   margin: 0 0 24px 0 !important;
   font-size: 22px !important;
   font-weight: 600 !important;
+}
+
+/* Hide duplicate h1 titles outside content-wrapper on dashboard */
+body.admin-page.dashboard #content h1:not(.content-wrapper h1),
+body.admin-page #content.dashboard-page h1:not(.content-wrapper h1),
+body.admin-page #content:has(.dashboard-page) h1:not(.content-wrapper h1) {
+  display: none !important;
+}
+
+/* Ensure only one h1 shows - hide any that are not inside content-wrapper */
+body.admin-page #content:has(.dashboard-page) > h1 {
+  display: none !important;
 }
 
 body.admin-page #content .dashboard-grid {

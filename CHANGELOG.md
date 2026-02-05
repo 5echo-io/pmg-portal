@@ -5,6 +5,14 @@ This project follows Semantic Versioning (SemVer).
 
 ## [Unreleased]
 Added:
+- Debug view accessible via avatar menu for superusers
+- Comprehensive logging middleware for backend request/response tracking
+- Frontend logging system for client-side event tracking
+- Copy to clipboard functionality for debug data export
+Fixed:
+- Admin dashboard width issue - completely rebuilt dashboard page to use full browser width
+- Duplicate "Administration" title on admin dashboard page
+- Breadcrumbs removed from dashboard page to prevent duplicate titles
 - Interactive install wizard to collect .env values and bootstrap local Postgres
 - Improved admin interface with helpful descriptions and member/link counts
 - Setup guide documentation (SETUP_GUIDE.md)

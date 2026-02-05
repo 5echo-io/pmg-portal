@@ -1,13 +1,26 @@
-{% extends "admin/index.html" %}
+{% extends "admin/base.html" %}
 {% load static %}
 {% load i18n %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static 'app.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'admin_custom.css' %}">
+{% endblock %}
+
+{% block bodyclass %}{{ block.super }} admin-page dashboard{% endblock %}
 
 {% block sidebar %}
 {# Remove Recent Actions sidebar completely #}
 {% endblock %}
 
+{% block breadcrumbs %}
+{# Remove breadcrumbs completely to avoid duplicate title #}
+{% endblock %}
+
 {% block content %}
-<div class="content-wrapper">
+{# Completely override Django admin's default content - fresh start #}
+<div class="content-wrapper dashboard-page">
   <h1>Administration</h1>
   
   <div class="dashboard-grid">
@@ -54,65 +67,82 @@
 </div>
 
 <script>
-// Force #content and all parent containers to use full width
+// Aggressive width fix for dashboard page
 (function() {
-  function fixContentWidth() {
+  function fixDashboardWidth() {
+    // Remove all Django admin width constraints
     const content = document.getElementById('content');
-    const contentWrapper = document.querySelector('.content-wrapper');
     const main = document.getElementById('main');
     const container = document.getElementById('container');
+    const contentWrapper = document.querySelector('.content-wrapper');
+    const dashboardGrid = document.querySelector('.dashboard-grid');
     
-    if (content && contentWrapper) {
-      // CRITICAL FIX: Remove .colMS class which Django admin uses to set width: 464px
-      // This is the root cause - the class itself applies the width constraint
-      if (content.classList.contains('colMS')) {
-        content.classList.remove('colMS');
-        // Add a custom class to maintain styling if needed
-        content.classList.add('colMS-override');
-      }
-      
-      // Set width directly with cssText (assignment, not append)
-      content.style.cssText = 'max-width: 100% !important; width: 100% !important; min-width: 100% !important; margin-left: 0 !important; margin-right: 0 !important; float: none !important; padding: 32px !important;';
-      
-      // Also fix .main and #main if they exist
-      if (main) {
-        main.style.cssText = 'max-width: 100% !important; width: 100% !important; float: none !important;';
-      }
-      
-      // Also fix #container
-      if (container) {
-        container.style.cssText = 'max-width: 100% !important; width: 100% !important;';
-      }
-      
-      // Ensure content-wrapper is centered with max-width: 980px (like portal)
-      contentWrapper.style.cssText = 'max-width: 980px !important; width: 100% !important; margin-left: auto !important; margin-right: auto !important;';
-      
-      // Ensure dashboard-grid uses full width
-      const dashboardGrid = document.querySelector('.dashboard-grid');
-      if (dashboardGrid) {
-        dashboardGrid.style.cssText = 'display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 24px !important; width: 100% !important; max-width: 100% !important;';
+    // Remove .colMS class which forces width: 464px
+    if (content && content.classList.contains('colMS')) {
+      content.classList.remove('colMS');
+      content.classList.add('colMS-override');
+    }
+    
+    // Fix #content - full width
+    if (content) {
+      content.style.cssText = 'max-width: 100% !important; width: 100% !important; min-width: 100% !important; margin-left: 0 !important; margin-right: 0 !important; float: none !important; padding: 32px !important; box-sizing: border-box !important;';
+    }
+    
+    // Fix #main - full width
+    if (main) {
+      main.style.cssText = 'max-width: 100% !important; width: 100% !important; float: none !important; box-sizing: border-box !important;';
+    }
+    
+    // Fix #container - full width
+    if (container) {
+      container.style.cssText = 'max-width: 100% !important; width: 100% !important; box-sizing: border-box !important;';
+    }
+    
+    // Fix content-wrapper - centered with max-width: 980px (like portal)
+    if (contentWrapper) {
+      contentWrapper.style.cssText = 'max-width: 980px !important; width: 100% !important; margin-left: auto !important; margin-right: auto !important; box-sizing: border-box !important;';
+    }
+    
+    // Fix dashboard-grid - 3 columns
+    if (dashboardGrid) {
+      dashboardGrid.style.cssText = 'display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 24px !important; width: 100% !important; max-width: 100% !important; box-sizing: border-box !important;';
+    }
+    
+    // Hide breadcrumbs if they exist
+    const breadcrumbs = document.querySelector('.breadcrumbs');
+    if (breadcrumbs) {
+      breadcrumbs.style.display = 'none';
+    }
+    
+    // Hide any duplicate h1 titles outside content-wrapper
+    const allH1s = document.querySelectorAll('#content h1');
+    if (allH1s.length > 1) {
+      // Keep only the first one (inside content-wrapper)
+      for (let i = 1; i < allH1s.length; i++) {
+        if (!allH1s[i].closest('.content-wrapper')) {
+          allH1s[i].style.display = 'none';
+        }
       }
     }
   }
   
   // Run immediately
-  fixContentWidth();
+  fixDashboardWidth();
   
-  // Run after DOM is loaded
+  // Run after DOM is ready
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', fixContentWidth);
+    document.addEventListener('DOMContentLoaded', fixDashboardWidth);
   }
   
-  // Run after CSS has loaded (multiple delays to catch all scenarios)
-  setTimeout(fixContentWidth, 50);
-  setTimeout(fixContentWidth, 100);
-  setTimeout(fixContentWidth, 200);
-  setTimeout(fixContentWidth, 300);
-  setTimeout(fixContentWidth, 500);
-  setTimeout(fixContentWidth, 1000);
+  // Run after CSS loads (multiple delays)
+  setTimeout(fixDashboardWidth, 50);
+  setTimeout(fixDashboardWidth, 100);
+  setTimeout(fixDashboardWidth, 200);
+  setTimeout(fixDashboardWidth, 300);
+  setTimeout(fixDashboardWidth, 500);
   
-  // Also run on window load
-  window.addEventListener('load', fixContentWidth);
+  // Run on window load
+  window.addEventListener('load', fixDashboardWidth);
 })();
 </script>
 {% endblock %}
