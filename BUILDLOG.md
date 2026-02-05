@@ -253,6 +253,17 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev
+  - Version: 0.2.0-alpha.25
+  - Summary:
+    - Changed JavaScript to use cssText instead of setProperty for more aggressive style overrides
+    - cssText allows appending !important styles directly without property conflicts
+    - Added MutationObserver to watch for style changes and automatically re-apply fixes
+    - MutationObserver detects when Django admin CSS sets width back to 464px and fixes it immediately
+    - Added setTimeout delay up to 1000ms to catch very late-loading CSS
+    - This should finally override Django admin's persistent width: 464px constraint
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev
   - Version: 0.2.0-alpha.24
   - Summary:
     - FIXED: Django admin sets width: 464px on #content.colMS - added min-width: 100% override

@@ -128,6 +128,9 @@ Changed:
 - Added console.log debugging to show computed styles for troubleshooting
 - Fixed Django admin's default width: 464px on #content.colMS by adding min-width: 100% override
 - Enhanced JavaScript to remove and re-set width property to override Django admin's fixed width
+- Changed JavaScript to use cssText instead of setProperty for more aggressive style overrides
+- Added MutationObserver to watch for style changes and re-apply fixes if Django admin CSS overwrites them
+- Added multiple setTimeout delays up to 1000ms to catch late-loading CSS
 
 Fixed:
 - Recent Actions button click handler improved (removed conflicting onclick, improved event listener attachment)
