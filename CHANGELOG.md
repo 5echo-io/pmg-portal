@@ -85,6 +85,8 @@ Changed:
 - Add button background changed from blue to green (success color) for better visual distinction
 - Comprehensive CSS overrides added to ensure admin page uses full browser width (targeting html, body, #container, #content, .colMS, .colSM, .main, and all child elements)
 - Customer switcher now redirects to portal page when switching customer from profile settings page
+- Admin dashboard now displays 3 columns instead of 2
+- Admin page content now has max-width: 1200px with centered margins (similar to portal page) for better readability
 
 Fixed:
 - Recent Actions button click handler improved (removed conflicting onclick, improved event listener attachment)

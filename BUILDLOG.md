@@ -253,6 +253,15 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev
+  - Version: 0.2.0-alpha.7
+  - Summary:
+    - Changed admin dashboard from 2 columns to 3 columns layout
+    - Added max-width: 1200px to #content with margin: 0 auto for centered layout with safe zones (similar to portal page)
+    - Updated responsive breakpoints: 2 columns at 1400px, 1 column at 900px
+    - Admin page now has proper width constraints instead of full browser width for better readability
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev
   - Version: 0.2.0-alpha.6
   - Summary:
     - Fixed Recent Actions button by removing conflicting onclick attribute and improving event listener

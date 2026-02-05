@@ -348,9 +348,9 @@ body #content,
 #content {
   background: var(--bg) !important;
   padding: 32px !important;
-  max-width: 100% !important;
+  max-width: 1200px !important;
   width: 100% !important;
-  margin: 0 !important;
+  margin: 0 auto !important;
   box-sizing: border-box !important;
   float: none !important;
 }
@@ -1166,7 +1166,7 @@ fieldset.module .form-row:last-child {
 body.admin-page .dashboard,
 .dashboard {
   display: grid !important;
-  grid-template-columns: repeat(2, 1fr) !important;
+  grid-template-columns: repeat(3, 1fr) !important;
   gap: 24px !important;
   margin-top: 0 !important;
   width: 100% !important;
@@ -1174,7 +1174,13 @@ body.admin-page .dashboard,
   box-sizing: border-box !important;
 }
 
-@media (max-width: 1200px) {
+@media (max-width: 1400px) {
+  .dashboard {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+@media (max-width: 900px) {
   .dashboard {
     grid-template-columns: 1fr !important;
   }
