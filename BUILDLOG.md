@@ -2,6 +2,14 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev (suggested)
+  - Version: 0.1.0-alpha.17
+  - Summary:
+    - Fixed 500 error when accessing admin panel
+    - Added missing {% load i18n %} tag in admin index.html template
+    - Template was using {% blocktrans %} and {% trans %} without loading i18n library
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev (suggested)
   - Version: 0.1.0-alpha.16
   - Summary:
     - Redesigned portal topbar layout for better UX

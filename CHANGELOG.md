@@ -69,6 +69,7 @@ Fixed:
 - Complete redesign of Django admin interface with modern minimalist design
 - Improved navigation, buttons, and visual hierarchy
 - Better contrast and readability throughout admin interface
+- 500 error when accessing admin panel (added missing {% load i18n %} in admin index.html template)
 
 ## [0.1.0-alpha.1] - Initial foundation
 Added:
