@@ -252,6 +252,89 @@
     
     // Make toggleUserMenu globally accessible
     window.toggleUserMenu = toggleUserMenu;
+    
+    // Frontend logging for debug view
+    (function() {
+      window.pmgDebugLogs = window.pmgDebugLogs || [];
+      const MAX_LOGS = 100;
+      
+      function logEvent(type, data) {
+        const logEntry = {
+          timestamp: new Date().toISOString(),
+          type: type,
+          data: data,
+          url: window.location.pathname,
+          userAgent: navigator.userAgent,
+        };
+        window.pmgDebugLogs.push(logEntry);
+        if (window.pmgDebugLogs.length > MAX_LOGS) {
+          window.pmgDebugLogs.shift();
+        }
+        console.debug('[PMG Debug]', type, data);
+      }
+      
+      // Log button clicks
+      document.addEventListener('click', function(e) {
+        const target = e.target;
+        if (target.tagName === 'BUTTON' || target.tagName === 'A' || target.closest('button') || target.closest('a')) {
+          const element = target.closest('button') || target.closest('a') || target;
+          logEvent('click', {
+            element: element.tagName,
+            id: element.id || null,
+            className: element.className || null,
+            text: element.textContent?.trim().substring(0, 50) || null,
+            href: element.href || null,
+          });
+        }
+      });
+      
+      // Log form submissions
+      document.addEventListener('submit', function(e) {
+        logEvent('form_submit', {
+          formId: e.target.id || null,
+          action: e.target.action || null,
+          method: e.target.method || 'GET',
+        });
+      });
+      
+      // Log page load
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
+          logEvent('page_load', {
+            readyState: document.readyState,
+            loadTime: performance.timing ? performance.timing.loadEventEnd - performance.timing.navigationStart : null,
+          });
+        });
+      } else {
+        logEvent('page_load', {
+          readyState: document.readyState,
+          loadTime: performance.timing ? performance.timing.loadEventEnd - performance.timing.navigationStart : null,
+        });
+      }
+      
+      // Log JavaScript errors
+      window.addEventListener('error', function(e) {
+        logEvent('javascript_error', {
+          message: e.message,
+          filename: e.filename,
+          lineno: e.lineno,
+          colno: e.colno,
+          error: e.error ? e.error.toString() : null,
+        });
+      });
+      
+      // Log unhandled promise rejections
+      window.addEventListener('unhandledrejection', function(e) {
+        logEvent('promise_rejection', {
+          reason: e.reason ? e.reason.toString() : 'Unknown',
+        });
+      });
+      
+      // Make logs accessible globally
+      window.getPmgDebugLogs = function() {
+        return window.pmgDebugLogs;
+      };
+    })();
   </script>
 </body>
 </html>

@@ -253,6 +253,18 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev
+  - Version: 0.2.0-alpha.12
+  - Summary:
+    - Fixed admin dashboard width issue by adding more specific CSS selectors (body.admin-page #content .dashboard, etc.)
+    - Removed padding and margin constraints from dashboard CSS
+    - Created DebugLoggingMiddleware to track all HTTP requests/responses, processing times, database queries, and exceptions
+    - Added frontend JavaScript logging to track button clicks, form submissions, page loads, JavaScript errors, and promise rejections
+    - Enhanced debug view template to display request logs table, database queries, and frontend logs viewer
+    - Added database query logging configuration in settings.py (when DEBUG=True)
+    - Frontend logs accessible via window.getPmgDebugLogs() in browser console
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev
   - Version: 0.2.0-alpha.11
   - Summary:
     - Added Debug link to avatar menu dropdown for superusers

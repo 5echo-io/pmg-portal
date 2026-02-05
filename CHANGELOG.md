@@ -94,6 +94,10 @@ Changed:
 - Added even more aggressive CSS overrides using viewport width (100vw) for #container and topbar
 - Enhanced topbar CSS to ensure it spans full browser width
 - Added Debug link to avatar menu dropdown for superusers (accessible from both portal and admin pages)
+- Fixed admin dashboard width by adding more specific CSS selectors and removing padding/margin constraints
+- Added comprehensive debug logging middleware to track all requests, responses, database queries, and processing times
+- Added frontend JavaScript logging to track button clicks, form submissions, page loads, and JavaScript errors
+- Enhanced debug view to display request logs, database queries, and frontend logs
 
 Fixed:
 - Recent Actions button click handler improved (removed conflicting onclick, improved event listener attachment)

@@ -14,6 +14,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.conf import settings
 from django.http import JsonResponse
 from django.db import connection
+from pmg_portal.logging_middleware import DebugLoggingMiddleware
 
 def landing(request):
     # If user is authenticated, redirect to portal, otherwise to login
@@ -77,10 +78,12 @@ def debug_view(request):
                 debug_data["files"]["changelog_size"] = cp.stat().st_size
                 break
         
-        # Recent logs (if available)
-        logger = logging.getLogger('django')
-        if hasattr(logger, 'handlers'):
-            debug_data["logs"] = ["Log handlers available"]
+        # Request/Response logs from middleware
+        debug_data["request_logs"] = DebugLoggingMiddleware.get_logs(limit=50)
+        
+        # Database queries from current connection
+        debug_data["database"]["total_queries"] = len(connection.queries)
+        debug_data["database"]["queries"] = connection.queries[-20:] if len(connection.queries) > 20 else connection.queries
         
         # Context processor test
         debug_data["django"]["context_processors"] = [
@@ -88,10 +91,19 @@ def debug_view(request):
             "portal.context_processors.footer_info",
         ]
         
+        # Logging configuration
+        debug_data["logging"] = {
+            "handlers": [h.__class__.__name__ for h in logging.root.handlers],
+            "level": logging.getLevelName(logging.root.level),
+        }
+        
     except Exception as e:
         debug_data["error"] = str(e)
         import traceback
         debug_data["traceback"] = traceback.format_exc()
+    
+    # Frontend logs will be collected via JavaScript and shown in template
+    debug_data["frontend_logs_note"] = "Frontend logs are collected via JavaScript. Check browser console or use window.getPmgDebugLogs() in console."
     
     if request.GET.get('format') == 'json':
         return JsonResponse(debug_data)

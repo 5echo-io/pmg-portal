@@ -46,6 +46,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "pmg_portal.logging_middleware.DebugLoggingMiddleware",  # Debug logging (last)
 ]
 
 ROOT_URLCONF = "pmg_portal.urls"
@@ -88,6 +89,16 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
+
+# Enable database query logging for debug view
+if DEBUG:
+    if "loggers" not in LOGGING:
+        LOGGING["loggers"] = {}
+    LOGGING["loggers"]["django.db.backends"] = {
+        "handlers": ["console"],
+        "level": "DEBUG",
+        "propagate": False,
+    }
 
 LANGUAGE_CODE = "en-us"
 TIME_ZONE = "Europe/Oslo"
@@ -136,6 +147,11 @@ LOGGING = {
         "portal": {
             "handlers": ["console"],
             "level": "DEBUG" if DEBUG else "INFO",
+            "propagate": False,
+        },
+        "pmg_portal.debug": {
+            "handlers": ["console"],
+            "level": "DEBUG",
             "propagate": False,
         },
     },
