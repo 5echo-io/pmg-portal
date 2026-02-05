@@ -223,17 +223,23 @@ body.admin-page .footer-content,
       }
     });
     
-    // Fix footer - match portal exactly
+    // NUCLEAR FOOTER FIX - Move outside ALL containers and force full width
     const footer = document.querySelector('footer.footer, .footer');
     if (footer) {
-      // Move footer outside #container if it's inside
+      // Move footer to body if it's inside any container
+      const body = document.body;
       const container = document.getElementById('container');
-      if (container && footer.parentElement === container) {
-        container.parentElement.appendChild(footer);
+      const main = document.getElementById('main');
+      const content = document.getElementById('content');
+      
+      // Check if footer is inside any container
+      if (footer.parentElement !== body) {
+        // Move footer to body
+        body.appendChild(footer);
       }
       
-      // Force full width with flexbox positioning (like portal)
-      footer.style.cssText = 'width: 100% !important; max-width: 100% !important; min-width: 100% !important; margin-left: 0 !important; margin-right: 0 !important; margin-top: auto !important; flex-shrink: 0 !important; padding: 30px 0 !important; border-top: 1px solid var(--line) !important; background: #0c1426 !important; box-sizing: border-box !important; position: relative !important;';
+      // Force full viewport width using calc() trick
+      footer.style.cssText = 'width: 100vw !important; max-width: 100vw !important; min-width: 100vw !important; margin-left: calc(-50vw + 50%) !important; margin-right: calc(-50vw + 50%) !important; margin-top: auto !important; flex-shrink: 0 !important; padding: 30px 0 !important; border-top: 1px solid var(--line) !important; background: #0c1426 !important; box-sizing: border-box !important; position: relative !important; left: 0 !important; right: 0 !important;';
       
       // Fix footer-content to match portal (max-width: 980px)
       const footerContent = footer.querySelector('.footer-content');
@@ -243,9 +249,15 @@ body.admin-page .footer-content,
     }
     
     // Ensure body uses flexbox for footer positioning
-    const body = document.body;
-    if (body && !body.classList.contains('page-wrapper')) {
-      body.style.cssText = 'min-height: 100vh !important; display: flex !important; flex-direction: column !important; margin: 0 !important; padding: 0 !important;';
+    const bodyEl = document.body;
+    if (bodyEl) {
+      bodyEl.style.cssText = 'min-height: 100vh !important; display: flex !important; flex-direction: column !important; margin: 0 !important; padding: 0 !important; width: 100% !important; max-width: 100% !important;';
+    }
+    
+    // Ensure html also uses full width
+    const htmlEl = document.documentElement;
+    if (htmlEl) {
+      htmlEl.style.cssText = 'width: 100% !important; max-width: 100% !important; margin: 0 !important; padding: 0 !important;';
     }
     
     // Debug output

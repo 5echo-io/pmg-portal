@@ -49,12 +49,7 @@
         {% if request.user.is_superuser %}
         <div class="user-menu-divider"></div>
         <a href="/admin/" class="user-menu-item">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="3" width="7" height="7"></rect>
-            <rect x="14" y="3" width="7" height="7"></rect>
-            <rect x="14" y="14" width="7" height="7"></rect>
-            <rect x="3" y="14" width="7" height="7"></rect>
-          </svg>
+          <!-- Admin Panel SVG -->
           Admin Panel
         </a>
         <a href="/debug/" class="user-menu-item">
@@ -67,7 +62,7 @@
         </a>
         {% endif %}
         <div class="user-menu-divider"></div>
-        <a href="/account/logout/" class="user-menu-item">
+        <a href="/accounts/logout/" class="user-menu-item">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
             <polyline points="16 17 21 12 16 7"></polyline>
@@ -80,45 +75,15 @@
   </div>
 </header>
 
-{% if messages %}
-<div class="toast-container">
-  {% for message in messages %}
-  <div class="toast toast-{{ message.tags }}" data-toast-id="{{ forloop.counter }}">
-    <div class="toast-content">
-      <span class="toast-message">{{ message }}</span>
-      <button class="toast-close" onclick="dismissToast(this.parentElement.parentElement)">×</button>
-    </div>
-  </div>
-  {% endfor %}
-</div>
-<script>
-  // Auto-dismiss toasts after 5 seconds
-  document.querySelectorAll('.toast').forEach(function(toast) {
-    setTimeout(function() {
-      dismissToast(toast);
-    }, 5000);
-  });
-  
-  function dismissToast(toast) {
-    if (toast) {
-      toast.style.animation = 'toastSlideOut 0.3s ease-out';
-      setTimeout(function() {
-        toast.remove();
-      }, 300);
-    }
-  }
-</script>
-{% endif %}
-
 <!-- Recent Actions Modal -->
 <div id="recent-actions-modal" class="admin-modal" onclick="closeRecentActionsModal(event)">
   <div class="admin-modal-content" onclick="event.stopPropagation()">
     <div class="admin-modal-header">
       <h2>Recent Actions</h2>
-      <button class="admin-modal-close" onclick="closeRecentActionsModal(event)">×</button>
+      <button class="admin-modal-close" onclick="closeRecentActionsModal(event)">&times;</button>
     </div>
     <div class="admin-modal-body">
-      <div id="recent-actions-list">
+      <div id="recent-actions-list" class="recent-actions-list">
         <p class="muted">Loading recent actions...</p>
       </div>
     </div>
@@ -129,75 +94,50 @@
 function toggleUserMenu(event) {
   event.stopPropagation();
   const menu = document.getElementById('user-menu');
-  if (!menu) return;
-  
-  const isOpen = menu.classList.contains('open');
-  
-  document.querySelectorAll('.user-menu').forEach(m => m.classList.remove('open'));
-  
-  if (!isOpen) {
-    menu.classList.add('open');
-    setTimeout(() => {
-      const closeHandler = function(e) {
-        if (!menu.contains(e.target) && !e.target.closest('.user-avatar-btn')) {
-          menu.classList.remove('open');
-          document.removeEventListener('click', closeHandler);
-        }
-      };
-      document.addEventListener('click', closeHandler, { once: true });
-    }, 10);
+  if (menu) {
+    menu.classList.toggle('open');
   }
 }
 
+document.addEventListener('click', function(event) {
+  const menu = document.getElementById('user-menu');
+  const avatarBtn = document.querySelector('.user-avatar-btn');
+  if (menu && avatarBtn && !menu.contains(event.target) && !avatarBtn.contains(event.target)) {
+    menu.classList.remove('open');
+  }
+});
+
 function openRecentActionsModal() {
   const modal = document.getElementById('recent-actions-modal');
+  if (modal) {
+    modal.style.display = 'flex';
+    loadRecentActions();
+  }
+}
+
+function loadRecentActions() {
   const list = document.getElementById('recent-actions-list');
+  if (!list) return;
   
-  if (!modal) {
-    console.error('Recent actions modal not found');
-    return;
-  }
-  
-  if (modal.style.display === 'flex') {
-    modal.style.display = 'none';
-    return;
-  }
-  
-  modal.style.display = 'flex';
-  
-  fetch('/admin/log/?limit=15')
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Failed to fetch recent actions');
-      }
-      return response.text();
-    })
-    .then(html => {
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(html, 'text/html');
-      const logEntries = doc.querySelectorAll('#changelist tbody tr');
-      
-      if (logEntries.length === 0) {
-        list.innerHTML = '<p class="muted">No recent actions found.</p>';
+  fetch('/admin/actions/')
+    .then(response => response.json())
+    .then(data => {
+      if (!data.actions || data.actions.length === 0) {
+        list.innerHTML = '<p class="muted">No recent actions.</p>';
         return;
       }
       
-      let htmlContent = '<div class="recent-actions-table">';
-      logEntries.forEach(entry => {
-        const cells = entry.querySelectorAll('td');
-        if (cells.length >= 3) {
-          htmlContent += `
-            <div class="recent-action-item">
-              <div class="recent-action-icon">
-                ${getActionIcon(cells[1]?.textContent || '')}
-              </div>
-              <div class="recent-action-content">
-                <div class="recent-action-text">${cells[1]?.innerHTML || ''}</div>
-                <div class="recent-action-time">${cells[2]?.textContent || ''}</div>
-              </div>
+      let htmlContent = '<div class="recent-actions-container">';
+      data.actions.forEach(action => {
+        htmlContent += `
+          <div class="recent-action-item">
+            <div class="recent-action-icon">${getActionIcon(action.action_flag)}</div>
+            <div class="recent-action-content">
+              <div class="recent-action-text">${action.content_type_name}: <a href="${action.url}">${action.object_repr}</a></div>
+              <div class="recent-action-time">${action.action_time}</div>
             </div>
-          `;
-        }
+          </div>
+        `;
       });
       htmlContent += '</div>';
       list.innerHTML = htmlContent;
@@ -270,6 +210,93 @@ document.addEventListener('keydown', function(e) {
     document.querySelectorAll('.user-menu').forEach(m => m.classList.remove('open'));
   }
 });
+
+// FOOTER FIX - Move footer outside all containers and ensure full width
+(function() {
+  function fixFooter() {
+    const footer = document.querySelector('footer.footer, .footer');
+    const body = document.body;
+    
+    if (footer && body) {
+      // Always move footer to body if it's not already there
+      if (footer.parentElement !== body) {
+        body.appendChild(footer);
+      }
+      
+      // Force full viewport width
+      footer.style.cssText = 'width: 100vw !important; max-width: 100vw !important; min-width: 100vw !important; margin-left: calc(-50vw + 50%) !important; margin-right: calc(-50vw + 50%) !important; margin-top: auto !important; flex-shrink: 0 !important; padding: 30px 0 !important; border-top: 1px solid var(--line) !important; background: #0c1426 !important; box-sizing: border-box !important; position: relative !important;';
+      
+      // Fix footer-content
+      const footerContent = footer.querySelector('.footer-content');
+      if (footerContent) {
+        footerContent.style.cssText = 'max-width: 980px !important; width: 100% !important; margin-left: auto !important; margin-right: auto !important; padding-left: 20px !important; padding-right: 20px !important; box-sizing: border-box !important; display: grid !important; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important; gap: 30px !important;';
+      }
+    }
+    
+    // Ensure body uses flexbox
+    if (body) {
+      body.style.cssText = 'min-height: 100vh !important; display: flex !important; flex-direction: column !important; margin: 0 !important; padding: 0 !important; width: 100% !important; max-width: 100% !important;';
+    }
+    
+    // Ensure html uses full width
+    const html = document.documentElement;
+    if (html) {
+      html.style.cssText = 'width: 100% !important; max-width: 100% !important; margin: 0 !important; padding: 0 !important;';
+    }
+  }
+  
+  // Run immediately
+  fixFooter();
+  
+  // Run after DOM ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', fixFooter);
+  }
+  
+  // Run after load
+  window.addEventListener('load', fixFooter);
+  
+  // Run multiple times to catch late-loading content
+  setTimeout(fixFooter, 100);
+  setTimeout(fixFooter, 300);
+  setTimeout(fixFooter, 500);
+})();
+
+// Make changelist filter sidebar static and always visible
+(function() {
+  function makeSidebarStatic() {
+    const filter = document.getElementById('changelist-filter');
+    const sticky = document.querySelector('.sticky');
+    const stickyContainer = document.querySelector('.sticky-container');
+    
+    [filter, sticky, stickyContainer].forEach(el => {
+      if (el) {
+        el.style.cssText = 'position: static !important; display: block !important; visibility: visible !important; opacity: 1 !important; transform: none !important;';
+        
+        // Hide any collapse/toggle buttons
+        const toggleBtns = el.querySelectorAll('.collapse-toggle, .toggle, [class*="toggle"], [class*="collapse"]');
+        toggleBtns.forEach(btn => {
+          btn.style.display = 'none';
+        });
+      }
+    });
+  }
+  
+  // Run immediately
+  makeSidebarStatic();
+  
+  // Run after DOM ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', makeSidebarStatic);
+  }
+  
+  // Run after load
+  window.addEventListener('load', makeSidebarStatic);
+  
+  // Run multiple times
+  setTimeout(makeSidebarStatic, 100);
+  setTimeout(makeSidebarStatic, 300);
+})();
 </script>
 {% endblock %}
 
@@ -297,17 +324,9 @@ document.addEventListener('keydown', function(e) {
     </div>
     <div class="modal-body">
       {% if changelog_section %}
-      <div class="changelog-section">
-        <pre class="changelog-content">{{ changelog_section|escape }}</pre>
-      </div>
-      {% endif %}
-      {% if changelog_full %}
-      <div class="modal-actions">
-        <button class="modal-btn" onclick="toggleFullChangelog()">View Full Changelog</button>
-      </div>
-      <div id="fullChangelog" class="changelog-section" style="display: none;">
-        <pre class="changelog-content">{{ changelog_full|escape }}</pre>
-      </div>
+      <div class="footer-changelog">{{ changelog_section|safe }}</div>
+      {% else %}
+      <p class="muted">No changelog available for this version.</p>
       {% endif %}
     </div>
   </div>
@@ -315,35 +334,17 @@ document.addEventListener('keydown', function(e) {
 
 <script>
 function openChangelogModal() {
-  document.getElementById('changelogModal').style.display = 'flex';
-  document.body.style.overflow = 'hidden';
-}
-
-function closeChangelogModal(event) {
-  if (!event || event.target.classList.contains('modal') || event.target.classList.contains('modal-close')) {
-    document.getElementById('changelogModal').style.display = 'none';
-    document.body.style.overflow = 'auto';
-    const fullChangelog = document.getElementById('fullChangelog');
-    if (fullChangelog) {
-      fullChangelog.style.display = 'none';
-    }
-    const btn = document.querySelector('.modal-btn');
-    if (btn) {
-      btn.textContent = 'View Full Changelog';
-    }
+  const modal = document.getElementById('changelogModal');
+  if (modal) {
+    modal.style.display = 'flex';
   }
 }
 
-function toggleFullChangelog() {
-  const fullChangelog = document.getElementById('fullChangelog');
-  const btn = document.querySelector('.modal-btn');
-  if (fullChangelog && btn) {
-    if (fullChangelog.style.display === 'none') {
-      fullChangelog.style.display = 'block';
-      btn.textContent = 'Hide Full Changelog';
-    } else {
-      fullChangelog.style.display = 'none';
-      btn.textContent = 'View Full Changelog';
+function closeChangelogModal(event) {
+  if (!event || event.target.id === 'changelogModal' || event.target.classList.contains('modal-close')) {
+    const modal = document.getElementById('changelogModal');
+    if (modal) {
+      modal.style.display = 'none';
     }
   }
 }
@@ -356,89 +357,6 @@ document.addEventListener('keydown', function(event) {
     }
   }
 });
-
-// Frontend logging for debug view
-(function() {
-  window.pmgDebugLogs = window.pmgDebugLogs || [];
-  const MAX_LOGS = 100;
-  
-  function logEvent(type, data) {
-    const logEntry = {
-      timestamp: new Date().toISOString(),
-      type: type,
-      data: data,
-      url: window.location.pathname,
-      userAgent: navigator.userAgent,
-    };
-    window.pmgDebugLogs.push(logEntry);
-    if (window.pmgDebugLogs.length > MAX_LOGS) {
-      window.pmgDebugLogs.shift();
-    }
-    console.debug('[PMG Debug]', type, data);
-  }
-  
-  // Log button clicks
-  document.addEventListener('click', function(e) {
-    const target = e.target;
-    if (target.tagName === 'BUTTON' || target.tagName === 'A' || target.closest('button') || target.closest('a')) {
-      const element = target.closest('button') || target.closest('a') || target;
-      logEvent('click', {
-        element: element.tagName,
-        id: element.id || null,
-        className: element.className || null,
-        text: element.textContent?.trim().substring(0, 50) || null,
-        href: element.href || null,
-      });
-    }
-  });
-  
-  // Log form submissions
-  document.addEventListener('submit', function(e) {
-    logEvent('form_submit', {
-      formId: e.target.id || null,
-      action: e.target.action || null,
-      method: e.target.method || 'GET',
-    });
-  });
-  
-  // Log page load
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function() {
-      logEvent('page_load', {
-        readyState: document.readyState,
-        loadTime: performance.timing ? performance.timing.loadEventEnd - performance.timing.navigationStart : null,
-      });
-    });
-  } else {
-    logEvent('page_load', {
-      readyState: document.readyState,
-      loadTime: performance.timing ? performance.timing.loadEventEnd - performance.timing.navigationStart : null,
-    });
-  }
-  
-  // Log JavaScript errors
-  window.addEventListener('error', function(e) {
-    logEvent('javascript_error', {
-      message: e.message,
-      filename: e.filename,
-      lineno: e.lineno,
-      colno: e.colno,
-      error: e.error ? e.error.toString() : null,
-    });
-  });
-  
-  // Log unhandled promise rejections
-  window.addEventListener('unhandledrejection', function(e) {
-    logEvent('promise_rejection', {
-      reason: e.reason ? e.reason.toString() : 'Unknown',
-    });
-  });
-  
-  // Make logs accessible globally
-  window.getPmgDebugLogs = function() {
-    return window.pmgDebugLogs;
-  };
-})();
 </script>
 {% endif %}
 {% endblock %}

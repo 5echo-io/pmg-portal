@@ -543,12 +543,14 @@ body.admin-page #container + .footer,
 body footer.footer,
 footer.footer,
 body.admin-page.dashboard footer.footer,
-body.admin-page.dashboard .footer {
-  width: 100% !important;
-  max-width: 100% !important;
-  min-width: 100% !important;
-  margin-left: 0 !important;
-  margin-right: 0 !important;
+body.admin-page.dashboard .footer,
+html body.admin-page footer.footer,
+html body footer.footer {
+  width: 100vw !important;
+  max-width: 100vw !important;
+  min-width: 100vw !important;
+  margin-left: calc(-50vw + 50%) !important;
+  margin-right: calc(-50vw + 50%) !important;
   margin-top: auto !important;
   flex-shrink: 0 !important;
   padding: 30px 0 !important;
@@ -563,7 +565,9 @@ body.admin-page.dashboard .footer {
 /* Ensure footer-content matches portal styling exactly */
 body.admin-page .footer-content,
 .footer-content,
-body.admin-page.dashboard .footer-content {
+body.admin-page.dashboard .footer-content,
+footer.footer .footer-content,
+.footer .footer-content {
   max-width: 980px !important;
   width: 100% !important;
   margin: 0 auto !important;
@@ -1112,6 +1116,29 @@ input[type="submit"].default:hover,
   border-radius: var(--radius-md) !important;
   padding: 0 !important;
   box-shadow: var(--shadow-sm) !important;
+  position: static !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Make changelist filter sidebar static and always visible */
+#changelist-filter,
+.sticky,
+.sticky-container {
+  position: static !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+/* Hide any collapse/toggle buttons for sidebar */
+#changelist-filter .collapse-toggle,
+#changelist-filter .toggle,
+.sticky .collapse-toggle,
+.sticky .toggle {
+  display: none !important;
 }
 
 #changelist-filter h2 {

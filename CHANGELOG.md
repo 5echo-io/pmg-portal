@@ -20,6 +20,10 @@ Fixed:
 - Fixed footer positioning - footer now sticks to bottom of page using flexbox (matches portal)
 - Fixed footer content width - changed from 1200px to 980px to match portal and eliminate right gap
 - Footer styling now matches portal exactly (same grid layout, padding, and max-width)
+- Footer now moved outside all containers using JavaScript to ensure full width
+- Footer uses 100vw with calc() margins to break out of any container constraints
+- Admin changelist filter sidebar (#changelist-filter) is now static and cannot be hidden
+- Sidebar toggle/collapse buttons are hidden to prevent collapsing
 - Interactive install wizard to collect .env values and bootstrap local Postgres
 - Improved admin interface with helpful descriptions and member/link counts
 - Setup guide documentation (SETUP_GUIDE.md)
