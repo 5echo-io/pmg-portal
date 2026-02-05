@@ -253,6 +253,15 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev
+  - Version: 0.2.0-alpha.24
+  - Summary:
+    - FIXED: Django admin sets width: 464px on #content.colMS - added min-width: 100% override
+    - Enhanced JavaScript to remove and re-set width property to force override Django admin's fixed width
+    - Added min-width: 100% to all #content selectors for dashboard pages
+    - This should fix the issue where #content had computed width: 464px instead of 100%
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev
   - Version: 0.2.0-alpha.23
   - Summary:
     - Added dashboard-grid width fixes in JavaScript

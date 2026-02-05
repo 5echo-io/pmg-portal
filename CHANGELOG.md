@@ -126,6 +126,8 @@ Changed:
 - Removed all max-width constraints from #content when dashboard class is present on body
 - Added dashboard-grid width fixes in JavaScript
 - Added console.log debugging to show computed styles for troubleshooting
+- Fixed Django admin's default width: 464px on #content.colMS by adding min-width: 100% override
+- Enhanced JavaScript to remove and re-set width property to override Django admin's fixed width
 
 Fixed:
 - Recent Actions button click handler improved (removed conflicting onclick, improved event listener attachment)

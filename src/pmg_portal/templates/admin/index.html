@@ -63,12 +63,17 @@
     const container = document.getElementById('container');
     
     if (content && contentWrapper) {
-      // Remove ALL constraints from #content
+      // Remove ALL constraints from #content - Django admin sets width: 464px on .colMS
       content.style.setProperty('max-width', '100%', 'important');
       content.style.setProperty('width', '100%', 'important');
+      content.style.setProperty('min-width', '100%', 'important');
       content.style.setProperty('margin-left', '0', 'important');
       content.style.setProperty('margin-right', '0', 'important');
       content.style.setProperty('float', 'none', 'important');
+      
+      // Force remove any fixed width that Django admin might have set
+      content.style.removeProperty('width');
+      content.style.setProperty('width', '100%', 'important');
       
       // Also fix .main and #main if they exist
       if (main) {
