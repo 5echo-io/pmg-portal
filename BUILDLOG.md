@@ -2,6 +2,21 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev (suggested)
+  - Version: 0.1.0-alpha.18
+  - Summary:
+    - Fixed footer to always stay at bottom of screen using flexbox sticky footer layout
+    - Unified admin and portal UI: admin pages now use same topbar as portal
+    - Hidden customer dropdown in admin pages (only visible in portal)
+    - Fixed Recent Actions modal button functionality
+    - Added toast notifications to portal pages (previously only in admin)
+    - Moved toast notifications to bottom right corner
+    - Added active page highlighting in topbar menu (Portal/Admin buttons)
+    - Created admin base.html template with portal-style topbar
+    - Added footer to admin pages matching portal footer
+    - Improved CSS for consistent experience across admin and portal
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev (suggested)
   - Version: 0.1.0-alpha.17
   - Summary:
     - Fixed 500 error when accessing admin panel

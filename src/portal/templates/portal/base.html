@@ -7,14 +7,14 @@
   <title>{% block title %}PMG Portal{% endblock %}</title>
   <link rel="stylesheet" href="{% static 'app.css' %}">
 </head>
-<body>
+<body class="page-wrapper">
   <header class="topbar">
     <div class="topbar-left">
       <div class="brand">PMG Portal</div>
       <div class="topbar-nav">
-        <a class="topbar-btn" href="/portal/">Portal</a>
+        <a class="topbar-btn {% if request.path == '/portal/' or request.path|slice:':8' == '/portal/' %}active{% endif %}" href="/portal/">Portal</a>
         {% if request.user.is_superuser %}
-        <a class="topbar-btn" href="/admin/">Admin</a>
+        <a class="topbar-btn {% if request.path|slice:':7' == '/admin/' %}active{% endif %}" href="/admin/">Admin</a>
         {% endif %}
       </div>
     </div>
@@ -108,8 +108,22 @@
     });
   </script>
 
-  <main class="container">
-    {% block content %}{% endblock %}
+  <main class="main-content">
+    <div class="container">
+      {% if messages %}
+      <div class="toast-container">
+        {% for message in messages %}
+        <div class="toast toast-{{ message.tags }}">
+          <div class="toast-content">
+            <span class="toast-message">{{ message }}</span>
+            <button class="toast-close" onclick="this.parentElement.parentElement.remove()">×</button>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+      {% block content %}{% endblock %}
+    </div>
   </main>
 
   <footer class="footer">

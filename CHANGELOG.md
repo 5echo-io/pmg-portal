@@ -49,6 +49,12 @@ Changed:
 - Redesigned portal topbar layout: menu buttons (Portal, Admin) moved to left side next to brand
 - User avatar with dropdown menu replaces separate logout/admin buttons
 - Removed "Your customers" section from portal page (replaced by dropdown in header)
+- Footer now always stays at bottom of screen (sticky footer with flexbox layout)
+- Admin pages now use same topbar design as portal pages for consistent experience
+- Customer dropdown hidden in admin pages (only visible in portal)
+- Recent Actions modal button fixed and working properly
+- Toast notifications now show in both portal and admin pages, positioned at bottom right
+- Active page highlighted in topbar menu (Portal/Admin buttons show active state)
 
 Fixed:
 - Local Postgres bootstrap in installer (role/db creation)
@@ -70,6 +76,10 @@ Fixed:
 - Improved navigation, buttons, and visual hierarchy
 - Better contrast and readability throughout admin interface
 - 500 error when accessing admin panel (added missing {% load i18n %} in admin index.html template)
+- Footer positioning fixed to always be at bottom of screen
+- Admin and portal pages now have consistent UI/UX with same topbar design
+- Toast notifications unified across portal and admin, positioned bottom right
+- Active page indication added to topbar navigation buttons
 
 ## [0.1.0-alpha.1] - Initial foundation
 Added:

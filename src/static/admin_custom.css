@@ -40,14 +40,27 @@ body {
 }
 
 /* ===== HEADER ===== */
+/* Hide Django's default header when using custom topbar */
 #header {
-  background: var(--surface) !important;
-  border-bottom: 1px solid var(--border) !important;
-  padding: 0 !important;
-  box-shadow: var(--shadow-sm) !important;
-  position: sticky !important;
-  top: 0 !important;
-  z-index: 1000 !important;
+  display: none !important;
+}
+
+body.admin-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+body.admin-page #content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+body.admin-page .footer {
+  margin-top: auto;
+  flex-shrink: 0;
 }
 
 #branding {
@@ -772,10 +785,9 @@ input[type="submit"].default:hover,
 }
 
 /* ===== MESSAGES ===== */
+/* Hide Django's default message list - we use toast notifications instead */
 .messagelist {
-  margin: 0 0 24px 0 !important;
-  list-style: none !important;
-  padding: 0 !important;
+  display: none !important;
 }
 
 .messagelist li {
