@@ -253,6 +253,15 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev
+  - Version: 0.2.0-alpha.8
+  - Summary:
+    - Fixed admin page width issue by setting #container max-width to none (was 100%)
+    - Footer now properly spans full width on admin pages with consistent styling
+    - Added explicit footer width and margin overrides to ensure it's not constrained
+    - Footer positioned at bottom using flexbox layout (margin-top: auto)
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev
   - Version: 0.2.0-alpha.7
   - Summary:
     - Changed admin dashboard from 2 columns to 3 columns layout

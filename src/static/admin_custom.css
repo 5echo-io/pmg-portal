@@ -71,6 +71,12 @@ body.admin-page #content {
 body.admin-page .footer {
   margin-top: auto;
   flex-shrink: 0;
+  width: 100% !important;
+  max-width: 100% !important;
+  padding: 30px 20px !important;
+  border-top: 1px solid var(--line) !important;
+  background: #0c1426 !important;
+  box-sizing: border-box !important;
 }
 
 #branding {
@@ -336,9 +342,9 @@ body.admin-page .footer {
 body.admin-page #container,
 body #container,
 #container {
-  max-width: 100% !important;
+  max-width: none !important;
   width: 100% !important;
-  margin: 0 auto !important;
+  margin: 0 !important;
   padding: 0 !important;
   box-sizing: border-box !important;
 }
@@ -399,6 +405,21 @@ body.admin-page div[id*="container"] {
   max-width: 100% !important;
   width: 100% !important;
   box-sizing: border-box !important;
+}
+
+/* Ensure #container itself doesn't constrain width */
+body.admin-page #container {
+  max-width: none !important;
+  width: 100% !important;
+}
+
+/* Ensure footer spans full width */
+body.admin-page footer.footer,
+body.admin-page .footer {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
 }
 
 #content h1 {
