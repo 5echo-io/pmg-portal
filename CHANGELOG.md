@@ -119,6 +119,8 @@ Changed:
 - Removed all complex CSS overrides and JavaScript workarounds in favor of simple portal-style structure
 - Fixed #content max-width constraint by adding :has(.content-wrapper) selector to remove max-width: 1200px when content-wrapper is present
 - Added specific overrides for #content.colMS to ensure it doesn't constrain content-wrapper width
+- Added JavaScript fallback to dynamically set #content max-width: 100% when content-wrapper is present
+- JavaScript runs immediately, on DOMContentLoaded, and after delays to ensure CSS has loaded
 
 Fixed:
 - Recent Actions button click handler improved (removed conflicting onclick, improved event listener attachment)

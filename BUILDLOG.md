@@ -253,6 +253,16 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev
+  - Version: 0.2.0-alpha.21
+  - Summary:
+    - Added JavaScript fallback to dynamically fix #content width constraints
+    - JavaScript uses setProperty with 'important' flag to override CSS
+    - Sets #content max-width: 100% and width: 100% when content-wrapper is present
+    - Ensures content-wrapper has max-width: 980px and centered margins
+    - Runs immediately, on DOMContentLoaded, and after 100ms/500ms delays to catch all CSS loading scenarios
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev
   - Version: 0.2.0-alpha.20
   - Summary:
     - Fixed #content max-width constraint issue by adding :has(.content-wrapper) selector

@@ -52,4 +52,40 @@
     {% endfor %}
   </div>
 </div>
+
+<script>
+// Force #content to use full width when it contains content-wrapper
+(function() {
+  function fixContentWidth() {
+    const content = document.getElementById('content');
+    const contentWrapper = document.querySelector('.content-wrapper');
+    
+    if (content && contentWrapper) {
+      // Remove max-width constraint from #content
+      content.style.setProperty('max-width', '100%', 'important');
+      content.style.setProperty('width', '100%', 'important');
+      content.style.setProperty('margin-left', '0', 'important');
+      content.style.setProperty('margin-right', '0', 'important');
+      
+      // Ensure content-wrapper is centered with max-width: 980px
+      contentWrapper.style.setProperty('max-width', '980px', 'important');
+      contentWrapper.style.setProperty('width', '100%', 'important');
+      contentWrapper.style.setProperty('margin-left', 'auto', 'important');
+      contentWrapper.style.setProperty('margin-right', 'auto', 'important');
+    }
+  }
+  
+  // Run immediately
+  fixContentWidth();
+  
+  // Run after DOM is loaded
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', fixContentWidth);
+  }
+  
+  // Run after CSS has loaded
+  setTimeout(fixContentWidth, 100);
+  setTimeout(fixContentWidth, 500);
+})();
+</script>
 {% endblock %}
