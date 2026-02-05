@@ -6,6 +6,64 @@
 {{ block.super }}
 <link rel="stylesheet" type="text/css" href="{% static 'app.css' %}">
 <link rel="stylesheet" type="text/css" href="{% static 'admin_custom.css' %}">
+<style>
+/* INJECTED CSS - Loads last to override everything */
+/* Force full width on dashboard - break out of ALL containers */
+body.admin-page.dashboard #container,
+body.admin-page.dashboard #main,
+body.admin-page.dashboard #content,
+body.admin-page.dashboard #content.colMS,
+body.admin-page.dashboard #content.colMS-override {
+  max-width: 100vw !important;
+  width: 100vw !important;
+  min-width: 100vw !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  float: none !important;
+  box-sizing: border-box !important;
+}
+
+/* Hide or fix sidebar that constrains content */
+body.admin-page.dashboard #changelist-filter,
+body.admin-page.dashboard .sticky,
+body.admin-page.dashboard .sticky-container,
+body.admin-page.dashboard aside,
+body.admin-page.dashboard [class*="sidebar"] {
+  display: none !important;
+}
+
+/* Ensure content-wrapper breaks out and centers */
+body.admin-page.dashboard #content .content-wrapper {
+  max-width: 980px !important;
+  width: 100% !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* Force dashboard-grid to use full available width */
+body.admin-page.dashboard .dashboard-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 24px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Hide breadcrumbs */
+body.admin-page.dashboard .breadcrumbs {
+  display: none !important;
+}
+
+/* Hide duplicate h1 */
+body.admin-page.dashboard #content > h1:not(.content-wrapper h1) {
+  display: none !important;
+}
+</style>
 {% endblock %}
 
 {% block bodyclass %}{{ block.super }} admin-page dashboard{% endblock %}
@@ -67,82 +125,98 @@
 </div>
 
 <script>
-// Aggressive width fix for dashboard page
+// NUCLEAR OPTION: Completely override all width constraints
 (function() {
-  function fixDashboardWidth() {
-    // Remove all Django admin width constraints
-    const content = document.getElementById('content');
-    const main = document.getElementById('main');
-    const container = document.getElementById('container');
+  function nuclearWidthFix() {
+    // Get all elements that might constrain width
+    const elements = [
+      document.getElementById('container'),
+      document.getElementById('main'),
+      document.getElementById('content'),
+      document.querySelector('.colMS'),
+      document.querySelector('.colSM'),
+      document.querySelector('#changelist-filter'),
+      document.querySelector('.sticky'),
+      document.querySelector('.sticky-container'),
+    ];
+    
+    elements.forEach(el => {
+      if (el) {
+        // Remove width-constraining classes
+        el.classList.remove('colMS', 'colSM');
+        
+        // Force full viewport width
+        if (el.id === 'container' || el.id === 'main' || el.id === 'content') {
+          el.style.cssText = 'max-width: 100vw !important; width: 100vw !important; min-width: 100vw !important; margin-left: 0 !important; margin-right: 0 !important; padding-left: 0 !important; padding-right: 0 !important; float: none !important; box-sizing: border-box !important;';
+        }
+      }
+    });
+    
+    // Hide any sidebars or filters
+    const sidebars = document.querySelectorAll('#changelist-filter, .sticky, .sticky-container, aside[class*="sidebar"], [class*="sidebar"]');
+    sidebars.forEach(sb => {
+      if (sb && !sb.closest('.content-wrapper')) {
+        sb.style.display = 'none';
+      }
+    });
+    
+    // Fix content-wrapper - centered with max-width
     const contentWrapper = document.querySelector('.content-wrapper');
-    const dashboardGrid = document.querySelector('.dashboard-grid');
-    
-    // Remove .colMS class which forces width: 464px
-    if (content && content.classList.contains('colMS')) {
-      content.classList.remove('colMS');
-      content.classList.add('colMS-override');
-    }
-    
-    // Fix #content - full width
-    if (content) {
-      content.style.cssText = 'max-width: 100% !important; width: 100% !important; min-width: 100% !important; margin-left: 0 !important; margin-right: 0 !important; float: none !important; padding: 32px !important; box-sizing: border-box !important;';
-    }
-    
-    // Fix #main - full width
-    if (main) {
-      main.style.cssText = 'max-width: 100% !important; width: 100% !important; float: none !important; box-sizing: border-box !important;';
-    }
-    
-    // Fix #container - full width
-    if (container) {
-      container.style.cssText = 'max-width: 100% !important; width: 100% !important; box-sizing: border-box !important;';
-    }
-    
-    // Fix content-wrapper - centered with max-width: 980px (like portal)
     if (contentWrapper) {
-      contentWrapper.style.cssText = 'max-width: 980px !important; width: 100% !important; margin-left: auto !important; margin-right: auto !important; box-sizing: border-box !important;';
+      // Calculate available width (viewport minus padding)
+      const viewportWidth = window.innerWidth;
+      const maxContentWidth = Math.min(980, viewportWidth - 64); // 32px padding on each side
+      contentWrapper.style.cssText = `max-width: ${maxContentWidth}px !important; width: 100% !important; margin-left: auto !important; margin-right: auto !important; padding: 0 !important; box-sizing: border-box !important;`;
     }
     
-    // Fix dashboard-grid - 3 columns
+    // Fix dashboard-grid
+    const dashboardGrid = document.querySelector('.dashboard-grid');
     if (dashboardGrid) {
       dashboardGrid.style.cssText = 'display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 24px !important; width: 100% !important; max-width: 100% !important; box-sizing: border-box !important;';
     }
     
-    // Hide breadcrumbs if they exist
+    // Hide breadcrumbs and duplicate titles
     const breadcrumbs = document.querySelector('.breadcrumbs');
-    if (breadcrumbs) {
-      breadcrumbs.style.display = 'none';
-    }
+    if (breadcrumbs) breadcrumbs.style.display = 'none';
     
-    // Hide any duplicate h1 titles outside content-wrapper
     const allH1s = document.querySelectorAll('#content h1');
-    if (allH1s.length > 1) {
-      // Keep only the first one (inside content-wrapper)
-      for (let i = 1; i < allH1s.length; i++) {
-        if (!allH1s[i].closest('.content-wrapper')) {
-          allH1s[i].style.display = 'none';
-        }
+    allH1s.forEach((h1, idx) => {
+      if (idx > 0 && !h1.closest('.content-wrapper')) {
+        h1.style.display = 'none';
       }
-    }
+    });
+    
+    // Debug output
+    console.log('=== DASHBOARD WIDTH FIX ===');
+    console.log('Container width:', document.getElementById('container') ? window.getComputedStyle(document.getElementById('container')).width : 'N/A');
+    console.log('Main width:', document.getElementById('main') ? window.getComputedStyle(document.getElementById('main')).width : 'N/A');
+    console.log('Content width:', document.getElementById('content') ? window.getComputedStyle(document.getElementById('content')).width : 'N/A');
+    console.log('Content-wrapper width:', contentWrapper ? window.getComputedStyle(contentWrapper).width : 'N/A');
+    console.log('Viewport width:', window.innerWidth);
   }
   
   // Run immediately
-  fixDashboardWidth();
+  nuclearWidthFix();
   
-  // Run after DOM is ready
+  // Run after DOM ready
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', fixDashboardWidth);
+    document.addEventListener('DOMContentLoaded', nuclearWidthFix);
   }
   
-  // Run after CSS loads (multiple delays)
-  setTimeout(fixDashboardWidth, 50);
-  setTimeout(fixDashboardWidth, 100);
-  setTimeout(fixDashboardWidth, 200);
-  setTimeout(fixDashboardWidth, 300);
-  setTimeout(fixDashboardWidth, 500);
+  // Run after all resources load
+  window.addEventListener('load', nuclearWidthFix);
   
-  // Run on window load
-  window.addEventListener('load', fixDashboardWidth);
+  // Run multiple times to catch late-loading CSS
+  setTimeout(nuclearWidthFix, 0);
+  setTimeout(nuclearWidthFix, 50);
+  setTimeout(nuclearWidthFix, 100);
+  setTimeout(nuclearWidthFix, 200);
+  setTimeout(nuclearWidthFix, 300);
+  setTimeout(nuclearWidthFix, 500);
+  setTimeout(nuclearWidthFix, 1000);
+  
+  // Also run on resize to recalculate
+  window.addEventListener('resize', nuclearWidthFix);
 })();
 </script>
 {% endblock %}

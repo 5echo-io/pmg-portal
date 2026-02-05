@@ -13,6 +13,9 @@ Fixed:
 - Admin dashboard width issue - completely rebuilt dashboard page to use full browser width
 - Duplicate "Administration" title on admin dashboard page
 - Breadcrumbs removed from dashboard page to prevent duplicate titles
+- Injected CSS directly into template to ensure it loads last and overrides all Django admin styles
+- Added JavaScript to hide sidebars and filters that constrain content width
+- Force viewport width (100vw) on all container elements to break out of constraints
 - Interactive install wizard to collect .env values and bootstrap local Postgres
 - Improved admin interface with helpful descriptions and member/link counts
 - Setup guide documentation (SETUP_GUIDE.md)
