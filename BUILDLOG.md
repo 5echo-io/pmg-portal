@@ -2,6 +2,15 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev (suggested)
+  - Version: 0.1.0-alpha.10
+  - Summary:
+    - Fixed 500 error in CustomerMembership changelist (removed bulk_add URL reference)
+    - Modernized Django admin interface with dark theme CSS
+    - Created custom admin base template for styling
+    - Admin now matches portal design aesthetic
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev (suggested)
   - Version: 0.1.0-alpha.9
   - Summary:
     - Fixed 500 error when adding CustomerMembership (form fields configuration)

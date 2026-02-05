@@ -17,6 +17,7 @@ Added:
 - Bulk add CustomerMemberships feature integrated into regular add form (multi-select customers)
 - Customer admins can now manage memberships for their own customer
 - Improved README.md with detailed installation and update instructions
+- Modernized Django admin interface with dark theme matching portal design
 
 Changed:
 - Default admin password to "admin" and skip creation if any superuser exists
@@ -46,6 +47,8 @@ Fixed:
 - 500 errors on admin changelist and save operations (improved get_queryset URL detection, added comprehensive error handling)
 - Database tables missing error (created initial migrations for portal models)
 - 500 error when adding CustomerMembership (fixed form fields configuration for add/edit modes)
+- 500 error when accessing CustomerMembership changelist (removed bulk_add URL reference)
+- Modernized Django admin interface with dark theme matching portal design
 
 ## [0.1.0-alpha.1] - Initial foundation
 Added:

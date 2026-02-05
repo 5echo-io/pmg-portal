@@ -82,6 +82,7 @@ class CustomerMembershipAdmin(admin.ModelAdmin):
     search_fields = ("user__username", "user__email", "customer__name")
     autocomplete_fields = ("user",)
     form = CustomerMembershipForm
+    change_list_template = "admin/portal/customermembership/change_list.html"
     
     def get_fieldsets(self, request, obj=None):
         """Return fieldsets based on add/edit mode."""

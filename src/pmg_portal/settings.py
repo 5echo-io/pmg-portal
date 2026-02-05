@@ -53,7 +53,7 @@ ROOT_URLCONF = "pmg_portal.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / "pmg_portal" / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
