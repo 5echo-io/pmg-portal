@@ -25,6 +25,7 @@ Fixed:
 - "View site" button redirect error (fixed landing view to check authentication)
 - Whitelabeled admin site (removed "Django administration" branding)
 - 500 error when adding Customer (fixed member_count/link_count methods to handle new objects)
+- Installer interactive prompts when piped from curl (defaults to update mode in non-interactive)
 
 ## [0.1.0-alpha.1] - Initial foundation
 Added:

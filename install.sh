@@ -23,14 +23,22 @@ echo -e "${GREEN}=== PMG Portal Installer ===${NC}"
 # Check if already installed
 if [ -d "$APP_DIR" ] && [ -f "$APP_DIR/.env" ]; then
     echo -e "${YELLOW}PMG Portal is already installed at $APP_DIR${NC}"
-    echo ""
-    echo "What would you like to do?"
-    echo "1) Update (preserves database and .env, updates code)"
-    echo "2) Uninstall (removes everything including database)"
-    echo "3) Cancel"
-    echo ""
-    # Use /dev/tty to read from terminal even when stdin is piped
-    read -rp "Enter choice [1-3]: " choice </dev/tty
+    
+    # Check if we're in an interactive terminal
+    if [ -t 0 ] && [ -t 1 ]; then
+        # Interactive mode - ask user
+        echo ""
+        echo "What would you like to do?"
+        echo "1) Update (preserves database and .env, updates code)"
+        echo "2) Uninstall (removes everything including database)"
+        echo "3) Cancel"
+        echo ""
+        read -rp "Enter choice [1-3]: " choice
+    else
+        # Non-interactive mode (piped from curl) - default to update
+        echo "Non-interactive mode detected. Defaulting to Update mode."
+        choice="1"
+    fi
     
     case "$choice" in
         1)
@@ -67,7 +75,12 @@ if [ "$MODE" = "uninstall" ]; then
         set +a
         
         echo ""
-        read -rp "Remove Postgres database? (y/N): " remove_db </dev/tty
+        if [ -t 0 ] && [ -t 1 ]; then
+            read -rp "Remove Postgres database? (y/N): " remove_db
+        else
+            echo "Non-interactive mode: preserving database."
+            remove_db="N"
+        fi
         if [[ "$remove_db" =~ ^[Yy]$ ]]; then
             if [ "${POSTGRES_HOST:-127.0.0.1}" = "127.0.0.1" ] || [ "${POSTGRES_HOST:-127.0.0.1}" = "localhost" ]; then
                 echo "Removing Postgres database..."

@@ -2,11 +2,19 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev (suggested)
+  - Version: 0.1.0-alpha.5
+  - Summary:
+    - Fixed installer interactive mode detection (auto-defaults to update when piped)
+    - Improved non-interactive installation experience
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev (suggested)
   - Version: 0.1.0-alpha.4
   - Summary:
     - Added standalone installer (install.sh) for curl-based installation
     - Installer detects existing installation and offers update/uninstall
     - Update mode preserves database and .env configuration
+    - Fixed interactive prompts in non-interactive mode (defaults to update)
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev (suggested)
