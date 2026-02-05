@@ -16,6 +16,27 @@ from django.http import JsonResponse
 from django.db import connection
 from pmg_portal.logging_middleware import DebugLoggingMiddleware
 
+
+def _make_json_serializable(obj):
+    """Recursively convert objects to JSON-serializable form (e.g. Path -> str)."""
+    if isinstance(obj, Path):
+        return str(obj)
+    if hasattr(obj, "__iter__") and not isinstance(obj, (str, bytes, dict)):
+        try:
+            return [_make_json_serializable(x) for x in obj]
+        except TypeError:
+            return str(obj)
+    if isinstance(obj, dict):
+        return {k: _make_json_serializable(v) for k, v in obj.items()}
+    if isinstance(obj, (str, int, float, bool, type(None))):
+        return obj
+    try:
+        import json
+        json.dumps(obj)
+        return obj
+    except (TypeError, ValueError):
+        return str(obj)
+
 def landing(request):
     # If user is authenticated, redirect to portal, otherwise to login
     if request.user.is_authenticated:
@@ -112,7 +133,7 @@ def debug_view(request):
     debug_data["frontend_logs_note"] = "Frontend logs are collected via JavaScript. Check browser console or use window.getPmgDebugLogs() in console."
     
     if request.GET.get('format') == 'json':
-        return JsonResponse(debug_data)
+        return JsonResponse(_make_json_serializable(debug_data))
     
     return render(request, "web/debug.html", {
         "debug_data": debug_data,
