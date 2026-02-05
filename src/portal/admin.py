@@ -7,7 +7,11 @@ Created: 2026-02-05
 Last Modified: 2026-02-05
 """
 from django.contrib import admin
+from django.contrib import messages
+from django.shortcuts import redirect, render
+from django.urls import path
 from .models import Customer, CustomerMembership, PortalLink
+from .forms import BulkCustomerMembershipForm
 
 @admin.register(Customer)
 class CustomerAdmin(admin.ModelAdmin):
@@ -75,6 +79,42 @@ class CustomerMembershipAdmin(admin.ModelAdmin):
     list_filter = ("role", "customer")
     search_fields = ("user__username", "user__email", "customer__name")
     autocomplete_fields = ("user", "customer")
+    change_list_template = "admin/portal/customermembership/change_list.html"
+    
+    def get_urls(self):
+        urls = super().get_urls()
+        custom_urls = [
+            path('bulk-add/', self.admin_site.admin_view(self.bulk_add_view), name='portal_customermembership_bulk_add'),
+        ]
+        return custom_urls + urls
+    
+    def bulk_add_view(self, request):
+        """Custom view for bulk adding CustomerMemberships."""
+        if request.method == 'POST':
+            form = BulkCustomerMembershipForm(request.POST)
+            if form.is_valid():
+                created, skipped = form.save()
+                if created:
+                    messages.success(request, f'Created {len(created)} customer membership(s).')
+                if skipped:
+                    messages.info(request, f'Updated {len(skipped)} existing membership(s).')
+                return redirect('admin:portal_customermembership_changelist')
+        else:
+            form = BulkCustomerMembershipForm()
+        
+        # Set user queryset for autocomplete
+        from django.contrib.auth import get_user_model
+        User = get_user_model()
+        form.fields['user'].queryset = User.objects.all()
+        
+        context = {
+            **self.admin_site.each_context(request),
+            'title': 'Bulk Add Customer Memberships',
+            'form': form,
+            'opts': self.model._meta,
+            'has_view_permission': self.has_view_permission(request, None),
+        }
+        return render(request, 'admin/portal/customermembership/bulk_add.html', context)
 
 @admin.register(PortalLink)
 class PortalLinkAdmin(admin.ModelAdmin):

@@ -2,6 +2,15 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev (suggested)
+  - Version: 0.1.0-alpha.7
+  - Summary:
+    - Improved UI/UX: better topbar button styling, admin visibility controls
+    - Added bulk add CustomerMemberships feature
+    - Simplified footer design
+    - Made 5echo.io clickable link
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev (suggested)
   - Version: 0.1.0-alpha.6
   - Summary:
     - Created initial migrations for portal models (fixes missing database tables)
@@ -10,6 +19,12 @@
     - Removed changelog preview text from footer, only button remains
     - Added dark mode scrollbar styling
     - Added logging configuration for better debugging
+    - Improved topbar design with better button styling
+    - Admin button only visible to superusers
+    - Removed Admin link from login page
+    - Added bulk add CustomerMemberships feature
+    - Made 5echo.io clickable in footer
+    - Simplified footer (removed Quick Links)
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev (suggested)

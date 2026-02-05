@@ -1,0 +1,53 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block content %}
+<h1>Bulk Add Customer Memberships</h1>
+<p>Assign a user to multiple customers at once.</p>
+
+<form method="post">
+  {% csrf_token %}
+  
+  <fieldset class="module aligned">
+    <div class="form-row">
+      <div>
+        <label for="{{ form.user.id_for_label }}">{{ form.user.label }}:</label>
+        {{ form.user }}
+        {% if form.user.help_text %}
+        <p class="help">{{ form.user.help_text }}</p>
+        {% endif %}
+        {{ form.user.errors }}
+      </div>
+    </div>
+    
+    <div class="form-row">
+      <div>
+        <label>{{ form.customers.label }}:</label>
+        <div style="max-height: 300px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; background: #f9f9f9; border-radius: 4px;">
+          {{ form.customers }}
+        </div>
+        {% if form.customers.help_text %}
+        <p class="help">{{ form.customers.help_text }}</p>
+        {% endif %}
+        {{ form.customers.errors }}
+      </div>
+    </div>
+    
+    <div class="form-row">
+      <div>
+        <label for="{{ form.role.id_for_label }}">{{ form.role.label }}:</label>
+        {{ form.role }}
+        {% if form.role.help_text %}
+        <p class="help">{{ form.role.help_text }}</p>
+        {% endif %}
+        {{ form.role.errors }}
+      </div>
+    </div>
+  </fieldset>
+  
+  <div class="submit-row">
+    <input type="submit" value="Create Memberships" class="default">
+    <a href="{% url 'admin:portal_customermembership_changelist' %}" class="button">Cancel</a>
+  </div>
+</form>
+{% endblock %}

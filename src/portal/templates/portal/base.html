@@ -11,10 +11,12 @@
   <header class="topbar">
     <div class="brand">PMG Portal</div>
     <div class="topbar-right">
-      <span class="muted">{{ request.user.username }}</span>
-      <a class="link" href="/portal/">Portal</a>
-      <a class="link" href="/admin/">Admin</a>
-      <a class="link" href="/account/logout/">Logout</a>
+      <span class="topbar-username">{{ request.user.username }}</span>
+      <a class="topbar-btn" href="/portal/">Portal</a>
+      {% if request.user.is_superuser %}
+      <a class="topbar-btn" href="/admin/">Admin</a>
+      {% endif %}
+      <a class="topbar-btn" href="/account/logout/">Logout</a>
     </div>
   </header>
 
@@ -27,23 +29,12 @@
       <div class="footer-section">
         <div class="footer-title">PMG Portal</div>
         <div class="footer-text">Version {{ app_version|default:"Unknown" }}</div>
-        <div class="footer-text muted">Copyright &copy; {{ copyright_year|default:"2026" }} 5echo.io</div>
-      </div>
-      <div class="footer-section">
-        <div class="footer-title">Quick Links</div>
-        <a href="/admin/" class="footer-link">Admin Panel</a>
-        <a href="/portal/" class="footer-link">Portal</a>
-        <a href="/account/logout/" class="footer-link">Logout</a>
-      </div>
-      <div class="footer-section">
-        <div class="footer-title">System</div>
-        <a href="/admin/" class="footer-link">View Logs</a>
-        <div class="footer-text muted">View system logs in admin panel</div>
+        <div class="footer-text muted">Copyright &copy; {{ copyright_year|default:"2026" }} <a href="https://5echo.io" target="_blank" rel="noopener" class="footer-link">5echo.io</a></div>
       </div>
       {% if show_changelog_button %}
       <div class="footer-section">
         <div class="footer-title">Changelog</div>
-        <button class="footer-btn-text" onclick="openChangelogModal()">View Changelog</button>
+        <a href="#" class="footer-link" onclick="openChangelogModal(); return false;">View Changelog</a>
       </div>
       {% endif %}
     </div>

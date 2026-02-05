@@ -10,10 +10,11 @@ Added:
 - Setup guide documentation (SETUP_GUIDE.md)
 - Standalone installer script (install.sh) that can be run via curl from GitHub
 - Installer detects existing installation and offers update/uninstall options
-- Footer with copyright, version, quick links, and changelog button
+- Footer with copyright, version, and changelog button
 - Changelog modal dialog showing version-specific changes (unreleased or major release)
 - Dark mode scrollbar styling
 - Initial database migrations for portal models
+- Bulk add CustomerMemberships feature (assign user to multiple customers at once)
 
 Changed:
 - Default admin password to "admin" and skip creation if any superuser exists
@@ -21,6 +22,15 @@ Changed:
 - Default APP_BIND to 0.0.0.0:8097 (was 127.0.0.1:8097) for reverse proxy compatibility
 - Improved install wizard DJANGO_ALLOWED_HOSTS prompt with example
 - Enhanced admin interface for Customers, CustomerMemberships, and Portal Links
+- Improved topbar design with better button styling and username separation
+- Admin button only visible to superusers (removed from login page)
+- Footer simplified (removed Quick Links section)
+- Changelog button styled to match other footer links
+- Made 5echo.io clickable link in footer
+- Improved topbar design with better button styling and username separation
+- Admin button only visible to superusers
+- Footer simplified (removed Quick Links section)
+- Changelog button styled to match other footer links
 
 Fixed:
 - Local Postgres bootstrap in installer (role/db creation)

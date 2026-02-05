@@ -113,9 +113,41 @@ a.link:hover { color: var(--text); }
   background: #0c1426;
   position: sticky;
   top: 0;
+  z-index: 100;
 }
 
 .brand { font-weight: 700; }
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.topbar-username {
+  color: var(--muted);
+  font-size: 13px;
+  padding-right: 12px;
+  border-right: 1px solid var(--line);
+  margin-right: 4px;
+}
+
+.topbar-btn {
+  padding: 6px 12px;
+  border-radius: 6px;
+  background: var(--btn);
+  color: var(--text);
+  text-decoration: none;
+  font-size: 13px;
+  border: 1px solid var(--line);
+  transition: all 0.2s;
+}
+
+.topbar-btn:hover {
+  background: var(--btnHover);
+  border-color: var(--btnHover);
+  color: var(--text);
+}
 .container { max-width: 980px; margin: 0 auto; padding: 20px; }
 
 .panel {
@@ -182,21 +214,6 @@ a.link:hover { color: var(--text); }
   overflow-y: auto;
 }
 
-.footer-btn-text {
-  margin-top: 8px;
-  padding: 0;
-  font-size: 12px;
-  border: none;
-  background: none;
-  color: var(--muted);
-  cursor: pointer;
-  text-decoration: underline;
-  text-align: left;
-}
-
-.footer-btn-text:hover {
-  color: var(--text);
-}
 
 /* Modal Styles */
 .modal {
