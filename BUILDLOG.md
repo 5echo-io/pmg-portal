@@ -2,6 +2,15 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev (suggested)
+  - Version: 0.1.0-alpha.11
+  - Summary:
+    - Completely redesigned admin CSS for better text contrast and visibility
+    - Matched admin design to portal color palette exactly
+    - Fixed all text color issues (text now visible on all backgrounds)
+    - Improved form elements, buttons, tables, and all admin components
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev (suggested)
   - Version: 0.1.0-alpha.10
   - Summary:
     - Fixed 500 error in CustomerMembership changelist (removed bulk_add URL reference)
