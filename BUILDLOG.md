@@ -2,6 +2,17 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev
+  - Version: 0.2.0-alpha.34
+  - Summary:
+    - Simplified admin layout CSS and removed conflicting width overrides
+    - Standardized admin container flex layout to keep footer at bottom
+    - Removed admin nav sidebar toggle and forced sidebar visible
+    - Added deeper backend logging (view info, templates, db time, slow queries)
+    - Added frontend fetch/XHR logging for portal and admin
+    - Expanded debug page with view/template columns and system/Django info
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev
   - Version: 0.2.0-alpha.33
   - Summary:
     - Removed injected dashboard JS/CSS overrides and relied on shared layout

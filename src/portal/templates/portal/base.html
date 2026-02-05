@@ -329,6 +329,49 @@
           reason: e.reason ? e.reason.toString() : 'Unknown',
         });
       });
+
+      // Log fetch requests
+      if (window.fetch && !window.__pmgFetchWrapped) {
+        const originalFetch = window.fetch;
+        window.fetch = function(input, init) {
+          const url = typeof input === 'string' ? input : input.url;
+          const method = (init && init.method) || 'GET';
+          logEvent('fetch_start', { url: url, method: method });
+          return originalFetch.apply(this, arguments)
+            .then(function(response) {
+              logEvent('fetch_end', { url: url, method: method, status: response.status });
+              return response;
+            })
+            .catch(function(error) {
+              logEvent('fetch_error', { url: url, method: method, error: error ? error.toString() : 'Unknown' });
+              throw error;
+            });
+        };
+        window.__pmgFetchWrapped = true;
+      }
+
+      // Log XHR requests
+      if (window.XMLHttpRequest && !window.__pmgXhrWrapped) {
+        const originalOpen = XMLHttpRequest.prototype.open;
+        const originalSend = XMLHttpRequest.prototype.send;
+        XMLHttpRequest.prototype.open = function(method, url) {
+          this.__pmgMethod = method;
+          this.__pmgUrl = url;
+          return originalOpen.apply(this, arguments);
+        };
+        XMLHttpRequest.prototype.send = function() {
+          const xhr = this;
+          logEvent('xhr_start', { url: xhr.__pmgUrl, method: xhr.__pmgMethod });
+          xhr.addEventListener('load', function() {
+            logEvent('xhr_end', { url: xhr.__pmgUrl, method: xhr.__pmgMethod, status: xhr.status });
+          });
+          xhr.addEventListener('error', function() {
+            logEvent('xhr_error', { url: xhr.__pmgUrl, method: xhr.__pmgMethod, status: xhr.status });
+          });
+          return originalSend.apply(this, arguments);
+        };
+        window.__pmgXhrWrapped = true;
+      }
       
       // Make logs accessible globally
       window.getPmgDebugLogs = function() {

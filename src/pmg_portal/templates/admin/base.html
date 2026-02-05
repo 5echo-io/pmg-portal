@@ -241,6 +241,132 @@ document.addEventListener('keydown', function(e) {
   setTimeout(enforceNavSidebar, 100);
   setTimeout(enforceNavSidebar, 300);
 })();
+
+// Frontend logging for admin pages (same as portal)
+(function() {
+  window.pmgDebugLogs = window.pmgDebugLogs || [];
+  const MAX_LOGS = 100;
+
+  function logEvent(type, data) {
+    const logEntry = {
+      timestamp: new Date().toISOString(),
+      type: type,
+      data: data,
+      url: window.location.pathname,
+      userAgent: navigator.userAgent,
+    };
+    window.pmgDebugLogs.push(logEntry);
+    if (window.pmgDebugLogs.length > MAX_LOGS) {
+      window.pmgDebugLogs.shift();
+    }
+    console.debug('[PMG Debug]', type, data);
+  }
+
+  // Log button/link clicks
+  document.addEventListener('click', function(e) {
+    const target = e.target;
+    if (target.tagName === 'BUTTON' || target.tagName === 'A' || target.closest('button') || target.closest('a')) {
+      const element = target.closest('button') || target.closest('a') || target;
+      logEvent('click', {
+        element: element.tagName,
+        id: element.id || null,
+        className: element.className || null,
+        text: element.textContent?.trim().substring(0, 50) || null,
+        href: element.href || null,
+      });
+    }
+  });
+
+  // Log form submissions
+  document.addEventListener('submit', function(e) {
+    logEvent('form_submit', {
+      formId: e.target.id || null,
+      action: e.target.action || null,
+      method: e.target.method || 'GET',
+    });
+  });
+
+  // Log page load
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
+      logEvent('page_load', {
+        readyState: document.readyState,
+        loadTime: performance.timing ? performance.timing.loadEventEnd - performance.timing.navigationStart : null,
+      });
+    });
+  } else {
+    logEvent('page_load', {
+      readyState: document.readyState,
+      loadTime: performance.timing ? performance.timing.loadEventEnd - performance.timing.navigationStart : null,
+    });
+  }
+
+  // Log JavaScript errors
+  window.addEventListener('error', function(e) {
+    logEvent('javascript_error', {
+      message: e.message,
+      filename: e.filename,
+      lineno: e.lineno,
+      colno: e.colno,
+      error: e.error ? e.error.toString() : null,
+    });
+  });
+
+  // Log unhandled promise rejections
+  window.addEventListener('unhandledrejection', function(e) {
+    logEvent('promise_rejection', {
+      reason: e.reason ? e.reason.toString() : 'Unknown',
+    });
+  });
+
+  // Log fetch requests
+  if (window.fetch && !window.__pmgFetchWrapped) {
+    const originalFetch = window.fetch;
+    window.fetch = function(input, init) {
+      const url = typeof input === 'string' ? input : input.url;
+      const method = (init && init.method) || 'GET';
+      logEvent('fetch_start', { url: url, method: method });
+      return originalFetch.apply(this, arguments)
+        .then(function(response) {
+          logEvent('fetch_end', { url: url, method: method, status: response.status });
+          return response;
+        })
+        .catch(function(error) {
+          logEvent('fetch_error', { url: url, method: method, error: error ? error.toString() : 'Unknown' });
+          throw error;
+        });
+    };
+    window.__pmgFetchWrapped = true;
+  }
+
+  // Log XHR requests
+  if (window.XMLHttpRequest && !window.__pmgXhrWrapped) {
+    const originalOpen = XMLHttpRequest.prototype.open;
+    const originalSend = XMLHttpRequest.prototype.send;
+    XMLHttpRequest.prototype.open = function(method, url) {
+      this.__pmgMethod = method;
+      this.__pmgUrl = url;
+      return originalOpen.apply(this, arguments);
+    };
+    XMLHttpRequest.prototype.send = function() {
+      const xhr = this;
+      logEvent('xhr_start', { url: xhr.__pmgUrl, method: xhr.__pmgMethod });
+      xhr.addEventListener('load', function() {
+        logEvent('xhr_end', { url: xhr.__pmgUrl, method: xhr.__pmgMethod, status: xhr.status });
+      });
+      xhr.addEventListener('error', function() {
+        logEvent('xhr_error', { url: xhr.__pmgUrl, method: xhr.__pmgMethod, status: xhr.status });
+      });
+      return originalSend.apply(this, arguments);
+    };
+    window.__pmgXhrWrapped = true;
+  }
+
+  // Make logs accessible globally
+  window.getPmgDebugLogs = function() {
+    return window.pmgDebugLogs;
+  };
+})();
 </script>
 {% endblock %}
 

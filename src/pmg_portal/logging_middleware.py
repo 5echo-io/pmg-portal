@@ -28,6 +28,7 @@ class DebugLoggingMiddleware(MiddlewareMixin):
         """Log incoming request details."""
         request._start_time = time.time()
         request._db_queries_before = len(connection.queries)
+        request._view_info = {}
         
         log_entry = {
             'timestamp': time.time(),
@@ -38,6 +39,11 @@ class DebugLoggingMiddleware(MiddlewareMixin):
             'ip': self._get_client_ip(request),
             'user_agent': request.META.get('HTTP_USER_AGENT', ''),
             'referer': request.META.get('HTTP_REFERER', ''),
+            'get_keys': list(request.GET.keys()),
+            'post_keys': list(request.POST.keys()),
+            'content_type': request.META.get('CONTENT_TYPE', ''),
+            'content_length': request.META.get('CONTENT_LENGTH', ''),
+            'view': None,
             'status': 'processing',
             'db_queries': [],
             'template_rendered': None,
@@ -49,6 +55,48 @@ class DebugLoggingMiddleware(MiddlewareMixin):
         logger.info(f"Request: {request.method} {request.path} - User: {log_entry['user']}")
         
         return None
+
+    def process_view(self, request, view_func, view_args, view_kwargs):
+        """Capture resolved view information."""
+        try:
+            resolver_match = getattr(request, 'resolver_match', None)
+            view_info = {
+                'view_func': getattr(view_func, '__name__', str(view_func)),
+                'view_module': getattr(view_func, '__module__', ''),
+                'view_args': view_args,
+                'view_kwargs': view_kwargs,
+                'url_name': getattr(resolver_match, 'url_name', None),
+                'app_name': getattr(resolver_match, 'app_name', None),
+                'namespace': getattr(resolver_match, 'namespace', None),
+                'view_name': getattr(resolver_match, 'view_name', None),
+            }
+            request._view_info = view_info
+            if hasattr(request, '_log_entry'):
+                request._log_entry['view'] = view_info
+        except Exception:
+            # Avoid breaking request handling due to logging errors
+            pass
+        return None
+
+    def process_template_response(self, request, response):
+        """Capture template names and context keys for template responses."""
+        if hasattr(request, '_log_entry'):
+            try:
+                templates = getattr(response, 'templates', []) or []
+                template_names = []
+                for t in templates:
+                    name = getattr(t, 'name', None)
+                    if name:
+                        template_names.append(name)
+                context_keys = []
+                context_data = getattr(response, 'context_data', None)
+                if isinstance(context_data, dict):
+                    context_keys = list(context_data.keys())
+                request._log_entry['template_rendered'] = template_names or None
+                request._log_entry['context_keys'] = context_keys
+            except Exception:
+                pass
+        return response
     
     def process_response(self, request, response):
         """Log response details."""
@@ -56,14 +104,31 @@ class DebugLoggingMiddleware(MiddlewareMixin):
             processing_time = time.time() - request._start_time
             db_queries_after = len(connection.queries)
             db_queries_count = db_queries_after - request._db_queries_before
+            db_queries = connection.queries[-db_queries_count:] if db_queries_count > 0 else []
+            db_time_ms = 0.0
+            slow_queries = []
+            for query in db_queries:
+                try:
+                    q_time = float(query.get('time', 0)) * 1000
+                    db_time_ms += q_time
+                    if q_time >= 200:
+                        slow_queries.append({
+                            'time_ms': round(q_time, 2),
+                            'sql': query.get('sql', '')[:500],
+                        })
+                except Exception:
+                    continue
             
             request._log_entry.update({
                 'status': 'completed',
                 'status_code': response.status_code,
                 'db_queries_count': db_queries_count,
-                'db_queries': connection.queries[-db_queries_count:] if db_queries_count > 0 else [],
+                'db_queries': db_queries,
+                'db_time_ms': round(db_time_ms, 2),
+                'slow_queries': slow_queries,
                 'processing_time': round(processing_time * 1000, 2),  # milliseconds
                 'response_size': len(response.content) if hasattr(response, 'content') else 0,
+                'response_content_type': getattr(response, 'get', lambda x, d=None: None)('Content-Type', None),
             })
             
             # Add to logs (keep only last N)

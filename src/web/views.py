@@ -42,6 +42,8 @@ def debug_view(request):
         debug_data["system"]["django_version"] = django.get_version()
         debug_data["system"]["debug"] = settings.DEBUG
         debug_data["system"]["base_dir"] = str(settings.BASE_DIR)
+        debug_data["system"]["pid"] = os.getpid()
+        debug_data["system"]["cwd"] = os.getcwd()
         
         # Database info
         with connection.cursor() as cursor:
@@ -90,11 +92,15 @@ def debug_view(request):
             "portal.context_processors.user_customers",
             "portal.context_processors.footer_info",
         ]
+        debug_data["django"]["installed_apps"] = list(getattr(settings, "INSTALLED_APPS", []))
+        debug_data["django"]["middleware"] = list(getattr(settings, "MIDDLEWARE", []))
+        debug_data["django"]["templates"] = getattr(settings, "TEMPLATES", [])
         
         # Logging configuration
         debug_data["logging"] = {
             "handlers": [h.__class__.__name__ for h in logging.root.handlers],
             "level": logging.getLevelName(logging.root.level),
+            "loggers": sorted(list(logging.Logger.manager.loggerDict.keys())),
         }
         
     except Exception as e:

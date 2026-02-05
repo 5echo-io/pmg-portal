@@ -33,6 +33,11 @@ Fixed:
 - Standardized Django admin container layout to match portal flex structure
 - Footer now uses shared layout rules only (no DOM moves or calc hacks)
 - Admin nav sidebar toggle removed and sidebar forced visible
+- Simplified admin layout CSS to remove conflicting width overrides
+- Admin container now uses flex layout to keep footer at bottom
+- Added detailed request logging (view, templates, db time, slow queries)
+- Added fetch/XHR logging for frontend (portal + admin)
+- Debug page now shows view/template columns and extra Django/system info
 - Interactive install wizard to collect .env values and bootstrap local Postgres
 - Improved admin interface with helpful descriptions and member/link counts
 - Setup guide documentation (SETUP_GUIDE.md)
