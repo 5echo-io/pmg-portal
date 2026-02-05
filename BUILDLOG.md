@@ -2,6 +2,16 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev
+  - Version: 0.3.0-beta.2
+  - Summary:
+    - Changelog footer shows beta version section; modal "View Full Changelog" hides short version
+    - Profile Account Information: pencil edit for email, first name, last name; Date joined in panel footer
+    - Email-as-primary: login with email (or username), registration username from email, migration syncs username=email
+    - Avatar initial from first/last name then email; customer dropdown spacing and alignment
+    - Install wizard: default admin created with username=email; migrations comment for accounts sync
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev
   - Version: 0.2.0-alpha.34
   - Summary:
     - Simplified admin layout CSS and removed conflicting width overrides

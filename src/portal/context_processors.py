@@ -102,8 +102,20 @@ def footer_info(request):
                     changelog_full = content  # Store full changelog for modal
                     
                     # Determine which section to show based on version
-                    if version.startswith("0.1.0-alpha") or "alpha" in version.lower() or "beta" in version.lower():
-                        # Alpha/beta version - show Unreleased section
+                    if "beta" in version.lower():
+                        # Beta: look for exact version section (e.g. ## [0.3.0-beta.2])
+                        version_clean = version.strip()
+                        version_pattern = f"## [{version_clean}]"
+                        if version_pattern in content:
+                            parts = content.split(version_pattern, 1)
+                            if len(parts) > 1:
+                                changelog_section = parts[1].split("## [")[0].strip()
+                                show_changelog_button = True
+                        elif "## [Unreleased]" in content:
+                            unreleased = content.split("## [Unreleased]")[1].split("## [")[0]
+                            changelog_section = unreleased.strip()
+                            show_changelog_button = True
+                    elif version.startswith("0.1.0-alpha") or "alpha" in version.lower():
                         if "## [Unreleased]" in content:
                             unreleased = content.split("## [Unreleased]")[1].split("## [")[0]
                             changelog_section = unreleased.strip()

@@ -7,7 +7,7 @@ from django.contrib.auth import login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 
-from .forms import LoginForm, RegisterForm, CustomPasswordChangeForm
+from .forms import LoginForm, RegisterForm, CustomPasswordChangeForm, AccountEditForm
 
 
 def login_view(request):
@@ -49,38 +49,43 @@ def register_view(request):
 def profile_view(request):
     """User profile settings page."""
     show_password_modal = False
+    account_form = AccountEditForm(instance=request.user)
+    password_form = CustomPasswordChangeForm(request.user)
     
     if request.method == "POST":
         if "change_password" in request.POST:
             password_form = CustomPasswordChangeForm(request.user, request.POST)
-            show_password_modal = True  # Show modal if form was submitted
+            show_password_modal = True
             if password_form.is_valid():
                 user = password_form.save()
                 update_session_auth_hash(request, user)
                 messages.success(request, "Your password has been changed successfully.")
-                # Redirect to avoid resubmission on refresh
+                return redirect("/account/profile/")
+            else:
+                messages.error(request, "Please correct the errors below.")
+        elif "update_account" in request.POST:
+            account_form = AccountEditForm(request.POST, instance=request.user)
+            if account_form.is_valid():
+                account_form.save()
+                messages.success(request, "Account information updated.")
                 return redirect("/account/profile/")
             else:
                 messages.error(request, "Please correct the errors below.")
         elif "delete_account" in request.POST:
-            confirm_username = request.POST.get("confirm_username", "").strip()
-            if confirm_username == request.user.username:
-                # Delete the user account
+            confirm_email = (request.POST.get("confirm_email") or "").strip()
+            if confirm_email == (request.user.email or ""):
                 user = request.user
-                logout(request)  # Logout before deletion
+                logout(request)
                 user.delete()
                 messages.success(request, "Your account has been permanently deleted.")
                 return redirect("/account/login/")
             else:
-                messages.error(request, "Username confirmation does not match. Account deletion cancelled.")
-        else:
-            password_form = CustomPasswordChangeForm(request.user)
-    else:
-        password_form = CustomPasswordChangeForm(request.user)
+                messages.error(request, "Email confirmation does not match. Account deletion cancelled.")
     
     return render(request, "accounts/profile.html", {
         "user": request.user,
         "password_form": password_form,
+        "account_form": account_form,
         "show_password_modal": show_password_modal,
     })
 

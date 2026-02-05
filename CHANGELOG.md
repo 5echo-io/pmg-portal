@@ -5,6 +5,28 @@ This project follows Semantic Versioning (SemVer).
 
 ## [Unreleased]
 
+## [0.3.0-beta.2] – 2026-02-05
+Changelog and profile improvements, email-as-primary login.
+
+Added:
+- Changelog modal: "View Full Changelog" hides short version; "Hide Full Changelog" shows it again
+- Profile Account Information: edit (pencil) button to edit email, first name, last name
+- Panel footer on Account Information for "Joined [date]" and future account metadata
+- Migration `accounts.0001_sync_username_from_email`: syncs User.username from User.email for existing users
+
+Changed:
+- Changelog in footer: beta versions now show matching version section (e.g. 0.3.0-beta.1) instead of Unreleased
+- Avatar initial: first letter of first name, then last name, then email (no longer username)
+- Customer dropdown: tighter row spacing (min-height 28px, padding 0 12px); wrapper align-self center
+- Login: field labeled "Email"; accepts email or username; login with email preferred
+- Registration: username hidden and set from email; new users get username = email
+- Profile delete account: confirm with email instead of username
+- Install wizard: first admin created with username = email; prompt "DEFAULT_ADMIN_EMAIL (login email for first admin)"
+
+Fixed:
+- Changelog footer not showing latest beta section
+- Profile modal Cancel/Escape restoring Account Information tab (including Escape key)
+
 ## [0.3.0-beta.1] – 2026-02-05
 First beta release. Portal at root, custom admin UI, wider layout, and UX improvements.
 

@@ -73,8 +73,9 @@ fi
 prompt_default DJANGO_DEBUG "DJANGO_DEBUG (true/false)" "$DJANGO_DEBUG_DEFAULT"
 prompt_default DJANGO_ALLOWED_HOSTS "DJANGO_ALLOWED_HOSTS (comma-separated, e.g. pmg-portal.example.com,localhost,127.0.0.1)" "$DJANGO_ALLOWED_HOSTS_DEFAULT"
 prompt_default ENABLE_REGISTRATION "ENABLE_REGISTRATION (true/false)" "$ENABLE_REGISTRATION_DEFAULT"
-prompt_default DEFAULT_ADMIN_USERNAME "DEFAULT_ADMIN_USERNAME" "$DEFAULT_ADMIN_USERNAME_DEFAULT"
-prompt_default DEFAULT_ADMIN_EMAIL "DEFAULT_ADMIN_EMAIL" "$DEFAULT_ADMIN_EMAIL_DEFAULT"
+prompt_default DEFAULT_ADMIN_EMAIL "DEFAULT_ADMIN_EMAIL (login email for first admin)" "$DEFAULT_ADMIN_EMAIL_DEFAULT"
+# Username is set from email on create (email-as-primary); kept for .env backward compatibility
+DEFAULT_ADMIN_USERNAME="${DEFAULT_ADMIN_USERNAME:-$DEFAULT_ADMIN_EMAIL}"
 prompt_default DEFAULT_ADMIN_PASSWORD "DEFAULT_ADMIN_PASSWORD" "$DEFAULT_ADMIN_PASSWORD_DEFAULT" true
 prompt_default POSTGRES_HOST "POSTGRES_HOST" "$POSTGRES_HOST_DEFAULT"
 prompt_default POSTGRES_PORT "POSTGRES_PORT" "$POSTGRES_PORT_DEFAULT"
@@ -93,7 +94,7 @@ DJANGO_ALLOWED_HOSTS=$DJANGO_ALLOWED_HOSTS
 # If true, registration page is enabled
 ENABLE_REGISTRATION=$ENABLE_REGISTRATION
 
-# Default admin bootstrap (created on install if missing)
+# Default admin bootstrap (created on install if missing). Login uses email; username is set from email.
 DEFAULT_ADMIN_USERNAME=$DEFAULT_ADMIN_USERNAME
 DEFAULT_ADMIN_EMAIL=$DEFAULT_ADMIN_EMAIL
 DEFAULT_ADMIN_PASSWORD=$DEFAULT_ADMIN_PASSWORD
@@ -152,6 +153,7 @@ set -a
 source "$APP_DIR/.env"
 set +a
 
+# Migrations include accounts: syncs User.username from User.email (email-as-primary)
 sudo -E "$SRC_DIR/.venv/bin/python" manage.py migrate --noinput
 sudo -E "$SRC_DIR/.venv/bin/python" manage.py collectstatic --noinput
 
@@ -163,15 +165,16 @@ import django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "pmg_portal.settings")
 django.setup()
 
-from django.contrib.auth.models import User  # noqa: E402
+from django.contrib.auth import get_user_model  # noqa: E402
 
-username = os.getenv("DEFAULT_ADMIN_USERNAME", "admin")
-email = os.getenv("DEFAULT_ADMIN_EMAIL", "admin@example.com")
+User = get_user_model()
+email = (os.getenv("DEFAULT_ADMIN_EMAIL") or "admin@example.com").strip()
+username = email[:150]  # Email-as-primary: username must equal email for login
 password = os.getenv("DEFAULT_ADMIN_PASSWORD", "admin")
 
 if not User.objects.filter(is_superuser=True).exists():
     u = User.objects.create_superuser(username=username, email=email, password=password)
-    print(f"Created superuser: {u.username}")
+    print(f"Created superuser: {email}")
 else:
     print("Superuser already exists, skipping.")
 PY

@@ -46,7 +46,7 @@
       <div class="user-avatar-wrapper">
         <button class="user-avatar-btn" onclick="toggleUserMenu(event)" aria-label="User menu">
           <div class="user-avatar">
-            {{ request.user.username|first|upper }}
+            {% if request.user.first_name %}{{ request.user.first_name|first|upper }}{% elif request.user.last_name %}{{ request.user.last_name|first|upper }}{% elif request.user.email %}{{ request.user.email|first|upper }}{% else %}{{ request.user.username|first|upper }}{% endif %}
           </div>
         </button>
         <div id="user-menu" class="user-menu">
@@ -229,16 +229,18 @@
         <button class="modal-close" onclick="closeChangelogModal(event)">&times;</button>
       </div>
       <div class="modal-body">
+        <div id="shortChangelogWrap" class="changelog-section-wrap">
         {% if changelog_section %}
         <div class="changelog-section">
           <pre class="changelog-content">{{ changelog_section|escape }}</pre>
         </div>
         {% endif %}
+        </div>
         {% if changelog_full %}
         <div class="modal-actions">
-          <button class="modal-btn" onclick="toggleFullChangelog()">View Full Changelog</button>
+          <button class="modal-btn" id="toggleFullChangelogBtn" onclick="toggleFullChangelog()">View Full Changelog</button>
         </div>
-        <div id="fullChangelog" class="changelog-section" style="display: none;">
+        <div id="fullChangelog" class="changelog-section full-changelog-section" style="display: none;">
           <pre class="changelog-content">{{ changelog_full|escape }}</pre>
         </div>
         {% endif %}
@@ -259,25 +261,26 @@
         document.body.style.overflow = 'auto';
         // Reset full changelog view
         const fullChangelog = document.getElementById('fullChangelog');
-        if (fullChangelog) {
-          fullChangelog.style.display = 'none';
-        }
-        const btn = document.querySelector('.modal-btn');
-        if (btn) {
-          btn.textContent = 'View Full Changelog';
-        }
+        if (fullChangelog) fullChangelog.style.display = 'none';
+        const shortWrap = document.getElementById('shortChangelogWrap');
+        if (shortWrap) shortWrap.style.display = '';
+        const btn = document.getElementById('toggleFullChangelogBtn');
+        if (btn) btn.textContent = 'View Full Changelog';
       }
     }
     
     function toggleFullChangelog() {
       const fullChangelog = document.getElementById('fullChangelog');
-      const btn = document.querySelector('.modal-btn');
+      const shortWrap = document.getElementById('shortChangelogWrap');
+      const btn = document.getElementById('toggleFullChangelogBtn');
       if (fullChangelog && btn) {
         if (fullChangelog.style.display === 'none') {
           fullChangelog.style.display = 'block';
+          if (shortWrap) shortWrap.style.display = 'none';
           btn.textContent = 'Hide Full Changelog';
         } else {
           fullChangelog.style.display = 'none';
+          if (shortWrap) shortWrap.style.display = '';
           btn.textContent = 'View Full Changelog';
         }
       }
