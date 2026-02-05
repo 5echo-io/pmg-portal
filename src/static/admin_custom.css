@@ -46,21 +46,14 @@ body {
   display: none !important;
 }
 
+/* Do NOT use flex column on body – let Django admin layout (sidebar left, content right) work */
 body.admin-page {
   min-height: 100vh !important;
-  display: flex !important;
-  flex-direction: column !important;
+  display: block !important;
   width: 100% !important;
   max-width: 100% !important;
   margin: 0 !important;
   padding: 0 !important;
-}
-
-/* Ensure admin page body structure matches portal for footer positioning */
-html body.admin-page {
-  min-height: 100vh !important;
-  display: flex !important;
-  flex-direction: column !important;
 }
 
 html.admin-page,
@@ -69,21 +62,12 @@ html[class*="admin"] {
   max-width: 100% !important;
 }
 
+/* Content width matches portal (980px) – do not override #container/#main layout */
 body.admin-page #content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-}
-
-body.admin-page .footer {
-  margin-top: auto;
-  flex-shrink: 0;
-  width: 100% !important;
-  max-width: 100% !important;
-  padding: 30px 0 !important;
-  border-top: 1px solid var(--line) !important;
-  background: #0c1426 !important;
+  max-width: 980px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding: 32px 20px !important;
   box-sizing: border-box !important;
 }
 
@@ -346,73 +330,45 @@ body.admin-page .footer {
 }
 
 /* ===== CONTENT ===== */
-/* Standardized admin layout (match portal) */
-body.admin-page #container {
-  min-height: 100vh !important;
-  display: flex !important;
-  flex-direction: column !important;
-  flex: 1 !important;
+/* Do not override #container or #main – Django keeps sidebar left, content right */
+/* Only constrain #content width to match portal */
+body.admin-page #content.colMS,
+body.admin-page #content.colSM {
+  max-width: 980px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  float: none !important;
+}
+
+/* Footer: full-width wrapper breaks out of #container; matches portal */
+body.admin-page #footer {
+  width: 100vw !important;
+  max-width: 100vw !important;
+  margin-left: calc(-50vw + 50%) !important;
+  margin-right: calc(-50vw + 50%) !important;
+  padding: 0 !important;
+  border: none !important;
+  border-top: 1px solid var(--border) !important;
+  background: #0c1426 !important;
+  box-sizing: border-box !important;
+  margin-top: 0 !important;
+}
+
+.admin-footer-wrapper {
   width: 100% !important;
   max-width: 100% !important;
   margin: 0 !important;
   padding: 0 !important;
-  box-sizing: border-box !important;
 }
 
-body.admin-page #main {
-  flex: 1 !important;
-  display: flex !important;
-  flex-direction: column !important;
+body.admin-page .admin-footer-wrapper .footer,
+.admin-footer-wrapper .footer {
   width: 100% !important;
   max-width: 100% !important;
-  box-sizing: border-box !important;
-}
-
-body.admin-page #content {
-  flex: 1 !important;
-  background: var(--bg) !important;
-  padding: 32px !important;
-  width: 100% !important;
-  max-width: 980px !important;
-  margin: 0 auto !important;
-  box-sizing: border-box !important;
-  float: none !important;
-  position: relative !important;
-}
-
-body.admin-page #content.colMS,
-body.admin-page #content.colSM {
-  width: 100% !important;
-  max-width: 980px !important;
-  margin: 0 auto !important;
-  float: none !important;
-}
-
-/* Ensure footer spans full width (break out of #container) and matches portal - STANDARDIZED */
-footer.footer,
-.footer,
-body footer.footer,
-body .footer,
-body.admin-page footer.footer,
-body.admin-page .footer,
-html body footer.footer,
-html body .footer,
-body.admin-page #container footer.footer,
-body.admin-page #container .footer {
-  width: 100vw !important;
-  max-width: 100vw !important;
-  min-width: 100vw !important;
-  margin-left: calc(-50vw + 50%) !important;
-  margin-right: calc(-50vw + 50%) !important;
-  margin-top: auto !important;
-  flex-shrink: 0 !important;
+  margin: 0 !important;
   padding: 30px 0 !important;
-  border-top: 1px solid var(--border) !important;
-  background: #0c1426 !important;
-  box-sizing: border-box !important;
-  position: relative !important;
-  left: 0 !important;
-  right: 0 !important;
+  background: transparent !important;
+  border: none !important;
 }
 
 /* Ensure footer-content matches portal styling exactly (centered, same max-width as portal) */
@@ -464,66 +420,10 @@ footer.footer .footer-content,
   font-size: 13px !important;
 }
 
-/* ===== UNIFIED LAYOUT OVERRIDES (PORTAL MATCH) ===== */
-html,
-html.admin-page,
-body.admin-page {
-  height: 100% !important;
-  width: 100% !important;
-  max-width: 100% !important;
-  margin: 0 !important;
-  padding: 0 !important;
-}
+/* ===== UNIFIED LAYOUT ===== */
+/* No flex/column overrides – Django admin keeps nav-sidebar on left, content on right */
 
-body.admin-page {
-  min-height: 100vh !important;
-  display: flex !important;
-  flex-direction: column !important;
-}
-
-/* Make Django admin container behave like portal layout */
-body.admin-page #container {
-  min-height: 100vh !important;
-  display: flex !important;
-  flex-direction: column !important;
-  width: 100% !important;
-  max-width: 100% !important;
-  margin: 0 !important;
-  padding: 0 !important;
-}
-
-body.admin-page #main {
-  flex: 1 !important;
-  display: flex !important;
-  flex-direction: column !important;
-  width: 100% !important;
-  max-width: 100% !important;
-}
-
-body.admin-page #content {
-  flex: 1 !important;
-  width: 100% !important;
-  max-width: 100% !important;
-  margin: 0 !important;
-  padding: 32px !important;
-  box-sizing: border-box !important;
-}
-
-/* Footer matches portal: full width (break out of container), centered content */
-footer.footer,
-.footer {
-  width: 100vw !important;
-  max-width: 100vw !important;
-  margin-left: calc(-50vw + 50%) !important;
-  margin-right: calc(-50vw + 50%) !important;
-  margin-top: auto !important;
-  flex-shrink: 0 !important;
-  padding: 30px 0 !important;
-  border-top: 1px solid var(--border) !important;
-  background: #0c1426 !important;
-  box-sizing: border-box !important;
-  position: relative !important;
-}
+/* Footer content: same as portal (centered, max-width 980px) */
 
 .footer-content {
   max-width: 980px !important;
@@ -1342,12 +1242,12 @@ body.admin-page #content:has(.content-wrapper) .content-wrapper {
   position: relative !important;
 }
 
-/* Ensure #content itself doesn't constrain content-wrapper */
-body.admin-page #content:has(.content-wrapper),
+/* Dashboard and all admin content use same width as portal (980px) */
 body.admin-page.dashboard #content,
-body.admin-page #content.colMS:has(.content-wrapper) {
-  max-width: 100% !important;
-  width: 100% !important;
+body.admin-page #content:has(.content-wrapper) {
+  max-width: 980px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
 }
 
 body.admin-page #content .content-wrapper h1 {
