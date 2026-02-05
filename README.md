@@ -9,10 +9,24 @@ A Django + Postgres portal foundation:
 - Simple customer portal pages (same template/layout for all customers)
 
 ## Quick start (Ubuntu)
+
+### Option 1: One-line install from GitHub (Recommended)
+```bash
+sudo apt install curl -y && curl -fsSL https://raw.githubusercontent.com/5echo-io/pmg-portal/dev/install.sh | sudo bash
+```
+
+The installer will:
+- Detect if PMG Portal is already installed
+- If installed: prompt to **Update** (preserves database) or **Uninstall**
+- If not installed: run fresh installation wizard
+
+### Option 2: Manual installation
 1) Install Postgres and create database/user (see .env.example)
 2) Copy .env.example to .env and edit values
 3) Run:
+   ```bash
    sudo bash scripts/install.sh
+   ```
 
 ## Default admin
 Created automatically from env:

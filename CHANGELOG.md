@@ -8,6 +8,8 @@ Added:
 - Interactive install wizard to collect .env values and bootstrap local Postgres
 - Improved admin interface with helpful descriptions and member/link counts
 - Setup guide documentation (SETUP_GUIDE.md)
+- Standalone installer script (install.sh) that can be run via curl from GitHub
+- Installer detects existing installation and offers update/uninstall options
 
 Changed:
 - Default admin password to "admin" and skip creation if any superuser exists
