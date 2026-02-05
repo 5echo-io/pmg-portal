@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Register | PMG Portal</title>
+  <link rel="stylesheet" href="/static/app.css">
+</head>
+<body class="page">
+  <div class="card">
+    <h1>Create account</h1>
+    <p class="muted">This creates a user. Customer access is assigned by an admin.</p>
+
+    <form method="post">
+      {% csrf_token %}
+
+      <label>Username</label>
+      {{ form.username }}
+
+      <label>Email</label>
+      {{ form.email }}
+
+      <label>Password</label>
+      {{ form.password1 }}
+
+      <label>Confirm password</label>
+      {{ form.password2 }}
+
+      {% if form.errors %}
+        <div class="alert">{{ form.errors }}</div>
+      {% endif %}
+
+      <button type="submit">Create account</button>
+    </form>
+
+    <div class="row">
+      <a href="/account/login/">Back to login</a>
+    </div>
+  </div>
+</body>
+</html>

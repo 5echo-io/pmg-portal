@@ -1,0 +1,45 @@
+"""
+Accounts views (login, logout, register).
+"""
+from django.conf import settings
+from django.contrib import messages
+from django.contrib.auth import login, logout
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect, render
+
+from .forms import LoginForm, RegisterForm
+
+
+def login_view(request):
+    if request.user.is_authenticated:
+        return redirect("/portal/")
+
+    form = LoginForm(request, data=request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        login(request, form.get_user())
+        return redirect("/portal/")
+
+    return render(request, "accounts/login.html", {"form": form})
+
+
+@login_required
+def logout_view(request):
+    logout(request)
+    return redirect("/account/login/")
+
+
+def register_view(request):
+    if not settings.ENABLE_REGISTRATION:
+        messages.info(request, "Registration is currently disabled.")
+        return redirect("/account/login/")
+
+    if request.user.is_authenticated:
+        return redirect("/portal/")
+
+    form = RegisterForm(request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        user = form.save()
+        login(request, user)
+        return redirect("/portal/")
+
+    return render(request, "accounts/register.html", {"form": form})
