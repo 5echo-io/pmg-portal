@@ -111,6 +111,8 @@ Changed:
 - Added more aggressive CSS overrides targeting #content.colMS specifically to override Django admin's float layout
 - Added body.admin-page.dashboard class targeting for dashboard pages
 - Increased CSS specificity to ensure dashboard width overrides work even when Django admin CSS loads first
+- Added JavaScript to dynamically remove width constraints from #content, #container, and .dashboard elements on dashboard page
+- JavaScript runs immediately, on DOMContentLoaded, and after 100ms delay to ensure all CSS has loaded
 
 Fixed:
 - Recent Actions button click handler improved (removed conflicting onclick, improved event listener attachment)

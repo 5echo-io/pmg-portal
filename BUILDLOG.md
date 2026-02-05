@@ -253,6 +253,16 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev
+  - Version: 0.2.0-alpha.18
+  - Summary:
+    - Added JavaScript to admin/index.html template to dynamically remove width constraints
+    - JavaScript targets #content, #container, #main, and .dashboard elements
+    - Sets inline styles with maxWidth: 100%, width: 100%, marginLeft/Right: 0
+    - Runs immediately, on DOMContentLoaded, and after 100ms delay to ensure all CSS has loaded
+    - This ensures dashboard uses full browser width even if CSS overrides fail
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev
   - Version: 0.2.0-alpha.17
   - Summary:
     - Added more aggressive CSS overrides targeting #content.colMS specifically to override Django admin's float layout
