@@ -2,6 +2,20 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev (suggested)
+  - Version: 0.1.0-alpha.16
+  - Summary:
+    - Redesigned portal topbar layout for better UX
+    - Moved menu buttons (Portal, Admin) to left side next to brand name
+    - Created user avatar component with dropdown menu
+    - Avatar dropdown includes user info, admin panel link (if superuser), and logout
+    - Customer dropdown positioned in middle-right of topbar
+    - Removed "Your customers" section from portal page (redundant with header dropdown)
+    - Improved topbar visual hierarchy and spacing
+    - Added smooth animations for avatar dropdown menu
+    - Fixed Admin button functionality in topbar
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev (suggested)
   - Version: 0.1.0-alpha.15
   - Summary:
     - Fixed Recent Actions sidebar removal (properly overrode sidebar block in index.html)

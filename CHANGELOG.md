@@ -24,6 +24,8 @@ Added:
 - Customer dropdown selector in portal header for switching between customers
 - Customer switching functionality with session-based active customer storage
 - IMPROVEMENTS.md document with comprehensive improvement ideas and future features
+- Redesigned topbar with menu buttons on left, customer dropdown in middle-right, user avatar on far right
+- User avatar dropdown menu with logout and admin panel access
 
 Changed:
 - Default admin password to "admin" and skip creation if any superuser exists
@@ -44,6 +46,9 @@ Changed:
 - Replaced default Django admin icons with modern minimalist SVG icons
 - Improved admin visual hierarchy with better contrast and readability
 - Portal now uses session-based customer selection instead of always showing first customer
+- Redesigned portal topbar layout: menu buttons (Portal, Admin) moved to left side next to brand
+- User avatar with dropdown menu replaces separate logout/admin buttons
+- Removed "Your customers" section from portal page (replaced by dropdown in header)
 
 Fixed:
 - Local Postgres bootstrap in installer (role/db creation)
