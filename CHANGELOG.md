@@ -24,6 +24,11 @@ Fixed:
 - Footer uses 100vw with calc() margins to break out of any container constraints
 - Admin changelist filter sidebar (#changelist-filter) is now static and cannot be hidden
 - Sidebar toggle/collapse buttons are hidden to prevent collapsing
+- Standardized layout structure across all pages (portal and admin)
+- Footer now consistently positioned at bottom using flexbox (margin-top: auto)
+- Footer styling unified - full width background with centered content (max-width: 980px)
+- Topbar height and styling standardized across all pages
+- All pages now use same flexbox structure: html > body (flex column) > header + main (flex: 1) + footer (margin-top: auto)
 - Interactive install wizard to collect .env values and bootstrap local Postgres
 - Improved admin interface with helpful descriptions and member/link counts
 - Setup guide documentation (SETUP_GUIDE.md)

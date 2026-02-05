@@ -35,20 +35,31 @@
   background: #2a3a5c;
 }
 
+html {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
 body {
   margin: 0;
+  padding: 0;
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
   background: var(--bg);
   color: var(--text);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  width: 100%;
+  max-width: 100%;
 }
 
 .page-wrapper {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  width: 100%;
+  flex: 1;
 }
 
 .page {
@@ -419,10 +430,12 @@ a.link:hover { color: var(--text); }
 
 .footer {
   margin-top: auto;
-  padding: 30px 20px;
+  padding: 30px 0;
   border-top: 1px solid var(--line);
   background: #0c1426;
   flex-shrink: 0;
+  width: 100%;
+  max-width: 100%;
 }
 
 /* Toast Messages */
