@@ -63,53 +63,34 @@
     const container = document.getElementById('container');
     
     if (content && contentWrapper) {
-      // Remove ALL constraints from #content - Django admin sets width: 464px on .colMS
-      content.style.setProperty('max-width', '100%', 'important');
-      content.style.setProperty('width', '100%', 'important');
-      content.style.setProperty('min-width', '100%', 'important');
-      content.style.setProperty('margin-left', '0', 'important');
-      content.style.setProperty('margin-right', '0', 'important');
-      content.style.setProperty('float', 'none', 'important');
-      
-      // Force remove any fixed width that Django admin might have set
-      content.style.removeProperty('width');
-      content.style.setProperty('width', '100%', 'important');
+      // CRITICAL: Django admin sets width: 464px on #content.colMS
+      // Use cssText to append !important styles directly
+      content.style.cssText += '; max-width: 100% !important; width: 100% !important; min-width: 100% !important; margin-left: 0 !important; margin-right: 0 !important; float: none !important;';
       
       // Also fix .main and #main if they exist
       if (main) {
-        main.style.setProperty('max-width', '100%', 'important');
-        main.style.setProperty('width', '100%', 'important');
-        main.style.setProperty('float', 'none', 'important');
+        main.style.cssText += '; max-width: 100% !important; width: 100% !important; float: none !important;';
       }
       
       // Also fix #container
       if (container) {
-        container.style.setProperty('max-width', '100%', 'important');
-        container.style.setProperty('width', '100%', 'important');
+        container.style.cssText += '; max-width: 100% !important; width: 100% !important;';
       }
       
       // Ensure content-wrapper is centered with max-width: 980px (like portal)
-      contentWrapper.style.setProperty('max-width', '980px', 'important');
-      contentWrapper.style.setProperty('width', '100%', 'important');
-      contentWrapper.style.setProperty('margin-left', 'auto', 'important');
-      contentWrapper.style.setProperty('margin-right', 'auto', 'important');
+      contentWrapper.style.cssText += '; max-width: 980px !important; width: 100% !important; margin-left: auto !important; margin-right: auto !important;';
       
       // Ensure dashboard-grid uses full width
       const dashboardGrid = document.querySelector('.dashboard-grid');
       if (dashboardGrid) {
-        dashboardGrid.style.setProperty('width', '100%', 'important');
-        dashboardGrid.style.setProperty('max-width', '100%', 'important');
-      }
-      
-      // Also remove colMS class constraints if present
-      if (content.classList.contains('colMS')) {
-        content.style.setProperty('float', 'none', 'important');
+        dashboardGrid.style.cssText += '; width: 100% !important; max-width: 100% !important;';
       }
       
       // Debug: log computed styles
-      console.log('Content computed width:', window.getComputedStyle(content).width);
-      console.log('ContentWrapper computed width:', window.getComputedStyle(contentWrapper).width);
-      console.log('ContentWrapper computed max-width:', window.getComputedStyle(contentWrapper).maxWidth);
+      const computed = window.getComputedStyle(content);
+      console.log('Content computed width:', computed.width);
+      console.log('Content computed max-width:', computed.maxWidth);
+      console.log('Content inline width:', content.style.width);
     }
   }
   
@@ -124,11 +105,35 @@
   // Run after CSS has loaded (multiple delays to catch all scenarios)
   setTimeout(fixContentWidth, 50);
   setTimeout(fixContentWidth, 100);
+  setTimeout(fixContentWidth, 200);
   setTimeout(fixContentWidth, 300);
   setTimeout(fixContentWidth, 500);
+  setTimeout(fixContentWidth, 1000);
   
   // Also run on window load
   window.addEventListener('load', fixContentWidth);
+  
+  // Use MutationObserver to watch for style changes
+  if (window.MutationObserver) {
+    const observer = new MutationObserver(function(mutations) {
+      const content = document.getElementById('content');
+      if (content) {
+        const computed = window.getComputedStyle(content);
+        if (computed.width === '464px') {
+          console.log('Detected 464px width, fixing...');
+          fixContentWidth();
+        }
+      }
+    });
+    
+    const content = document.getElementById('content');
+    if (content) {
+      observer.observe(content, {
+        attributes: true,
+        attributeFilter: ['style', 'class']
+      });
+    }
+  }
 })();
 </script>
 {% endblock %}
