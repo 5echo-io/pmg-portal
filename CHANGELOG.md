@@ -5,7 +5,7 @@ This project follows Semantic Versioning (SemVer).
 
 ## [Unreleased]
 
-All pre-release builds (alpha, beta, rc) are shown as Unreleased until release as plain MAJOR.MINOR.PATCH.
+All pre-release builds (alpha, beta, rc) are shown as Unreleased.
 
 Added:
 - Portal at site root (/) with HTMX for no-refresh navigation
@@ -31,6 +31,9 @@ Changed:
 - Changelog: pre-release builds (alpha, beta, rc) always show Unreleased; full release shows all sections for that major
 - Changelog modal: no scroll on modal container; only content boxes scroll; fade animation when toggling View Full / Hide Full; button pulse animation on toggle
 - Changelog short view: only one Unreleased section (stops at next ## heading; no duplicate Added/Changed/Fixed)
+- Changelog modal: state-based toggle (data-changelog-view); setTimeout for swap so View Full / Hide Full and reopen work
+- Changelog intro text: "All pre-release builds (alpha, beta, rc) are shown as Unreleased"
+- Previous changes (pre-0.3.0): one Added, one Changed, one Fixed (no duplicate lists per section)
 - Avatar initial: first letter of first name, then last name, then email (no longer username)
 - Login: field labeled "Email"; accepts email or username; login with email preferred
 - Registration: username hidden and set from email; new users get username = email
@@ -48,56 +51,6 @@ Added:
 - Comprehensive logging middleware for backend request/response tracking
 - Frontend logging system for client-side event tracking
 - Copy to clipboard functionality for debug data export
-Fixed:
-- Admin dashboard width issue - completely rebuilt dashboard page to use full browser width
-- Duplicate "Administration" title on admin dashboard page
-- Breadcrumbs removed from dashboard page to prevent duplicate titles
-- Injected CSS directly into template to ensure it loads last and overrides all Django admin styles
-- Added JavaScript to hide sidebars and filters that constrain content width
-- Force viewport width (100vw) on all container elements to break out of constraints
-- Fixed footer width issue - footer now spans full browser width using 100vw and calc() margins
-- Fixed footer positioning - footer now sticks to bottom of page using flexbox (matches portal)
-- Fixed footer content width - changed from 1200px to 980px to match portal and eliminate right gap
-- Footer styling now matches portal exactly (same grid layout, padding, and max-width)
-- Footer now moved outside all containers using JavaScript to ensure full width
-- Footer uses 100vw with calc() margins to break out of any container constraints
-- Admin changelist filter sidebar (#changelist-filter) is now static and cannot be hidden
-- Sidebar toggle/collapse buttons are hidden to prevent collapsing
-- Standardized layout structure across all pages (portal and admin)
-- Footer now consistently positioned at bottom using flexbox (margin-top: auto)
-- Footer styling unified - full width background with centered content (max-width: 980px)
-- Topbar height and styling standardized across all pages
-- All pages now use same flexbox structure: html > body (flex column) > header + main (flex: 1) + footer (margin-top: auto)
-- Removed injected "nuclear" JS/CSS from admin dashboard and rely on shared layout
-- Standardized Django admin container layout to match portal flex structure
-- Footer now uses shared layout rules only (no DOM moves or calc hacks)
-- Admin nav sidebar toggle removed and sidebar forced visible
-- Simplified admin layout CSS to remove conflicting width overrides
-- Admin container now uses flex layout to keep footer at bottom
-- Added detailed request logging (view, templates, db time, slow queries)
-- Added fetch/XHR logging for frontend (portal + admin)
-- Debug page now shows view/template columns and extra Django/system info
-- Interactive install wizard to collect .env values and bootstrap local Postgres
-- Improved admin interface with helpful descriptions and member/link counts
-- Setup guide documentation (SETUP_GUIDE.md)
-- Standalone installer script (install.sh) that can be run via curl from GitHub
-- Installer detects existing installation and offers update/uninstall options
-- Footer with copyright, version, and changelog button
-- Changelog modal dialog showing version-specific changes (unreleased or major release)
-- Dark mode scrollbar styling
-- Initial database migrations for portal models
-- Bulk add CustomerMemberships feature integrated into regular add form (multi-select customers)
-- Customer admins can now manage memberships for their own customer
-- Improved README.md with detailed installation and update instructions
-- Modernized Django admin interface with dark theme matching portal design
-- Recent Actions modal accessible via clock icon in admin header
-- Modern minimalist SVG icons throughout admin interface (Lucide-inspired)
-- Customer dropdown selector in admin header for filtering by customer
-- Customer dropdown selector in portal header for switching between customers
-- Customer switching functionality with session-based active customer storage
-- IMPROVEMENTS.md document with comprehensive improvement ideas and future features
-- Redesigned topbar with menu buttons on left, customer dropdown in middle-right, user avatar on far right
-- User avatar dropdown menu with logout and admin panel access
 
 Changed:
 - Default admin password to "admin" and skip creation if any superuser exists
@@ -143,8 +96,6 @@ Changed:
 - Logout confirmation modal in profile settings sidebar
 - Account information section in profile settings
 - Password change modal integrated into profile settings
-
-Changed:
 - Increased spacing between website title and menu buttons in topbar (gap: 32px)
 - Delete account modal now resets to Account Information section when closed/cancelled
 - Increased topbar padding (20px top/bottom, 32px left/right) for better spacing
@@ -208,6 +159,55 @@ Changed:
 - Added CSS support for .colMS-override class
 
 Fixed:
+- Admin dashboard width issue - completely rebuilt dashboard page to use full browser width
+- Duplicate "Administration" title on admin dashboard page
+- Breadcrumbs removed from dashboard page to prevent duplicate titles
+- Injected CSS directly into template to ensure it loads last and overrides all Django admin styles
+- Added JavaScript to hide sidebars and filters that constrain content width
+- Force viewport width (100vw) on all container elements to break out of constraints
+- Fixed footer width issue - footer now spans full browser width using 100vw and calc() margins
+- Fixed footer positioning - footer now sticks to bottom of page using flexbox (matches portal)
+- Fixed footer content width - changed from 1200px to 980px to match portal and eliminate right gap
+- Footer styling now matches portal exactly (same grid layout, padding, and max-width)
+- Footer now moved outside all containers using JavaScript to ensure full width
+- Footer uses 100vw with calc() margins to break out of any container constraints
+- Admin changelist filter sidebar (#changelist-filter) is now static and cannot be hidden
+- Sidebar toggle/collapse buttons are hidden to prevent collapsing
+- Standardized layout structure across all pages (portal and admin)
+- Footer now consistently positioned at bottom using flexbox (margin-top: auto)
+- Footer styling unified - full width background with centered content (max-width: 980px)
+- Topbar height and styling standardized across all pages
+- All pages now use same flexbox structure: html > body (flex column) > header + main (flex: 1) + footer (margin-top: auto)
+- Removed injected "nuclear" JS/CSS from admin dashboard and rely on shared layout
+- Standardized Django admin container layout to match portal flex structure
+- Footer now uses shared layout rules only (no DOM moves or calc hacks)
+- Admin nav sidebar toggle removed and sidebar forced visible
+- Simplified admin layout CSS to remove conflicting width overrides
+- Admin container now uses flex layout to keep footer at bottom
+- Added detailed request logging (view, templates, db time, slow queries)
+- Added fetch/XHR logging for frontend (portal + admin)
+- Debug page now shows view/template columns and extra Django/system info
+- Interactive install wizard to collect .env values and bootstrap local Postgres
+- Improved admin interface with helpful descriptions and member/link counts
+- Setup guide documentation (SETUP_GUIDE.md)
+- Standalone installer script (install.sh) that can be run via curl from GitHub
+- Installer detects existing installation and offers update/uninstall options
+- Footer with copyright, version, and changelog button
+- Changelog modal dialog showing version-specific changes (unreleased or major release)
+- Dark mode scrollbar styling
+- Initial database migrations for portal models
+- Bulk add CustomerMemberships feature integrated into regular add form (multi-select customers)
+- Customer admins can now manage memberships for their own customer
+- Improved README.md with detailed installation and update instructions
+- Modernized Django admin interface with dark theme matching portal design
+- Recent Actions modal accessible via clock icon in admin header
+- Modern minimalist SVG icons throughout admin interface (Lucide-inspired)
+- Customer dropdown selector in admin header for filtering by customer
+- Customer dropdown selector in portal header for switching between customers
+- Customer switching functionality with session-based active customer storage
+- IMPROVEMENTS.md document with comprehensive improvement ideas and future features
+- Redesigned topbar with menu buttons on left, customer dropdown in middle-right, user avatar on far right
+- User avatar dropdown menu with logout and admin panel access
 - Recent Actions button click handler improved (removed conflicting onclick, improved event listener attachment)
 - Admin page width constraints further overridden with more aggressive CSS selectors (targeting all divs with class/id containing "col", "content", "container")
 - Avatar icon vertical alignment in topbar

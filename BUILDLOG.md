@@ -2,6 +2,14 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev
+  - Version: 0.15.22-beta.6
+  - Summary:
+    - Changelog modal: state-based toggle (data-changelog-view) and setTimeout(220) for panel swap so Hide Full / View Full and reopen work
+    - Changelog intro text shortened to "All pre-release builds (alpha, beta, rc) are shown as Unreleased"
+    - CHANGELOG Previous changes (pre-0.3.0): one Added, one Changed, one Fixed (no duplicate lists per section)
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev
   - Version: 0.15.22-beta.5
   - Summary:
     - Changelog Unreleased: only one section shown; parse stops at next ## heading (no duplicate Added/Changed/Fixed from Previous changes)
