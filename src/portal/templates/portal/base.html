@@ -6,13 +6,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>{% block title %}PMG Portal{% endblock %}</title>
   <link rel="stylesheet" href="{% static 'app.css' %}">
+  <script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg7tCRwA0TfVH/t7q6ZcdP2U6Fb2G6FOhDWWktNp4SZM" crossorigin="anonymous"></script>
 </head>
 <body class="page-wrapper">
   <header class="topbar">
     <div class="topbar-left">
       <div class="brand">PMG Portal</div>
       <div class="topbar-nav">
-        <a class="topbar-btn {% if request.path == '/' %}active{% endif %}" href="/">Portal</a>
+        <a class="topbar-btn {% if request.path == '/' %}active{% endif %}" href="/" hx-get="/" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="true" >Portal</a>
         {% if request.user.is_superuser %}
         <a class="topbar-btn {% if request.path|slice:':7' == '/admin/' %}active{% endif %}" href="/admin/">Admin</a>
         {% endif %}
@@ -20,15 +21,26 @@
     </div>
     <div class="topbar-right">
       {% if user_customers|length > 1 %}
-      <form method="post" action="" id="customer-switcher-form" class="customer-switcher-wrapper">
+      <div class="customer-picker-wrapper">
+        <button type="button" class="customer-picker-btn" onclick="toggleCustomerMenu(event)" aria-label="Select customer" id="customer-picker-btn">
+          <span class="customer-picker-label">{% for m in user_customers %}{% if m.customer.id == active_customer_id %}{{ m.customer.name }}{% endif %}{% endfor %}</span>
+          <svg class="customer-picker-chevron" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+        <div id="customer-menu" class="customer-menu">
+          {% if user_customers|length > 4 %}
+          <div class="customer-menu-search">
+            <input type="text" class="customer-menu-search-input" placeholder="Search customers…" id="customer-search" oninput="filterCustomerMenu(this.value)" aria-label="Search customers">
+          </div>
+          {% endif %}
+          <div class="customer-menu-list">
+            {% for membership in user_customers %}
+            <button type="button" class="customer-menu-item" data-customer-id="{{ membership.customer.id }}" data-customer-name="{{ membership.customer.name }}" onclick="selectCustomer({{ membership.customer.id }})">{{ membership.customer.name }}</button>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      <form method="post" action="" id="customer-switcher-form" style="display: none;">
         {% csrf_token %}
-        <select name="customer_id" id="customer-switcher" class="customer-switcher" onchange="switchCustomer(this.value)">
-          {% for membership in user_customers %}
-          <option value="{{ membership.customer.id }}" {% if membership.customer.id == active_customer_id %}selected{% endif %}>
-            {{ membership.customer.name }}
-          </option>
-          {% endfor %}
-        </select>
       </form>
       {% elif user_customers|length == 1 %}
       <span class="topbar-customer-name">{{ user_customers.0.customer.name }}</span>
@@ -87,14 +99,45 @@
   </header>
   
   <script>
-    function switchCustomer(customerId) {
+    function selectCustomer(customerId) {
       const form = document.getElementById('customer-switcher-form');
       if (form && customerId) {
         form.action = '/switch/' + customerId + '/';
         form.submit();
       }
     }
-    
+
+    function toggleCustomerMenu(event) {
+      event.stopPropagation();
+      const menu = document.getElementById('customer-menu');
+      if (!menu) return;
+      const isOpen = menu.classList.contains('open');
+      document.querySelectorAll('.customer-menu').forEach(function(m) { m.classList.remove('open'); });
+      document.querySelectorAll('.user-menu').forEach(function(m) { m.classList.remove('open'); });
+      if (!isOpen) {
+        menu.classList.add('open');
+        var searchInput = document.getElementById('customer-search');
+        if (searchInput) { searchInput.value = ''; filterCustomerMenu(''); }
+        setTimeout(function() {
+          var closeHandler = function(e) {
+            if (!menu.contains(e.target) && !e.target.closest('.customer-picker-btn')) {
+              menu.classList.remove('open');
+              document.removeEventListener('click', closeHandler);
+            }
+          };
+          document.addEventListener('click', closeHandler, { once: true });
+        }, 10);
+      }
+    }
+
+    function filterCustomerMenu(q) {
+      q = (q || '').toLowerCase().trim();
+      document.querySelectorAll('#customer-menu .customer-menu-item').forEach(function(item) {
+        var name = (item.getAttribute('data-customer-name') || item.textContent || '').toLowerCase();
+        item.style.display = q === '' || name.indexOf(q) !== -1 ? '' : 'none';
+      });
+    }
+
     function toggleUserMenu(event) {
       event.stopPropagation();
       const menu = document.getElementById('user-menu');
@@ -102,8 +145,9 @@
       
       const isOpen = menu.classList.contains('open');
       
-      // Close all menus
+      // Close all menus (user and customer)
       document.querySelectorAll('.user-menu').forEach(m => m.classList.remove('open'));
+      document.querySelectorAll('.customer-menu').forEach(m => m.classList.remove('open'));
       
       if (!isOpen) {
         menu.classList.add('open');
@@ -124,12 +168,19 @@
     document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape') {
         document.querySelectorAll('.user-menu').forEach(m => m.classList.remove('open'));
+        document.querySelectorAll('.customer-menu').forEach(m => m.classList.remove('open'));
       }
+    });
+
+    // HTMX: update document title when main content is swapped
+    document.body.addEventListener('setTitle', function(e) {
+      if (e.detail && e.detail.title) document.title = e.detail.title;
     });
   </script>
 
   <main class="main-content">
     <div class="container">
+      <div id="main-content">
       {% if messages %}
       <div class="toast-container">
         {% for message in messages %}
@@ -160,6 +211,7 @@
       </script>
       {% endif %}
       {% block content %}{% endblock %}
+      </div>
     </div>
   </main>
 

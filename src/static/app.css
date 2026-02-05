@@ -228,33 +228,120 @@ a.link:hover { color: var(--text); }
   box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.2);
 }
 
-.customer-switcher-wrapper {
-  display: inline-block;
-  margin: 0;
+/* Customer picker (dropdown like avatar) */
+.customer-picker-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
 }
 
-.customer-switcher {
-  padding: 6px 12px;
-  border-radius: 6px;
+.customer-picker-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 8px;
   background: var(--btn);
-  color: var(--text);
   border: 1px solid var(--line);
+  color: var(--text);
   font-size: 13px;
+  font-family: inherit;
   cursor: pointer;
   transition: all 0.2s;
-  font-family: inherit;
-  min-width: 150px;
+  max-width: 180px;
 }
 
-.customer-switcher:hover {
+.customer-picker-btn:hover {
   background: var(--btnHover);
   border-color: var(--btnHover);
 }
 
-.customer-switcher:focus {
+.customer-picker-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.customer-picker-chevron {
+  flex-shrink: 0;
+  color: var(--muted);
+  transition: transform 0.2s;
+}
+
+.customer-picker-wrapper:has(.customer-menu.open) .customer-picker-chevron {
+  transform: rotate(180deg);
+}
+
+.customer-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  min-width: 200px;
+  max-width: 280px;
+  max-height: 320px;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.2s ease;
+  z-index: 1000;
+}
+
+.customer-menu.open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.customer-menu-search {
+  padding: 8px;
+  border-bottom: 1px solid var(--line);
+  flex-shrink: 0;
+}
+
+.customer-menu-search-input {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  background: #0e1626;
+  color: var(--text);
+  font-size: 13px;
+}
+
+.customer-menu-search-input:focus {
   outline: none;
-  border-color: var(--btnHover);
-  box-shadow: 0 0 0 2px rgba(42, 58, 92, 0.3);
+  border-color: #3b82f6;
+}
+
+.customer-menu-list {
+  overflow-y: auto;
+  padding: 6px 0;
+}
+
+.customer-menu-item {
+  display: block;
+  width: 100%;
+  padding: 10px 16px;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.customer-menu-item:hover {
+  background: var(--btn);
+  color: var(--text);
 }
 
 .topbar-customer-name {

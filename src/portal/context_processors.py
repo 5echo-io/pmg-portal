@@ -7,33 +7,48 @@ Created: 2026-02-05
 Last Modified: 2026-02-05
 """
 from pathlib import Path
+from types import SimpleNamespace
 from django.conf import settings
-from .models import CustomerMembership
+from .models import CustomerMembership, Customer
+
 
 def user_customers(request):
-    """Add user's customer memberships to all templates."""
+    """Add user's customer list to all templates. Superusers get all customers."""
     if not request or not request.user or not request.user.is_authenticated:
         return {
             "user_customers": [],
             "active_customer_id": None,
         }
-    
-    memberships = CustomerMembership.objects.filter(
-        user=request.user
-    ).select_related("customer").order_by("customer__name")
-    
-    # Get active customer from session, or use first membership
+
+    # Superusers see and can switch to all customers (no membership required)
+    if request.user.is_superuser:
+        customers = Customer.objects.order_by("name")
+        # Wrap in objects with .customer so templates can use item.customer.id / item.customer.name
+        user_customers_list = [SimpleNamespace(customer=c) for c in customers]
+    else:
+        memberships = (
+            CustomerMembership.objects.filter(user=request.user)
+            .select_related("customer")
+            .order_by("customer__name")
+        )
+        user_customers_list = list(memberships)
+
+    # Resolve active_customer_id from session
     active_customer_id = request.session.get("active_customer_id")
-    if active_customer_id:
-        # Verify user still has access to this customer
-        if not memberships.filter(customer_id=active_customer_id).exists():
-            active_customer_id = None
-    
-    if not active_customer_id and memberships.exists():
-        active_customer_id = memberships.first().customer_id
-    
+    if active_customer_id is not None:
+        if request.user.is_superuser:
+            if not Customer.objects.filter(pk=active_customer_id).exists():
+                active_customer_id = None
+        else:
+            if not any(m.customer_id == active_customer_id for m in user_customers_list):
+                active_customer_id = None
+
+    if active_customer_id is None and user_customers_list:
+        first = user_customers_list[0]
+        active_customer_id = getattr(first, "customer_id", None) or first.customer.id
+
     return {
-        "user_customers": list(memberships),
+        "user_customers": user_customers_list,
         "active_customer_id": active_customer_id,
     }
 
