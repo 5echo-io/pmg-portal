@@ -253,6 +253,16 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev
+  - Version: 0.2.0-alpha.3
+  - Summary:
+    - Fixed admin dashboard width issue (removed max-width constraint, now uses full page width)
+    - Made Add buttons smaller (28px height, 13px font size, reduced padding)
+    - Styled Change buttons as box buttons with edit icon in dashboard
+    - Improved button icon contrast (white icons on colored backgrounds)
+    - Updated object-tools Add button to match smaller size
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev
   - Version: 0.2.0-alpha.2
   - Summary:
     - Increased topbar padding (20px top/bottom, 32px left/right) for better spacing around menu

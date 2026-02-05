@@ -78,6 +78,10 @@ Changed:
 - Increased topbar padding (20px top/bottom, 32px left/right) for better spacing
 - Admin dashboard modules now display in 2 columns side by side instead of stacked
 - Admin dashboard box titles (captions) now have blue background for better contrast
+- Admin dashboard now uses full page width (removed max-width constraint)
+- Add buttons in admin dashboard made smaller (28px height, 13px font)
+- Change buttons in admin dashboard styled as box buttons with edit icon
+- Button icons improved for better contrast
 
 Fixed:
 - Avatar icon vertical alignment in topbar
