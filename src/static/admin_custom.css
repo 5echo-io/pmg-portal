@@ -132,6 +132,38 @@ body {
   height: 18px !important;
 }
 
+/* Customer Switcher Dropdown */
+.admin-customer-switcher {
+  padding: 8px 12px !important;
+  border-radius: var(--radius-sm) !important;
+  background: var(--surface-elevated) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text-primary) !important;
+  font-size: 13px !important;
+  cursor: pointer !important;
+  transition: var(--transition) !important;
+  font-family: inherit !important;
+  margin-right: 12px !important;
+  height: 36px !important;
+  min-width: 150px !important;
+}
+
+.admin-customer-switcher:hover {
+  background: var(--surface) !important;
+  border-color: var(--border-hover) !important;
+}
+
+.admin-customer-switcher:focus {
+  outline: none !important;
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+}
+
+.admin-customer-switcher option {
+  background: var(--surface) !important;
+  color: var(--text-primary) !important;
+}
+
 /* Recent Actions Modal */
 .admin-modal {
   display: none !important;

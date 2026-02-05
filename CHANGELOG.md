@@ -20,6 +20,10 @@ Added:
 - Modernized Django admin interface with dark theme matching portal design
 - Recent Actions modal accessible via clock icon in admin header
 - Modern minimalist SVG icons throughout admin interface (Lucide-inspired)
+- Customer dropdown selector in admin header for filtering by customer
+- Customer dropdown selector in portal header for switching between customers
+- Customer switching functionality with session-based active customer storage
+- IMPROVEMENTS.md document with comprehensive improvement ideas and future features
 
 Changed:
 - Default admin password to "admin" and skip creation if any superuser exists
@@ -35,10 +39,11 @@ Changed:
 - Registration text updated to reflect PMG and Customer admin access assignment
 - CustomerMembership admin: multi-select customers when adding, single select when editing
 - Moved changelog button to footer under copyright information
-- Removed Recent Actions section from admin dashboard
+- Removed Recent Actions section from admin dashboard (now accessible via modal)
 - Redesigned admin tables with modern styling, zebra striping, and improved spacing
 - Replaced default Django admin icons with modern minimalist SVG icons
 - Improved admin visual hierarchy with better contrast and readability
+- Portal now uses session-based customer selection instead of always showing first customer
 
 Fixed:
 - Local Postgres bootstrap in installer (role/db creation)

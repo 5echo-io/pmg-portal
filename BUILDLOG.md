@@ -4,6 +4,21 @@
   - Branch: dev (suggested)
   - Version: 0.1.0-alpha.15
   - Summary:
+    - Fixed Recent Actions sidebar removal (properly overrode sidebar block in index.html)
+    - Added customer dropdown selector in admin header for filtering by customer
+    - Added customer dropdown selector in portal header for switching between customers
+    - Implemented customer switching functionality with session-based storage
+    - Created user_customers context processor for template access to customer memberships
+    - Updated portal_home view to use session-stored active customer
+    - Added switch_customer view with POST handling and session management
+    - Styled customer switcher dropdowns in both admin and portal interfaces
+    - Created IMPROVEMENTS.md with comprehensive list of improvement ideas and future features
+    - Improved user experience for multi-customer users
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev (suggested)
+  - Version: 0.1.0-alpha.15
+  - Summary:
     - Deep dive admin UI/UX redesign: modernized tables, layout, and icons
     - Removed Recent Actions section from admin dashboard
     - Added Recent Actions modal accessible via clock icon in admin header
