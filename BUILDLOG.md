@@ -2,6 +2,15 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev
+  - Version: 0.2.0-alpha.33
+  - Summary:
+    - Removed injected dashboard JS/CSS overrides and relied on shared layout
+    - Standardized admin layout containers to flex structure matching portal
+    - Unified footer styling and positioning without DOM moves or calc hacks
+    - Removed admin nav sidebar toggle and forced sidebar visible
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev
   - Version: 0.2.0-alpha.27
   - Summary:
     - Completely rebuilt admin dashboard page (index.html) to fix persistent width issue

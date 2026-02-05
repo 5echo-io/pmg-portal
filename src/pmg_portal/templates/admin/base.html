@@ -211,90 +211,35 @@ document.addEventListener('keydown', function(e) {
   }
 });
 
-// STANDARDIZED FOOTER FIX - Ensure footer is at bottom and full width
+// Enforce static admin sidebar (no toggle)
 (function() {
-  function fixFooter() {
-    const footer = document.querySelector('footer.footer, .footer');
+  function enforceNavSidebar() {
     const body = document.body;
-    const html = document.documentElement;
-    
-    // Ensure html and body use flexbox
-    if (html) {
-      html.style.cssText = 'height: 100% !important; width: 100% !important; max-width: 100% !important; margin: 0 !important; padding: 0 !important;';
-    }
-    
-    if (body) {
-      body.style.cssText = 'min-height: 100vh !important; display: flex !important; flex-direction: column !important; margin: 0 !important; padding: 0 !important; width: 100% !important; max-width: 100% !important;';
-    }
-    
-    if (footer && body) {
-      // Move footer to body if it's inside any container
-      if (footer.parentElement !== body) {
-        body.appendChild(footer);
-      }
-      
-      // Standard footer styling - full width, at bottom
-      footer.style.cssText = 'width: 100% !important; max-width: 100% !important; min-width: 100% !important; margin-left: 0 !important; margin-right: 0 !important; margin-top: auto !important; flex-shrink: 0 !important; padding: 30px 0 !important; border-top: 1px solid var(--line) !important; background: #0c1426 !important; box-sizing: border-box !important; position: relative !important;';
-      
-      // Fix footer-content - centered with max-width: 980px
-      const footerContent = footer.querySelector('.footer-content');
-      if (footerContent) {
-        footerContent.style.cssText = 'max-width: 980px !important; width: 100% !important; margin-left: auto !important; margin-right: auto !important; padding-left: 20px !important; padding-right: 20px !important; box-sizing: border-box !important; display: grid !important; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important; gap: 30px !important;';
-      }
-    }
-  }
-  
-  // Run immediately
-  fixFooter();
-  
-  // Run after DOM ready
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', fixFooter);
-  }
-  
-  // Run after load
-  window.addEventListener('load', fixFooter);
-  
-  // Run multiple times to catch late-loading content
-  setTimeout(fixFooter, 100);
-  setTimeout(fixFooter, 300);
-  setTimeout(fixFooter, 500);
-})();
+    const toggle = document.getElementById('toggle-nav-sidebar');
+    const navSidebar = document.getElementById('nav-sidebar');
 
-// Make changelist filter sidebar static and always visible
-(function() {
-  function makeSidebarStatic() {
-    const filter = document.getElementById('changelist-filter');
-    const sticky = document.querySelector('.sticky');
-    const stickyContainer = document.querySelector('.sticky-container');
-    
-    [filter, sticky, stickyContainer].forEach(el => {
-      if (el) {
-        el.style.cssText = 'position: static !important; display: block !important; visibility: visible !important; opacity: 1 !important; transform: none !important;';
-        
-        // Hide any collapse/toggle buttons
-        const toggleBtns = el.querySelectorAll('.collapse-toggle, .toggle, [class*="toggle"], [class*="collapse"]');
-        toggleBtns.forEach(btn => {
-          btn.style.display = 'none';
-        });
-      }
-    });
+    if (body) {
+      body.classList.remove('nav-sidebar-collapsed');
+    }
+
+    if (toggle) {
+      toggle.remove();
+    }
+
+    if (navSidebar) {
+      navSidebar.style.display = 'block';
+    }
   }
-  
-  // Run immediately
-  makeSidebarStatic();
-  
-  // Run after DOM ready
+
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', makeSidebarStatic);
+    document.addEventListener('DOMContentLoaded', enforceNavSidebar);
+  } else {
+    enforceNavSidebar();
   }
-  
-  // Run after load
-  window.addEventListener('load', makeSidebarStatic);
-  
-  // Run multiple times
-  setTimeout(makeSidebarStatic, 100);
-  setTimeout(makeSidebarStatic, 300);
+
+  window.addEventListener('load', enforceNavSidebar);
+  setTimeout(enforceNavSidebar, 100);
+  setTimeout(enforceNavSidebar, 300);
 })();
 </script>
 {% endblock %}

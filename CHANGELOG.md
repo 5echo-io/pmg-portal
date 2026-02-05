@@ -29,6 +29,10 @@ Fixed:
 - Footer styling unified - full width background with centered content (max-width: 980px)
 - Topbar height and styling standardized across all pages
 - All pages now use same flexbox structure: html > body (flex column) > header + main (flex: 1) + footer (margin-top: auto)
+- Removed injected "nuclear" JS/CSS from admin dashboard and rely on shared layout
+- Standardized Django admin container layout to match portal flex structure
+- Footer now uses shared layout rules only (no DOM moves or calc hacks)
+- Admin nav sidebar toggle removed and sidebar forced visible
 - Interactive install wizard to collect .env values and bootstrap local Postgres
 - Improved admin interface with helpful descriptions and member/link counts
 - Setup guide documentation (SETUP_GUIDE.md)
