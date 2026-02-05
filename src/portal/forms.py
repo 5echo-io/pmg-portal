@@ -64,15 +64,16 @@ class CustomerMembershipForm(forms.ModelForm):
         if self.instance and self.instance.pk:
             return super().save(commit=commit)
         
-        # If adding new, create a dummy instance (will be handled in save_model)
-        # We need to return an instance for Django admin
+        # If adding new, we need to create a dummy instance
+        # Django admin will call save_model which handles the actual creation
         instance = super().save(commit=False)
-        if commit:
-            # Don't save here - save_model will handle it
-            pass
+        # Set a dummy customer so the instance is valid
+        if not instance.customer_id and self.cleaned_data.get('customers'):
+            instance.customer = self.cleaned_data['customers'][0]
         return instance
     
     def save_m2m(self):
-        """Override save_m2m to prevent Django admin from trying to save M2M."""
-        # We handle saving in save_model, so this is a no-op
+        """Override save_m2m - we handle saving in save_model."""
+        # This is called after save(), but we handle everything in save_model
+        # So we do nothing here to prevent errors
         pass

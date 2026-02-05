@@ -2,6 +2,16 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev (suggested)
+  - Version: 0.1.0-alpha.13
+  - Summary:
+    - Fixed CustomerMembership save error (proper form instance handling)
+    - Redesigned admin interface to match Interheart style exactly
+    - Compact fonts (12px, 13px, 14px) matching Interheart
+    - Clean, subtle design with proper rgba colors
+    - Better spacing and visual hierarchy
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev (suggested)
   - Version: 0.1.0-alpha.12
   - Summary:
     - Fixed 500 error when saving CustomerMembership (added save_m2m method)
