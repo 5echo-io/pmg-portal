@@ -4,26 +4,30 @@
 {% block breadcrumb_extra %}<span class="breadcrumb-sep">→</span> <span>Users</span>{% endblock %}
 
 {% block admin_content %}
-<div class="admin-page-header">
-  <h1 class="admin-page-title">Users</h1>
-  <a href="{% url 'admin_app:admin_user_add' %}" class="admin-btn-sm admin-btn-primary">Add user</a>
-</div>
+<h1 class="admin-page-title">Users</h1>
 
-<div class="admin-toolbar">
-  <form method="get" action="" class="admin-search-form" style="display: flex; gap: 8px; flex-wrap: wrap;">
-    <input type="text" name="q" value="{{ search }}" placeholder="Search users…" class="form-input">
-    <select name="staff" class="form-input" style="width: auto;">
-      <option value="">All</option>
-      <option value="1" {% if request.GET.staff == "1" %}selected{% endif %}>Staff only</option>
-      <option value="0" {% if request.GET.staff == "0" %}selected{% endif %}>Not staff</option>
-    </select>
-    <select name="active" class="form-input" style="width: auto;">
-      <option value="">All</option>
-      <option value="1" {% if request.GET.active == "1" %}selected{% endif %}>Active</option>
-      <option value="0" {% if request.GET.active == "0" %}selected{% endif %}>Inactive</option>
-    </select>
+<div class="admin-toolbar admin-toolbar--single-row">
+  <form method="get" action="" class="admin-toolbar-form">
+    <input type="text" name="q" value="{{ search }}" placeholder="Search users…" class="form-input" aria-label="Search users">
+    <div class="admin-filter-group">
+      <label class="admin-filter-label" for="id_filter_staff">Staff</label>
+      <select name="staff" id="id_filter_staff" class="form-input">
+        <option value="">All</option>
+        <option value="1" {% if request.GET.staff == "1" %}selected{% endif %}>Staff only</option>
+        <option value="0" {% if request.GET.staff == "0" %}selected{% endif %}>Not staff</option>
+      </select>
+    </div>
+    <div class="admin-filter-group">
+      <label class="admin-filter-label" for="id_filter_active">Active</label>
+      <select name="active" id="id_filter_active" class="form-input">
+        <option value="">All</option>
+        <option value="1" {% if request.GET.active == "1" %}selected{% endif %}>Active</option>
+        <option value="0" {% if request.GET.active == "0" %}selected{% endif %}>Inactive</option>
+      </select>
+    </div>
     <button type="submit" class="form-btn form-btn-secondary">Search</button>
   </form>
+  <a href="{% url 'admin_app:admin_user_add' %}" class="admin-btn-sm admin-btn-primary">Add user</a>
 </div>
 
 <p class="muted admin-count">{{ total_count }} user{{ total_count|pluralize }}</p>

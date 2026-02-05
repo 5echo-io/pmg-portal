@@ -9,15 +9,43 @@
 {% block admin_content %}
 <h1 class="admin-page-title">{% if user_obj %}Edit user{% else %}Add user{% endif %}</h1>
 
-<form method="post" action="" class="admin-form">
+<form method="post" action="" class="admin-form admin-form--wide">
   {% csrf_token %}
-  {% for field in form %}
-  <div class="admin-form-field">
-    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-    {{ field }}
-    {% if field.help_text %}<p class="admin-form-help">{{ field.help_text }}</p>{% endif %}
-    {% if field.errors %}<p class="form-error">{{ field.errors.0 }}</p>{% endif %}
+  <div class="admin-form-row">
+    <div class="admin-form-field">
+      <label for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+      {{ form.username }}
+      {% if form.username.help_text %}<p class="admin-form-help">{{ form.username.help_text }}</p>{% endif %}
+      {% if form.username.errors %}<p class="form-error">{{ form.username.errors.0 }}</p>{% endif %}
+    </div>
+    <div class="admin-form-field">
+      <label for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
+      {{ form.email }}
+      {% if form.email.help_text %}<p class="admin-form-help">{{ form.email.help_text }}</p>{% endif %}
+      {% if form.email.errors %}<p class="form-error">{{ form.email.errors.0 }}</p>{% endif %}
+    </div>
   </div>
+  <div class="admin-form-row">
+    <div class="admin-form-field">
+      <label for="{{ form.first_name.id_for_label }}">{{ form.first_name.label }}</label>
+      {{ form.first_name }}
+      {% if form.first_name.errors %}<p class="form-error">{{ form.first_name.errors.0 }}</p>{% endif %}
+    </div>
+    <div class="admin-form-field">
+      <label for="{{ form.last_name.id_for_label }}">{{ form.last_name.label }}</label>
+      {{ form.last_name }}
+      {% if form.last_name.errors %}<p class="form-error">{{ form.last_name.errors.0 }}</p>{% endif %}
+    </div>
+  </div>
+  {% for field in form %}
+    {% if field.name != 'username' and field.name != 'email' and field.name != 'first_name' and field.name != 'last_name' %}
+    <div class="admin-form-field full-width">
+      <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+      {{ field }}
+      {% if field.help_text %}<p class="admin-form-help">{{ field.help_text }}</p>{% endif %}
+      {% if field.errors %}<p class="form-error">{{ field.errors.0 }}</p>{% endif %}
+    </div>
+    {% endif %}
   {% endfor %}
   <div class="admin-form-actions">
     <button type="submit" class="form-btn form-btn-primary">Save</button>
