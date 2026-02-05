@@ -64,35 +64,15 @@ class CustomerMembershipForm(forms.ModelForm):
         if self.instance and self.instance.pk:
             return super().save(commit=commit)
         
-        # If adding new, handle multi-select
-        customers = self.cleaned_data.get('customers', [])
-        if not customers:
-            # Shouldn't happen since field is required, but fallback
-            return super().save(commit=commit)
-        
-        user = self.cleaned_data['user']
-        role = self.cleaned_data['role']
-        
-        # Create/update memberships for each selected customer
-        created = []
-        updated = []
-        for customer in customers:
-            membership, created_flag = CustomerMembership.objects.get_or_create(
-                user=user,
-                customer=customer,
-                defaults={'role': role}
-            )
-            if not created_flag:
-                # Update role if membership already exists
-                membership.role = role
-                membership.save()
-                updated.append(membership)
-            else:
-                created.append(membership)
-        
-        # Return the first one for compatibility with admin
-        if created:
-            return created[0]
-        elif updated:
-            return updated[0]
-        return None
+        # If adding new, create a dummy instance (will be handled in save_model)
+        # We need to return an instance for Django admin
+        instance = super().save(commit=False)
+        if commit:
+            # Don't save here - save_model will handle it
+            pass
+        return instance
+    
+    def save_m2m(self):
+        """Override save_m2m to prevent Django admin from trying to save M2M."""
+        # We handle saving in save_model, so this is a no-op
+        pass

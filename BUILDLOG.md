@@ -2,6 +2,16 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev (suggested)
+  - Version: 0.1.0-alpha.12
+  - Summary:
+    - Fixed 500 error when saving CustomerMembership (added save_m2m method)
+    - Complete redesign of admin interface with modern, clean dark theme
+    - Improved spacing, shadows, and visual hierarchy
+    - Better button styles with hover effects
+    - Enhanced table and form styling
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev (suggested)
   - Version: 0.1.0-alpha.11
   - Summary:
     - Completely redesigned admin CSS for better text contrast and visibility

@@ -48,8 +48,8 @@ Fixed:
 - Database tables missing error (created initial migrations for portal models)
 - 500 error when adding CustomerMembership (fixed form fields configuration for add/edit modes)
 - 500 error when accessing CustomerMembership changelist (removed bulk_add URL reference)
-- Modernized Django admin interface with dark theme matching portal design
-- Improved admin CSS with better text contrast and visibility
+- 500 error when saving CustomerMembership (fixed save_m2m method)
+- Complete redesign of Django admin interface with modern, clean dark theme
 
 ## [0.1.0-alpha.1] - Initial foundation
 Added:
