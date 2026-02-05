@@ -369,12 +369,13 @@ body #container #content,
   position: relative !important;
 }
 
-/* Dashboard page needs full width - VERY AGGRESSIVE override */
-/* Target #content.colMS specifically when it contains dashboard */
-body.admin-page #content.colMS:has(.dashboard),
-body.admin-page #content:has(.dashboard),
+/* Dashboard page needs full width - remove max-width from #content when it contains content-wrapper */
+body.admin-page #content.colMS:has(.content-wrapper),
+body.admin-page #content:has(.content-wrapper),
 body.admin-page.dashboard #content,
-body.admin-page.dashboard #content.colMS {
+body.admin-page.dashboard #content.colMS,
+body.admin-page #content.colMS:has(.dashboard-grid),
+body.admin-page #content:has(.dashboard-grid) {
   max-width: 100% !important;
   width: 100% !important;
   padding-left: 32px !important;
@@ -385,7 +386,8 @@ body.admin-page.dashboard #content.colMS {
 
 /* Override .colMS float layout for dashboard pages */
 body.admin-page.dashboard #content.colMS,
-body.admin-page #content.colMS:has(.dashboard) {
+body.admin-page #content.colMS:has(.content-wrapper),
+body.admin-page #content.colMS:has(.dashboard-grid) {
   float: none !important;
   width: 100% !important;
   max-width: 100% !important;
@@ -419,6 +421,14 @@ body.admin-page .content-main,
   margin: 0 !important;
   float: none !important;
   box-sizing: border-box !important;
+}
+
+/* SPECIFIC override for #content.colMS when it contains content-wrapper */
+body.admin-page #content.colMS:has(.content-wrapper),
+body.admin-page.dashboard #content.colMS {
+  max-width: 100% !important;
+  width: 100% !important;
+  float: none !important;
 }
 
 /* Ensure dashboard uses full width - REMOVE ALL CONSTRAINTS */
@@ -1307,12 +1317,25 @@ fieldset.module .form-row:last-child {
 
 /* ===== ADMIN INDEX ===== */
 /* Use same structure as portal page - content-wrapper with max-width */
-body.admin-page #content .content-wrapper {
+/* IMPORTANT: This must break out of #content's max-width constraint */
+body.admin-page #content .content-wrapper,
+body.admin-page.dashboard #content .content-wrapper,
+body.admin-page #content.colMS .content-wrapper,
+body.admin-page #content:has(.content-wrapper) .content-wrapper {
   max-width: 980px !important;
   width: 100% !important;
   margin: 0 auto !important;
   padding: 0 !important;
   box-sizing: border-box !important;
+  position: relative !important;
+}
+
+/* Ensure #content itself doesn't constrain content-wrapper */
+body.admin-page #content:has(.content-wrapper),
+body.admin-page.dashboard #content,
+body.admin-page #content.colMS:has(.content-wrapper) {
+  max-width: 100% !important;
+  width: 100% !important;
 }
 
 body.admin-page #content .content-wrapper h1 {

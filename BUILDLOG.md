@@ -253,6 +253,15 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev
+  - Version: 0.2.0-alpha.20
+  - Summary:
+    - Fixed #content max-width constraint issue by adding :has(.content-wrapper) selector
+    - Added specific override for #content.colMS:has(.content-wrapper) to remove max-width: 1200px constraint
+    - Ensured #content itself doesn't constrain .content-wrapper by setting max-width: 100% when content-wrapper is present
+    - Added multiple selectors to catch all cases: body.admin-page.dashboard #content, body.admin-page #content:has(.content-wrapper)
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev
   - Version: 0.2.0-alpha.19
   - Summary:
     - Completely redesigned admin dashboard to match portal page structure

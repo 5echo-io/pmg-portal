@@ -117,6 +117,8 @@ Changed:
 - Replaced table-based dashboard layout with panel-based layout matching portal design
 - Dashboard now uses .content-wrapper, .dashboard-grid, .panel, .list, and .list-item classes like portal page
 - Removed all complex CSS overrides and JavaScript workarounds in favor of simple portal-style structure
+- Fixed #content max-width constraint by adding :has(.content-wrapper) selector to remove max-width: 1200px when content-wrapper is present
+- Added specific overrides for #content.colMS to ensure it doesn't constrain content-wrapper width
 
 Fixed:
 - Recent Actions button click handler improved (removed conflicting onclick, improved event listener attachment)
