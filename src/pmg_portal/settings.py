@@ -90,10 +90,8 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
-# Enable database query logging for debug view
+# Enable database query logging for debug view (only in DEBUG mode)
 if DEBUG:
-    if "loggers" not in LOGGING:
-        LOGGING["loggers"] = {}
     LOGGING["loggers"]["django.db.backends"] = {
         "handlers": ["console"],
         "level": "DEBUG",

@@ -369,6 +369,24 @@ body #container #content,
   position: relative !important;
 }
 
+/* Dashboard page needs full width - override max-width constraint */
+body.admin-page #content:has(.dashboard),
+body.admin-page #content > .dashboard {
+  max-width: 100% !important;
+  padding-left: 32px !important;
+  padding-right: 32px !important;
+}
+
+/* Fallback for browsers that don't support :has() */
+body.admin-page .dashboard {
+  max-width: calc(100vw - 64px) !important;
+  margin-left: calc(-50vw + 50%) !important;
+  margin-right: calc(-50vw + 50%) !important;
+  width: calc(100vw - 64px) !important;
+  padding-left: 32px !important;
+  padding-right: 32px !important;
+}
+
 /* Override Django admin column layouts */
 body.admin-page .colMS,
 body.admin-page .colSM,

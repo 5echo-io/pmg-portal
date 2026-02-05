@@ -253,6 +253,16 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev
+  - Version: 0.2.0-alpha.13
+  - Summary:
+    - Fixed admin dashboard width by using calc() CSS to break dashboard out of #content's max-width: 1200px constraint
+    - Dashboard now uses full viewport width (calc(100vw - 64px)) with proper margins to break out of parent container
+    - Added :has() selector fallback for modern browsers, with calc() fallback for older browsers
+    - Added "Copy to Clipboard" button to debug view that copies JSON debug data to clipboard
+    - Copy button shows visual feedback ("Copied!") when successful
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev
   - Version: 0.2.0-alpha.12
   - Summary:
     - Fixed admin dashboard width issue by adding more specific CSS selectors (body.admin-page #content .dashboard, etc.)

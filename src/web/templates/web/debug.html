@@ -177,8 +177,9 @@
 
   <div class="panel">
     <h2>Export</h2>
-    <div style="margin-top: 16px;">
+    <div style="margin-top: 16px; display: flex; gap: 12px;">
       <a href="?format=json" class="form-btn form-btn-primary" target="_blank">Export as JSON</a>
+      <button onclick="copyDebugToClipboard()" class="form-btn form-btn-secondary">Copy to Clipboard</button>
     </div>
   </div>
 
@@ -199,6 +200,34 @@
       } else {
         content.textContent = 'Frontend logging not initialized. Refresh the page.';
         container.style.display = 'block';
+      }
+    }
+    
+    async function copyDebugToClipboard() {
+      try {
+        // Fetch JSON data
+        const response = await fetch('?format=json');
+        const data = await response.json();
+        const jsonString = JSON.stringify(data, null, 2);
+        
+        // Copy to clipboard
+        await navigator.clipboard.writeText(jsonString);
+        
+        // Show success feedback
+        const btn = event.target;
+        const originalText = btn.textContent;
+        btn.textContent = 'Copied!';
+        btn.style.background = 'var(--success)';
+        btn.style.color = 'white';
+        
+        setTimeout(() => {
+          btn.textContent = originalText;
+          btn.style.background = '';
+          btn.style.color = '';
+        }, 2000);
+      } catch (err) {
+        console.error('Failed to copy:', err);
+        alert('Failed to copy to clipboard. Please use Export as JSON instead.');
       }
     }
   </script>

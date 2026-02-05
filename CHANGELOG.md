@@ -98,6 +98,8 @@ Changed:
 - Added comprehensive debug logging middleware to track all requests, responses, database queries, and processing times
 - Added frontend JavaScript logging to track button clicks, form submissions, page loads, and JavaScript errors
 - Enhanced debug view to display request logs, database queries, and frontend logs
+- Fixed admin dashboard width issue by using calc() to break out of #content max-width constraint (dashboard now uses full viewport width)
+- Added "Copy to Clipboard" button to debug view for easy sharing of debug data
 
 Fixed:
 - Recent Actions button click handler improved (removed conflicting onclick, improved event listener attachment)
