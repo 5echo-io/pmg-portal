@@ -253,6 +253,16 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev
+  - Version: 0.1.0-alpha.23
+  - Summary:
+    - Added logout confirmation modal in profile settings sidebar (prevents accidental logout)
+    - Delete account modal now resets to Account Information section when closed/cancelled
+    - Fixed Recent Actions button vertical alignment in admin topbar (changed to flex with fixed height)
+    - Fixed Recent Actions button click functionality (added onclick fallback attribute)
+    - Updated admin-icon-btn CSS to use flex instead of inline-flex for better alignment
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev
   - Version: 0.1.0-alpha.22
   - Summary:
     - Fixed avatar icon vertical alignment in topbar

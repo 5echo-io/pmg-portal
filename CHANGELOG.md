@@ -70,8 +70,12 @@ Changed:
 - Added "Delete Account" option in profile settings with danger zone styling
 - Increased spacing between website title and menu buttons in topbar
 - Fixed avatar icon vertical alignment in topbar
+- Added logout confirmation modal in profile settings sidebar
+- Delete account modal now resets to Account Information section when closed/cancelled
 
 Fixed:
+- Recent Actions button vertical alignment in admin topbar
+- Recent Actions button click functionality (added onclick fallback)
 - Local Postgres bootstrap in installer (role/db creation)
 - Static files not loading (added WhiteNoise middleware for production static file serving)
 - 500 error after login redirect (improved error handling in portal_home view)

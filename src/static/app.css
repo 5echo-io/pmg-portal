@@ -240,16 +240,18 @@ a.link:hover { color: var(--text); }
   background: transparent;
   border: 1px solid var(--line);
   border-radius: 6px;
-  padding: 8px 10px;
+  padding: 0;
   margin-right: 12px;
   cursor: pointer;
   color: var(--muted);
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.2s;
-  vertical-align: middle;
   line-height: 1;
+  height: 36px;
+  width: 36px;
+  flex-shrink: 0;
 }
 
 .admin-icon-btn:hover {

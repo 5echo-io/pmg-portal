@@ -28,7 +28,7 @@
           Delete Account
         </a>
         <div class="profile-nav-divider"></div>
-        <a href="/account/logout/" class="profile-nav-item">
+        <a href="#logout" class="profile-nav-item" onclick="openLogoutModal(); return false;">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
             <polyline points="16 17 21 12 16 7"></polyline>
@@ -107,6 +107,23 @@
             <button type="submit" class="form-btn form-btn-primary">Change Password</button>
           </div>
         </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Logout Confirmation Modal -->
+  <div id="logoutModal" class="modal" style="display: none;" onclick="closeLogoutModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Confirm Logout</h2>
+        <button class="modal-close" onclick="closeLogoutModal(event)">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to logout?</p>
+        <div style="display: flex; gap: 12px; margin-top: 20px; justify-content: flex-end;">
+          <button type="button" onclick="closeLogoutModal(event)" class="form-btn form-btn-secondary">Cancel</button>
+          <a href="/account/logout/" class="form-btn form-btn-primary" style="text-decoration: none;">Logout</a>
+        </div>
       </div>
     </div>
   </div>
@@ -202,6 +219,29 @@
           modal.style.display = 'none';
           document.body.style.overflow = 'auto';
         }
+        // Reset to Account Information section
+        document.querySelectorAll('.profile-nav-item').forEach(item => {
+          item.classList.remove('active');
+        });
+        document.querySelector('.profile-nav-item[href="#account-info"]')?.classList.add('active');
+      }
+    }
+
+    function openLogoutModal() {
+      const modal = document.getElementById('logoutModal');
+      if (modal) {
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+      }
+    }
+
+    function closeLogoutModal(event) {
+      if (!event || event.target.classList.contains('modal') || event.target.classList.contains('modal-close') || event.target.textContent === 'Cancel') {
+        const modal = document.getElementById('logoutModal');
+        if (modal) {
+          modal.style.display = 'none';
+          document.body.style.overflow = 'auto';
+        }
       }
     }
     
@@ -217,11 +257,15 @@
       if (event.key === 'Escape') {
         const passwordModal = document.getElementById('passwordChangeModal');
         const deleteModal = document.getElementById('deleteAccountModal');
+        const logoutModal = document.getElementById('logoutModal');
         if (passwordModal && passwordModal.style.display === 'flex') {
           closePasswordChangeModal(event);
         }
         if (deleteModal && deleteModal.style.display === 'flex') {
           closeDeleteAccountModal(event);
+        }
+        if (logoutModal && logoutModal.style.display === 'flex') {
+          closeLogoutModal(event);
         }
       }
     });
