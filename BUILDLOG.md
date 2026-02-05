@@ -253,6 +253,17 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev
+  - Version: 0.2.0-alpha.26
+  - Summary:
+    - FIXED: Removed MutationObserver that was causing infinite loop
+    - JavaScript now removes .colMS class directly (root cause of width: 464px)
+    - Adds .colMS-override class instead to maintain styling without width constraint
+    - Changed cssText to use assignment (=) instead of append (+=) to avoid conflicts
+    - Added CSS support for .colMS-override class
+    - This should finally fix the width issue by removing the problematic class entirely
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev
   - Version: 0.2.0-alpha.25
   - Summary:
     - Changed JavaScript to use cssText instead of setProperty for more aggressive style overrides

@@ -131,6 +131,9 @@ Changed:
 - Changed JavaScript to use cssText instead of setProperty for more aggressive style overrides
 - Added MutationObserver to watch for style changes and re-apply fixes if Django admin CSS overwrites them
 - Added multiple setTimeout delays up to 1000ms to catch late-loading CSS
+- Fixed infinite loop in MutationObserver by removing it and instead removing .colMS class directly
+- JavaScript now removes .colMS class and adds .colMS-override class to break Django admin's width: 464px constraint
+- Added CSS support for .colMS-override class
 
 Fixed:
 - Recent Actions button click handler improved (removed conflicting onclick, improved event listener attachment)

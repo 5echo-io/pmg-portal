@@ -431,9 +431,19 @@ body.admin-page .content-main,
 /* Django admin sets width: 464px on .colMS - MUST override this */
 body.admin-page #content.colMS:has(.content-wrapper),
 body.admin-page.dashboard #content.colMS,
-body.admin-page.dashboard #content.colMS {
+body.admin-page.dashboard #content.colMS,
+body.admin-page #content.colMS-override {
   max-width: 100% !important;
   width: 100% !important;
+  min-width: 100% !important;
+  float: none !important;
+}
+
+/* Override .colMS class itself for dashboard pages */
+body.admin-page.dashboard .colMS,
+body.admin-page #content.colMS-override {
+  width: 100% !important;
+  max-width: 100% !important;
   min-width: 100% !important;
   float: none !important;
 }
