@@ -44,6 +44,9 @@ Changed:
 - Admin role and customer add/edit: narrow Save button
 - Admin customer access add form: centered layout
 - RoleForm (name only) for roles add/edit to fix 500; CustomerForm primary_contact queryset in __init__ for customers add
+- Login: "Create account" link less bold and centered; Sign in button disabled until email and password filled, then green border/glow when ready
+- Register: removed "This creates a user." text; "Back to login" less bold and centered
+- Customer dropdown: more padding on menu items; no vertical gap between items; dropdown closer to trigger (2px); topbar alignment with avatar
 
 Fixed:
 - Footer width now matches main content (1280px)

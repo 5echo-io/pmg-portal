@@ -2,6 +2,14 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev
+  - Version: 0.15.22-beta.8
+  - Summary:
+    - Login: Create account link less bold and centered; Sign in button disabled until email+password filled, green border when ready
+    - Register: removed "This creates a user."; Back to login less bold and centered
+    - Customer dropdown: more padding on items, no gap between items; dropdown 2px below trigger; topbar align with avatar
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev
   - Version: 0.15.22-beta.7
   - Summary:
     - Admin users: SEARCH label, narrow Search button, Add user 36px, wider search field; user form: checkbox layout, Save/Cancel height, narrow Save

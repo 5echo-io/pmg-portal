@@ -137,6 +137,36 @@ button:hover { background: var(--btnHover); }
   margin-top: 14px;
 }
 
+.row--centered {
+  justify-content: center;
+}
+
+.auth-link {
+  font-weight: 400;
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.auth-link:hover {
+  color: var(--text);
+}
+
+.card button[type="submit"]:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.card button[type="submit"].ready {
+  border-color: rgba(34, 197, 94, 0.6);
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.25);
+  cursor: pointer;
+}
+
+.card button[type="submit"].ready:hover {
+  border-color: #22c55e;
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.35);
+}
+
 a { color: var(--text); }
 a.link { text-decoration: none; color: var(--muted); }
 a.link:hover { color: var(--text); }
@@ -207,6 +237,7 @@ a.link:hover { color: var(--text); }
 .topbar-right .user-avatar-wrapper {
   display: inline-flex;
   align-items: center;
+  align-self: center;
 }
 
 .topbar-right .user-avatar-btn {
@@ -297,7 +328,7 @@ a.link:hover { color: var(--text); }
 
 .customer-menu {
   position: absolute;
-  top: calc(100% + 8px);
+  top: calc(100% + 2px);
   right: 0;
   background: var(--card);
   border: 1px solid var(--line);
@@ -344,7 +375,7 @@ a.link:hover { color: var(--text); }
 
 .customer-menu-list {
   overflow-y: auto;
-  padding: 2px 0;
+  padding: 0;
 }
 
 .customer-menu-item {
@@ -352,8 +383,11 @@ a.link:hover { color: var(--text); }
   align-items: center;
   width: 100%;
   min-height: 0;
-  padding: 4px 12px;
+  padding: 10px 14px;
+  margin: 0;
   border: none;
+  border-radius: 0;
+  border-bottom: none;
   background: transparent;
   color: var(--text);
   font-size: 13px;
@@ -363,6 +397,10 @@ a.link:hover { color: var(--text); }
   transition: background 0.2s;
   font-family: inherit;
   box-sizing: border-box;
+}
+
+.customer-menu-item:last-child {
+  border-bottom: none;
 }
 
 .customer-menu-item:hover {

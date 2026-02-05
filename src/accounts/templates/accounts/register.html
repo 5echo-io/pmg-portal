@@ -10,7 +10,6 @@
 <body class="page">
   <div class="card">
     <h1>Create account</h1>
-    <p class="muted">This creates a user. Customer access can be assigned by Park Media Group AS (PMG) admins or Customer admins within their own company.</p>
 
     <form method="post">
       {% csrf_token %}
@@ -32,8 +31,8 @@
       <button type="submit">Create account</button>
     </form>
 
-    <div class="row">
-      <a href="/account/login/">Back to login</a>
+    <div class="row row--centered">
+      <a href="/account/login/" class="auth-link">Back to login</a>
     </div>
   </div>
 </body>

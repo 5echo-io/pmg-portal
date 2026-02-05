@@ -12,7 +12,7 @@
     <h1>PMG Portal</h1>
     <p class="muted">Sign in to continue.</p>
 
-    <form method="post">
+    <form method="post" id="login-form">
       {% csrf_token %}
       <label>Email</label>
       {{ form.username }}
@@ -24,12 +24,33 @@
         <div class="alert">{{ form.non_field_errors }}</div>
       {% endif %}
 
-      <button type="submit">Sign in</button>
+      <button type="submit" id="signin-btn" disabled>Sign in</button>
     </form>
 
-    <div class="row">
-      <a href="/account/register/">Create account</a>
+    <div class="row row--centered">
+      <a href="/account/register/" class="auth-link">Create account</a>
     </div>
   </div>
+  <script>
+    (function() {
+      var form = document.getElementById('login-form');
+      var btn = document.getElementById('signin-btn');
+      if (!form || !btn) return;
+      var email = form.querySelector('input[name="username"], input[type="email"]');
+      var pass = form.querySelector('input[name="password"]');
+      function check() {
+        var e = (email && email.value.trim()) || '';
+        var p = (pass && pass.value) || '';
+        var ready = e.length > 0 && p.length > 0;
+        btn.disabled = !ready;
+        btn.classList.toggle('ready', ready);
+      }
+      if (email) email.addEventListener('input', check);
+      if (email) email.addEventListener('change', check);
+      if (pass) pass.addEventListener('input', check);
+      if (pass) pass.addEventListener('change', check);
+      check();
+    })();
+  </script>
 </body>
 </html>
