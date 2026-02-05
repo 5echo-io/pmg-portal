@@ -6,6 +6,8 @@
   - Summary:
     - Fixed installer interactive mode detection (auto-defaults to update when piped)
     - Improved non-interactive installation experience
+    - Added footer with copyright, version, and changelog preview
+    - Fixed 500 error when saving Customer in admin
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev (suggested)

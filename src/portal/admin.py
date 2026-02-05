@@ -20,16 +20,21 @@ class CustomerAdmin(admin.ModelAdmin):
     
     prepopulated_fields = {"slug": ("name",)}
     
+    def get_queryset(self, request):
+        """Optimize queryset for list display."""
+        qs = super().get_queryset(request)
+        return qs.prefetch_related("customermembership_set", "links")
+    
     def member_count(self, obj):
         if obj and obj.pk:
             return obj.customermembership_set.count()
-        return 0
+        return "-"
     member_count.short_description = "Members"
     
     def link_count(self, obj):
         if obj and obj.pk:
             return obj.links.count()
-        return 0
+        return "-"
     link_count.short_description = "Links"
 
 @admin.register(CustomerMembership)

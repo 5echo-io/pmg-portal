@@ -21,5 +21,32 @@
   <main class="container">
     {% block content %}{% endblock %}
   </main>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-section">
+        <div class="footer-title">PMG Portal</div>
+        <div class="footer-text">Version {{ app_version|default:"Unknown" }}</div>
+        <div class="footer-text muted">Copyright &copy; {{ copyright_year|default:"2026" }} 5echo.io</div>
+      </div>
+      <div class="footer-section">
+        <div class="footer-title">Quick Links</div>
+        <a href="/admin/" class="footer-link">Admin Panel</a>
+        <a href="/portal/" class="footer-link">Portal</a>
+        <a href="/account/logout/" class="footer-link">Logout</a>
+      </div>
+      <div class="footer-section">
+        <div class="footer-title">System</div>
+        <a href="/admin/" class="footer-link">View Logs</a>
+        <div class="footer-text muted">View system logs in admin panel</div>
+      </div>
+      {% if changelog_preview %}
+      <div class="footer-section">
+        <div class="footer-title">Latest Changes</div>
+        <div class="footer-changelog">{{ changelog_preview|linebreaks }}</div>
+      </div>
+      {% endif %}
+    </div>
+  </footer>
 </body>
 </html>
