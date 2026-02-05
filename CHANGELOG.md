@@ -113,6 +113,10 @@ Changed:
 - Increased CSS specificity to ensure dashboard width overrides work even when Django admin CSS loads first
 - Added JavaScript to dynamically remove width constraints from #content, #container, and .dashboard elements on dashboard page
 - JavaScript runs immediately, on DOMContentLoaded, and after 100ms delay to ensure all CSS has loaded
+- Completely redesigned admin dashboard to use same structure as portal page (content-wrapper with max-width: 980px)
+- Replaced table-based dashboard layout with panel-based layout matching portal design
+- Dashboard now uses .content-wrapper, .dashboard-grid, .panel, .list, and .list-item classes like portal page
+- Removed all complex CSS overrides and JavaScript workarounds in favor of simple portal-style structure
 
 Fixed:
 - Recent Actions button click handler improved (removed conflicting onclick, improved event listener attachment)

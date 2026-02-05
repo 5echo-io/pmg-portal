@@ -7,92 +7,49 @@
 {% endblock %}
 
 {% block content %}
-<div class="dashboard">
-  {% for app in app_list %}
-    <div class="app-{{ app.app_label }} module">
-      <table>
-        <caption>
-          <a href="{{ app.app_url }}" class="section" title="{% blocktrans with name=app.name %}Models in the {{ name }} application{% endblocktrans %}">{{ app.name }}</a>
-        </caption>
-        {% for model in app.models %}
-          <tr class="model-{{ model.object_name|lower }}">
-            {% if model.admin_url %}
-              <th scope="row"><a href="{{ model.admin_url }}">{{ model.name }}</a></th>
-            {% else %}
-              <th scope="row">{{ model.name }}</th>
-            {% endif %}
-
-            {% if model.add_url %}
-              <td><a href="{{ model.add_url }}" class="addlink">{% trans 'Add' %}</a></td>
-            {% else %}
-              <td>&nbsp;</td>
-            {% endif %}
-
-            {% if model.admin_url %}
-              {% if model.view_only %}
-                <td><a href="{{ model.admin_url }}" class="viewlink">{% trans 'View' %}</a></td>
-              {% else %}
-                <td><a href="{{ model.admin_url }}" class="changelink">{% trans 'Change' %}</a></td>
-              {% endif %}
-            {% else %}
-              <td>&nbsp;</td>
-            {% endif %}
-          </tr>
-        {% endfor %}
-      </table>
-    </div>
-  {% empty %}
-    <p>{% trans "You don't have permission to view or edit anything." %}</p>
-  {% endfor %}
+<div class="content-wrapper">
+  <h1>Administration</h1>
+  
+  <div class="dashboard-grid">
+    {% for app in app_list %}
+      <div class="panel">
+        <h2>
+          <a href="{{ app.app_url }}" class="section-link" title="{% blocktrans with name=app.name %}Models in the {{ name }} application{% endblocktrans %}">
+            {{ app.name }}
+          </a>
+        </h2>
+        
+        <ul class="list">
+          {% for model in app.models %}
+            <li class="list-item">
+              <div class="list-title">
+                {% if model.admin_url %}
+                  <a href="{{ model.admin_url }}">{{ model.name }}</a>
+                {% else %}
+                  {{ model.name }}
+                {% endif %}
+              </div>
+              <div class="list-actions">
+                {% if model.add_url %}
+                  <a href="{{ model.add_url }}" class="addlink">{% trans 'Add' %}</a>
+                {% endif %}
+                {% if model.admin_url %}
+                  {% if model.view_only %}
+                    <a href="{{ model.admin_url }}" class="viewlink">{% trans 'View' %}</a>
+                  {% else %}
+                    <a href="{{ model.admin_url }}" class="changelink">{% trans 'Change' %}</a>
+                  {% endif %}
+                {% endif %}
+              </div>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% empty %}
+      <div class="panel">
+        <p>{% trans "You don't have permission to view or edit anything." %}</p>
+      </div>
+    {% endfor %}
+  </div>
 </div>
-
-<script>
-// Force dashboard to use full width by removing constraints from #content
-(function() {
-  function fixDashboardWidth() {
-    const content = document.getElementById('content');
-    const dashboard = document.querySelector('.dashboard');
-    
-    if (content && dashboard) {
-      // Remove max-width constraint from #content
-      content.style.maxWidth = '100%';
-      content.style.width = '100%';
-      content.style.marginLeft = '0';
-      content.style.marginRight = '0';
-      content.style.paddingLeft = '32px';
-      content.style.paddingRight = '32px';
-      
-      // Ensure dashboard uses full width
-      dashboard.style.width = '100%';
-      dashboard.style.maxWidth = '100%';
-      dashboard.style.marginLeft = '0';
-      dashboard.style.marginRight = '0';
-      
-      // Also check parent containers
-      const container = document.getElementById('container');
-      if (container) {
-        container.style.maxWidth = '100%';
-        container.style.width = '100%';
-      }
-      
-      const main = document.getElementById('main');
-      if (main) {
-        main.style.maxWidth = '100%';
-        main.style.width = '100%';
-      }
-    }
-  }
-  
-  // Run immediately
-  fixDashboardWidth();
-  
-  // Also run after DOM is fully loaded
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', fixDashboardWidth);
-  }
-  
-  // Run after a short delay to ensure all CSS has loaded
-  setTimeout(fixDashboardWidth, 100);
-})();
-</script>
 {% endblock %}

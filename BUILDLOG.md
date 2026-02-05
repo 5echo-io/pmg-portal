@@ -253,6 +253,17 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev
+  - Version: 0.2.0-alpha.19
+  - Summary:
+    - Completely redesigned admin dashboard to match portal page structure
+    - Replaced table-based dashboard with panel-based layout using .content-wrapper, .dashboard-grid, .panel, .list, .list-item
+    - Dashboard now uses max-width: 980px centered layout like portal page (not full width)
+    - Removed all complex CSS overrides, JavaScript workarounds, and calc() margins
+    - Dashboard uses same visual design as portal page with panels and lists
+    - Grid layout: 3 columns (desktop), 2 columns (tablet), 1 column (mobile)
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev
   - Version: 0.2.0-alpha.18
   - Summary:
     - Added JavaScript to admin/index.html template to dynamically remove width constraints

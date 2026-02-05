@@ -1306,7 +1306,107 @@ fieldset.module .form-row:last-child {
 }
 
 /* ===== ADMIN INDEX ===== */
-/* Dashboard grid layout - FULL WIDTH */
+/* Use same structure as portal page - content-wrapper with max-width */
+body.admin-page #content .content-wrapper {
+  max-width: 980px !important;
+  width: 100% !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+}
+
+body.admin-page #content .content-wrapper h1 {
+  margin: 0 0 24px 0 !important;
+  font-size: 22px !important;
+  font-weight: 600 !important;
+}
+
+body.admin-page #content .dashboard-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 24px !important;
+  margin-top: 0 !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+@media (max-width: 1400px) {
+  body.admin-page #content .dashboard-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+@media (max-width: 900px) {
+  body.admin-page #content .dashboard-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Style panels like portal page */
+body.admin-page #content .content-wrapper .panel {
+  background: var(--card) !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 14px !important;
+  padding: 16px !important;
+  margin-top: 0 !important;
+}
+
+body.admin-page #content .content-wrapper .panel h2 {
+  margin: 0 0 16px 0 !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  padding-bottom: 12px !important;
+  border-bottom: 1px solid var(--line) !important;
+}
+
+body.admin-page #content .content-wrapper .panel h2 .section-link {
+  color: var(--text-primary) !important;
+  text-decoration: none !important;
+}
+
+body.admin-page #content .content-wrapper .panel h2 .section-link:hover {
+  color: var(--accent) !important;
+}
+
+body.admin-page #content .content-wrapper .list {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+body.admin-page #content .content-wrapper .list-item {
+  padding: 12px 0 !important;
+  border-top: 1px solid var(--line) !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+}
+
+body.admin-page #content .content-wrapper .list-item:first-child {
+  border-top: none !important;
+}
+
+body.admin-page #content .content-wrapper .list-title {
+  font-weight: 600 !important;
+  flex: 1 !important;
+}
+
+body.admin-page #content .content-wrapper .list-title a {
+  color: var(--text-primary) !important;
+  text-decoration: none !important;
+}
+
+body.admin-page #content .content-wrapper .list-title a:hover {
+  color: var(--accent) !important;
+}
+
+body.admin-page #content .content-wrapper .list-actions {
+  display: flex !important;
+  gap: 8px !important;
+  align-items: center !important;
+}
+
+/* Legacy dashboard support */
 body.admin-page .dashboard,
 body.admin-page #content .dashboard,
 body.admin-page #content > .dashboard,
