@@ -5,6 +5,12 @@ This project follows Semantic Versioning (SemVer).
 
 ## [Unreleased]
 
+## [0.15.22-beta.4] – 2026-02-05
+Changed:
+- Changelog modal: non–full MAJOR (0.x, beta, alpha) always shows Unreleased; full MAJOR shows all sections for that major
+- Changelog modal: no scroll on modal container; only content boxes scroll (responsive)
+- Changelog modal: fade animation when toggling View Full / Hide Full Changelog
+
 ## [0.15.19-beta.3] – 2026-02-05
 Changed:
 - Customer dropdown: reduced vertical spacing between list items (min-height 0, padding 4px 12px, line-height 1.25)

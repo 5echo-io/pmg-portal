@@ -2,6 +2,13 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev
+  - Version: 0.15.22-beta.4
+  - Summary:
+    - Changelog modal: Unreleased for non–full MAJOR, full MAJOR shows all sections for that major
+    - Changelog modal: no scroll on modal; only content boxes scroll; fade animation on View Full / Hide Full
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev
   - Version: 0.15.19-beta.3
   - Summary:
     - Customer dropdown: reduced vertical spacing between list items (min-height 0, padding 4px 12px, line-height 1.25)
