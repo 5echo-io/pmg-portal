@@ -2,6 +2,14 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev
+  - Version: 0.15.22-beta.7
+  - Summary:
+    - Admin users: SEARCH label, narrow Search button, Add user 36px, wider search field; user form: checkbox layout, Save/Cancel height, narrow Save
+    - Admin roles/customers/access: same toolbar layout (SEARCH, aligned search+button, Add on right); RoleForm for roles add (fix 500); CustomerForm queryset for customers add
+    - Admin customer access add: form centered
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev
   - Version: 0.15.22-beta.6
   - Summary:
     - Changelog modal: state-based toggle (data-changelog-view) and setTimeout(220) for panel swap so Hide Full / View Full and reopen work

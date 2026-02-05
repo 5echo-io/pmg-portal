@@ -39,6 +39,11 @@ Changed:
 - Registration: username hidden and set from email; new users get username = email
 - Profile delete account: confirm with email instead of username
 - Install wizard: first admin created with username = email; prompt "DEFAULT_ADMIN_EMAIL (login email for first admin)"
+- Admin users/roles/customers/access lists: SEARCH label above field; narrower Search button; Add button 36px height; wider search input; single-row toolbar with aligned search and Add button
+- Admin user add/edit: checkbox layout for Staff/Active/Superuser; Save and Cancel same height; narrow Save button
+- Admin role and customer add/edit: narrow Save button
+- Admin customer access add form: centered layout
+- RoleForm (name only) for roles add/edit to fix 500; CustomerForm primary_contact queryset in __init__ for customers add
 
 Fixed:
 - Footer width now matches main content (1280px)
