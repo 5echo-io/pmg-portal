@@ -253,6 +253,16 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev
+  - Version: 0.2.0-alpha.17
+  - Summary:
+    - Added more aggressive CSS overrides targeting #content.colMS specifically to override Django admin's float layout
+    - Added body.admin-page.dashboard class targeting (Django adds .dashboard class to body on dashboard page)
+    - Increased CSS specificity with multiple selectors: body.admin-page.dashboard #content, body.admin-page #content.colMS:has(.dashboard)
+    - Override .colMS float layout specifically for dashboard pages to ensure full width
+    - Dashboard now should use full browser width even when Django admin CSS loads first
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev
   - Version: 0.2.0-alpha.16
   - Summary:
     - Removed problematic inline wrapper div from admin/index.html that was causing dashboard to disappear

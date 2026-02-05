@@ -108,6 +108,9 @@ Changed:
 - Fixed footer positioning to use 100vw width with calc() margins to ensure it spans full browser width
 - Increased Export button min-width to 140px and added white-space: nowrap to prevent text wrapping
 - Removed problematic inline wrapper div that was causing dashboard to disappear - reverted to simpler CSS-only solution using :has() selector
+- Added more aggressive CSS overrides targeting #content.colMS specifically to override Django admin's float layout
+- Added body.admin-page.dashboard class targeting for dashboard pages
+- Increased CSS specificity to ensure dashboard width overrides work even when Django admin CSS loads first
 
 Fixed:
 - Recent Actions button click handler improved (removed conflicting onclick, improved event listener attachment)
