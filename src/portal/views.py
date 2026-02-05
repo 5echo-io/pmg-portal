@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
+from django.db.models import Prefetch
 from .models import CustomerMembership
 
 @login_required
@@ -8,6 +9,7 @@ def portal_home(request):
         memberships = (
             CustomerMembership.objects
             .select_related("customer")
+            .prefetch_related("customer__links")
             .filter(user=request.user)
             .order_by("customer__name")
         )
@@ -22,18 +24,23 @@ def portal_home(request):
             return render(request, "portal/no_customer.html")
             
         customer = active.customer
-        links = customer.links.all()
+        # Use prefetched links if available, otherwise query
+        links = list(customer.links.all())
 
         return render(
             request,
             "portal/customer_home.html",
             {
                 "customer": customer,
-                "memberships": memberships,
+                "memberships": list(memberships),
                 "active_role": active.role,
                 "links": links,
             },
         )
-    except Exception:
+    except Exception as e:
+        # Log error in production, but don't expose to user
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.exception("Error in portal_home view")
         # Fallback to no_customer template on any error
         return render(request, "portal/no_customer.html")

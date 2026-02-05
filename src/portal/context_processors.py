@@ -15,22 +15,43 @@ def footer_info(request):
     changelog_preview = ""
     
     try:
-        # Read version
-        version_file = Path(settings.BASE_DIR.parent) / "VERSION"
-        if version_file.exists():
-            version = version_file.read_text().strip()
+        # Try multiple possible locations for VERSION file
+        possible_paths = [
+            Path(settings.BASE_DIR.parent) / "VERSION",  # /opt/pmg-portal/VERSION
+            Path(settings.BASE_DIR) / ".." / "VERSION",   # Alternative path
+            Path("/opt/pmg-portal/VERSION"),              # Absolute path
+        ]
         
-        # Read changelog preview (first few lines of Unreleased section)
-        changelog_file = Path(settings.BASE_DIR.parent) / "CHANGELOG.md"
-        if changelog_file.exists():
-            content = changelog_file.read_text()
-            # Extract Unreleased section
-            if "## [Unreleased]" in content:
-                unreleased = content.split("## [Unreleased]")[1].split("## [")[0]
-                # Get first 3 lines of changes
-                lines = [l.strip() for l in unreleased.split("\n") if l.strip() and not l.strip().startswith("#")]
-                changelog_preview = "\n".join(lines[:10])  # First 10 non-empty lines
+        for version_file in possible_paths:
+            try:
+                if version_file.exists() and version_file.is_file():
+                    version = version_file.read_text(encoding='utf-8').strip()
+                    break
+            except (OSError, IOError, UnicodeDecodeError):
+                continue
+        
+        # Try multiple possible locations for CHANGELOG file
+        changelog_paths = [
+            Path(settings.BASE_DIR.parent) / "CHANGELOG.md",
+            Path(settings.BASE_DIR) / ".." / "CHANGELOG.md",
+            Path("/opt/pmg-portal/CHANGELOG.md"),
+        ]
+        
+        for changelog_file in changelog_paths:
+            try:
+                if changelog_file.exists() and changelog_file.is_file():
+                    content = changelog_file.read_text(encoding='utf-8')
+                    # Extract Unreleased section
+                    if "## [Unreleased]" in content:
+                        unreleased = content.split("## [Unreleased]")[1].split("## [")[0]
+                        # Get first 10 lines of changes
+                        lines = [l.strip() for l in unreleased.split("\n") if l.strip() and not l.strip().startswith("#")]
+                        changelog_preview = "\n".join(lines[:10])
+                    break
+            except (OSError, IOError, UnicodeDecodeError):
+                continue
     except Exception:
+        # Silently fail - footer will show defaults
         pass
     
     return {

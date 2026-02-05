@@ -28,6 +28,7 @@ Fixed:
 - 500 error when adding Customer (fixed member_count/link_count methods to handle new objects)
 - Installer interactive prompts when piped from curl (defaults to update mode in non-interactive)
 - 500 error when saving Customer in admin (optimized queryset and fixed admin_order_field)
+- 500 error in admin save and portal links (fixed context processor file reading, improved error handling)
 
 ## [0.1.0-alpha.1] - Initial foundation
 Added:

@@ -8,6 +8,8 @@
     - Improved non-interactive installation experience
     - Added footer with copyright, version, and changelog preview
     - Fixed 500 error when saving Customer in admin
+    - Fixed context processor file reading errors causing admin save failures
+    - Improved portal_home view error handling and query optimization
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev (suggested)
