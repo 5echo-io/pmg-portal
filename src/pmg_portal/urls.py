@@ -7,8 +7,6 @@ Created: 2026-02-05
 Last Modified: 2026-02-05
 """
 from django.contrib import admin
-from django.conf import settings
-from django.conf.urls.static import static
 from django.urls import include, path
 
 urlpatterns = [
@@ -17,7 +15,3 @@ urlpatterns = [
     path("portal/", include("portal.urls")),
     path("", include("web.urls")),
 ]
-
-# Serve static files in production (behind reverse proxy)
-if not settings.DEBUG:
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

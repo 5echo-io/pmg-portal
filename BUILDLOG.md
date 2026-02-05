@@ -5,8 +5,8 @@
   - Version: 0.1.0-alpha.4
   - Summary:
     - Changed default APP_BIND to 0.0.0.0:8097 for reverse proxy compatibility
-    - Fixed static files not loading: updated templates to use Django static tag
-    - Added static file serving to URLs for production
+    - Fixed static files not loading: added WhiteNoise middleware for production
+    - Updated templates to use Django static tag
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev (suggested)
