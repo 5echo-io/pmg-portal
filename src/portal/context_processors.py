@@ -10,9 +10,19 @@ from pathlib import Path
 from django.conf import settings
 
 def footer_info(request):
-    """Add footer information to all templates."""
+    """Add footer information to templates. Only runs for portal templates, not admin."""
+    # Skip for admin pages to avoid errors
+    if request.path.startswith('/admin/'):
+        return {
+            "app_version": "Unknown",
+            "changelog_preview": "",
+            "changelog_full": "",
+            "copyright_year": "2026",
+        }
+    
     version = "Unknown"
     changelog_preview = ""
+    changelog_full = ""
     
     try:
         # Try multiple possible locations for VERSION file
@@ -27,7 +37,7 @@ def footer_info(request):
                 if version_file.exists() and version_file.is_file():
                     version = version_file.read_text(encoding='utf-8').strip()
                     break
-            except (OSError, IOError, UnicodeDecodeError):
+            except (OSError, IOError, UnicodeDecodeError, PermissionError):
                 continue
         
         # Try multiple possible locations for CHANGELOG file
@@ -41,14 +51,15 @@ def footer_info(request):
             try:
                 if changelog_file.exists() and changelog_file.is_file():
                     content = changelog_file.read_text(encoding='utf-8')
-                    # Extract Unreleased section
+                    changelog_full = content  # Store full changelog for modal
+                    # Extract Unreleased section for preview
                     if "## [Unreleased]" in content:
                         unreleased = content.split("## [Unreleased]")[1].split("## [")[0]
                         # Get first 10 lines of changes
                         lines = [l.strip() for l in unreleased.split("\n") if l.strip() and not l.strip().startswith("#")]
                         changelog_preview = "\n".join(lines[:10])
                     break
-            except (OSError, IOError, UnicodeDecodeError):
+            except (OSError, IOError, UnicodeDecodeError, PermissionError):
                 continue
     except Exception:
         # Silently fail - footer will show defaults
@@ -57,5 +68,6 @@ def footer_info(request):
     return {
         "app_version": version,
         "changelog_preview": changelog_preview,
+        "changelog_full": changelog_full,
         "copyright_year": "2026",
     }

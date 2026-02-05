@@ -23,16 +23,25 @@ class CustomerAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         """Optimize queryset for list display."""
         qs = super().get_queryset(request)
-        return qs.prefetch_related("customermembership_set", "links")
+        # Only prefetch for list view, not for add/edit forms
+        if hasattr(request.resolver_match, 'url_name') and 'changelist' in request.resolver_match.url_name:
+            return qs.prefetch_related("customermembership_set", "links")
+        return qs
     
     def member_count(self, obj):
         if obj and obj.pk:
+            # Use cached count if available from prefetch
+            if hasattr(obj, '_prefetched_objects_cache') and 'customermembership_set' in obj._prefetched_objects_cache:
+                return len(obj._prefetched_objects_cache['customermembership_set'])
             return obj.customermembership_set.count()
         return "-"
     member_count.short_description = "Members"
     
     def link_count(self, obj):
         if obj and obj.pk:
+            # Use cached count if available from prefetch
+            if hasattr(obj, '_prefetched_objects_cache') and 'links' in obj._prefetched_objects_cache:
+                return len(obj._prefetched_objects_cache['links'])
             return obj.links.count()
         return "-"
     link_count.short_description = "Links"

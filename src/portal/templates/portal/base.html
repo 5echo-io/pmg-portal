@@ -43,10 +43,52 @@
       {% if changelog_preview %}
       <div class="footer-section">
         <div class="footer-title">Latest Changes</div>
-        <div class="footer-changelog">{{ changelog_preview|linebreaks }}</div>
+        <div class="footer-changelog">{{ changelog_preview|linebreaks|truncatewords:30 }}</div>
+        {% if changelog_full %}
+        <button class="footer-btn" onclick="openChangelogModal()">View Full Changelog</button>
+        {% endif %}
       </div>
       {% endif %}
     </div>
   </footer>
+
+  <!-- Changelog Modal -->
+  {% if changelog_full %}
+  <div id="changelogModal" class="modal" onclick="closeChangelogModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Changelog</h2>
+        <button class="modal-close" onclick="closeChangelogModal(event)">&times;</button>
+      </div>
+      <div class="modal-body">
+        <pre class="changelog-content">{{ changelog_full|escape }}</pre>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <script>
+    function openChangelogModal() {
+      document.getElementById('changelogModal').style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+    
+    function closeChangelogModal(event) {
+      if (!event || event.target.classList.contains('modal') || event.target.classList.contains('modal-close')) {
+        document.getElementById('changelogModal').style.display = 'none';
+        document.body.style.overflow = 'auto';
+      }
+    }
+    
+    // Close on ESC key
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape') {
+        const modal = document.getElementById('changelogModal');
+        if (modal && modal.style.display === 'flex') {
+          closeChangelogModal(event);
+        }
+      }
+    });
+  </script>
 </body>
 </html>

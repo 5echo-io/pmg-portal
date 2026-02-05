@@ -11,6 +11,7 @@ Added:
 - Standalone installer script (install.sh) that can be run via curl from GitHub
 - Installer detects existing installation and offers update/uninstall options
 - Footer with copyright, version, quick links, and latest changelog preview
+- Changelog modal dialog in footer for viewing full changelog
 
 Changed:
 - Default admin password to "admin" and skip creation if any superuser exists
@@ -29,6 +30,7 @@ Fixed:
 - Installer interactive prompts when piped from curl (defaults to update mode in non-interactive)
 - 500 error when saving Customer in admin (optimized queryset and fixed admin_order_field)
 - 500 error in admin save and portal links (fixed context processor file reading, improved error handling)
+- 500 error when saving in admin (context processor now skips admin pages, improved admin queryset handling)
 
 ## [0.1.0-alpha.1] - Initial foundation
 Added:

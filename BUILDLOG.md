@@ -7,7 +7,9 @@
     - Fixed installer interactive mode detection (auto-defaults to update when piped)
     - Improved non-interactive installation experience
     - Added footer with copyright, version, and changelog preview
-    - Fixed 500 error when saving Customer in admin
+    - Added changelog modal dialog for viewing full changelog
+    - Fixed 500 error when saving Customer in admin (context processor now skips admin pages)
+    - Improved admin queryset handling to avoid errors during save operations
     - Fixed context processor file reading errors causing admin save failures
     - Improved portal_home view error handling and query optimization
 
