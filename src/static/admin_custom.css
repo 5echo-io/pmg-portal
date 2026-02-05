@@ -49,6 +49,16 @@ body.admin-page {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+html.admin-page,
+html[class*="admin"] {
+  width: 100% !important;
+  max-width: 100% !important;
 }
 
 body.admin-page #content {
@@ -322,12 +332,16 @@ body.admin-page .footer {
 }
 
 /* ===== CONTENT ===== */
+/* Override all Django admin width constraints */
+body.admin-page #container,
 #container {
   max-width: 100% !important;
   width: 100% !important;
   margin: 0 !important;
+  padding: 0 !important;
 }
 
+body.admin-page #content,
 #content {
   background: var(--bg) !important;
   padding: 32px !important;
@@ -335,6 +349,34 @@ body.admin-page .footer {
   width: 100% !important;
   margin: 0 !important;
   box-sizing: border-box !important;
+}
+
+/* Override Django admin column layouts */
+.colMS,
+.colSM,
+.main,
+.content-main {
+  max-width: 100% !important;
+  width: 100% !important;
+  margin: 0 !important;
+  float: none !important;
+}
+
+/* Ensure all admin content uses full width */
+body.admin-page .dashboard,
+body.admin-page #content > *,
+body.admin-page #content > div,
+body.admin-page #content > .dashboard {
+  max-width: 100% !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Override any potential wrapper constraints */
+body.admin-page #container > *,
+body.admin-page #container > div {
+  max-width: 100% !important;
+  width: 100% !important;
 }
 
 #content h1 {
@@ -1099,6 +1141,7 @@ fieldset.module .form-row:last-child {
 }
 
 /* ===== ADMIN INDEX ===== */
+body.admin-page .dashboard,
 .dashboard {
   display: grid !important;
   grid-template-columns: repeat(2, 1fr) !important;
@@ -1106,6 +1149,7 @@ fieldset.module .form-row:last-child {
   margin-top: 0 !important;
   width: 100% !important;
   max-width: 100% !important;
+  box-sizing: border-box !important;
 }
 
 @media (max-width: 1200px) {

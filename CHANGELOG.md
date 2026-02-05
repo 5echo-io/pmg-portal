@@ -83,6 +83,7 @@ Changed:
 - Change buttons in admin dashboard styled as box buttons with edit icon
 - Button icons improved for better contrast
 - Add button background changed from blue to green (success color) for better visual distinction
+- Comprehensive CSS overrides added to ensure admin page uses full browser width (targeting html, body, #container, #content, .colMS, .colSM, .main, and all child elements)
 
 Fixed:
 - Avatar icon vertical alignment in topbar

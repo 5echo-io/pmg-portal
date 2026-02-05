@@ -253,6 +253,16 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev
+  - Version: 0.2.0-alpha.5
+  - Summary:
+    - Comprehensive fix for admin page width issue
+    - Added CSS overrides for html, body.admin-page, #container, #content, .colMS, .colSM, .main, and all child elements
+    - Ensured all admin page elements use 100% width with !important flags to override Django's default admin CSS
+    - Added box-sizing: border-box to all admin content elements
+    - Targeted both body.admin-page and general selectors to catch all possible width constraints
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev
   - Version: 0.2.0-alpha.4
   - Summary:
     - Fixed admin dashboard width issue by removing max-width constraint on #container element
