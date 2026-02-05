@@ -17,6 +17,9 @@ Fixed:
 - Added JavaScript to hide sidebars and filters that constrain content width
 - Force viewport width (100vw) on all container elements to break out of constraints
 - Fixed footer width issue - footer now spans full browser width using 100vw and calc() margins
+- Fixed footer positioning - footer now sticks to bottom of page using flexbox (matches portal)
+- Fixed footer content width - changed from 1200px to 980px to match portal and eliminate right gap
+- Footer styling now matches portal exactly (same grid layout, padding, and max-width)
 - Interactive install wizard to collect .env values and bootstrap local Postgres
 - Improved admin interface with helpful descriptions and member/link counts
 - Setup guide documentation (SETUP_GUIDE.md)
