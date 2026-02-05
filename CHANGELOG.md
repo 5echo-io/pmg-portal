@@ -16,6 +16,7 @@ Fixed:
 - Injected CSS directly into template to ensure it loads last and overrides all Django admin styles
 - Added JavaScript to hide sidebars and filters that constrain content width
 - Force viewport width (100vw) on all container elements to break out of constraints
+- Fixed footer width issue - footer now spans full browser width using 100vw and calc() margins
 - Interactive install wizard to collect .env values and bootstrap local Postgres
 - Improved admin interface with helpful descriptions and member/link counts
 - Setup guide documentation (SETUP_GUIDE.md)
