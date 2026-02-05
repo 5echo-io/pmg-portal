@@ -409,10 +409,10 @@ footer.footer .footer-content,
 
 #content h1 {
   color: var(--text-primary) !important;
-  font-size: 24px !important;
+  font-size: 20px !important;
   font-weight: 600 !important;
   letter-spacing: -0.02em !important;
-  margin: 0 0 24px 0 !important;
+  margin: 0 0 16px 0 !important;
   padding: 0 !important;
 }
 
@@ -430,7 +430,7 @@ footer.footer .footer-content,
   margin: 0 0 12px 0 !important;
 }
 
-/* ===== BREADCRUMBS – boxed layout (same width as content) ===== */
+/* ===== BREADCRUMBS – boxed layout, left-aligned ===== */
 body.admin-page nav[aria-label="Breadcrumbs"],
 body.admin-page .breadcrumbs {
   max-width: 980px !important;
@@ -439,6 +439,7 @@ body.admin-page .breadcrumbs {
   padding-left: 20px !important;
   padding-right: 20px !important;
   box-sizing: border-box !important;
+  text-align: left !important;
 }
 
 .breadcrumbs {
@@ -481,16 +482,78 @@ body.admin-page .breadcrumbs {
   background: transparent !important;
 }
 
-#nav-sidebar .module h2 {
-  font-size: 11px !important;
-  font-weight: 600 !important;
+/* Side menu section headers: not clickable, distinct from links */
+#nav-sidebar .module h2,
+#nav-sidebar .module caption {
+  font-size: 10px !important;
+  font-weight: 700 !important;
   text-transform: uppercase !important;
-  letter-spacing: 0.06em !important;
+  letter-spacing: 0.08em !important;
   color: var(--text-tertiary) !important;
-  padding: 16px 20px 10px !important;
+  padding: 12px 20px 8px !important;
   margin: 0 !important;
   border: none !important;
   background: transparent !important;
+}
+
+#nav-sidebar .module h2 a,
+#nav-sidebar .module caption a {
+  pointer-events: none !important;
+  cursor: default !important;
+  color: inherit !important;
+  text-decoration: none !important;
+}
+
+/* Collapsible sections: collapsed by default (content hidden) */
+#nav-sidebar .module.collapsed table,
+#nav-sidebar .module.collapsed ul {
+  display: none !important;
+}
+
+#nav-sidebar .module caption,
+#nav-sidebar .module h2 {
+  cursor: pointer !important;
+  user-select: none !important;
+}
+
+#nav-sidebar .module caption::after,
+#nav-sidebar .module h2::after {
+  content: '' !important;
+  display: inline-block !important;
+  margin-left: 8px !important;
+  width: 0 !important;
+  height: 0 !important;
+  border-top: 4px solid transparent !important;
+  border-bottom: 4px solid transparent !important;
+  border-left: 5px solid var(--text-tertiary) !important;
+  vertical-align: middle !important;
+  transition: transform 0.2s !important;
+}
+
+#nav-sidebar .module:not(.collapsed) caption::after,
+#nav-sidebar .module:not(.collapsed) h2::after {
+  border-left: 4px solid transparent !important;
+  border-right: 4px solid transparent !important;
+  border-top: 5px solid var(--text-tertiary) !important;
+  border-bottom: none !important;
+  margin-left: 6px !important;
+}
+
+/* Add link in side menu: minimal */
+#nav-sidebar .addlink,
+#nav-sidebar a[href*="/add/"] {
+  font-size: 12px !important;
+  padding: 6px 20px 6px 28px !important;
+  color: var(--success) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+
+#nav-sidebar .addlink:hover,
+#nav-sidebar a[href*="/add/"]:hover {
+  background: rgba(16, 185, 129, 0.1) !important;
+  color: #34d399 !important;
 }
 
 #nav-sidebar .module caption,
@@ -627,9 +690,9 @@ body.admin-page #content:has(.dashboard-page) .breadcrumbs {
   background: var(--surface-elevated) !important;
   border-bottom: 1px solid var(--border) !important;
   color: var(--text-primary) !important;
-  padding: 16px 20px !important;
+  padding: 10px 16px !important;
   margin: 0 !important;
-  font-size: 14px !important;
+  font-size: 12px !important;
   font-weight: 600 !important;
   text-transform: uppercase !important;
   letter-spacing: 0.05em !important;
@@ -649,7 +712,7 @@ body.admin-page #content:has(.dashboard-page) .breadcrumbs {
 .module td,
 .module th {
   color: var(--text-primary) !important;
-  font-size: 14px !important;
+  font-size: 12px !important;
 }
 
 /* ===== TABLES ===== */
@@ -670,12 +733,12 @@ body.admin-page #content:has(.dashboard-page) .breadcrumbs {
   background: var(--surface-elevated) !important;
   border-bottom: 1px solid var(--border) !important;
   color: var(--text-secondary) !important;
-  padding: 14px 18px !important;
+  padding: 10px 14px !important;
   font-weight: 600 !important;
-  font-size: 11px !important;
+  font-size: 10px !important;
   text-align: left !important;
   text-transform: uppercase !important;
-  letter-spacing: 0.08em !important;
+  letter-spacing: 0.06em !important;
   white-space: nowrap !important;
 }
 
@@ -694,9 +757,9 @@ body.admin-page #content:has(.dashboard-page) .breadcrumbs {
 
 #result_list tbody td {
   border-bottom: 1px solid var(--border) !important;
-  padding: 16px 18px !important;
+  padding: 10px 14px !important;
   color: var(--text-primary) !important;
-  font-size: 13px !important;
+  font-size: 12px !important;
   vertical-align: middle !important;
 }
 
@@ -942,16 +1005,16 @@ input[type="submit"].default:hover,
   background: var(--danger) !important;
   color: white !important;
   border-radius: var(--radius-sm) !important;
-  padding: 10px 20px !important;
-  font-size: 14px !important;
+  padding: 6px 14px !important;
+  font-size: 12px !important;
   font-weight: 500 !important;
   text-decoration: none !important;
   transition: var(--transition) !important;
   box-shadow: var(--shadow-sm) !important;
   display: inline-flex !important;
   align-items: center !important;
-  gap: 8px !important;
-  height: 40px !important;
+  gap: 6px !important;
+  height: 32px !important;
 }
 
 .deletelink::before,
@@ -989,24 +1052,24 @@ input[type="submit"].default:hover,
 .object-tools a {
   border-radius: var(--radius-sm) !important;
   border: 1px solid var(--border) !important;
-  padding: 10px 20px !important;
+  padding: 6px 14px !important;
   font-weight: 500 !important;
   color: var(--text-primary) !important;
   background: var(--surface-elevated) !important;
   text-decoration: none !important;
   display: inline-flex !important;
   align-items: center !important;
-  gap: 8px !important;
-  height: 40px !important;
-  font-size: 14px !important;
+  gap: 6px !important;
+  height: 32px !important;
+  font-size: 12px !important;
   transition: var(--transition) !important;
   box-shadow: var(--shadow-sm) !important;
 }
 
 .object-tools .addlink {
   padding: 6px 12px !important;
-  height: 28px !important;
-  font-size: 13px !important;
+  height: 32px !important;
+  font-size: 12px !important;
   gap: 6px !important;
   border-color: var(--success) !important;
   background: var(--success) !important;
@@ -1076,12 +1139,44 @@ input[type="submit"].default:hover,
   color: rgba(255, 255, 255, 0.95) !important;
 }
 
+/* ===== CHANGELIST LAYOUT: filter sidebar on LEFT of content ===== */
+#changelist-form {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  gap: 24px !important;
+  align-items: flex-start !important;
+}
+
+#changelist-filter {
+  order: -1 !important;
+  flex: 0 0 260px !important;
+  min-width: 260px !important;
+}
+
+#changelist-form > div:first-of-type {
+  flex: 1 !important;
+  min-width: 0 !important;
+}
+
+/* Filters box: "Filters" title on top */
+#changelist-filter h2 {
+  margin: 0 !important;
+  padding: 12px 16px !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.06em !important;
+  border-bottom: 1px solid var(--border) !important;
+}
+
 /* ===== FILTERS ===== */
 #changelist-filter {
   background: var(--surface) !important;
   border: 1px solid var(--border) !important;
   border-radius: var(--radius-md) !important;
   padding: 0 !important;
+  margin-bottom: 24px !important;
   box-shadow: var(--shadow-sm) !important;
   position: static !important;
   display: block !important;
@@ -1110,14 +1205,12 @@ input[type="submit"].default:hover,
 
 #changelist-filter h2 {
   background: var(--surface-elevated) !important;
-  border-bottom: 1px solid var(--border) !important;
   color: var(--text-primary) !important;
-  padding: 14px 18px !important;
   margin: 0 !important;
-  font-size: 12px !important;
+  font-size: 11px !important;
   font-weight: 600 !important;
   text-transform: uppercase !important;
-  letter-spacing: 0.05em !important;
+  letter-spacing: 0.06em !important;
 }
 
 #changelist-filter h3 {
@@ -1215,8 +1308,8 @@ a:hover {
   background: var(--surface) !important;
   border: 1px solid var(--border) !important;
   border-radius: var(--radius-md) !important;
-  padding: 16px !important;
-  margin-top: 24px !important;
+  padding: 12px !important;
+  margin-top: 16px !important;
   text-align: center !important;
   box-shadow: var(--shadow-sm) !important;
 }
@@ -1231,12 +1324,12 @@ a:hover {
   border: 1px solid var(--border) !important;
   color: var(--text-primary) !important;
   border-radius: var(--radius-sm) !important;
-  padding: 8px 14px !important;
-  margin: 0 4px !important;
+  padding: 6px 12px !important;
+  margin: 0 3px !important;
   text-decoration: none !important;
   display: inline-block !important;
   transition: var(--transition) !important;
-  font-size: 14px !important;
+  font-size: 12px !important;
   font-weight: 500 !important;
 }
 
@@ -1258,8 +1351,8 @@ a:hover {
   background: var(--surface) !important;
   border: 1px solid var(--border) !important;
   border-radius: var(--radius-md) !important;
-  padding: 20px !important;
-  margin-bottom: 24px !important;
+  padding: 14px !important;
+  margin-bottom: 16px !important;
   box-shadow: var(--shadow-sm) !important;
 }
 
@@ -1401,8 +1494,8 @@ body.admin-page #content .dashboard-grid {
 
 /* Admin home: only two boxes (Auth + Portal), wider panels */
 body.admin-page #content .dashboard-grid-two {
-  grid-template-columns: repeat(2, 1fr) !important;
-  gap: 32px !important;
+  grid-template-columns: repeat(2, minmax(380px, 1fr)) !important;
+  gap: 40px !important;
 }
 
 @media (max-width: 900px) {
@@ -1432,21 +1525,56 @@ body.admin-page #content .content-wrapper .panel {
   margin-top: 0 !important;
 }
 
-body.admin-page #content .content-wrapper .panel h2 {
+body.admin-page #content .content-wrapper .panel h2,
+body.admin-page #content .content-wrapper .panel h2.dashboard-panel-title {
   margin: 0 0 16px 0 !important;
   font-size: 16px !important;
   font-weight: 600 !important;
   padding-bottom: 12px !important;
   border-bottom: 1px solid var(--line) !important;
-}
-
-body.admin-page #content .content-wrapper .panel h2 .section-link {
   color: var(--text-primary) !important;
-  text-decoration: none !important;
 }
 
-body.admin-page #content .content-wrapper .panel h2 .section-link:hover {
+/* Dashboard: minimal Add/Change buttons with SVG */
+body.admin-page #content .content-wrapper .list-actions .addlink-minimal,
+body.admin-page #content .content-wrapper .list-actions .changelink-minimal {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  padding: 6px 12px !important;
+  height: 28px !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  border-radius: 6px !important;
+  text-decoration: none !important;
+  transition: var(--transition) !important;
+}
+
+body.admin-page #content .content-wrapper .list-actions .addlink-minimal {
+  background: rgba(16, 185, 129, 0.15) !important;
+  border: 1px solid rgba(16, 185, 129, 0.4) !important;
+  color: #10b981 !important;
+}
+
+body.admin-page #content .content-wrapper .list-actions .addlink-minimal:hover {
+  background: rgba(16, 185, 129, 0.25) !important;
+  border-color: #10b981 !important;
+}
+
+body.admin-page #content .content-wrapper .list-actions .changelink-minimal {
+  background: rgba(59, 130, 246, 0.12) !important;
+  border: 1px solid rgba(59, 130, 246, 0.3) !important;
   color: var(--accent) !important;
+}
+
+body.admin-page #content .content-wrapper .list-actions .changelink-minimal:hover {
+  background: rgba(59, 130, 246, 0.2) !important;
+  border-color: var(--accent) !important;
+}
+
+body.admin-page #content .content-wrapper .list-actions .addlink-minimal svg,
+body.admin-page #content .content-wrapper .list-actions .changelink-minimal svg {
+  flex-shrink: 0 !important;
 }
 
 body.admin-page #content .content-wrapper .list {

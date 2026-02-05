@@ -442,13 +442,15 @@ a.link:hover { color: var(--text); }
 .list-item:first-child { border-top: 0; }
 .list-title { font-weight: 600; }
 
-/* Shared footer wrapper (Portal and all non-admin pages) – matches admin footer */
+/* Shared footer wrapper (Portal and all non-admin pages) – matches admin footer, stable so it doesn’t “refresh” */
 .site-footer-wrapper {
   margin-top: auto;
   flex-shrink: 0;
   width: 100%;
+  min-height: 120px;
   border-top: 1px solid var(--line);
   background: #0c1426;
+  contain: layout style;
 }
 
 .site-footer-wrapper .footer {

@@ -211,7 +211,7 @@ document.addEventListener('keydown', function(e) {
   }
 });
 
-// Enforce static admin sidebar (no toggle)
+// Enforce static admin sidebar (no toggle) and fix sidebar hidden after back/forward
 (function() {
   function enforceNavSidebar() {
     const body = document.body;
@@ -221,6 +221,11 @@ document.addEventListener('keydown', function(e) {
     if (body) {
       body.classList.remove('nav-sidebar-collapsed');
     }
+    try {
+      if (typeof sessionStorage !== 'undefined') {
+        sessionStorage.removeItem('django.admin.navSidebarIsOpen');
+      }
+    } catch (e) {}
 
     if (toggle) {
       toggle.remove();
@@ -228,16 +233,55 @@ document.addEventListener('keydown', function(e) {
 
     if (navSidebar) {
       navSidebar.style.display = 'block';
+      navSidebar.removeAttribute('hidden');
     }
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', enforceNavSidebar);
-  } else {
-    enforceNavSidebar();
+  function initNavSidebarCollapse() {
+    const nav = document.getElementById('nav-sidebar');
+    if (!nav) return;
+    var modules = nav.querySelectorAll('.module');
+    modules.forEach(function(mod) {
+      mod.classList.add('collapsed');
+      var cap = mod.querySelector('caption');
+      var h2 = mod.querySelector('h2');
+      var header = cap || h2;
+      if (header) {
+        header.setAttribute('role', 'button');
+        header.setAttribute('aria-expanded', 'false');
+        header.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          var open = !mod.classList.toggle('collapsed');
+          header.setAttribute('aria-expanded', open ? 'true' : 'false');
+        });
+        var link = header.querySelector('a');
+        if (link) {
+          link.addEventListener('click', function(e) { e.preventDefault(); });
+        }
+      }
+    });
   }
 
-  window.addEventListener('load', enforceNavSidebar);
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
+      enforceNavSidebar();
+      initNavSidebarCollapse();
+    });
+  } else {
+    enforceNavSidebar();
+    initNavSidebarCollapse();
+  }
+
+  window.addEventListener('load', function() {
+    enforceNavSidebar();
+    initNavSidebarCollapse();
+  });
+  window.addEventListener('pageshow', function(ev) {
+    if (ev.persisted) {
+      enforceNavSidebar();
+    }
+  });
   setTimeout(enforceNavSidebar, 100);
   setTimeout(enforceNavSidebar, 300);
 })();
