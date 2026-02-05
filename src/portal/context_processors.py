@@ -8,6 +8,34 @@ Last Modified: 2026-02-05
 """
 from pathlib import Path
 from django.conf import settings
+from .models import CustomerMembership
+
+def user_customers(request):
+    """Add user's customer memberships to all templates."""
+    if not request or not request.user or not request.user.is_authenticated:
+        return {
+            "user_customers": [],
+            "active_customer_id": None,
+        }
+    
+    memberships = CustomerMembership.objects.filter(
+        user=request.user
+    ).select_related("customer").order_by("customer__name")
+    
+    # Get active customer from session, or use first membership
+    active_customer_id = request.session.get("active_customer_id")
+    if active_customer_id:
+        # Verify user still has access to this customer
+        if not memberships.filter(customer_id=active_customer_id).exists():
+            active_customer_id = None
+    
+    if not active_customer_id and memberships.exists():
+        active_customer_id = memberships.first().customer_id
+    
+    return {
+        "user_customers": list(memberships),
+        "active_customer_id": active_customer_id,
+    }
 
 def footer_info(request):
     """Add footer information to templates. Only runs for portal templates, not admin."""

@@ -1,7 +1,8 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Prefetch
-from .models import CustomerMembership
+from django.contrib import messages
+from .models import CustomerMembership, Customer
 
 @login_required
 def portal_home(request):
@@ -17,9 +18,19 @@ def portal_home(request):
         if not memberships.exists():
             return render(request, "portal/no_customer.html")
 
-        # For now: if multiple customers, show first one.
-        # Later: add customer switcher (dropdown).
-        active = memberships.first()
+        # Get active customer from session, or use first one
+        active_customer_id = request.session.get("active_customer_id")
+        if active_customer_id:
+            active = memberships.filter(customer_id=active_customer_id).first()
+            if not active:
+                # User no longer has access, reset to first
+                active_customer_id = None
+        
+        if not active_customer_id:
+            active = memberships.first()
+            if active:
+                request.session["active_customer_id"] = active.customer_id
+        
         if not active or not active.customer:
             return render(request, "portal/no_customer.html")
             
@@ -44,3 +55,33 @@ def portal_home(request):
         logger.exception("Error in portal_home view")
         # Fallback to no_customer template on any error
         return render(request, "portal/no_customer.html")
+
+@login_required
+def switch_customer(request, customer_id):
+    """Switch active customer for the current user."""
+    if request.method != "POST":
+        messages.error(request, "Invalid request method.")
+        referer = request.META.get("HTTP_REFERER", "/portal/")
+        return redirect(referer)
+    
+    # Handle "All Customers" (customer_id = 0) for admin
+    if customer_id == 0:
+        request.session.pop("active_customer_id", None)
+        messages.success(request, "Viewing all customers")
+        referer = request.META.get("HTTP_REFERER", "/admin/")
+        return redirect(referer)
+    
+    # Verify user has access to this customer
+    membership = get_object_or_404(
+        CustomerMembership,
+        user=request.user,
+        customer_id=customer_id
+    )
+    
+    # Store in session
+    request.session["active_customer_id"] = customer_id
+    messages.success(request, f"Switched to {membership.customer.name}")
+    
+    # Redirect back to referer or portal home
+    referer = request.META.get("HTTP_REFERER", "/portal/")
+    return redirect(referer)

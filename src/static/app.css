@@ -148,6 +148,34 @@ a.link:hover { color: var(--text); }
   border-color: var(--btnHover);
   color: var(--text);
 }
+
+.customer-switcher {
+  padding: 6px 12px;
+  border-radius: 6px;
+  background: var(--btn);
+  color: var(--text);
+  border: 1px solid var(--line);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.customer-switcher:hover {
+  background: var(--btnHover);
+  border-color: var(--btnHover);
+}
+
+.customer-switcher:focus {
+  outline: none;
+  border-color: var(--btnHover);
+  box-shadow: 0 0 0 2px rgba(42, 58, 92, 0.3);
+}
+
+.topbar-customer-name {
+  color: var(--muted);
+  font-size: 13px;
+}
 .container { max-width: 980px; margin: 0 auto; padding: 20px; }
 
 .panel {

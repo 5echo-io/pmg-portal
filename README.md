@@ -11,14 +11,35 @@ A Django + Postgres portal foundation:
 ## Quick start (Ubuntu)
 
 ### Option 1: One-line install from GitHub (Recommended)
+
+**Fresh Installation:**
 ```bash
-sudo apt install curl -y && curl -fsSL https://raw.githubusercontent.com/5echo-io/pmg-portal/dev/install.sh | sudo bash
+curl -fsSL https://raw.githubusercontent.com/5echo-io/pmg-portal/dev/install.sh | sudo bash
 ```
 
-The installer will:
-- Detect if PMG Portal is already installed
-- If installed: prompt to **Update** (preserves database) or **Uninstall**
-- If not installed: run fresh installation wizard
+**Update Existing Installation:**
+```bash
+curl -fsSL https://raw.githubusercontent.com/5echo-io/pmg-portal/dev/install.sh | sudo bash
+```
+The installer will automatically detect if PMG Portal is already installed and prompt you to choose:
+- **1) Update** - Preserves database and `.env` file, updates code and dependencies
+- **2) Uninstall** - Removes everything including database (with confirmation prompt)
+- **3) Cancel** - Exit without changes
+
+**Interactive Mode:**
+When run in an interactive terminal, you'll be prompted to choose between Update/Uninstall/Cancel.
+When run non-interactively (piped from curl), it defaults to Update mode.
+
+**What the installer does:**
+- Installs OS dependencies (Python, Postgres, etc.)
+- Interactive wizard to configure `.env` file
+- Sets up local Postgres database and user
+- Creates Python virtual environment
+- Installs Python dependencies
+- Runs Django migrations
+- Collects static files
+- Creates default admin user (if none exists)
+- Sets up systemd service
 
 ### Option 2: Manual installation
 1) Install Postgres and create database/user (see .env.example)
