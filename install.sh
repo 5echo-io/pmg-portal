@@ -29,7 +29,8 @@ if [ -d "$APP_DIR" ] && [ -f "$APP_DIR/.env" ]; then
     echo "2) Uninstall (removes everything including database)"
     echo "3) Cancel"
     echo ""
-    read -rp "Enter choice [1-3]: " choice
+    # Use /dev/tty to read from terminal even when stdin is piped
+    read -rp "Enter choice [1-3]: " choice </dev/tty
     
     case "$choice" in
         1)
@@ -66,7 +67,7 @@ if [ "$MODE" = "uninstall" ]; then
         set +a
         
         echo ""
-        read -rp "Remove Postgres database? (y/N): " remove_db
+        read -rp "Remove Postgres database? (y/N): " remove_db </dev/tty
         if [[ "$remove_db" =~ ^[Yy]$ ]]; then
             if [ "${POSTGRES_HOST:-127.0.0.1}" = "127.0.0.1" ] || [ "${POSTGRES_HOST:-127.0.0.1}" = "localhost" ]; then
                 echo "Removing Postgres database..."
