@@ -2,6 +2,12 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev
+  - Version: 0.15.19-beta.3
+  - Summary:
+    - Customer dropdown: reduced vertical spacing between list items (min-height 0, padding 4px 12px, line-height 1.25)
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev
   - Version: 0.3.0-beta.2
   - Summary:
     - Changelog footer shows beta version section; modal "View Full Changelog" hides short version

@@ -5,6 +5,10 @@ This project follows Semantic Versioning (SemVer).
 
 ## [Unreleased]
 
+## [0.15.19-beta.3] – 2026-02-05
+Changed:
+- Customer dropdown: reduced vertical spacing between list items (min-height 0, padding 4px 12px, line-height 1.25)
+
 ## [0.3.0-beta.2] – 2026-02-05
 Changelog and profile improvements, email-as-primary login.
 
