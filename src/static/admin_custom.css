@@ -390,21 +390,21 @@ body.admin-page .admin-footer-wrapper .footer,
   border: none !important;
 }
 
-/* Ensure footer-content matches portal styling exactly (centered, same max-width as portal) */
+/* Footer content: same max-width as container (1280px), responsive */
 body.admin-page .footer-content,
 .footer-content,
 body.admin-page.dashboard .footer-content,
 footer.footer .footer-content,
 .footer .footer-content {
-  max-width: 980px !important;
+  max-width: 1280px !important;
   width: 100% !important;
   margin: 0 auto !important;
-  padding-left: 20px !important;
-  padding-right: 20px !important;
+  padding-left: 32px !important;
+  padding-right: 32px !important;
   box-sizing: border-box !important;
   display: grid !important;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
-  gap: 30px !important;
+  gap: 24px !important;
 }
 
 #content h1 {
@@ -456,14 +456,14 @@ body.admin-page .breadcrumbs {
 /* Footer content: same as portal (centered, max-width 980px) */
 
 .footer-content {
-  max-width: 980px !important;
+  max-width: 1280px !important;
   width: 100% !important;
   margin: 0 auto !important;
-  padding-left: 20px !important;
-  padding-right: 20px !important;
+  padding-left: 32px !important;
+  padding-right: 32px !important;
   display: grid !important;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
-  gap: 30px !important;
+  gap: 24px !important;
   box-sizing: border-box !important;
 }
 

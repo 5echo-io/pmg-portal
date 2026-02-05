@@ -4,6 +4,34 @@ All notable changes to this project will be documented in this file.
 This project follows Semantic Versioning (SemVer).
 
 ## [Unreleased]
+
+## [0.3.0-beta.1] – 2026-02-05
+First beta release. Portal at root, custom admin UI, wider layout, and UX improvements.
+
+Added:
+- Portal at site root (/) with HTMX for no-refresh navigation
+- Custom admin app at /admin/ (User management, Customers & access, Portal management)
+- Customer dropdown in header (avatar-style with search when >4 customers)
+- Superusers can switch to any customer; redirect to / after customer switch
+- Wider layout (1280px) aligned with topbar and footer
+- Admin list filters: Staff/Active labels, single-row toolbar, outlined Search button
+- Admin forms: card layout, two-column rows (e.g. username|email), aligned Save/Cancel
+- Profile modals: Cancel restores active tab to Account Information
+
+Changed:
+- Version scheme to beta (0.3.0-beta.1)
+- Buttons: smaller (36px height), vertically centered, Search button outlined
+- Footer: max-width 1280px, responsive padding
+- Customer dropdown: reduced row spacing (min-height 32px, padding 2px 12px)
+- Topbar: customer picker height/alignment for consistent vertical center
+- Edit (table) button: higher contrast hover (blue background)
+
+Fixed:
+- Footer width now matches main content (1280px)
+- Profile: Change password / Delete account Cancel returns to Account Information tab
+- Form button vertical alignment across admin forms
+
+## Previous changes (pre-0.3.0)
 Added:
 - Debug view accessible via avatar menu for superusers
 - Comprehensive logging middleware for backend request/response tracking
