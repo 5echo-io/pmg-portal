@@ -100,43 +100,44 @@ def footer_info(request):
                 if changelog_file.exists() and changelog_file.is_file():
                     content = changelog_file.read_text(encoding='utf-8')
                     changelog_full = content  # Store full changelog for modal
-                    
-                    # Determine which section to show based on version
-                    if "beta" in version.lower():
-                        # Beta: look for exact version section (e.g. ## [0.3.0-beta.2])
-                        version_clean = version.strip()
-                        version_pattern = f"## [{version_clean}]"
-                        if version_pattern in content:
-                            parts = content.split(version_pattern, 1)
-                            if len(parts) > 1:
-                                changelog_section = parts[1].split("## [")[0].strip()
-                                show_changelog_button = True
+                    show_changelog_button = True
+
+                    # Full release = plain MAJOR.MINOR.PATCH with no build (alpha/beta/rc). Any build suffix → Unreleased
+                    is_full_major = (
+                        "beta" not in version.lower()
+                        and "alpha" not in version.lower()
+                        and "rc" not in version.lower()
+                        and not version.strip().startswith("0.")
+                    )
+
+                    if is_full_major:
+                        # Full MAJOR release: show all sections for this major (e.g. all ## [1.x.x])
+                        major_num = version.strip().split("-")[0].split(".")[0]
+                        sections = []
+                        rest = content
+                        while "## [" in rest:
+                            i = rest.index("## [")
+                            segment = rest[i:]
+                            j = segment[4:].find("## [")
+                            block = segment[: 4 + j].rstrip() if j != -1 else segment.rstrip()
+                            rest = segment[4 + j:] if j != -1 else ""
+                            title = block[4 : block.index("]") + 1] if "]" in block else ""
+                            if title.startswith(f"{major_num}."):
+                                sections.append(block)
+                        if sections:
+                            changelog_section = "\n\n".join(sections)
                         elif "## [Unreleased]" in content:
-                            unreleased = content.split("## [Unreleased]")[1].split("## [")[0]
-                            changelog_section = unreleased.strip()
-                            show_changelog_button = True
-                    elif version.startswith("0.1.0-alpha") or "alpha" in version.lower():
-                        if "## [Unreleased]" in content:
-                            unreleased = content.split("## [Unreleased]")[1].split("## [")[0]
-                            changelog_section = unreleased.strip()
-                            show_changelog_button = True
+                            unreleased = content.split("## [Unreleased]")[1].split("## [")[0].strip()
+                            changelog_section = unreleased or "Ingen endringer listet."
+                        else:
+                            changelog_section = "Ingen endringer listet."
                     else:
-                        # Major release - find matching version section
-                        # Extract major version (e.g., "0.1.0" from "0.1.0-alpha.5")
-                        major_version = version.split('-')[0] if '-' in version else version
-                        version_pattern = f"## [{major_version}"
-                        if version_pattern in content:
-                            # Find the section for this version
-                            parts = content.split(version_pattern)
-                            if len(parts) > 1:
-                                version_section = parts[1].split("## [")[0]
-                                changelog_section = version_section.strip()
-                                show_changelog_button = True
-                        elif "## [Unreleased]" in content:
-                            # Fallback to Unreleased if version section not found
-                            unreleased = content.split("## [Unreleased]")[1].split("## [")[0]
-                            changelog_section = unreleased.strip()
-                            show_changelog_button = True
+                        # Non–full MAJOR (0.x, beta, alpha): short view always shows Unreleased
+                        if "## [Unreleased]" in content:
+                            unreleased = content.split("## [Unreleased]")[1].split("## [")[0].strip()
+                            changelog_section = unreleased or "Ingen unreleased endringer."
+                        else:
+                            changelog_section = "Ingen unreleased endringer."
                     break
             except (OSError, IOError, UnicodeDecodeError, PermissionError):
                 continue

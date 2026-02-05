@@ -5,40 +5,7 @@ This project follows Semantic Versioning (SemVer).
 
 ## [Unreleased]
 
-## [0.15.22-beta.4] – 2026-02-05
-Changed:
-- Changelog modal: non–full MAJOR (0.x, beta, alpha) always shows Unreleased; full MAJOR shows all sections for that major
-- Changelog modal: no scroll on modal container; only content boxes scroll (responsive)
-- Changelog modal: fade animation when toggling View Full / Hide Full Changelog
-
-## [0.15.19-beta.3] – 2026-02-05
-Changed:
-- Customer dropdown: reduced vertical spacing between list items (min-height 0, padding 4px 12px, line-height 1.25)
-
-## [0.3.0-beta.2] – 2026-02-05
-Changelog and profile improvements, email-as-primary login.
-
-Added:
-- Changelog modal: "View Full Changelog" hides short version; "Hide Full Changelog" shows it again
-- Profile Account Information: edit (pencil) button to edit email, first name, last name
-- Panel footer on Account Information for "Joined [date]" and future account metadata
-- Migration `accounts.0001_sync_username_from_email`: syncs User.username from User.email for existing users
-
-Changed:
-- Changelog in footer: beta versions now show matching version section (e.g. 0.3.0-beta.1) instead of Unreleased
-- Avatar initial: first letter of first name, then last name, then email (no longer username)
-- Customer dropdown: tighter row spacing (min-height 28px, padding 0 12px); wrapper align-self center
-- Login: field labeled "Email"; accepts email or username; login with email preferred
-- Registration: username hidden and set from email; new users get username = email
-- Profile delete account: confirm with email instead of username
-- Install wizard: first admin created with username = email; prompt "DEFAULT_ADMIN_EMAIL (login email for first admin)"
-
-Fixed:
-- Changelog footer not showing latest beta section
-- Profile modal Cancel/Escape restoring Account Information tab (including Escape key)
-
-## [0.3.0-beta.1] – 2026-02-05
-First beta release. Portal at root, custom admin UI, wider layout, and UX improvements.
+All pre-release builds (alpha, beta, rc) are shown as Unreleased until release as plain MAJOR.MINOR.PATCH.
 
 Added:
 - Portal at site root (/) with HTMX for no-refresh navigation
@@ -49,18 +16,29 @@ Added:
 - Admin list filters: Staff/Active labels, single-row toolbar, outlined Search button
 - Admin forms: card layout, two-column rows (e.g. username|email), aligned Save/Cancel
 - Profile modals: Cancel restores active tab to Account Information
+- Changelog modal with "View Full Changelog" / "Hide Full Changelog" toggle
+- Profile Account Information: edit (pencil) button to edit email, first name, last name
+- Panel footer on Account Information for "Joined [date]" and future account metadata
+- Migration `accounts.0001_sync_username_from_email`: syncs User.username from User.email for existing users
 
 Changed:
-- Version scheme to beta (0.3.0-beta.1)
+- Version scheme to beta
 - Buttons: smaller (36px height), vertically centered, Search button outlined
 - Footer: max-width 1280px, responsive padding
-- Customer dropdown: reduced row spacing (min-height 32px, padding 2px 12px)
+- Customer dropdown: reduced vertical spacing (min-height 0, padding 4px 12px, line-height 1.25); wrapper align-self center
 - Topbar: customer picker height/alignment for consistent vertical center
 - Edit (table) button: higher contrast hover (blue background)
+- Changelog: pre-release builds (alpha, beta, rc) always show Unreleased; full release shows all sections for that major
+- Changelog modal: no scroll on modal container; only content boxes scroll; fade animation when toggling View Full / Hide Full
+- Avatar initial: first letter of first name, then last name, then email (no longer username)
+- Login: field labeled "Email"; accepts email or username; login with email preferred
+- Registration: username hidden and set from email; new users get username = email
+- Profile delete account: confirm with email instead of username
+- Install wizard: first admin created with username = email; prompt "DEFAULT_ADMIN_EMAIL (login email for first admin)"
 
 Fixed:
 - Footer width now matches main content (1280px)
-- Profile: Change password / Delete account Cancel returns to Account Information tab
+- Profile: Change password / Delete account Cancel returns to Account Information tab; modal Cancel/Escape restores tab (including Escape key)
 - Form button vertical alignment across admin forms
 
 ## Previous changes (pre-0.3.0)
