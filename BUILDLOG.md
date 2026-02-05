@@ -2,6 +2,19 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev (suggested)
+  - Version: 0.1.0-alpha.20
+  - Summary:
+    - Added auto-dismiss functionality to toast notifications (5 seconds)
+    - Toast notifications now fade out smoothly before removal
+    - Avatar dropdown now displays full name (first_name + last_name) instead of username
+    - Falls back to username if full name is not set
+    - Password change page buttons now match in height (40px)
+    - Buttons aligned to the right side of the form
+    - Created form-btn and form-btn-primary/secondary CSS classes for consistent button styling
+    - Improved user experience with better visual feedback
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev (suggested)
   - Version: 0.1.0-alpha.19
   - Summary:
     - Ensured footer is identical on portal and admin pages

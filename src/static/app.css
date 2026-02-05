@@ -452,6 +452,17 @@ a.link:hover { color: var(--text); }
   }
 }
 
+@keyframes toastSlideOut {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
 .toast-content {
   display: flex;
   align-items: center;
@@ -508,6 +519,47 @@ a.link:hover { color: var(--text); }
 .toast-info {
   border-color: rgba(59, 130, 246, 0.3);
   background: rgba(59, 130, 246, 0.1);
+}
+
+/* Form Buttons */
+.form-btn {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  min-width: 120px;
+}
+
+.form-btn-primary {
+  background: #3b82f6;
+  border-color: #3b82f6;
+  color: white;
+}
+
+.form-btn-primary:hover {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: white;
+}
+
+.form-btn-secondary {
+  background: var(--btn);
+  border-color: var(--line);
+  color: var(--text);
+}
+
+.form-btn-secondary:hover {
+  background: var(--btnHover);
+  border-color: var(--btnHover);
+  color: var(--text);
 }
 
 /* Admin Modal (for Recent Actions) */

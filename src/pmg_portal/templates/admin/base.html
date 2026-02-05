@@ -35,7 +35,7 @@
       </button>
       <div id="user-menu" class="user-menu">
         <div class="user-menu-header">
-          <div class="user-menu-name">{{ request.user.username }}</div>
+          <div class="user-menu-name">{% if request.user.first_name or request.user.last_name %}{{ request.user.first_name }} {{ request.user.last_name }}{% else %}{{ request.user.username }}{% endif %}</div>
           <div class="user-menu-email">{{ request.user.email|default:"" }}</div>
         </div>
         <div class="user-menu-divider"></div>
@@ -82,14 +82,31 @@
 {% if messages %}
 <div class="toast-container">
   {% for message in messages %}
-  <div class="toast toast-{{ message.tags }}">
+  <div class="toast toast-{{ message.tags }}" data-toast-id="{{ forloop.counter }}">
     <div class="toast-content">
       <span class="toast-message">{{ message }}</span>
-      <button class="toast-close" onclick="this.parentElement.parentElement.remove()">×</button>
+      <button class="toast-close" onclick="dismissToast(this.parentElement.parentElement)">×</button>
     </div>
   </div>
   {% endfor %}
 </div>
+<script>
+  // Auto-dismiss toasts after 5 seconds
+  document.querySelectorAll('.toast').forEach(function(toast) {
+    setTimeout(function() {
+      dismissToast(toast);
+    }, 5000);
+  });
+  
+  function dismissToast(toast) {
+    if (toast) {
+      toast.style.animation = 'toastSlideOut 0.3s ease-out';
+      setTimeout(function() {
+        toast.remove();
+      }, 300);
+    }
+  }
+</script>
 {% endif %}
 
 <!-- Recent Actions Modal -->

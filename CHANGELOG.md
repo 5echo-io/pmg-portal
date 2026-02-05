@@ -61,6 +61,9 @@ Changed:
 - Added password change and profile settings to avatar dropdown menu
 - Improved avatar dropdown close behavior (closes on outside click)
 - Enhanced active page highlight with better contrast and visual design
+- Toast notifications now auto-dismiss after 5 seconds
+- Avatar dropdown now shows full name instead of username (falls back to username if no name set)
+- Password change page buttons now match in height and are aligned to the right
 
 Fixed:
 - Local Postgres bootstrap in installer (role/db creation)
