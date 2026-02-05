@@ -15,6 +15,7 @@ Changed:
 
 Fixed:
 - Local Postgres bootstrap in installer (role/db creation)
+- Static files not loading (templates now use Django static tag, static file serving enabled)
 
 ## [0.1.0-alpha.1] - Initial foundation
 Added:
