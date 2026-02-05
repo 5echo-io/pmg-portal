@@ -430,11 +430,13 @@ document.addEventListener('keydown', function(e) {
       <button class="modal-close" onclick="closeChangelogModal(event)">&times;</button>
     </div>
     <div class="modal-body">
+      <div class="changelog-section-wrap">
       {% if changelog_section %}
-      <div class="footer-changelog">{{ changelog_section|safe }}</div>
+      <div class="changelog-section"><pre class="changelog-content">{{ changelog_section|escape }}</pre></div>
       {% else %}
       <p class="muted">No changelog available for this version.</p>
       {% endif %}
+      </div>
     </div>
   </div>
 </div>

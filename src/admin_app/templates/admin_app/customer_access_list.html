@@ -4,27 +4,30 @@
 {% block breadcrumb_extra %}<span class="breadcrumb-sep">→</span> <span>Customer access</span>{% endblock %}
 
 {% block admin_content %}
-<div class="admin-page-header">
-  <h1 class="admin-page-title">Customer access</h1>
-  <a href="{% url 'admin_app:admin_customer_access_add' %}" class="admin-btn-sm admin-btn-primary">Add access</a>
-</div>
+<h1 class="admin-page-title">Customer access</h1>
 
-<div class="admin-toolbar">
-  <form method="get" action="" style="display: flex; gap: 8px; flex-wrap: wrap;">
-    <input type="text" name="q" value="{{ search }}" placeholder="Search…" class="form-input">
-    <select name="customer" class="form-input" style="width: auto;">
-      <option value="">All customers</option>
-      {% for c in customers %}
-      <option value="{{ c.pk }}" {% if request.GET.customer == c.pk|stringformat:"d" %}selected{% endif %}>{{ c.name }}</option>
-      {% endfor %}
-    </select>
-    <select name="role" class="form-input" style="width: auto;">
-      <option value="">All roles</option>
-      <option value="member" {% if request.GET.role == "member" %}selected{% endif %}>Member</option>
-      <option value="admin" {% if request.GET.role == "admin" %}selected{% endif %}>Customer Admin</option>
-    </select>
-    <button type="submit" class="form-btn form-btn-secondary">Filter</button>
+<div class="admin-toolbar admin-toolbar--single-row">
+  <form method="get" action="" class="admin-toolbar-form">
+    <div class="admin-search-wrap">
+      <label class="admin-search-label" for="id_q_access">SEARCH</label>
+      <div class="admin-search-row">
+        <input type="text" name="q" id="id_q_access" value="{{ search }}" placeholder="Search…" class="form-input admin-search-input">
+        <select name="customer" id="id_filter_customer" class="form-input admin-filter-select">
+          <option value="">All customers</option>
+          {% for c in customers %}
+          <option value="{{ c.pk }}" {% if request.GET.customer == c.pk|stringformat:"d" %}selected{% endif %}>{{ c.name }}</option>
+          {% endfor %}
+        </select>
+        <select name="role" id="id_filter_role" class="form-input admin-filter-select">
+          <option value="">All roles</option>
+          <option value="member" {% if request.GET.role == "member" %}selected{% endif %}>Member</option>
+          <option value="admin" {% if request.GET.role == "admin" %}selected{% endif %}>Customer Admin</option>
+        </select>
+        <button type="submit" class="form-btn form-btn-secondary admin-search-btn">Search</button>
+      </div>
+    </div>
   </form>
+  <a href="{% url 'admin_app:admin_customer_access_add' %}" class="admin-btn-sm admin-btn-primary admin-toolbar-add-btn">Add access</a>
 </div>
 
 <p class="muted">{{ total_count }} access record{{ total_count|pluralize }}</p>

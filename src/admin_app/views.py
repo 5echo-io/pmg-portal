@@ -107,30 +107,30 @@ def role_list(request):
 
 @superuser_required
 def role_add(request):
-    from django.contrib.auth.forms import GroupForm
+    from .forms import RoleForm
     if request.method == "POST":
-        form = GroupForm(request.POST)
+        form = RoleForm(request.POST)
         if form.is_valid():
             form.save()
             messages.success(request, "Role created.")
             return redirect("admin_app:admin_role_list")
     else:
-        form = GroupForm()
+        form = RoleForm()
     return render(request, "admin_app/role_form.html", {"form": form, "role": None})
 
 
 @superuser_required
 def role_edit(request, pk):
-    from django.contrib.auth.forms import GroupForm
+    from .forms import RoleForm
     role = get_object_or_404(Group, pk=pk)
     if request.method == "POST":
-        form = GroupForm(request.POST, instance=role)
+        form = RoleForm(request.POST, instance=role)
         if form.is_valid():
             form.save()
             messages.success(request, "Role updated.")
             return redirect("admin_app:admin_role_list")
     else:
-        form = GroupForm(instance=role)
+        form = RoleForm(instance=role)
     return render(request, "admin_app/role_form.html", {"form": form, "role": role})
 
 
