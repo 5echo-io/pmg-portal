@@ -63,34 +63,35 @@
     const container = document.getElementById('container');
     
     if (content && contentWrapper) {
-      // CRITICAL: Django admin sets width: 464px on #content.colMS
-      // Use cssText to append !important styles directly
-      content.style.cssText += '; max-width: 100% !important; width: 100% !important; min-width: 100% !important; margin-left: 0 !important; margin-right: 0 !important; float: none !important;';
+      // CRITICAL FIX: Remove .colMS class which Django admin uses to set width: 464px
+      // This is the root cause - the class itself applies the width constraint
+      if (content.classList.contains('colMS')) {
+        content.classList.remove('colMS');
+        // Add a custom class to maintain styling if needed
+        content.classList.add('colMS-override');
+      }
+      
+      // Set width directly with cssText (assignment, not append)
+      content.style.cssText = 'max-width: 100% !important; width: 100% !important; min-width: 100% !important; margin-left: 0 !important; margin-right: 0 !important; float: none !important; padding: 32px !important;';
       
       // Also fix .main and #main if they exist
       if (main) {
-        main.style.cssText += '; max-width: 100% !important; width: 100% !important; float: none !important;';
+        main.style.cssText = 'max-width: 100% !important; width: 100% !important; float: none !important;';
       }
       
       // Also fix #container
       if (container) {
-        container.style.cssText += '; max-width: 100% !important; width: 100% !important;';
+        container.style.cssText = 'max-width: 100% !important; width: 100% !important;';
       }
       
       // Ensure content-wrapper is centered with max-width: 980px (like portal)
-      contentWrapper.style.cssText += '; max-width: 980px !important; width: 100% !important; margin-left: auto !important; margin-right: auto !important;';
+      contentWrapper.style.cssText = 'max-width: 980px !important; width: 100% !important; margin-left: auto !important; margin-right: auto !important;';
       
       // Ensure dashboard-grid uses full width
       const dashboardGrid = document.querySelector('.dashboard-grid');
       if (dashboardGrid) {
-        dashboardGrid.style.cssText += '; width: 100% !important; max-width: 100% !important;';
+        dashboardGrid.style.cssText = 'display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 24px !important; width: 100% !important; max-width: 100% !important;';
       }
-      
-      // Debug: log computed styles
-      const computed = window.getComputedStyle(content);
-      console.log('Content computed width:', computed.width);
-      console.log('Content computed max-width:', computed.maxWidth);
-      console.log('Content inline width:', content.style.width);
     }
   }
   
@@ -112,28 +113,6 @@
   
   // Also run on window load
   window.addEventListener('load', fixContentWidth);
-  
-  // Use MutationObserver to watch for style changes
-  if (window.MutationObserver) {
-    const observer = new MutationObserver(function(mutations) {
-      const content = document.getElementById('content');
-      if (content) {
-        const computed = window.getComputedStyle(content);
-        if (computed.width === '464px') {
-          console.log('Detected 464px width, fixing...');
-          fixContentWidth();
-        }
-      }
-    });
-    
-    const content = document.getElementById('content');
-    if (content) {
-      observer.observe(content, {
-        attributes: true,
-        attributeFilter: ['style', 'class']
-      });
-    }
-  }
 })();
 </script>
 {% endblock %}
