@@ -253,8 +253,20 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev
-  - Version: 0.1.0-alpha.23
+  - Version: 0.2.0-alpha.2
   - Summary:
+    - Increased topbar padding (20px top/bottom, 32px left/right) for better spacing around menu
+    - Admin dashboard modules now display in 2-column grid layout instead of stacked vertically
+    - Admin dashboard box titles (captions) styled with blue background for better contrast
+    - Added responsive breakpoint for dashboard (switches to single column on smaller screens)
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev
+  - Version: 0.2.0-alpha.1
+  - Summary:
+    - Version bump: 0.1.0-alpha.23 → 0.2.0-alpha.1 (MINOR version increment for new features)
+    - Note: CHANGELOG accumulates all changes under [Unreleased] until MAJOR release
+    - Major features added: Profile settings redesign, Delete account functionality, Logout confirmation modal
     - Added logout confirmation modal in profile settings sidebar (prevents accidental logout)
     - Delete account modal now resets to Account Information section when closed/cancelled
     - Fixed Recent Actions button vertical alignment in admin topbar (changed to flex with fixed height)

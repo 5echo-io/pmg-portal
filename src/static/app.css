@@ -134,7 +134,7 @@ a.link:hover { color: var(--text); }
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 14px 18px;
+  padding: 20px 32px;
   border-bottom: 1px solid var(--line);
   background: #0c1426;
   position: sticky;

@@ -67,13 +67,20 @@ Changed:
 - Removed "Change Password" link from avatar dropdown menu
 - Password change now opens as a modal popup in profile settings page
 - Profile settings page redesigned with left sidebar navigation menu
-- Added "Delete Account" option in profile settings with danger zone styling
-- Increased spacing between website title and menu buttons in topbar
-- Fixed avatar icon vertical alignment in topbar
-- Added logout confirmation modal in profile settings sidebar
+- Delete account functionality with danger zone confirmation modal
+- Logout confirmation modal in profile settings sidebar
+- Account information section in profile settings
+- Password change modal integrated into profile settings
+
+Changed:
+- Increased spacing between website title and menu buttons in topbar (gap: 32px)
 - Delete account modal now resets to Account Information section when closed/cancelled
+- Increased topbar padding (20px top/bottom, 32px left/right) for better spacing
+- Admin dashboard modules now display in 2 columns side by side instead of stacked
+- Admin dashboard box titles (captions) now have blue background for better contrast
 
 Fixed:
+- Avatar icon vertical alignment in topbar
 - Recent Actions button vertical alignment in admin topbar
 - Recent Actions button click functionality (added onclick fallback)
 - Local Postgres bootstrap in installer (role/db creation)

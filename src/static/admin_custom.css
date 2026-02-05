@@ -1075,9 +1075,48 @@ fieldset.module .form-row:last-child {
 }
 
 /* ===== ADMIN INDEX ===== */
+.dashboard {
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 24px !important;
+  margin-top: 0 !important;
+}
+
+@media (max-width: 1200px) {
+  .dashboard {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+.dashboard .module {
+  margin-bottom: 0 !important;
+}
+
 .dashboard .module table {
   background: transparent !important;
   border: none !important;
+}
+
+.dashboard .module table caption {
+  background: rgba(59, 130, 246, 0.15) !important;
+  border-bottom: 1px solid rgba(59, 130, 246, 0.3) !important;
+  color: #3b82f6 !important;
+  padding: 16px 20px !important;
+  margin: 0 !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  text-align: left !important;
+}
+
+.dashboard .module table caption a {
+  color: #3b82f6 !important;
+  text-decoration: none !important;
+}
+
+.dashboard .module table caption a:hover {
+  color: #2563eb !important;
 }
 
 .dashboard .module th {
