@@ -1,7 +1,6 @@
 from django.urls import path
-from .views import landing, debug_view
+from .views import debug_view
 
 urlpatterns = [
-    path("", landing, name="landing"),
-    path("debug/", debug_view, name="debug"),
+    path("", debug_view, name="debug"),
 ]

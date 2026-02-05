@@ -61,7 +61,7 @@ def switch_customer(request, customer_id):
     """Switch active customer for the current user."""
     if request.method != "POST":
         messages.error(request, "Invalid request method.")
-        referer = request.META.get("HTTP_REFERER", "/portal/")
+        referer = request.META.get("HTTP_REFERER", "/")
         return redirect(referer)
     
     # Handle "All Customers" (customer_id = 0) for admin
@@ -84,7 +84,7 @@ def switch_customer(request, customer_id):
     
     # Redirect back to referer or portal home
     # If coming from profile page, redirect to portal instead
-    referer = request.META.get("HTTP_REFERER", "/portal/")
+    referer = request.META.get("HTTP_REFERER", "/")
     if "/account/profile/" in referer:
-        return redirect("/portal/")
+        return redirect("/")
     return redirect(referer)

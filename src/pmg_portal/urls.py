@@ -18,6 +18,7 @@ urlpatterns = [
     # Django's built-in admin at /admin-django/ (no collision)
     path("admin-django/", admin.site.urls),
     path("account/", include("accounts.urls")),
-    path("portal/", include("portal.urls")),
-    path("", include("web.urls")),
+    # Portal at site root: / and /switch/<id>/
+    path("", include("portal.urls")),
+    path("debug/", include("web.urls")),
 ]

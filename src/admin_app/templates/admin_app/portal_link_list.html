@@ -4,7 +4,10 @@
 {% block breadcrumb_extra %}<span class="breadcrumb-sep">→</span> <span>Portal links</span>{% endblock %}
 
 {% block admin_content %}
-<h1>Portal links</h1>
+<div class="admin-page-header">
+  <h1 class="admin-page-title">Portal links</h1>
+  <a href="{% url 'admin_app:admin_portal_link_add' %}" class="admin-btn-sm admin-btn-primary">Add link</a>
+</div>
 
 <div class="admin-toolbar">
   <form method="get" action="" style="display: flex; gap: 8px; flex-wrap: wrap;">
@@ -17,7 +20,6 @@
     </select>
     <button type="submit" class="form-btn form-btn-secondary">Filter</button>
   </form>
-  <a href="{% url 'admin_app:admin_portal_link_add' %}" class="admin-btn-sm admin-btn-primary">Add link</a>
 </div>
 
 <p class="muted">{{ total_count }} link{{ total_count|pluralize }}</p>

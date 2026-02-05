@@ -4,10 +4,12 @@
 {% block title %}{% block admin_title %}Admin{% endblock %} | PMG Portal{% endblock %}
 
 {% block content %}
+{% block admin_breadcrumb %}
 <nav class="breadcrumb admin-breadcrumb" aria-label="Breadcrumb">
   <a href="{% url 'admin_app:admin_home' %}">Admin</a>
   {% block breadcrumb_extra %}{% endblock %}
 </nav>
+{% endblock %}
 {% if messages %}
 <ul class="admin-messages">
   {% for message in messages %}

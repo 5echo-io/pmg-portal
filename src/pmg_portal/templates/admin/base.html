@@ -14,7 +14,7 @@
   <div class="topbar-left">
     <div class="brand">PMG Portal</div>
     <div class="topbar-nav">
-      <a class="topbar-btn {% if request.path == '/portal/' or request.path|slice:':8' == '/portal/' %}active{% endif %}" href="/portal/">Portal</a>
+      <a class="topbar-btn {% if request.path == '/' %}active{% endif %}" href="/">Portal</a>
       {% if request.user.is_superuser %}
       <a class="topbar-btn {% if request.path|slice:':7' == '/admin/' %}active{% endif %}" href="/admin/">Admin</a>
       {% endif %}

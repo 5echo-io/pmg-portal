@@ -40,7 +40,7 @@ def _make_json_serializable(obj):
 def landing(request):
     # If user is authenticated, redirect to portal, otherwise to login
     if request.user.is_authenticated:
-        return redirect("/portal/")
+        return redirect("/")
     return redirect("/account/login/")
 
 @login_required

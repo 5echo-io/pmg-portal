@@ -12,12 +12,12 @@ from .forms import LoginForm, RegisterForm, CustomPasswordChangeForm
 
 def login_view(request):
     if request.user.is_authenticated:
-        return redirect("/portal/")
+        return redirect("/")
 
     form = LoginForm(request, data=request.POST or None)
     if request.method == "POST" and form.is_valid():
         login(request, form.get_user())
-        return redirect("/portal/")
+        return redirect("/")
 
     return render(request, "accounts/login.html", {"form": form})
 
@@ -34,13 +34,13 @@ def register_view(request):
         return redirect("/account/login/")
 
     if request.user.is_authenticated:
-        return redirect("/portal/")
+        return redirect("/")
 
     form = RegisterForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
         user = form.save()
         login(request, user)
-        return redirect("/portal/")
+        return redirect("/")
 
     return render(request, "accounts/register.html", {"form": form})
 
