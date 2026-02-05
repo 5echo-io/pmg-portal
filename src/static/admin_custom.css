@@ -322,12 +322,19 @@ body.admin-page .footer {
 }
 
 /* ===== CONTENT ===== */
+#container {
+  max-width: 100% !important;
+  width: 100% !important;
+  margin: 0 !important;
+}
+
 #content {
   background: var(--bg) !important;
   padding: 32px !important;
   max-width: 100% !important;
   width: 100% !important;
-  margin: 0 auto !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
 }
 
 #content h1 {
@@ -667,11 +674,11 @@ input[type="submit"].default:hover,
 /* Add button */
 .addlink {
   border-radius: var(--radius-sm) !important;
-  border: 1px solid var(--accent) !important;
+  border: 1px solid var(--success) !important;
   padding: 6px 12px !important;
   font-weight: 500 !important;
   color: white !important;
-  background: var(--accent) !important;
+  background: var(--success) !important;
   text-decoration: none !important;
   display: inline-flex !important;
   align-items: center !important;
@@ -693,8 +700,8 @@ input[type="submit"].default:hover,
 }
 
 .addlink:hover {
-  background: var(--accent-hover) !important;
-  border-color: var(--accent-hover) !important;
+  background: #059669 !important;
+  border-color: #059669 !important;
   color: white !important;
   transform: translateY(-1px) !important;
   box-shadow: var(--shadow-md) !important;
@@ -773,6 +780,15 @@ input[type="submit"].default:hover,
   height: 28px !important;
   font-size: 13px !important;
   gap: 6px !important;
+  border-color: var(--success) !important;
+  background: var(--success) !important;
+  color: white !important;
+}
+
+.object-tools .addlink:hover {
+  background: #059669 !important;
+  border-color: #059669 !important;
+  color: white !important;
 }
 
 .object-tools .addlink::before {

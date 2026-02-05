@@ -253,6 +253,15 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev
+  - Version: 0.2.0-alpha.4
+  - Summary:
+    - Fixed admin dashboard width issue by removing max-width constraint on #container element
+    - Changed Add button background from blue to green (success color) for better visual distinction
+    - Updated both dashboard and object-tools Add buttons to use green background
+    - Ensured #content uses full width with proper box-sizing
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev
   - Version: 0.2.0-alpha.3
   - Summary:
     - Fixed admin dashboard width issue (removed max-width constraint, now uses full page width)
