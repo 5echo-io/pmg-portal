@@ -253,6 +253,15 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev
+  - Version: 0.2.0-alpha.23
+  - Summary:
+    - Added dashboard-grid width fixes in JavaScript
+    - Added console.log debugging to show computed styles for troubleshooting
+    - JavaScript now logs computed width and max-width for #content and .content-wrapper
+    - This helps identify what's actually constraining the width in the browser
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev
   - Version: 0.2.0-alpha.22
   - Summary:
     - Enhanced JavaScript to fix ALL parent containers: #content, .main, #main, #container

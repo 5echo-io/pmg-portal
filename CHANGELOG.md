@@ -124,6 +124,8 @@ Changed:
 - Enhanced JavaScript to also fix .main, #main, and #container width constraints
 - Added window.load event listener to ensure fixes apply after all resources load
 - Removed all max-width constraints from #content when dashboard class is present on body
+- Added dashboard-grid width fixes in JavaScript
+- Added console.log debugging to show computed styles for troubleshooting
 
 Fixed:
 - Recent Actions button click handler improved (removed conflicting onclick, improved event listener attachment)

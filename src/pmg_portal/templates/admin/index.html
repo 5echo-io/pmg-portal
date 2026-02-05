@@ -89,10 +89,22 @@
       contentWrapper.style.setProperty('margin-left', 'auto', 'important');
       contentWrapper.style.setProperty('margin-right', 'auto', 'important');
       
+      // Ensure dashboard-grid uses full width
+      const dashboardGrid = document.querySelector('.dashboard-grid');
+      if (dashboardGrid) {
+        dashboardGrid.style.setProperty('width', '100%', 'important');
+        dashboardGrid.style.setProperty('max-width', '100%', 'important');
+      }
+      
       // Also remove colMS class constraints if present
       if (content.classList.contains('colMS')) {
         content.style.setProperty('float', 'none', 'important');
       }
+      
+      // Debug: log computed styles
+      console.log('Content computed width:', window.getComputedStyle(content).width);
+      console.log('ContentWrapper computed width:', window.getComputedStyle(contentWrapper).width);
+      console.log('ContentWrapper computed max-width:', window.getComputedStyle(contentWrapper).maxWidth);
     }
   }
   
