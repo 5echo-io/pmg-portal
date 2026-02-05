@@ -91,6 +91,8 @@ Changed:
 - Footer now properly spans full width and is positioned at bottom on admin pages
 - Fixed footer_info context processor to work for admin pages (removed skip check)
 - Added debug view at /debug/ for system information, database info, and file paths (superuser only)
+- Added even more aggressive CSS overrides using viewport width (100vw) for #container and topbar
+- Enhanced topbar CSS to ensure it spans full browser width
 
 Fixed:
 - Recent Actions button click handler improved (removed conflicting onclick, improved event listener attachment)

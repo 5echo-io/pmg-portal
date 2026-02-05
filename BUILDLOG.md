@@ -253,6 +253,15 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev
+  - Version: 0.2.0-alpha.10
+  - Summary:
+    - Added viewport width (100vw) CSS overrides for #container to force full browser width
+    - Enhanced topbar CSS to ensure it spans full width with explicit margin overrides
+    - Added more specific selectors targeting body.admin-page > * and all div wrappers
+    - Improved CSS specificity to override Django admin's default width constraints
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev
   - Version: 0.2.0-alpha.9
   - Summary:
     - Fixed footer_info context processor to work for admin pages (removed admin path skip check)
