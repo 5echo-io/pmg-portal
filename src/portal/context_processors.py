@@ -11,14 +11,17 @@ from django.conf import settings
 
 def footer_info(request):
     """Add footer information to templates. Only runs for portal templates, not admin."""
+    # Always return safe defaults first
+    defaults = {
+        "app_version": "Unknown",
+        "changelog_preview": "",
+        "changelog_full": "",
+        "copyright_year": "2026",
+    }
+    
     # Skip for admin pages to avoid errors
-    if request.path.startswith('/admin/'):
-        return {
-            "app_version": "Unknown",
-            "changelog_preview": "",
-            "changelog_full": "",
-            "copyright_year": "2026",
-        }
+    if not request or not hasattr(request, 'path') or request.path.startswith('/admin/'):
+        return defaults
     
     version = "Unknown"
     changelog_preview = ""
@@ -61,9 +64,14 @@ def footer_info(request):
                     break
             except (OSError, IOError, UnicodeDecodeError, PermissionError):
                 continue
-    except Exception:
+    except Exception as e:
         # Silently fail - footer will show defaults
-        pass
+        # Log error only if DEBUG is enabled
+        import logging
+        logger = logging.getLogger(__name__)
+        if settings.DEBUG:
+            logger.exception("Error in footer_info context processor")
+        return defaults
     
     return {
         "app_version": version,

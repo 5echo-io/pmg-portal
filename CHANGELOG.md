@@ -31,6 +31,7 @@ Fixed:
 - 500 error when saving Customer in admin (optimized queryset and fixed admin_order_field)
 - 500 error in admin save and portal links (fixed context processor file reading, improved error handling)
 - 500 error when saving in admin (context processor now skips admin pages, improved admin queryset handling)
+- 500 errors on admin changelist and save operations (improved get_queryset URL detection, added comprehensive error handling)
 
 ## [0.1.0-alpha.1] - Initial foundation
 Added:

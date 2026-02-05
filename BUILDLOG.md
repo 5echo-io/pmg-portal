@@ -2,6 +2,14 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev (suggested)
+  - Version: 0.1.0-alpha.6
+  - Summary:
+    - Comprehensive fix for admin 500 errors
+    - Improved error handling in admin queryset and context processor
+    - Added logging configuration for better debugging
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev (suggested)
   - Version: 0.1.0-alpha.5
   - Summary:
     - Fixed installer interactive mode detection (auto-defaults to update when piped)
@@ -12,6 +20,8 @@
     - Improved admin queryset handling to avoid errors during save operations
     - Fixed context processor file reading errors causing admin save failures
     - Improved portal_home view error handling and query optimization
+    - Comprehensive fix for admin 500 errors: improved get_queryset URL detection, added try/except blocks
+    - Added logging configuration for better debugging
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev (suggested)
