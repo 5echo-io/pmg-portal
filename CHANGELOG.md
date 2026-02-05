@@ -14,7 +14,9 @@ Added:
 - Changelog modal dialog showing version-specific changes (unreleased or major release)
 - Dark mode scrollbar styling
 - Initial database migrations for portal models
-- Bulk add CustomerMemberships feature (assign user to multiple customers at once)
+- Bulk add CustomerMemberships feature integrated into regular add form (multi-select customers)
+- Customer admins can now manage memberships for their own customer
+- Improved README.md with detailed installation and update instructions
 
 Changed:
 - Default admin password to "admin" and skip creation if any superuser exists
@@ -27,10 +29,8 @@ Changed:
 - Footer simplified (removed Quick Links section)
 - Changelog button styled to match other footer links
 - Made 5echo.io clickable link in footer
-- Improved topbar design with better button styling and username separation
-- Admin button only visible to superusers
-- Footer simplified (removed Quick Links section)
-- Changelog button styled to match other footer links
+- Registration text updated to reflect PMG and Customer admin access assignment
+- CustomerMembership admin: multi-select customers when adding, single select when editing
 
 Fixed:
 - Local Postgres bootstrap in installer (role/db creation)

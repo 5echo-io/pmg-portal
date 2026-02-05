@@ -8,10 +8,9 @@ Last Modified: 2026-02-05
 """
 from django.contrib import admin
 from django.contrib import messages
-from django.shortcuts import redirect, render
-from django.urls import path
+from django.db.models import Q
 from .models import Customer, CustomerMembership, PortalLink
-from .forms import BulkCustomerMembershipForm
+from .forms import CustomerMembershipForm
 
 @admin.register(Customer)
 class CustomerAdmin(admin.ModelAdmin):
@@ -74,47 +73,114 @@ class CustomerMembershipAdmin(admin.ModelAdmin):
     """
     CustomerMembership = Links users to customers (which users belong to which companies).
     Role: "member" (regular access) or "admin" (customer admin privileges).
+    
+    Customer admins can manage memberships for their own customer.
+    PMG admins (superusers) can manage all memberships.
     """
     list_display = ("user", "customer", "role")
     list_filter = ("role", "customer")
     search_fields = ("user__username", "user__email", "customer__name")
-    autocomplete_fields = ("user", "customer")
-    change_list_template = "admin/portal/customermembership/change_list.html"
+    autocomplete_fields = ("user",)
+    form = CustomerMembershipForm
     
-    def get_urls(self):
-        urls = super().get_urls()
-        custom_urls = [
-            path('bulk-add/', self.admin_site.admin_view(self.bulk_add_view), name='portal_customermembership_bulk_add'),
-        ]
-        return custom_urls + urls
+    def get_form(self, request, obj=None, **kwargs):
+        """Return form with request context for permission filtering."""
+        form_class = super().get_form(request, obj, **kwargs)
+        
+        class CustomerMembershipFormWithRequest(form_class):
+            def __init__(self, *args, **kwargs):
+                kwargs['request'] = request
+                super().__init__(*args, **kwargs)
+        
+        return CustomerMembershipFormWithRequest
     
-    def bulk_add_view(self, request):
-        """Custom view for bulk adding CustomerMemberships."""
-        if request.method == 'POST':
-            form = BulkCustomerMembershipForm(request.POST)
-            if form.is_valid():
-                created, skipped = form.save()
-                if created:
-                    messages.success(request, f'Created {len(created)} customer membership(s).')
-                if skipped:
-                    messages.info(request, f'Updated {len(skipped)} existing membership(s).')
-                return redirect('admin:portal_customermembership_changelist')
+    def get_queryset(self, request):
+        """Filter queryset based on user permissions."""
+        qs = super().get_queryset(request)
+        if request.user.is_superuser:
+            # PMG admins see all memberships
+            return qs
         else:
-            form = BulkCustomerMembershipForm()
+            # Customer admins only see memberships for their customer
+            admin_customers = Customer.objects.filter(
+                customermembership__user=request.user,
+                customermembership__role=CustomerMembership.ROLE_ADMIN
+            )
+            return qs.filter(customer__in=admin_customers)
+    
+    def has_add_permission(self, request):
+        """Allow customer admins to add memberships for their customer."""
+        if request.user.is_superuser:
+            return True
+        # Check if user is a customer admin
+        return CustomerMembership.objects.filter(
+            user=request.user,
+            role=CustomerMembership.ROLE_ADMIN
+        ).exists()
+    
+    def has_change_permission(self, request, obj=None):
+        """Allow customer admins to change memberships for their customer."""
+        if request.user.is_superuser:
+            return True
+        if obj is None:
+            return self.has_add_permission(request)
+        # Check if user is admin for this customer
+        return CustomerMembership.objects.filter(
+            user=request.user,
+            customer=obj.customer,
+            role=CustomerMembership.ROLE_ADMIN
+        ).exists()
+    
+    def has_delete_permission(self, request, obj=None):
+        """Allow customer admins to delete memberships for their customer."""
+        if request.user.is_superuser:
+            return True
+        if obj is None:
+            return self.has_add_permission(request)
+        # Check if user is admin for this customer
+        return CustomerMembership.objects.filter(
+            user=request.user,
+            customer=obj.customer,
+            role=CustomerMembership.ROLE_ADMIN
+        ).exists()
+    
+    def save_model(self, request, obj, form, change):
+        """Handle saving multiple memberships from multi-select when adding."""
+        # If editing (change=True), use normal save
+        if change:
+            super().save_model(request, obj, form, change)
+            return
         
-        # Set user queryset for autocomplete
-        from django.contrib.auth import get_user_model
-        User = get_user_model()
-        form.fields['user'].queryset = User.objects.all()
-        
-        context = {
-            **self.admin_site.each_context(request),
-            'title': 'Bulk Add Customer Memberships',
-            'form': form,
-            'opts': self.model._meta,
-            'has_view_permission': self.has_view_permission(request, None),
-        }
-        return render(request, 'admin/portal/customermembership/bulk_add.html', context)
+        # If adding new, check for multi-select customers
+        customers = form.cleaned_data.get('customers', [])
+        if customers and len(customers) > 0:
+            # Create/update memberships for each selected customer
+            created_count = 0
+            updated_count = 0
+            user = form.cleaned_data['user']
+            role = form.cleaned_data['role']
+            
+            for customer in customers:
+                membership, created = CustomerMembership.objects.get_or_create(
+                    user=user,
+                    customer=customer,
+                    defaults={'role': role}
+                )
+                if not created:
+                    # Update role if membership already exists
+                    membership.role = role
+                    membership.save()
+                    updated_count += 1
+                else:
+                    created_count += 1
+            
+            if created_count > 0:
+                messages.success(request, f'Created {created_count} customer membership(s).')
+            if updated_count > 0:
+                messages.info(request, f'Updated {updated_count} existing membership(s).')
+        else:
+            # Fallback to single customer (shouldn't happen with required field)
+            super().save_model(request, obj, form, change)
 
 @admin.register(PortalLink)
 class PortalLinkAdmin(admin.ModelAdmin):

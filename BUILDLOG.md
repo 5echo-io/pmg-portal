@@ -2,12 +2,23 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev (suggested)
+  - Version: 0.1.0-alpha.8
+  - Summary:
+    - Merged bulk add into regular CustomerMembership add form with multi-select
+    - Added customer admin permissions to manage memberships for their customer
+    - Updated registration text to reflect PMG and Customer admin access assignment
+    - Removed separate bulk add page and templates
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev (suggested)
   - Version: 0.1.0-alpha.7
   - Summary:
     - Improved UI/UX: better topbar button styling, admin visibility controls
     - Added bulk add CustomerMemberships feature
     - Simplified footer design
     - Made 5echo.io clickable link
+    - Enhanced README.md with detailed installation/update instructions
+    - Enhanced README.md with detailed installation/update instructions
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev (suggested)
