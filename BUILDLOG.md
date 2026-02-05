@@ -2,6 +2,20 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev (suggested)
+  - Version: 0.1.0-alpha.15
+  - Summary:
+    - Deep dive admin UI/UX redesign: modernized tables, layout, and icons
+    - Removed Recent Actions section from admin dashboard
+    - Added Recent Actions modal accessible via clock icon in admin header
+    - Implemented modern minimalist SVG icons throughout admin (Lucide-inspired)
+    - Redesigned tables with zebra striping, improved spacing, and visual hierarchy
+    - Enhanced table styling with better borders, shadows, and hover effects
+    - Added icon buttons for view, edit, and delete actions in tables
+    - Improved modal design with backdrop blur and modern card styling
+    - Better icon integration with consistent sizing and spacing
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev (suggested)
   - Version: 0.1.0-alpha.14
   - Summary:
     - Complete admin UI/UX redesign with modern minimalist approach

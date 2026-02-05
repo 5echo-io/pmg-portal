@@ -102,6 +102,180 @@ body {
   color: var(--accent) !important;
 }
 
+/* Recent Actions Icon Button */
+#recent-actions-btn {
+  background: transparent !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius-sm) !important;
+  padding: 8px 10px !important;
+  margin-right: 12px !important;
+  cursor: pointer !important;
+  color: var(--text-secondary) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: var(--transition) !important;
+  vertical-align: middle !important;
+  line-height: 1 !important;
+}
+
+#recent-actions-btn:hover {
+  background: var(--surface-elevated) !important;
+  border-color: var(--border-hover) !important;
+  color: var(--text-primary) !important;
+  transform: translateY(-1px) !important;
+}
+
+#recent-actions-btn svg {
+  display: block !important;
+  width: 18px !important;
+  height: 18px !important;
+}
+
+/* Recent Actions Modal */
+.admin-modal {
+  display: none !important;
+  position: fixed !important;
+  z-index: 10000 !important;
+  left: 0 !important;
+  top: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: rgba(0, 0, 0, 0.7) !important;
+  backdrop-filter: blur(4px) !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 20px !important;
+}
+
+.admin-modal-content {
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius-lg) !important;
+  box-shadow: var(--shadow-lg) !important;
+  max-width: 700px !important;
+  width: 100% !important;
+  max-height: 80vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+}
+
+.admin-modal-header {
+  padding: 20px 24px !important;
+  border-bottom: 1px solid var(--border) !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  background: var(--surface-elevated) !important;
+}
+
+.admin-modal-header h2 {
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: 18px !important;
+  font-weight: 600 !important;
+  color: var(--text-primary) !important;
+}
+
+.admin-modal-close {
+  background: transparent !important;
+  border: none !important;
+  color: var(--text-secondary) !important;
+  font-size: 28px !important;
+  line-height: 1 !important;
+  cursor: pointer !important;
+  padding: 0 !important;
+  width: 32px !important;
+  height: 32px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: var(--radius-sm) !important;
+  transition: var(--transition) !important;
+}
+
+.admin-modal-close:hover {
+  background: var(--surface) !important;
+  color: var(--text-primary) !important;
+}
+
+.admin-modal-body {
+  padding: 24px !important;
+  overflow-y: auto !important;
+  flex: 1 !important;
+}
+
+.recent-actions-table {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+}
+
+.recent-action-item {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 12px !important;
+  padding: 12px !important;
+  border-radius: var(--radius-sm) !important;
+  background: var(--surface-elevated) !important;
+  border: 1px solid var(--border) !important;
+  transition: var(--transition) !important;
+}
+
+.recent-action-item:hover {
+  background: var(--surface) !important;
+  border-color: var(--border-hover) !important;
+}
+
+.recent-action-icon {
+  flex-shrink: 0 !important;
+  width: 32px !important;
+  height: 32px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: rgba(59, 130, 246, 0.1) !important;
+  border-radius: var(--radius-sm) !important;
+  color: var(--accent) !important;
+}
+
+.recent-action-icon svg {
+  width: 16px !important;
+  height: 16px !important;
+}
+
+.recent-action-content {
+  flex: 1 !important;
+  min-width: 0 !important;
+}
+
+.recent-action-text {
+  color: var(--text-primary) !important;
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+  margin-bottom: 4px !important;
+}
+
+.recent-action-text a {
+  color: var(--accent) !important;
+  text-decoration: none !important;
+}
+
+.recent-action-text a:hover {
+  text-decoration: underline !important;
+}
+
+.recent-action-time {
+  color: var(--text-tertiary) !important;
+  font-size: 12px !important;
+}
+
+.muted {
+  color: var(--text-tertiary) !important;
+  font-style: italic !important;
+}
+
 /* ===== CONTENT ===== */
 #content {
   background: var(--bg) !important;
@@ -199,33 +373,38 @@ body {
 
 /* ===== TABLES ===== */
 #result_list {
-  background: transparent !important;
-  border: none !important;
-  border-radius: 0 !important;
-  overflow: visible !important;
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius-md) !important;
+  overflow: hidden !important;
   width: 100% !important;
+  box-shadow: var(--shadow-sm) !important;
 }
 
 #result_list thead {
-  background: transparent !important;
+  background: var(--surface-elevated) !important;
 }
 
 #result_list thead th {
-  background: transparent !important;
+  background: var(--surface-elevated) !important;
   border-bottom: 1px solid var(--border) !important;
   color: var(--text-secondary) !important;
-  padding: 12px 16px !important;
+  padding: 14px 18px !important;
   font-weight: 600 !important;
-  font-size: 12px !important;
+  font-size: 11px !important;
   text-align: left !important;
   text-transform: uppercase !important;
-  letter-spacing: 0.05em !important;
+  letter-spacing: 0.08em !important;
+  white-space: nowrap !important;
 }
 
 #result_list thead th a {
   color: var(--text-secondary) !important;
   text-decoration: none !important;
   transition: var(--transition) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
 }
 
 #result_list thead th a:hover {
@@ -234,33 +413,27 @@ body {
 
 #result_list tbody td {
   border-bottom: 1px solid var(--border) !important;
-  padding: 14px 16px !important;
+  padding: 16px 18px !important;
   color: var(--text-primary) !important;
-  font-size: 14px !important;
+  font-size: 13px !important;
   vertical-align: middle !important;
-}
-
-#result_list tbody td a {
-  color: var(--text-primary) !important;
-  text-decoration: none !important;
-  transition: var(--transition) !important;
-  font-weight: 500 !important;
-}
-
-#result_list tbody td a:hover {
-  color: var(--accent) !important;
 }
 
 #result_list tbody tr {
   transition: var(--transition) !important;
+  background: var(--surface) !important;
+}
+
+#result_list tbody tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.01) !important;
 }
 
 #result_list tbody tr:hover {
-  background: rgba(255, 255, 255, 0.02) !important;
+  background: rgba(59, 130, 246, 0.06) !important;
 }
 
 #result_list tbody tr.selected {
-  background: rgba(59, 130, 246, 0.08) !important;
+  background: rgba(59, 130, 246, 0.12) !important;
 }
 
 #result_list tbody tr.selected td {
@@ -269,6 +442,57 @@ body {
 
 #result_list tbody tr:last-child td {
   border-bottom: none !important;
+}
+
+#result_list tbody td a {
+  color: var(--text-primary) !important;
+  text-decoration: none !important;
+  transition: var(--transition) !important;
+  font-weight: 500 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+
+#result_list tbody td a:hover {
+  color: var(--accent) !important;
+}
+
+/* Table action icons */
+#result_list tbody td .viewlink::before {
+  content: '' !important;
+  width: 14px !important;
+  height: 14px !important;
+  display: inline-block !important;
+  margin-right: 6px !important;
+  vertical-align: middle !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%233b82f6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z'%3E%3C/path%3E%3Ccircle cx='12' cy='12' r='3'%3E%3C/circle%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+}
+
+#result_list tbody td .changelink::before {
+  content: '' !important;
+  width: 14px !important;
+  height: 14px !important;
+  display: inline-block !important;
+  margin-right: 6px !important;
+  vertical-align: middle !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%233b82f6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7'%3E%3C/path%3E%3Cpath d='M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z'%3E%3C/path%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+}
+
+#result_list tbody td .deletelink::before {
+  content: '' !important;
+  width: 14px !important;
+  height: 14px !important;
+  display: inline-block !important;
+  margin-right: 6px !important;
+  vertical-align: middle !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23ef4444' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 6h18'%3E%3C/path%3E%3Cpath d='M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6'%3E%3C/path%3E%3Cpath d='M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2'%3E%3C/path%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
 }
 
 /* ===== FORMS ===== */
@@ -412,6 +636,16 @@ input[type="submit"].default:hover,
   box-shadow: var(--shadow-sm) !important;
 }
 
+.addlink::before {
+  content: '' !important;
+  width: 16px !important;
+  height: 16px !important;
+  display: inline-block !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14'%3E%3Cpath d='M12 5v14'%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+}
+
 .addlink:hover {
   background: var(--accent-hover) !important;
   border-color: var(--accent-hover) !important;
@@ -435,7 +669,19 @@ input[type="submit"].default:hover,
   box-shadow: var(--shadow-sm) !important;
   display: inline-flex !important;
   align-items: center !important;
+  gap: 8px !important;
   height: 40px !important;
+}
+
+.deletelink::before,
+.deletelink-box a::before {
+  content: '' !important;
+  width: 16px !important;
+  height: 16px !important;
+  display: inline-block !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 6h18'%3E%3Cpath d='M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6'%3E%3Cpath d='M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2'%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
 }
 
 .deletelink:hover,
@@ -474,6 +720,16 @@ input[type="submit"].default:hover,
   font-size: 14px !important;
   transition: var(--transition) !important;
   box-shadow: var(--shadow-sm) !important;
+}
+
+.object-tools .addlink::before {
+  content: '' !important;
+  width: 16px !important;
+  height: 16px !important;
+  display: inline-block !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14'%3E%3Cpath d='M12 5v14'%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
 }
 
 .object-tools a:hover {
