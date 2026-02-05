@@ -100,6 +100,10 @@ Changed:
 - Enhanced debug view to display request logs, database queries, and frontend logs
 - Fixed admin dashboard width issue by using calc() to break out of #content max-width constraint (dashboard now uses full viewport width)
 - Added "Copy to Clipboard" button to debug view for easy sharing of debug data
+- Fixed clipboard function error handling and fallback for older browsers
+- Fixed button size inconsistency in debug view export section
+- Completely redesigned admin dashboard CSS to remove all width constraints and ensure full browser width
+- Dashboard now properly breaks out of #content max-width constraint using :has() selector
 
 Fixed:
 - Recent Actions button click handler improved (removed conflicting onclick, improved event listener attachment)

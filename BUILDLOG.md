@@ -253,6 +253,17 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev
+  - Version: 0.2.0-alpha.14
+  - Summary:
+    - Fixed clipboard function error handling - added event parameter and fallback for older browsers using document.execCommand
+    - Fixed button size inconsistency - both Export and Copy buttons now have same height and styling
+    - Completely redesigned admin dashboard CSS to remove ALL width constraints
+    - Dashboard now uses :has() selector to detect when #content contains dashboard and removes max-width constraint
+    - Removed conflicting CSS rules and simplified dashboard width handling
+    - Dashboard now properly uses 100% width without any calc() workarounds
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev
   - Version: 0.2.0-alpha.13
   - Summary:
     - Fixed admin dashboard width by using calc() CSS to break dashboard out of #content's max-width: 1200px constraint

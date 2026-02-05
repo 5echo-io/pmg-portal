@@ -369,22 +369,24 @@ body #container #content,
   position: relative !important;
 }
 
-/* Dashboard page needs full width - override max-width constraint */
-body.admin-page #content:has(.dashboard),
-body.admin-page #content > .dashboard {
+/* Dashboard page needs full width - COMPLETE REDESIGN */
+/* Remove max-width constraint from #content when it contains dashboard */
+body.admin-page #content:has(.dashboard) {
   max-width: 100% !important;
+  width: 100% !important;
   padding-left: 32px !important;
   padding-right: 32px !important;
 }
 
-/* Fallback for browsers that don't support :has() */
+/* For dashboard specifically - break out of any container */
 body.admin-page .dashboard {
-  max-width: calc(100vw - 64px) !important;
-  margin-left: calc(-50vw + 50%) !important;
-  margin-right: calc(-50vw + 50%) !important;
-  width: calc(100vw - 64px) !important;
-  padding-left: 32px !important;
-  padding-right: 32px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  box-sizing: border-box !important;
 }
 
 /* Override Django admin column layouts */
@@ -403,12 +405,23 @@ body.admin-page .content-main,
   box-sizing: border-box !important;
 }
 
-/* Ensure all admin content uses full width */
+/* Ensure dashboard uses full width - REMOVE ALL CONSTRAINTS */
 body.admin-page .dashboard,
-body.admin-page #content > *,
-body.admin-page #content > div,
 body.admin-page #content > .dashboard,
-body.admin-page #content .dashboard {
+body.admin-page #content .dashboard,
+body.admin-page #content:has(.dashboard) .dashboard {
+  max-width: 100% !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+/* Other admin content can use safe zones */
+body.admin-page #content > *:not(.dashboard),
+body.admin-page #content > div:not(.dashboard) {
   max-width: 100% !important;
   width: 100% !important;
   box-sizing: border-box !important;
@@ -1275,6 +1288,7 @@ fieldset.module .form-row:last-child {
 }
 
 /* ===== ADMIN INDEX ===== */
+/* Dashboard grid layout - FULL WIDTH */
 body.admin-page .dashboard,
 body.admin-page #content .dashboard,
 body.admin-page #content > .dashboard,
@@ -1290,6 +1304,7 @@ body.admin-page #content > .dashboard,
   max-width: 100% !important;
   box-sizing: border-box !important;
   padding: 0 !important;
+  position: relative !important;
 }
 
 @media (max-width: 1400px) {
