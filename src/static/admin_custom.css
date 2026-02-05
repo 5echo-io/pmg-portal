@@ -123,6 +123,23 @@ body.admin-page #content {
   color: var(--accent) !important;
 }
 
+/* Topbar: align avatar and icon buttons vertically */
+body.admin-page .topbar-right {
+  align-items: center !important;
+}
+
+body.admin-page .topbar-right .user-avatar-wrapper,
+body.admin-page .topbar-right .user-avatar-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+body.admin-page .topbar-right .user-avatar-btn {
+  min-height: 36px !important;
+  padding: 0 !important;
+}
+
 /* Recent Actions Icon Button */
 #recent-actions-btn {
   background: transparent !important;
@@ -138,6 +155,8 @@ body.admin-page #content {
   transition: var(--transition) !important;
   vertical-align: middle !important;
   line-height: 1 !important;
+  height: 36px !important;
+  width: 36px !important;
 }
 
 #recent-actions-btn:hover {
@@ -411,7 +430,17 @@ footer.footer .footer-content,
   margin: 0 0 12px 0 !important;
 }
 
-/* ===== BREADCRUMBS ===== */
+/* ===== BREADCRUMBS – boxed layout (same width as content) ===== */
+body.admin-page nav[aria-label="Breadcrumbs"],
+body.admin-page .breadcrumbs {
+  max-width: 980px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding-left: 20px !important;
+  padding-right: 20px !important;
+  box-sizing: border-box !important;
+}
+
 .breadcrumbs {
   background: transparent !important;
   border-bottom: 1px solid var(--border) !important;
@@ -437,7 +466,100 @@ footer.footer .footer-content,
   box-sizing: border-box !important;
 }
 
-/* Ensure nav sidebar is always visible and toggle is removed (subpages only) */
+/* ===== NAV SIDEBAR – modernised (easier to read) ===== */
+#nav-sidebar {
+  background: var(--surface) !important;
+  border-right: 1px solid var(--border) !important;
+  padding: 20px 0 !important;
+}
+
+#nav-sidebar .module {
+  margin-bottom: 0 !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+#nav-sidebar .module h2 {
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.06em !important;
+  color: var(--text-tertiary) !important;
+  padding: 16px 20px 10px !important;
+  margin: 0 !important;
+  border: none !important;
+  background: transparent !important;
+}
+
+#nav-sidebar .module caption,
+#nav-sidebar .module th {
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  color: var(--text-tertiary) !important;
+  padding: 12px 20px !important;
+  background: transparent !important;
+  border: none !important;
+}
+
+#nav-sidebar a {
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  color: var(--text-secondary) !important;
+  padding: 10px 20px !important;
+  display: block !important;
+  text-decoration: none !important;
+  transition: var(--transition) !important;
+  border-radius: 0 !important;
+}
+
+#nav-sidebar a:hover {
+  color: var(--text-primary) !important;
+  background: rgba(59, 130, 246, 0.08) !important;
+}
+
+#nav-sidebar .current-app .module li.current-model a {
+  color: var(--accent) !important;
+  background: rgba(59, 130, 246, 0.12) !important;
+  font-weight: 600 !important;
+}
+
+#nav-sidebar .module ul {
+  list-style: none !important;
+  padding: 0 0 16px 0 !important;
+  margin: 0 !important;
+}
+
+#nav-sidebar .module li {
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+}
+
+/* Table-based nav (Django default) */
+#nav-sidebar table {
+  width: 100% !important;
+  border: none !important;
+  background: transparent !important;
+}
+
+#nav-sidebar td {
+  padding: 8px 20px !important;
+  border: none !important;
+  vertical-align: middle !important;
+}
+
+#nav-sidebar td a {
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  color: var(--text-secondary) !important;
+  padding: 0 !important;
+  display: inline !important;
+}
+
 #toggle-nav-sidebar {
   display: none !important;
 }
@@ -1275,6 +1397,18 @@ body.admin-page #content .dashboard-grid {
   margin-top: 0 !important;
   width: 100% !important;
   box-sizing: border-box !important;
+}
+
+/* Admin home: only two boxes (Auth + Portal), wider panels */
+body.admin-page #content .dashboard-grid-two {
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 32px !important;
+}
+
+@media (max-width: 900px) {
+  body.admin-page #content .dashboard-grid-two {
+    grid-template-columns: 1fr !important;
+  }
 }
 
 @media (max-width: 1400px) {

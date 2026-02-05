@@ -187,6 +187,20 @@ a.link:hover { color: var(--text); }
   margin-left: auto;
 }
 
+/* Keep avatar vertically centred with other topbar items */
+.topbar-right .user-avatar-wrapper {
+  display: inline-flex;
+  align-items: center;
+}
+
+.topbar-right .user-avatar-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding: 0;
+}
+
 .topbar-btn {
   padding: 6px 12px;
   border-radius: 6px;
@@ -427,6 +441,24 @@ a.link:hover { color: var(--text); }
 .list-item { padding: 10px 0; border-top: 1px solid var(--line); }
 .list-item:first-child { border-top: 0; }
 .list-title { font-weight: 600; }
+
+/* Shared footer wrapper (Portal and all non-admin pages) – matches admin footer */
+.site-footer-wrapper {
+  margin-top: auto;
+  flex-shrink: 0;
+  width: 100%;
+  border-top: 1px solid var(--line);
+  background: #0c1426;
+}
+
+.site-footer-wrapper .footer {
+  margin: 0;
+  padding: 30px 0;
+  background: transparent;
+  border: none;
+  width: 100%;
+  max-width: 100%;
+}
 
 .footer {
   margin-top: auto;

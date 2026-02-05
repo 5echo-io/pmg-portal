@@ -23,8 +23,9 @@
 <div class="content-wrapper dashboard-page">
   <h1>Administration</h1>
   
-  <div class="dashboard-grid">
+  <div class="dashboard-grid dashboard-grid-two">
     {% for app in app_list %}
+      {% if app.name == "Authentication and Authorization" or app.name == "Portal" %}
       <div class="panel">
         <h2>
           <a href="{{ app.app_url }}" class="section-link" title="{% blocktrans with name=app.name %}Models in the {{ name }} application{% endblocktrans %}">
@@ -58,6 +59,7 @@
           {% endfor %}
         </ul>
       </div>
+      {% endif %}
     {% empty %}
       <div class="panel">
         <p>{% trans "You don't have permission to view or edit anything." %}</p>
