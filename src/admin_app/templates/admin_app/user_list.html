@@ -1,0 +1,71 @@
+{% extends "admin_app/base.html" %}
+
+{% block admin_title %}Users{% endblock %}
+{% block breadcrumb_extra %}<span class="breadcrumb-sep">→</span> <span>Users</span>{% endblock %}
+
+{% block admin_content %}
+<h1>Users</h1>
+
+<div class="admin-toolbar">
+  <form method="get" action="" class="admin-search-form" style="display: flex; gap: 8px; flex-wrap: wrap;">
+    <input type="text" name="q" value="{{ search }}" placeholder="Search users…" class="form-input">
+    <select name="staff" class="form-input" style="width: auto;">
+      <option value="">All</option>
+      <option value="1" {% if request.GET.staff == "1" %}selected{% endif %}>Staff only</option>
+      <option value="0" {% if request.GET.staff == "0" %}selected{% endif %}>Not staff</option>
+    </select>
+    <select name="active" class="form-input" style="width: auto;">
+      <option value="">All</option>
+      <option value="1" {% if request.GET.active == "1" %}selected{% endif %}>Active</option>
+      <option value="0" {% if request.GET.active == "0" %}selected{% endif %}>Inactive</option>
+    </select>
+    <button type="submit" class="form-btn form-btn-secondary">Search</button>
+  </form>
+  <a href="{% url 'admin_app:admin_user_add' %}" class="admin-btn-sm admin-btn-primary">Add user</a>
+</div>
+
+<p class="muted">{{ total_count }} user{{ total_count|pluralize }}</p>
+
+<div class="admin-table-wrap">
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>Email</th>
+        <th>Name</th>
+        <th>Staff</th>
+        <th>Active</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for u in page_obj %}
+      <tr>
+        <td><a href="{% url 'admin_app:admin_user_edit' u.pk %}">{{ u.username }}</a></td>
+        <td>{{ u.email|default:"—" }}</td>
+        <td>{{ u.get_full_name|default:"—" }}</td>
+        <td>{% if u.is_staff %}Yes{% else %}No{% endif %}</td>
+        <td>{% if u.is_active %}Yes{% else %}No{% endif %}</td>
+        <td><a href="{% url 'admin_app:admin_user_edit' u.pk %}" class="admin-btn-sm">Edit</a></td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="6">No users found.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% if page_obj.has_other_pages %}
+<nav class="admin-pagination">
+  {% if page_obj.has_previous %}
+  <a href="?page={{ page_obj.previous_page_number }}{% if search %}&q={{ search }}{% endif %}">Previous</a>
+  {% endif %}
+  <span class="current">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+  {% if page_obj.has_next %}
+  <a href="?page={{ page_obj.next_page_number }}{% if search %}&q={{ search }}{% endif %}">Next</a>
+  {% endif %}
+</nav>
+{% endif %}
+{% endblock %}

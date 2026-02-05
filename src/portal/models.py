@@ -4,9 +4,19 @@ Customer portal foundation models.
 from django.conf import settings
 from django.db import models
 
+
 class Customer(models.Model):
     name = models.CharField(max_length=200, unique=True)
     slug = models.SlugField(max_length=80, unique=True)
+    org_number = models.CharField(max_length=32, blank=True, default="")
+    contact_info = models.TextField(blank=True, default="")
+    primary_contact = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="primary_contact_for_customers",
+    )
 
     def __str__(self) -> str:
         return self.name

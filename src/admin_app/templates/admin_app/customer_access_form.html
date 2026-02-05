@@ -1,0 +1,24 @@
+{% extends "admin_app/base.html" %}
+
+{% block admin_title %}{% if membership %}Edit access{% else %}Add access{% endif %}{% endblock %}
+{% block breadcrumb_extra %}
+<span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_customer_access_list' %}">Customer access</a>
+<span class="breadcrumb-sep">→</span> <span>{% if membership %}Edit{% else %}Add{% endif %}</span>
+{% endblock %}
+
+{% block admin_content %}
+<h1>{% if membership %}Edit access{% else %}Add access{% endif %}</h1>
+
+<form method="post" action="">
+  {% csrf_token %}
+  {% for field in form %}
+  <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+  {{ field }}
+  {% if field.errors %}<p class="form-error">{{ field.errors.0 }}</p>{% endif %}
+  {% endfor %}
+  <div style="margin-top: 20px; display: flex; gap: 12px;">
+    <button type="submit" class="form-btn form-btn-primary">Save</button>
+    <a href="{% url 'admin_app:admin_customer_access_list' %}" class="form-btn form-btn-secondary">Cancel</a>
+  </div>
+</form>
+{% endblock %}

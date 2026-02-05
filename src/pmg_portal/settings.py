@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     "accounts",
     "portal",
     "web",
+    "admin_app",
 ]
 
 MIDDLEWARE = [
