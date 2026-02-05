@@ -1,0 +1,283 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static 'app.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'admin_custom.css' %}">
+{% endblock %}
+
+{% block bodyclass %}{{ block.super }} admin-page{% endblock %}
+
+{% block header %}
+<header class="topbar">
+  <div class="topbar-left">
+    <div class="brand">PMG Portal</div>
+    <div class="topbar-nav">
+      <a class="topbar-btn {% if request.path == '/portal/' or request.path|slice:':8' == '/portal/' %}active{% endif %}" href="/portal/">Portal</a>
+      {% if request.user.is_superuser %}
+      <a class="topbar-btn {% if request.path|slice:':7' == '/admin/' %}active{% endif %}" href="/admin/">Admin</a>
+      {% endif %}
+    </div>
+  </div>
+  <div class="topbar-right">
+    <button id="recent-actions-btn" class="admin-icon-btn" title="Recent Actions" onclick="openRecentActionsModal()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <polyline points="12 6 12 12 16 14"></polyline>
+      </svg>
+    </button>
+    <div class="user-avatar-wrapper">
+      <button class="user-avatar-btn" onclick="toggleUserMenu(event)" aria-label="User menu">
+        <div class="user-avatar">
+          {{ request.user.username|first|upper }}
+        </div>
+      </button>
+      <div id="user-menu" class="user-menu">
+        <div class="user-menu-header">
+          <div class="user-menu-name">{{ request.user.username }}</div>
+          <div class="user-menu-email">{{ request.user.email|default:"" }}</div>
+        </div>
+        <div class="user-menu-divider"></div>
+        {% if request.user.is_superuser %}
+        <a href="/admin/" class="user-menu-item">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="14" y="14" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
+          </svg>
+          Admin Panel
+        </a>
+        {% endif %}
+        <a href="/account/logout/" class="user-menu-item">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+          Logout
+        </a>
+      </div>
+    </div>
+  </div>
+</header>
+
+{% if messages %}
+<div class="toast-container">
+  {% for message in messages %}
+  <div class="toast toast-{{ message.tags }}">
+    <div class="toast-content">
+      <span class="toast-message">{{ message }}</span>
+      <button class="toast-close" onclick="this.parentElement.parentElement.remove()">×</button>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<!-- Recent Actions Modal -->
+<div id="recent-actions-modal" class="admin-modal" onclick="closeRecentActionsModal(event)">
+  <div class="admin-modal-content" onclick="event.stopPropagation()">
+    <div class="admin-modal-header">
+      <h2>Recent Actions</h2>
+      <button class="admin-modal-close" onclick="closeRecentActionsModal(event)">×</button>
+    </div>
+    <div class="admin-modal-body">
+      <div id="recent-actions-list">
+        <p class="muted">Loading recent actions...</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function toggleUserMenu(event) {
+  event.stopPropagation();
+  const menu = document.getElementById('user-menu');
+  const isOpen = menu.classList.contains('open');
+  
+  document.querySelectorAll('.user-menu').forEach(m => m.classList.remove('open'));
+  
+  if (!isOpen) {
+    menu.classList.add('open');
+    setTimeout(() => {
+      document.addEventListener('click', function closeMenu(e) {
+        if (!menu.contains(e.target) && !event.target.closest('.user-avatar-btn')) {
+          menu.classList.remove('open');
+          document.removeEventListener('click', closeMenu);
+        }
+      }, { once: true });
+    }, 0);
+  }
+}
+
+function openRecentActionsModal() {
+  const modal = document.getElementById('recent-actions-modal');
+  const list = document.getElementById('recent-actions-list');
+  
+  if (!modal) {
+    console.error('Recent actions modal not found');
+    return;
+  }
+  
+  modal.style.display = 'flex';
+  
+  fetch('/admin/log/?limit=15')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Failed to fetch recent actions');
+      }
+      return response.text();
+    })
+    .then(html => {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+      const logEntries = doc.querySelectorAll('#changelist tbody tr');
+      
+      if (logEntries.length === 0) {
+        list.innerHTML = '<p class="muted">No recent actions found.</p>';
+        return;
+      }
+      
+      let htmlContent = '<div class="recent-actions-table">';
+      logEntries.forEach(entry => {
+        const cells = entry.querySelectorAll('td');
+        if (cells.length >= 3) {
+          htmlContent += `
+            <div class="recent-action-item">
+              <div class="recent-action-icon">
+                ${getActionIcon(cells[1]?.textContent || '')}
+              </div>
+              <div class="recent-action-content">
+                <div class="recent-action-text">${cells[1]?.innerHTML || ''}</div>
+                <div class="recent-action-time">${cells[2]?.textContent || ''}</div>
+              </div>
+            </div>
+          `;
+        }
+      });
+      htmlContent += '</div>';
+      list.innerHTML = htmlContent;
+    })
+    .catch(error => {
+      list.innerHTML = '<p class="muted">Unable to load recent actions.</p>';
+      console.error('Error loading recent actions:', error);
+    });
+}
+
+function closeRecentActionsModal(event) {
+  if (!event || event.target.id === 'recent-actions-modal' || event.target.classList.contains('admin-modal-close')) {
+    const modal = document.getElementById('recent-actions-modal');
+    if (modal) {
+      modal.style.display = 'none';
+    }
+  }
+}
+
+function getActionIcon(actionText) {
+  if (actionText.includes('Added') || actionText.includes('added')) {
+    return '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>';
+  } else if (actionText.includes('Changed') || actionText.includes('changed')) {
+    return '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>';
+  } else if (actionText.includes('Deleted') || actionText.includes('deleted')) {
+    return '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>';
+  }
+  return '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>';
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    closeRecentActionsModal();
+    document.querySelectorAll('.user-menu').forEach(m => m.classList.remove('open'));
+  }
+});
+</script>
+{% endblock %}
+
+{% block footer %}
+<footer class="footer">
+  <div class="footer-content">
+    <div class="footer-section">
+      <div class="footer-title">PMG Portal</div>
+      <div class="footer-text">Version {{ app_version|default:"Unknown" }}</div>
+      <div class="footer-text muted">Copyright &copy; {{ copyright_year|default:"2026" }} <a href="https://5echo.io" target="_blank" rel="noopener" class="footer-link">5echo.io</a></div>
+      {% if show_changelog_button %}
+      <a href="#" class="footer-link" onclick="openChangelogModal(); return false;" style="margin-top: 8px; display: inline-block;">View Changelog</a>
+      {% endif %}
+    </div>
+  </div>
+</footer>
+
+{% if show_changelog_button %}
+<!-- Changelog Modal -->
+<div id="changelogModal" class="modal" onclick="closeChangelogModal(event)">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Changelog - Version {{ app_version|default:"Unknown" }}</h2>
+      <button class="modal-close" onclick="closeChangelogModal(event)">&times;</button>
+    </div>
+    <div class="modal-body">
+      {% if changelog_section %}
+      <div class="changelog-section">
+        <pre class="changelog-content">{{ changelog_section|escape }}</pre>
+      </div>
+      {% endif %}
+      {% if changelog_full %}
+      <div class="modal-actions">
+        <button class="modal-btn" onclick="toggleFullChangelog()">View Full Changelog</button>
+      </div>
+      <div id="fullChangelog" class="changelog-section" style="display: none;">
+        <pre class="changelog-content">{{ changelog_full|escape }}</pre>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<script>
+function openChangelogModal() {
+  document.getElementById('changelogModal').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeChangelogModal(event) {
+  if (!event || event.target.classList.contains('modal') || event.target.classList.contains('modal-close')) {
+    document.getElementById('changelogModal').style.display = 'none';
+    document.body.style.overflow = 'auto';
+    const fullChangelog = document.getElementById('fullChangelog');
+    if (fullChangelog) {
+      fullChangelog.style.display = 'none';
+    }
+    const btn = document.querySelector('.modal-btn');
+    if (btn) {
+      btn.textContent = 'View Full Changelog';
+    }
+  }
+}
+
+function toggleFullChangelog() {
+  const fullChangelog = document.getElementById('fullChangelog');
+  const btn = document.querySelector('.modal-btn');
+  if (fullChangelog && btn) {
+    if (fullChangelog.style.display === 'none') {
+      fullChangelog.style.display = 'block';
+      btn.textContent = 'Hide Full Changelog';
+    } else {
+      fullChangelog.style.display = 'none';
+      btn.textContent = 'View Full Changelog';
+    }
+  }
+}
+
+document.addEventListener('keydown', function(event) {
+  if (event.key === 'Escape') {
+    const modal = document.getElementById('changelogModal');
+    if (modal && modal.style.display === 'flex') {
+      closeChangelogModal(event);
+    }
+  }
+});
+</script>
+{% endif %}
+{% endblock %}
