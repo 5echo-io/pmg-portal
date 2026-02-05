@@ -9,6 +9,9 @@
     - Updated templates to use Django static tag
     - Fixed 500 errors after login and "View site" button
     - Whitelabeled admin site (PMG Portal branding)
+    - Improved admin interface with descriptions and counts
+    - Added setup guide documentation
+    - Fixed 500 error when adding Customer (member_count/link_count methods)
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev (suggested)

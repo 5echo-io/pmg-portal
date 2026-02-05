@@ -6,12 +6,15 @@ This project follows Semantic Versioning (SemVer).
 ## [Unreleased]
 Added:
 - Interactive install wizard to collect .env values and bootstrap local Postgres
+- Improved admin interface with helpful descriptions and member/link counts
+- Setup guide documentation (SETUP_GUIDE.md)
 
 Changed:
 - Default admin password to "admin" and skip creation if any superuser exists
 - Default app bind port to 8097
 - Default APP_BIND to 0.0.0.0:8097 (was 127.0.0.1:8097) for reverse proxy compatibility
 - Improved install wizard DJANGO_ALLOWED_HOSTS prompt with example
+- Enhanced admin interface for Customers, CustomerMemberships, and Portal Links
 
 Fixed:
 - Local Postgres bootstrap in installer (role/db creation)
@@ -19,6 +22,7 @@ Fixed:
 - 500 error after login redirect (improved error handling in portal_home view)
 - "View site" button redirect error (fixed landing view to check authentication)
 - Whitelabeled admin site (removed "Django administration" branding)
+- 500 error when adding Customer (fixed member_count/link_count methods to handle new objects)
 
 ## [0.1.0-alpha.1] - Initial foundation
 Added:
