@@ -3,11 +3,11 @@ Accounts views (login, logout, register).
 """
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth import login, logout
+from django.contrib.auth import login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 
-from .forms import LoginForm, RegisterForm
+from .forms import LoginForm, RegisterForm, CustomPasswordChangeForm
 
 
 def login_view(request):
@@ -43,3 +43,29 @@ def register_view(request):
         return redirect("/portal/")
 
     return render(request, "accounts/register.html", {"form": form})
+
+
+@login_required
+def profile_view(request):
+    """User profile settings page."""
+    return render(request, "accounts/profile.html", {
+        "user": request.user,
+    })
+
+
+@login_required
+def password_change_view(request):
+    """Password change view."""
+    if request.method == "POST":
+        form = CustomPasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)
+            messages.success(request, "Your password has been changed successfully.")
+            return redirect("/account/profile/")
+        else:
+            messages.error(request, "Please correct the errors below.")
+    else:
+        form = CustomPasswordChangeForm(request.user)
+    
+    return render(request, "accounts/password_change.html", {"form": form})

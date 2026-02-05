@@ -2,6 +2,21 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev (suggested)
+  - Version: 0.1.0-alpha.19
+  - Summary:
+    - Ensured footer is identical on portal and admin pages
+    - Fixed avatar dropdown vertical alignment issue
+    - Fixed Recent Actions modal button functionality on admin page
+    - Added password change and profile settings pages
+    - Added Profile Settings and Change Password links to avatar dropdown
+    - Improved avatar dropdown close behavior (properly closes on outside click)
+    - Enhanced active page highlight with better contrast (blue background, border, shadow)
+    - Created profile.html and password_change.html templates
+    - Added CustomPasswordChangeForm for styled password change
+    - Improved JavaScript event handling for modals and dropdowns
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev (suggested)
   - Version: 0.1.0-alpha.18
   - Summary:
     - Fixed footer to always stay at bottom of screen using flexbox sticky footer layout

@@ -55,6 +55,12 @@ Changed:
 - Recent Actions modal button fixed and working properly
 - Toast notifications now show in both portal and admin pages, positioned at bottom right
 - Active page highlighted in topbar menu (Portal/Admin buttons show active state)
+- Footer now identical on portal and admin pages
+- Avatar dropdown vertical alignment fixed
+- Recent Actions modal button fixed and working properly
+- Added password change and profile settings to avatar dropdown menu
+- Improved avatar dropdown close behavior (closes on outside click)
+- Enhanced active page highlight with better contrast and visual design
 
 Fixed:
 - Local Postgres bootstrap in installer (role/db creation)
