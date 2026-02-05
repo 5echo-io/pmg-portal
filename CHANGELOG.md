@@ -32,6 +32,7 @@ Changed:
 - Made 5echo.io clickable link in footer
 - Registration text updated to reflect PMG and Customer admin access assignment
 - CustomerMembership admin: multi-select customers when adding, single select when editing
+- Moved changelog button to footer under copyright information
 
 Fixed:
 - Local Postgres bootstrap in installer (role/db creation)
@@ -49,7 +50,9 @@ Fixed:
 - 500 error when adding CustomerMembership (fixed form fields configuration for add/edit modes)
 - 500 error when accessing CustomerMembership changelist (removed bulk_add URL reference)
 - 500 error when saving CustomerMembership (fixed form save logic and save_m2m method)
-- Complete redesign of Django admin interface matching Interheart design style
+- Complete redesign of Django admin interface with modern minimalist design
+- Improved navigation, buttons, and visual hierarchy
+- Better contrast and readability throughout admin interface
 
 ## [0.1.0-alpha.1] - Initial foundation
 Added:

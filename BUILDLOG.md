@@ -2,6 +2,16 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev (suggested)
+  - Version: 0.1.0-alpha.14
+  - Summary:
+    - Complete admin UI/UX redesign with modern minimalist approach
+    - Improved navigation, buttons, spacing, and visual hierarchy
+    - Better contrast and readability (proper text colors on all backgrounds)
+    - Moved changelog button to footer under copyright information
+    - Inspired by Django Unfold and modern admin best practices
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev (suggested)
   - Version: 0.1.0-alpha.13
   - Summary:
     - Fixed CustomerMembership save error (proper form instance handling)

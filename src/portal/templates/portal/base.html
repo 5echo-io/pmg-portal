@@ -30,13 +30,10 @@
         <div class="footer-title">PMG Portal</div>
         <div class="footer-text">Version {{ app_version|default:"Unknown" }}</div>
         <div class="footer-text muted">Copyright &copy; {{ copyright_year|default:"2026" }} <a href="https://5echo.io" target="_blank" rel="noopener" class="footer-link">5echo.io</a></div>
+        {% if show_changelog_button %}
+        <a href="#" class="footer-link" onclick="openChangelogModal(); return false;" style="margin-top: 8px; display: inline-block;">View Changelog</a>
+        {% endif %}
       </div>
-      {% if show_changelog_button %}
-      <div class="footer-section">
-        <div class="footer-title">Changelog</div>
-        <a href="#" class="footer-link" onclick="openChangelogModal(); return false;">View Changelog</a>
-      </div>
-      {% endif %}
     </div>
   </footer>
 

@@ -1,20 +1,27 @@
-/* PMG Portal Admin - Interheart-inspired Design */
-/* Clean, compact dark theme matching Interheart style */
+/* PMG Portal Admin - Modern Minimalist Design */
+/* Inspired by Django Unfold and modern admin best practices */
 
 :root {
-  --bg: #091626;
-  --panel: rgba(12, 18, 32, 0.62);
-  --panel2: rgba(10, 16, 28, 0.94);
-  --line: rgba(255, 255, 255, 0.10);
-  --text: rgba(255, 255, 255, 0.92);
-  --muted: rgba(255, 255, 255, 0.60);
-  --good: #35d39f;
-  --danger: #ff3b5c;
-  --warn: #ffd34d;
-  --primary: #4ca5ff;
-  --shadow: 0 18px 54px rgba(0, 0, 0, 0.60);
-  --radius: 18px;
-  --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+  --bg: #0a0e1a;
+  --surface: #111827;
+  --surface-elevated: #1a1f2e;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-hover: rgba(255, 255, 255, 0.12);
+  --text-primary: rgba(255, 255, 255, 0.95);
+  --text-secondary: rgba(255, 255, 255, 0.65);
+  --text-tertiary: rgba(255, 255, 255, 0.45);
+  --accent: #3b82f6;
+  --accent-hover: #2563eb;
+  --success: #10b981;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.5);
+  --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 * {
@@ -23,60 +30,66 @@
 
 body {
   margin: 0 !important;
-  font-family: var(--sans) !important;
-  color: var(--text) !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+  color: var(--text-primary) !important;
   background: var(--bg) !important;
-  font-size: 13px !important;
+  font-size: 14px !important;
   line-height: 1.5 !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
 }
 
 /* ===== HEADER ===== */
 #header {
-  background: rgba(12, 18, 32, 0.85) !important;
-  border-bottom: 1px solid var(--line) !important;
+  background: var(--surface) !important;
+  border-bottom: 1px solid var(--border) !important;
   padding: 0 !important;
-  backdrop-filter: blur(10px) !important;
+  box-shadow: var(--shadow-sm) !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 1000 !important;
 }
 
 #branding {
   float: left !important;
-  padding: 12px 18px !important;
+  padding: 16px 24px !important;
 }
 
 #branding h1 {
   margin: 0 !important;
   padding: 0 !important;
-  font-size: 18px !important;
-  font-weight: 900 !important;
-  letter-spacing: 0.2px !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.01em !important;
 }
 
 #branding h1 a,
 #branding h1 a:link,
 #branding h1 a:visited {
-  color: var(--text) !important;
+  color: var(--text-primary) !important;
   text-decoration: none !important;
 }
 
 #user-tools {
   float: right !important;
-  padding: 12px 18px !important;
+  padding: 16px 24px !important;
   text-align: right !important;
-  font-size: 12px !important;
+  font-size: 13px !important;
 }
 
 #user-tools,
 #user-tools * {
-  color: var(--muted) !important;
+  color: var(--text-secondary) !important;
 }
 
 #user-tools a {
-  color: var(--text) !important;
+  color: var(--text-secondary) !important;
   text-decoration: none !important;
-  margin-left: 14px !important;
-  padding-left: 14px !important;
-  border-left: 1px solid var(--line) !important;
-  transition: color 0.15s ease !important;
+  margin-left: 20px !important;
+  padding-left: 20px !important;
+  border-left: 1px solid var(--border) !important;
+  transition: var(--transition) !important;
+  font-weight: 500 !important;
 }
 
 #user-tools a:first-child {
@@ -86,100 +99,102 @@ body {
 }
 
 #user-tools a:hover {
-  color: var(--primary) !important;
+  color: var(--accent) !important;
 }
 
 /* ===== CONTENT ===== */
 #content {
   background: var(--bg) !important;
-  padding: 18px !important;
-  max-width: 1280px !important;
+  padding: 32px !important;
+  max-width: 1400px !important;
   margin: 0 auto !important;
 }
 
 #content h1 {
-  color: var(--text) !important;
-  font-size: 20px !important;
-  font-weight: 900 !important;
-  letter-spacing: 0.2px !important;
-  margin: 0 0 16px 0 !important;
+  color: var(--text-primary) !important;
+  font-size: 24px !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.02em !important;
+  margin: 0 0 24px 0 !important;
   padding: 0 !important;
 }
 
 #content h2 {
-  color: var(--text) !important;
-  font-size: 16px !important;
-  font-weight: 850 !important;
-  margin: 0 0 12px 0 !important;
+  color: var(--text-primary) !important;
+  font-size: 18px !important;
+  font-weight: 600 !important;
+  margin: 0 0 16px 0 !important;
 }
 
 #content h3 {
-  color: var(--text) !important;
-  font-size: 14px !important;
-  font-weight: 850 !important;
-  margin: 0 0 10px 0 !important;
+  color: var(--text-primary) !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  margin: 0 0 12px 0 !important;
 }
 
 /* ===== BREADCRUMBS ===== */
 .breadcrumbs {
   background: transparent !important;
-  border-bottom: 1px solid var(--line) !important;
-  padding: 10px 0 !important;
-  margin: 0 0 16px 0 !important;
-  font-size: 12px !important;
+  border-bottom: 1px solid var(--border) !important;
+  padding: 12px 0 !important;
+  margin: 0 0 24px 0 !important;
+  font-size: 13px !important;
 }
 
 .breadcrumbs,
 .breadcrumbs * {
-  color: var(--muted) !important;
+  color: var(--text-tertiary) !important;
 }
 
 .breadcrumbs a {
-  color: var(--primary) !important;
+  color: var(--accent) !important;
   text-decoration: none !important;
-  transition: color 0.15s ease !important;
+  transition: var(--transition) !important;
+  font-weight: 500 !important;
 }
 
 .breadcrumbs a:hover {
-  color: var(--text) !important;
+  color: var(--accent-hover) !important;
 }
 
 /* ===== MODULES ===== */
 .module {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.040), rgba(255, 255, 255, 0.018)) !important;
-  border: 1px solid var(--line) !important;
-  border-radius: var(--radius) !important;
-  margin-bottom: 16px !important;
-  overflow: visible !important;
-  box-shadow: var(--shadow) !important;
-  backdrop-filter: blur(10px) !important;
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius-md) !important;
+  margin-bottom: 24px !important;
+  overflow: hidden !important;
+  box-shadow: var(--shadow-sm) !important;
 }
 
 .module h2 {
-  background: rgba(12, 18, 32, 0.55) !important;
-  border-bottom: 1px solid var(--line) !important;
-  color: var(--text) !important;
-  padding: 12px 16px !important;
+  background: var(--surface-elevated) !important;
+  border-bottom: 1px solid var(--border) !important;
+  color: var(--text-primary) !important;
+  padding: 16px 20px !important;
   margin: 0 !important;
   font-size: 14px !important;
-  font-weight: 850 !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
 }
 
 .module h3 {
-  color: var(--text) !important;
-  border-bottom: 1px solid var(--line) !important;
-  padding: 10px 16px !important;
+  color: var(--text-primary) !important;
+  border-bottom: 1px solid var(--border) !important;
+  padding: 14px 20px !important;
   margin: 0 !important;
-  font-size: 13px !important;
-  font-weight: 850 !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
 }
 
 .module p,
 .module li,
 .module td,
 .module th {
-  color: var(--text) !important;
-  font-size: 13px !important;
+  color: var(--text-primary) !important;
+  font-size: 14px !important;
 }
 
 /* ===== TABLES ===== */
@@ -197,56 +212,63 @@ body {
 
 #result_list thead th {
   background: transparent !important;
-  border-bottom: 1px solid var(--line) !important;
-  color: var(--muted) !important;
-  padding: 10px !important;
-  font-weight: 850 !important;
+  border-bottom: 1px solid var(--border) !important;
+  color: var(--text-secondary) !important;
+  padding: 12px 16px !important;
+  font-weight: 600 !important;
   font-size: 12px !important;
   text-align: left !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
 }
 
 #result_list thead th a {
-  color: var(--muted) !important;
+  color: var(--text-secondary) !important;
   text-decoration: none !important;
+  transition: var(--transition) !important;
 }
 
 #result_list thead th a:hover {
-  color: var(--text) !important;
-  text-decoration: underline !important;
+  color: var(--text-primary) !important;
 }
 
 #result_list tbody td {
-  border-bottom: 1px solid var(--line) !important;
-  padding: 10px !important;
-  color: var(--text) !important;
-  font-size: 13px !important;
+  border-bottom: 1px solid var(--border) !important;
+  padding: 14px 16px !important;
+  color: var(--text-primary) !important;
+  font-size: 14px !important;
   vertical-align: middle !important;
 }
 
 #result_list tbody td a {
-  color: var(--text) !important;
+  color: var(--text-primary) !important;
   text-decoration: none !important;
-  transition: color 0.15s ease !important;
+  transition: var(--transition) !important;
+  font-weight: 500 !important;
 }
 
 #result_list tbody td a:hover {
-  color: var(--primary) !important;
+  color: var(--accent) !important;
 }
 
 #result_list tbody tr {
-  transition: background 0.15s ease !important;
+  transition: var(--transition) !important;
 }
 
 #result_list tbody tr:hover {
-  background: rgba(255, 255, 255, 0.03) !important;
+  background: rgba(255, 255, 255, 0.02) !important;
 }
 
 #result_list tbody tr.selected {
-  background: rgba(76, 165, 255, 0.10) !important;
+  background: rgba(59, 130, 246, 0.08) !important;
 }
 
 #result_list tbody tr.selected td {
-  color: var(--text) !important;
+  color: var(--text-primary) !important;
+}
+
+#result_list tbody tr:last-child td {
+  border-bottom: none !important;
 }
 
 /* ===== FORMS ===== */
@@ -259,14 +281,14 @@ input[type="date"],
 input[type="datetime-local"],
 textarea,
 select {
-  border-radius: 14px !important;
-  border: 1px solid var(--line) !important;
-  background: rgba(255, 255, 255, 0.03) !important;
-  color: var(--text) !important;
-  padding: 10px 12px !important;
-  font-size: 13px !important;
-  font-family: var(--sans) !important;
-  transition: border-color 0.15s ease, filter 0.15s ease, background 0.15s ease !important;
+  border-radius: var(--radius-sm) !important;
+  border: 1px solid var(--border) !important;
+  background: var(--surface-elevated) !important;
+  color: var(--text-primary) !important;
+  padding: 10px 14px !important;
+  font-size: 14px !important;
+  font-family: inherit !important;
+  transition: var(--transition) !important;
   width: 100% !important;
   outline: none !important;
 }
@@ -280,14 +302,14 @@ input[type="date"]:focus,
 input[type="datetime-local"]:focus,
 textarea:focus,
 select:focus {
-  border-color: rgba(255, 255, 255, 0.24) !important;
-  filter: brightness(1.03) !important;
-  background: rgba(255, 255, 255, 0.04) !important;
-  color: var(--text) !important;
+  border-color: var(--accent) !important;
+  background: var(--surface-elevated) !important;
+  color: var(--text-primary) !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
 }
 
 input::placeholder {
-  color: rgba(255, 255, 255, 0.30) !important;
+  color: var(--text-tertiary) !important;
 }
 
 textarea {
@@ -297,19 +319,19 @@ textarea {
 
 /* Labels */
 label {
-  color: rgba(255, 255, 255, 0.55) !important;
-  font-size: 12px !important;
+  color: var(--text-secondary) !important;
+  font-size: 13px !important;
   font-weight: 500 !important;
-  margin-bottom: 6px !important;
+  margin-bottom: 8px !important;
   display: block !important;
 }
 
 .form-row label {
-  color: rgba(255, 255, 255, 0.55) !important;
+  color: var(--text-secondary) !important;
 }
 
 .aligned label {
-  color: rgba(255, 255, 255, 0.55) !important;
+  color: var(--text-secondary) !important;
   width: 160px !important;
   padding: 10px 0 !important;
 }
@@ -319,203 +341,217 @@ label {
 input[type="submit"],
 .submit-row input,
 a.button {
-  border-radius: 14px !important;
-  border: 1px solid rgba(255, 255, 255, 0.12) !important;
-  padding: 10px 12px !important;
+  border-radius: var(--radius-sm) !important;
+  border: 1px solid var(--border) !important;
+  padding: 10px 20px !important;
   cursor: pointer !important;
-  font-weight: 850 !important;
-  color: rgba(255, 255, 255, 0.90) !important;
-  background: rgba(255, 255, 255, 0.03) !important;
-  transition: transform 0.12s ease, border-color 0.12s ease, background 0.12s ease, filter 0.12s ease !important;
+  font-weight: 500 !important;
+  color: var(--text-primary) !important;
+  background: var(--surface-elevated) !important;
+  transition: var(--transition) !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
   gap: 8px !important;
   user-select: none !important;
-  height: 36px !important;
+  height: 40px !important;
   line-height: 1 !important;
   text-decoration: none !important;
-  font-size: 13px !important;
+  font-size: 14px !important;
+  box-shadow: var(--shadow-sm) !important;
 }
 
 .button:hover,
 input[type="submit"]:hover,
 .submit-row input:hover,
 a.button:hover {
+  border-color: var(--border-hover) !important;
+  background: var(--surface) !important;
   transform: translateY(-1px) !important;
-  border-color: rgba(255, 255, 255, 0.20) !important;
-  background: rgba(255, 255, 255, 0.04) !important;
-  filter: brightness(1.03) !important;
+  box-shadow: var(--shadow-md) !important;
 }
 
 .button:active,
 input[type="submit"]:active,
 .submit-row input:active,
 a.button:active {
-  transform: translateY(0px) !important;
+  transform: translateY(0) !important;
 }
 
 .button.default,
 input[type="submit"].default,
 .submit-row input.default {
-  border-color: rgba(255, 255, 255, 0.22) !important;
-  background: rgba(255, 255, 255, 0.06) !important;
+  border-color: var(--accent) !important;
+  background: var(--accent) !important;
+  color: white !important;
 }
 
 .button.default:hover,
 input[type="submit"].default:hover,
 .submit-row input.default:hover {
-  border-color: rgba(255, 255, 255, 0.30) !important;
-  background: rgba(255, 255, 255, 0.08) !important;
+  background: var(--accent-hover) !important;
+  border-color: var(--accent-hover) !important;
+  color: white !important;
 }
 
 /* Add button */
 .addlink {
-  border-radius: 14px !important;
-  border: 1px solid rgba(255, 255, 255, 0.12) !important;
-  padding: 10px 12px !important;
-  font-weight: 850 !important;
-  color: rgba(255, 255, 255, 0.90) !important;
-  background: rgba(255, 255, 255, 0.03) !important;
+  border-radius: var(--radius-sm) !important;
+  border: 1px solid var(--accent) !important;
+  padding: 10px 20px !important;
+  font-weight: 500 !important;
+  color: white !important;
+  background: var(--accent) !important;
   text-decoration: none !important;
   display: inline-flex !important;
   align-items: center !important;
   gap: 8px !important;
-  height: 36px !important;
-  font-size: 13px !important;
-  transition: transform 0.12s ease, border-color 0.12s ease, background 0.12s ease !important;
+  height: 40px !important;
+  font-size: 14px !important;
+  transition: var(--transition) !important;
+  box-shadow: var(--shadow-sm) !important;
 }
 
 .addlink:hover {
+  background: var(--accent-hover) !important;
+  border-color: var(--accent-hover) !important;
+  color: white !important;
   transform: translateY(-1px) !important;
-  border-color: rgba(255, 255, 255, 0.20) !important;
-  background: rgba(255, 255, 255, 0.04) !important;
+  box-shadow: var(--shadow-md) !important;
 }
 
 /* Delete button */
 .deletelink,
 .deletelink-box a {
-  border-color: rgba(255, 59, 92, 0.28) !important;
-  background: rgba(255, 59, 92, 0.10) !important;
-  color: rgba(255, 255, 255, 0.90) !important;
-  border-radius: 14px !important;
-  padding: 10px 12px !important;
-  font-size: 13px !important;
-  font-weight: 850 !important;
+  border-color: var(--danger) !important;
+  background: var(--danger) !important;
+  color: white !important;
+  border-radius: var(--radius-sm) !important;
+  padding: 10px 20px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
   text-decoration: none !important;
-  transition: all 0.12s ease !important;
+  transition: var(--transition) !important;
+  box-shadow: var(--shadow-sm) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  height: 40px !important;
 }
 
 .deletelink:hover,
 .deletelink-box a:hover {
-  border-color: rgba(255, 59, 92, 0.40) !important;
-  background: rgba(255, 59, 92, 0.14) !important;
+  background: #dc2626 !important;
+  border-color: #dc2626 !important;
+  color: white !important;
   transform: translateY(-1px) !important;
+  box-shadow: var(--shadow-md) !important;
 }
 
 /* ===== OBJECT TOOLS ===== */
 .object-tools {
-  margin-bottom: 16px !important;
+  margin-bottom: 24px !important;
   float: right !important;
 }
 
 .object-tools li {
-  margin-left: 10px !important;
+  margin-left: 12px !important;
   list-style: none !important;
   display: inline-block !important;
 }
 
 .object-tools a {
-  border-radius: 14px !important;
-  border: 1px solid rgba(255, 255, 255, 0.12) !important;
-  padding: 10px 12px !important;
-  font-weight: 850 !important;
-  color: rgba(255, 255, 255, 0.90) !important;
-  background: rgba(255, 255, 255, 0.03) !important;
+  border-radius: var(--radius-sm) !important;
+  border: 1px solid var(--border) !important;
+  padding: 10px 20px !important;
+  font-weight: 500 !important;
+  color: var(--text-primary) !important;
+  background: var(--surface-elevated) !important;
   text-decoration: none !important;
   display: inline-flex !important;
   align-items: center !important;
   gap: 8px !important;
-  height: 36px !important;
-  font-size: 13px !important;
-  transition: transform 0.12s ease, border-color 0.12s ease, background 0.12s ease !important;
+  height: 40px !important;
+  font-size: 14px !important;
+  transition: var(--transition) !important;
+  box-shadow: var(--shadow-sm) !important;
 }
 
 .object-tools a:hover {
+  border-color: var(--border-hover) !important;
+  background: var(--surface) !important;
   transform: translateY(-1px) !important;
-  border-color: rgba(255, 255, 255, 0.20) !important;
-  background: rgba(255, 255, 255, 0.04) !important;
+  box-shadow: var(--shadow-md) !important;
 }
 
 /* ===== MESSAGES ===== */
 .messagelist {
-  margin: 0 0 16px 0 !important;
+  margin: 0 0 24px 0 !important;
   list-style: none !important;
   padding: 0 !important;
 }
 
 .messagelist li {
-  border: 1px solid rgba(255, 255, 255, 0.12) !important;
-  border-radius: 12px !important;
-  padding: 10px 12px !important;
-  margin-bottom: 8px !important;
-  font-size: 13px !important;
-  line-height: 1.35 !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius-sm) !important;
+  padding: 14px 18px !important;
+  margin-bottom: 12px !important;
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+  box-shadow: var(--shadow-sm) !important;
 }
 
 .messagelist li.success {
-  border-color: rgba(53, 211, 159, 0.35) !important;
-  background: rgba(53, 211, 159, 0.08) !important;
-  color: rgba(255, 255, 255, 0.92) !important;
+  border-color: rgba(16, 185, 129, 0.3) !important;
+  background: rgba(16, 185, 129, 0.1) !important;
+  color: rgba(255, 255, 255, 0.95) !important;
 }
 
 .messagelist li.error {
-  border-color: rgba(255, 59, 92, 0.35) !important;
-  background: rgba(255, 59, 92, 0.08) !important;
-  color: rgba(255, 220, 220, 0.95) !important;
+  border-color: rgba(239, 68, 68, 0.3) !important;
+  background: rgba(239, 68, 68, 0.1) !important;
+  color: rgba(255, 255, 255, 0.95) !important;
 }
 
 .messagelist li.warning {
-  border-color: rgba(255, 211, 77, 0.35) !important;
-  background: rgba(255, 211, 77, 0.08) !important;
-  color: rgba(255, 255, 255, 0.92) !important;
+  border-color: rgba(245, 158, 11, 0.3) !important;
+  background: rgba(245, 158, 11, 0.1) !important;
+  color: rgba(255, 255, 255, 0.95) !important;
 }
 
 .messagelist li.info {
-  border-color: rgba(76, 165, 255, 0.35) !important;
-  background: rgba(76, 165, 255, 0.08) !important;
-  color: rgba(255, 255, 255, 0.92) !important;
+  border-color: rgba(59, 130, 246, 0.3) !important;
+  background: rgba(59, 130, 246, 0.1) !important;
+  color: rgba(255, 255, 255, 0.95) !important;
 }
 
 /* ===== FILTERS ===== */
 #changelist-filter {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.040), rgba(255, 255, 255, 0.018)) !important;
-  border: 1px solid var(--line) !important;
-  border-radius: var(--radius) !important;
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius-md) !important;
   padding: 0 !important;
-  box-shadow: var(--shadow) !important;
-  backdrop-filter: blur(10px) !important;
+  box-shadow: var(--shadow-sm) !important;
 }
 
 #changelist-filter h2 {
-  background: rgba(12, 18, 32, 0.55) !important;
-  border-bottom: 1px solid var(--line) !important;
-  color: var(--text) !important;
-  padding: 12px 16px !important;
+  background: var(--surface-elevated) !important;
+  border-bottom: 1px solid var(--border) !important;
+  color: var(--text-primary) !important;
+  padding: 14px 18px !important;
   margin: 0 !important;
   font-size: 12px !important;
-  font-weight: 850 !important;
+  font-weight: 600 !important;
   text-transform: uppercase !important;
-  letter-spacing: 0.5px !important;
+  letter-spacing: 0.05em !important;
 }
 
 #changelist-filter h3 {
-  color: var(--text) !important;
-  border-bottom: 1px solid var(--line) !important;
-  padding: 10px 16px !important;
+  color: var(--text-primary) !important;
+  border-bottom: 1px solid var(--border) !important;
+  padding: 12px 18px !important;
   margin: 0 !important;
   font-size: 13px !important;
-  font-weight: 850 !important;
+  font-weight: 600 !important;
 }
 
 #changelist-filter ul {
@@ -529,12 +565,13 @@ input[type="submit"].default:hover,
 }
 
 #changelist-filter a {
-  color: var(--text) !important;
-  padding: 10px 16px !important;
+  color: var(--text-secondary) !important;
+  padding: 10px 18px !important;
   display: block !important;
   text-decoration: none !important;
-  transition: all 0.15s ease !important;
-  border-bottom: 1px solid var(--line) !important;
+  transition: var(--transition) !important;
+  border-bottom: 1px solid var(--border) !important;
+  font-size: 14px !important;
 }
 
 #changelist-filter a:last-child {
@@ -542,20 +579,20 @@ input[type="submit"].default:hover,
 }
 
 #changelist-filter a:hover {
-  color: var(--primary) !important;
-  background: rgba(255, 255, 255, 0.03) !important;
+  color: var(--accent) !important;
+  background: rgba(255, 255, 255, 0.02) !important;
 }
 
 #changelist-filter li.selected a {
-  color: var(--primary) !important;
-  font-weight: 850 !important;
-  background: rgba(76, 165, 255, 0.10) !important;
+  color: var(--accent) !important;
+  font-weight: 600 !important;
+  background: rgba(59, 130, 246, 0.08) !important;
 }
 
 /* ===== CHECKBOXES & RADIOS ===== */
 input[type="checkbox"],
 input[type="radio"] {
-  accent-color: var(--primary) !important;
+  accent-color: var(--accent) !important;
   width: 18px !important;
   height: 18px !important;
   cursor: pointer !important;
@@ -563,155 +600,155 @@ input[type="radio"] {
 
 /* ===== SELECT MULTIPLE ===== */
 select[multiple] {
-  background: rgba(255, 255, 255, 0.03) !important;
-  border: 1px solid var(--line) !important;
-  color: var(--text) !important;
-  border-radius: 14px !important;
+  background: var(--surface-elevated) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text-primary) !important;
+  border-radius: var(--radius-sm) !important;
   min-height: 200px !important;
   padding: 8px !important;
 }
 
 select[multiple] option {
   padding: 10px !important;
-  color: var(--text) !important;
-  background: rgba(10, 16, 28, 1) !important;
+  color: var(--text-primary) !important;
+  background: var(--surface-elevated) !important;
 }
 
 select[multiple] option:checked {
-  background: var(--primary) !important;
+  background: var(--accent) !important;
   color: white !important;
 }
 
 select[multiple] option:hover {
-  background: rgba(255, 255, 255, 0.06) !important;
+  background: rgba(255, 255, 255, 0.05) !important;
 }
 
 /* ===== LINKS ===== */
 a:link,
 a:visited {
-  color: var(--primary) !important;
+  color: var(--accent) !important;
   text-decoration: none !important;
-  transition: color 0.15s ease !important;
+  transition: var(--transition) !important;
 }
 
 a:hover {
-  color: var(--text) !important;
+  color: var(--accent-hover) !important;
 }
 
 /* ===== PAGINATION ===== */
 .paginator {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.040), rgba(255, 255, 255, 0.018)) !important;
-  border: 1px solid var(--line) !important;
-  border-radius: var(--radius) !important;
-  padding: 12px !important;
-  margin-top: 16px !important;
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius-md) !important;
+  padding: 16px !important;
+  margin-top: 24px !important;
   text-align: center !important;
-  box-shadow: var(--shadow) !important;
-  backdrop-filter: blur(10px) !important;
+  box-shadow: var(--shadow-sm) !important;
 }
 
 .paginator,
 .paginator * {
-  color: var(--text) !important;
+  color: var(--text-primary) !important;
 }
 
 .paginator a {
-  background: rgba(255, 255, 255, 0.03) !important;
-  border: 1px solid var(--line) !important;
-  color: var(--text) !important;
-  border-radius: 12px !important;
-  padding: 6px 12px !important;
+  background: var(--surface-elevated) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text-primary) !important;
+  border-radius: var(--radius-sm) !important;
+  padding: 8px 14px !important;
   margin: 0 4px !important;
   text-decoration: none !important;
   display: inline-block !important;
-  transition: all 0.12s ease !important;
-  font-size: 12px !important;
+  transition: var(--transition) !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
 }
 
 .paginator a:hover {
-  background: rgba(255, 255, 255, 0.06) !important;
+  background: var(--surface) !important;
+  border-color: var(--border-hover) !important;
   transform: translateY(-1px) !important;
 }
 
 .paginator .this-page {
-  background: rgba(76, 165, 255, 0.15) !important;
-  color: var(--text) !important;
-  border-color: rgba(76, 165, 255, 0.30) !important;
-  font-weight: 850 !important;
+  background: var(--accent) !important;
+  color: white !important;
+  border-color: var(--accent) !important;
+  font-weight: 600 !important;
 }
 
 /* ===== SEARCH ===== */
 #changelist-search {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.040), rgba(255, 255, 255, 0.018)) !important;
-  border: 1px solid var(--line) !important;
-  border-radius: var(--radius) !important;
-  padding: 16px !important;
-  margin-bottom: 16px !important;
-  box-shadow: var(--shadow) !important;
-  backdrop-filter: blur(10px) !important;
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius-md) !important;
+  padding: 20px !important;
+  margin-bottom: 24px !important;
+  box-shadow: var(--shadow-sm) !important;
 }
 
 #changelist-search label {
-  color: rgba(255, 255, 255, 0.55) !important;
+  color: var(--text-secondary) !important;
   display: block !important;
-  margin-bottom: 8px !important;
-  font-size: 12px !important;
+  margin-bottom: 10px !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
 }
 
 #changelist-search input {
-  background: rgba(255, 255, 255, 0.03) !important;
-  border: 1px solid var(--line) !important;
-  color: var(--text) !important;
+  background: var(--surface-elevated) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text-primary) !important;
 }
 
 /* ===== HELP TEXT ===== */
 .help,
 p.help,
 .form-row .help {
-  color: rgba(255, 255, 255, 0.52) !important;
+  color: var(--text-tertiary) !important;
   font-size: 12px !important;
   margin-top: 6px !important;
-  font-style: italic !important;
+  line-height: 1.4 !important;
 }
 
 /* ===== ERRORS ===== */
 .errorlist {
-  background: rgba(255, 59, 92, 0.08) !important;
-  border: 1px solid rgba(255, 59, 92, 0.35) !important;
-  border-radius: 12px !important;
-  padding: 10px 12px !important;
-  color: rgba(255, 220, 220, 0.95) !important;
+  background: rgba(239, 68, 68, 0.1) !important;
+  border: 1px solid rgba(239, 68, 68, 0.3) !important;
+  border-radius: var(--radius-sm) !important;
+  padding: 12px 16px !important;
+  color: rgba(255, 255, 255, 0.95) !important;
   list-style: none !important;
-  margin: 8px 0 !important;
+  margin: 10px 0 !important;
   font-size: 13px !important;
 }
 
 .errorlist li {
-  color: rgba(255, 220, 220, 0.95) !important;
+  color: rgba(255, 255, 255, 0.95) !important;
   margin: 4px 0 !important;
 }
 
 /* ===== FIELDSET ===== */
 fieldset.module {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.040), rgba(255, 255, 255, 0.018)) !important;
-  border: 1px solid var(--line) !important;
-  border-radius: var(--radius) !important;
-  margin-bottom: 16px !important;
-  overflow: visible !important;
-  box-shadow: var(--shadow) !important;
-  backdrop-filter: blur(10px) !important;
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius-md) !important;
+  margin-bottom: 24px !important;
+  overflow: hidden !important;
+  box-shadow: var(--shadow-sm) !important;
 }
 
 fieldset.module h2 {
-  background: rgba(12, 18, 32, 0.55) !important;
-  border-bottom: 1px solid var(--line) !important;
-  color: var(--text) !important;
-  padding: 12px 16px !important;
+  background: var(--surface-elevated) !important;
+  border-bottom: 1px solid var(--border) !important;
+  color: var(--text-primary) !important;
+  padding: 16px 20px !important;
 }
 
 fieldset.module .form-row {
-  border-bottom: 1px solid var(--line) !important;
-  padding: 12px 16px !important;
+  border-bottom: 1px solid var(--border) !important;
+  padding: 16px 20px !important;
   margin: 0 !important;
 }
 
@@ -721,17 +758,20 @@ fieldset.module .form-row:last-child {
 
 /* ===== SUBMIT ROW ===== */
 .submit-row {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.040), rgba(255, 255, 255, 0.018)) !important;
-  border: 1px solid var(--line) !important;
-  border-radius: var(--radius) !important;
-  padding: 16px !important;
-  margin-top: 16px !important;
-  box-shadow: var(--shadow) !important;
-  backdrop-filter: blur(10px) !important;
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius-md) !important;
+  padding: 20px !important;
+  margin-top: 24px !important;
+  box-shadow: var(--shadow-sm) !important;
+  display: flex !important;
+  gap: 12px !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
 }
 
 .submit-row * {
-  color: var(--text) !important;
+  color: var(--text-primary) !important;
 }
 
 /* ===== ADMIN INDEX ===== */
@@ -742,27 +782,28 @@ fieldset.module .form-row:last-child {
 
 .dashboard .module th {
   background: transparent !important;
-  border-bottom: 1px solid var(--line) !important;
-  color: var(--muted) !important;
-  padding: 10px !important;
-  font-weight: 850 !important;
-  font-size: 12px !important;
-}
-
-.dashboard .module td {
-  color: var(--text) !important;
-  border-bottom: 1px solid var(--line) !important;
-  padding: 10px !important;
+  border-bottom: 1px solid var(--border) !important;
+  color: var(--text-secondary) !important;
+  padding: 12px !important;
+  font-weight: 600 !important;
   font-size: 13px !important;
 }
 
+.dashboard .module td {
+  color: var(--text-primary) !important;
+  border-bottom: 1px solid var(--border) !important;
+  padding: 12px !important;
+  font-size: 14px !important;
+}
+
 .dashboard .module td a {
-  color: var(--text) !important;
+  color: var(--text-primary) !important;
   text-decoration: none !important;
+  font-weight: 500 !important;
 }
 
 .dashboard .module td a:hover {
-  color: var(--primary) !important;
+  color: var(--accent) !important;
 }
 
 /* ===== SCROLLBAR ===== */
@@ -772,22 +813,21 @@ fieldset.module .form-row:last-child {
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 5px;
+  background: var(--bg);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
+  background: var(--border);
   border-radius: 5px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.25);
+  background: var(--border-hover);
 }
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.15) rgba(255, 255, 255, 0.03);
+  scrollbar-color: var(--border) var(--bg);
 }
 
 /* ===== REQUIRED FIELD ===== */
@@ -797,33 +837,32 @@ fieldset.module .form-row:last-child {
 
 /* ===== READONLY FIELDS ===== */
 .readonly {
-  color: var(--muted) !important;
+  color: var(--text-tertiary) !important;
   background: rgba(255, 255, 255, 0.02) !important;
-  padding: 10px 12px !important;
-  border-radius: 14px !important;
+  padding: 10px 14px !important;
+  border-radius: var(--radius-sm) !important;
 }
 
 /* ===== INLINE FORMS ===== */
 .inline-group {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.040), rgba(255, 255, 255, 0.018)) !important;
-  border: 1px solid var(--line) !important;
-  border-radius: var(--radius) !important;
-  margin-bottom: 16px !important;
-  overflow: visible !important;
-  box-shadow: var(--shadow) !important;
-  backdrop-filter: blur(10px) !important;
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius-md) !important;
+  margin-bottom: 20px !important;
+  overflow: hidden !important;
+  box-shadow: var(--shadow-sm) !important;
 }
 
 .inline-group h2 {
-  background: rgba(12, 18, 32, 0.55) !important;
-  border-bottom: 1px solid var(--line) !important;
-  color: var(--text) !important;
-  padding: 12px 16px !important;
+  background: var(--surface-elevated) !important;
+  border-bottom: 1px solid var(--border) !important;
+  color: var(--text-primary) !important;
+  padding: 14px 18px !important;
 }
 
 .inline-group .form-row {
-  border-bottom: 1px solid var(--line) !important;
-  padding: 12px 16px !important;
+  border-bottom: 1px solid var(--border) !important;
+  padding: 14px 18px !important;
 }
 
 .inline-group .form-row:last-child {
@@ -832,60 +871,60 @@ fieldset.module .form-row:last-child {
 
 /* ===== AUTOCOMPLETE ===== */
 .select2-container--default .select2-selection--single {
-  background: rgba(255, 255, 255, 0.03) !important;
-  border: 1px solid var(--line) !important;
-  color: var(--text) !important;
-  border-radius: 14px !important;
+  background: var(--surface-elevated) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text-primary) !important;
+  border-radius: var(--radius-sm) !important;
   height: auto !important;
   padding: 4px !important;
 }
 
 .select2-container--default .select2-selection--single .select2-selection__rendered {
-  color: var(--text) !important;
+  color: var(--text-primary) !important;
   line-height: 32px !important;
 }
 
 .select2-dropdown {
-  background: rgba(10, 16, 28, 0.96) !important;
-  border: 1px solid var(--line) !important;
-  border-radius: 14px !important;
-  box-shadow: var(--shadow) !important;
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--shadow-lg) !important;
 }
 
 .select2-results__option {
-  color: var(--text) !important;
+  color: var(--text-primary) !important;
   padding: 10px 14px !important;
 }
 
 .select2-results__option--highlighted {
-  background: var(--primary) !important;
+  background: var(--accent) !important;
   color: white !important;
 }
 
 /* ===== CALENDAR WIDGET ===== */
 .calendarbox,
 .clockbox {
-  background: rgba(10, 16, 28, 0.94) !important;
-  border: 1px solid var(--line) !important;
-  border-radius: var(--radius) !important;
-  box-shadow: var(--shadow) !important;
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--shadow-lg) !important;
 }
 
 .calendarbox table th,
 .clockbox h2 {
-  background: rgba(12, 18, 32, 0.55) !important;
-  color: var(--text) !important;
+  background: var(--surface-elevated) !important;
+  color: var(--text-primary) !important;
   padding: 12px !important;
 }
 
 .calendarbox table td a {
-  color: var(--text) !important;
+  color: var(--text-primary) !important;
   padding: 8px !important;
-  border-radius: 4px !important;
+  border-radius: var(--radius-sm) !important;
 }
 
 .calendarbox table td.selected a {
-  background: var(--primary) !important;
+  background: var(--accent) !important;
   color: white !important;
 }
 
@@ -898,25 +937,25 @@ fieldset.module .form-row:last-child {
   #branding,
   #user-tools {
     float: none !important;
-    padding: 10px 14px !important;
+    padding: 12px 16px !important;
   }
   
   #user-tools {
     text-align: left !important;
-    border-top: 1px solid var(--line) !important;
+    border-top: 1px solid var(--border) !important;
   }
   
   #content {
-    padding: 14px !important;
+    padding: 20px !important;
   }
   
   .object-tools {
     float: none !important;
-    margin-bottom: 12px !important;
+    margin-bottom: 16px !important;
   }
   
   .object-tools li {
     display: block !important;
-    margin: 6px 0 !important;
+    margin: 8px 0 !important;
   }
 }
