@@ -253,6 +253,16 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev
+  - Version: 0.2.0-alpha.15
+  - Summary:
+    - Added inline wrapper div in admin/index.html template with calc() margins to force dashboard to break out of #content container
+    - Updated CSS to support new dashboard wrapper structure
+    - Fixed footer positioning to use 100vw width with calc() margins (calc(-50vw + 50%)) to ensure full browser width
+    - Increased Export button min-width from 120px to 140px and added white-space: nowrap to prevent text wrapping
+    - Footer now properly spans full viewport width even when inside #container
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev
   - Version: 0.2.0-alpha.14
   - Summary:
     - Fixed clipboard function error handling - added event parameter and fallback for older browsers using document.execCommand

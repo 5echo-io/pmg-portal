@@ -104,6 +104,9 @@ Changed:
 - Fixed button size inconsistency in debug view export section
 - Completely redesigned admin dashboard CSS to remove all width constraints and ensure full browser width
 - Dashboard now properly breaks out of #content max-width constraint using :has() selector
+- Added inline wrapper div in admin/index.html template to force dashboard to break out of #content container using calc() margins
+- Fixed footer positioning to use 100vw width with calc() margins to ensure it spans full browser width
+- Increased Export button min-width to 140px and added white-space: nowrap to prevent text wrapping
 
 Fixed:
 - Recent Actions button click handler improved (removed conflicting onclick, improved event listener attachment)

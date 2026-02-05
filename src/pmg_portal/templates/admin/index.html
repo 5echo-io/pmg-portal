@@ -7,42 +7,45 @@
 {% endblock %}
 
 {% block content %}
-<div class="dashboard">
-  {% for app in app_list %}
-    <div class="app-{{ app.app_label }} module">
-      <table>
-        <caption>
-          <a href="{{ app.app_url }}" class="section" title="{% blocktrans with name=app.name %}Models in the {{ name }} application{% endblocktrans %}">{{ app.name }}</a>
-        </caption>
-        {% for model in app.models %}
-          <tr class="model-{{ model.object_name|lower }}">
-            {% if model.admin_url %}
-              <th scope="row"><a href="{{ model.admin_url }}">{{ model.name }}</a></th>
-            {% else %}
-              <th scope="row">{{ model.name }}</th>
-            {% endif %}
-
-            {% if model.add_url %}
-              <td><a href="{{ model.add_url }}" class="addlink">{% trans 'Add' %}</a></td>
-            {% else %}
-              <td>&nbsp;</td>
-            {% endif %}
-
-            {% if model.admin_url %}
-              {% if model.view_only %}
-                <td><a href="{{ model.admin_url }}" class="viewlink">{% trans 'View' %}</a></td>
+{# Force full width wrapper for dashboard #}
+<div style="width: 100vw; max-width: 100vw; margin-left: calc(-50vw + 50%); margin-right: calc(-50vw + 50%); padding: 0 32px; box-sizing: border-box;">
+  <div class="dashboard">
+    {% for app in app_list %}
+      <div class="app-{{ app.app_label }} module">
+        <table>
+          <caption>
+            <a href="{{ app.app_url }}" class="section" title="{% blocktrans with name=app.name %}Models in the {{ name }} application{% endblocktrans %}">{{ app.name }}</a>
+          </caption>
+          {% for model in app.models %}
+            <tr class="model-{{ model.object_name|lower }}">
+              {% if model.admin_url %}
+                <th scope="row"><a href="{{ model.admin_url }}">{{ model.name }}</a></th>
               {% else %}
-                <td><a href="{{ model.admin_url }}" class="changelink">{% trans 'Change' %}</a></td>
+                <th scope="row">{{ model.name }}</th>
               {% endif %}
-            {% else %}
-              <td>&nbsp;</td>
-            {% endif %}
-          </tr>
-        {% endfor %}
-      </table>
-    </div>
-  {% empty %}
-    <p>{% trans "You don't have permission to view or edit anything." %}</p>
-  {% endfor %}
+
+              {% if model.add_url %}
+                <td><a href="{{ model.add_url }}" class="addlink">{% trans 'Add' %}</a></td>
+              {% else %}
+                <td>&nbsp;</td>
+              {% endif %}
+
+              {% if model.admin_url %}
+                {% if model.view_only %}
+                  <td><a href="{{ model.admin_url }}" class="viewlink">{% trans 'View' %}</a></td>
+                {% else %}
+                  <td><a href="{{ model.admin_url }}" class="changelink">{% trans 'Change' %}</a></td>
+                {% endif %}
+              {% else %}
+                <td>&nbsp;</td>
+              {% endif %}
+            </tr>
+          {% endfor %}
+        </table>
+      </div>
+    {% empty %}
+      <p>{% trans "You don't have permission to view or edit anything." %}</p>
+    {% endfor %}
+  </div>
 </div>
 {% endblock %}
