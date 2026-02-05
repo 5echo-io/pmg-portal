@@ -253,6 +253,15 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev
+  - Version: 0.2.0-alpha.16
+  - Summary:
+    - Removed problematic inline wrapper div from admin/index.html that was causing dashboard to disappear
+    - Reverted to simpler CSS-only solution using :has() selector to detect dashboard and remove #content max-width constraint
+    - Dashboard now properly displays using CSS :has() selector to make #content full width when it contains .dashboard
+    - Simplified CSS rules - removed calc() margin workarounds that were causing layout issues
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev
   - Version: 0.2.0-alpha.15
   - Summary:
     - Added inline wrapper div in admin/index.html template with calc() margins to force dashboard to break out of #content container

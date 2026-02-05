@@ -369,28 +369,15 @@ body #container #content,
   position: relative !important;
 }
 
-/* Dashboard page needs full width - COMPLETE REDESIGN */
-/* Remove max-width constraint from #content when it contains dashboard */
-body.admin-page #content:has(.dashboard),
-body.admin-page #content:has(div[style*="100vw"]) {
+/* Dashboard page needs full width - remove max-width from #content when it contains dashboard */
+body.admin-page #content:has(.dashboard) {
   max-width: 100% !important;
   width: 100% !important;
-  padding-left: 0 !important;
-  padding-right: 0 !important;
-}
-
-/* For dashboard wrapper - break out of any container */
-body.admin-page #content > div[style*="100vw"] {
-  width: 100vw !important;
-  max-width: 100vw !important;
-  margin-left: calc(-50vw + 50%) !important;
-  margin-right: calc(-50vw + 50%) !important;
   padding-left: 32px !important;
   padding-right: 32px !important;
-  box-sizing: border-box !important;
 }
 
-/* For dashboard specifically - remove all constraints */
+/* For dashboard specifically - ensure it uses full available width */
 body.admin-page .dashboard {
   width: 100% !important;
   max-width: 100% !important;
