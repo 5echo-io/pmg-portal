@@ -22,15 +22,4 @@
     {% endif %}
   </div>
 
-  {% if memberships|length > 1 %}
-    <div class="panel">
-      <h2>Your customers</h2>
-      <ul class="list">
-        {% for m in memberships %}
-          <li class="list-item">{{ m.customer.name }} <span class="muted">({{ m.role }})</span></li>
-        {% endfor %}
-      </ul>
-      <p class="muted">Customer switcher comes next.</p>
-    </div>
-  {% endif %}
 {% endblock %}

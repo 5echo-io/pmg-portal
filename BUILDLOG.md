@@ -7,6 +7,9 @@
     - Fixed 500 error when accessing admin panel
     - Added missing {% load i18n %} tag in admin index.html template
     - Template was using {% blocktrans %} and {% trans %} without loading i18n library
+    - Fixed topbar layout: improved flexbox to ensure menu buttons stay on same line as brand
+    - Enhanced topbar CSS with flex-shrink and proper spacing
+    - Improved user avatar dropdown menu styling
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev (suggested)
