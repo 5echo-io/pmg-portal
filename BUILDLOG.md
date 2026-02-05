@@ -2,6 +2,13 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev (suggested)
+  - Version: 0.1.0-alpha.9
+  - Summary:
+    - Fixed 500 error when adding CustomerMembership (form fields configuration)
+    - Fixed form to properly handle add vs edit modes with dynamic fields
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev (suggested)
   - Version: 0.1.0-alpha.8
   - Summary:
     - Merged bulk add into regular CustomerMembership add form with multi-select

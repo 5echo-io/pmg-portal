@@ -21,7 +21,7 @@ class CustomerMembershipForm(forms.ModelForm):
     
     class Meta:
         model = CustomerMembership
-        fields = ('user', 'customer', 'role')
+        fields = ('user', 'role')
     
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
@@ -42,16 +42,19 @@ class CustomerMembershipForm(forms.ModelForm):
         else:
             available_customers = Customer.objects.all()
         
-        # If editing existing membership, hide customers field and use regular customer field
+        # If editing existing membership, add customer field and hide customers field
         if self.instance and self.instance.pk:
-            # Editing: hide multi-select, show regular customer field
+            # Editing: add customer field, hide multi-select
             if 'customers' in self.fields:
                 del self.fields['customers']
-            self.fields['customer'].queryset = available_customers
+            # Add customer field for editing
+            self.fields['customer'] = forms.ModelChoiceField(
+                queryset=available_customers,
+                required=True,
+                initial=self.instance.customer
+            )
         else:
-            # Adding: hide single customer field, show multi-select
-            if 'customer' in self.fields:
-                del self.fields['customer']
+            # Adding: ensure customers field is present and required
             self.fields['customers'].queryset = available_customers
             self.fields['customers'].required = True
     

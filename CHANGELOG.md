@@ -45,6 +45,7 @@ Fixed:
 - 500 error when saving in admin (context processor now skips admin pages, improved admin queryset handling)
 - 500 errors on admin changelist and save operations (improved get_queryset URL detection, added comprehensive error handling)
 - Database tables missing error (created initial migrations for portal models)
+- 500 error when adding CustomerMembership (fixed form fields configuration for add/edit modes)
 
 ## [0.1.0-alpha.1] - Initial foundation
 Added:

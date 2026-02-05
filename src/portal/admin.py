@@ -83,6 +83,19 @@ class CustomerMembershipAdmin(admin.ModelAdmin):
     autocomplete_fields = ("user",)
     form = CustomerMembershipForm
     
+    def get_fieldsets(self, request, obj=None):
+        """Return fieldsets based on add/edit mode."""
+        if obj is None:
+            # Adding: show customers (multi-select)
+            return [
+                (None, {'fields': ('user', 'customers', 'role')}),
+            ]
+        else:
+            # Editing: show customer (single select)
+            return [
+                (None, {'fields': ('user', 'customer', 'role')}),
+            ]
+    
     def get_form(self, request, obj=None, **kwargs):
         """Return form with request context for permission filtering."""
         form_class = super().get_form(request, obj, **kwargs)
