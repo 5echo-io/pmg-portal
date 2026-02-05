@@ -89,6 +89,8 @@ Changed:
 - Admin page content now has max-width: 1200px with centered margins (similar to portal page) for better readability
 - Fixed admin page width constraint by removing max-width from #container (set to none)
 - Footer now properly spans full width and is positioned at bottom on admin pages
+- Fixed footer_info context processor to work for admin pages (removed skip check)
+- Added debug view at /debug/ for system information, database info, and file paths (superuser only)
 
 Fixed:
 - Recent Actions button click handler improved (removed conflicting onclick, improved event listener attachment)

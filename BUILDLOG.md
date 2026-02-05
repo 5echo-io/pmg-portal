@@ -253,6 +253,16 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev
+  - Version: 0.2.0-alpha.9
+  - Summary:
+    - Fixed footer_info context processor to work for admin pages (removed admin path skip check)
+    - Added more aggressive CSS overrides for admin page width (targeting body > div wrappers)
+    - Enhanced footer CSS to handle footer inside or outside #container with viewport width tricks
+    - Created debug view at /debug/ for superusers to view system info, database info, file paths, and errors
+    - Added debug template with JSON export functionality
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev
   - Version: 0.2.0-alpha.8
   - Summary:
     - Fixed admin page width issue by setting #container max-width to none (was 100%)

@@ -1,0 +1,91 @@
+{% extends "portal/base.html" %}
+{% block title %}Debug Information | PMG Portal{% endblock %}
+
+{% block content %}
+  <h1>Debug Information</h1>
+  
+  <div class="panel">
+    <h2>System Information</h2>
+    <div style="margin-top: 16px;">
+      <div style="margin-bottom: 12px;">
+        <strong>Python Version:</strong> {{ debug_data.system.python_version|default:"Unknown" }}
+      </div>
+      <div style="margin-bottom: 12px;">
+        <strong>Django Debug Mode:</strong> {{ debug_data.system.debug|default:"Unknown" }}
+      </div>
+      <div style="margin-bottom: 12px;">
+        <strong>Base Directory:</strong> {{ debug_data.system.base_dir|default:"Unknown" }}
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Database Information</h2>
+    <div style="margin-top: 16px;">
+      <div style="margin-bottom: 12px;">
+        <strong>PostgreSQL Version:</strong> {{ debug_data.database.postgres_version|default:"Unknown" }}
+      </div>
+      <div style="margin-bottom: 12px;">
+        <strong>Database Name:</strong> {{ debug_data.database.database_name|default:"Unknown" }}
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>File Information</h2>
+    <div style="margin-top: 16px;">
+      <div style="margin-bottom: 12px;">
+        <strong>VERSION File:</strong> {{ debug_data.files.version_file|default:"Not found" }}
+      </div>
+      {% if debug_data.files.version_content %}
+      <div style="margin-bottom: 12px;">
+        <strong>Version:</strong> {{ debug_data.files.version_content }}
+      </div>
+      {% endif %}
+      <div style="margin-bottom: 12px;">
+        <strong>CHANGELOG.md File:</strong> {{ debug_data.files.changelog_file|default:"Not found" }}
+      </div>
+      {% if debug_data.files.changelog_size %}
+      <div style="margin-bottom: 12px;">
+        <strong>CHANGELOG.md Size:</strong> {{ debug_data.files.changelog_size }} bytes
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Django Configuration</h2>
+    <div style="margin-top: 16px;">
+      <div style="margin-bottom: 12px;">
+        <strong>Context Processors:</strong>
+        <ul style="margin-top: 8px; padding-left: 20px;">
+          {% for cp in debug_data.django.context_processors %}
+          <li>{{ cp }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  {% if debug_data.error %}
+  <div class="panel" style="border-color: #ef4444;">
+    <h2 style="color: #ef4444;">Error</h2>
+    <div style="margin-top: 16px;">
+      <pre style="background: rgba(239, 68, 68, 0.1); padding: 12px; border-radius: 8px; overflow-x: auto;">{{ debug_data.error }}</pre>
+      {% if debug_data.traceback %}
+      <details style="margin-top: 12px;">
+        <summary style="cursor: pointer; color: #ef4444;">Show Traceback</summary>
+        <pre style="background: rgba(239, 68, 68, 0.1); padding: 12px; border-radius: 8px; overflow-x: auto; margin-top: 8px;">{{ debug_data.traceback }}</pre>
+      </details>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="panel">
+    <h2>Export</h2>
+    <div style="margin-top: 16px;">
+      <a href="?format=json" class="form-btn form-btn-primary" target="_blank">Export as JSON</a>
+    </div>
+  </div>
+{% endblock %}

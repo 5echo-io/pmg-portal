@@ -38,17 +38,18 @@ def user_customers(request):
     }
 
 def footer_info(request):
-    """Add footer information to templates. Only runs for portal templates, not admin."""
+    """Add footer information to all templates (portal and admin)."""
     # Always return safe defaults first
     defaults = {
         "app_version": "Unknown",
         "changelog_preview": "",
         "changelog_full": "",
         "copyright_year": "2026",
+        "show_changelog_button": False,
     }
     
-    # Skip for admin pages to avoid errors
-    if not request or not hasattr(request, 'path') or request.path.startswith('/admin/'):
+    # Return defaults if no request
+    if not request or not hasattr(request, 'path'):
         return defaults
     
     version = "Unknown"
