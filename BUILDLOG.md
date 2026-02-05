@@ -4,8 +4,11 @@
   - Branch: dev (suggested)
   - Version: 0.1.0-alpha.6
   - Summary:
-    - Comprehensive fix for admin 500 errors
-    - Improved error handling in admin queryset and context processor
+    - Created initial migrations for portal models (fixes missing database tables)
+    - Fixed admin 500 errors with improved error handling
+    - Improved changelog modal to show version-specific sections
+    - Removed changelog preview text from footer, only button remains
+    - Added dark mode scrollbar styling
     - Added logging configuration for better debugging
 
 - 2026-02-05 (Europe/Oslo)

@@ -10,8 +10,10 @@ Added:
 - Setup guide documentation (SETUP_GUIDE.md)
 - Standalone installer script (install.sh) that can be run via curl from GitHub
 - Installer detects existing installation and offers update/uninstall options
-- Footer with copyright, version, quick links, and latest changelog preview
-- Changelog modal dialog in footer for viewing full changelog
+- Footer with copyright, version, quick links, and changelog button
+- Changelog modal dialog showing version-specific changes (unreleased or major release)
+- Dark mode scrollbar styling
+- Initial database migrations for portal models
 
 Changed:
 - Default admin password to "admin" and skip creation if any superuser exists
@@ -32,6 +34,7 @@ Fixed:
 - 500 error in admin save and portal links (fixed context processor file reading, improved error handling)
 - 500 error when saving in admin (context processor now skips admin pages, improved admin queryset handling)
 - 500 errors on admin changelist and save operations (improved get_queryset URL detection, added comprehensive error handling)
+- Database tables missing error (created initial migrations for portal models)
 
 ## [0.1.0-alpha.1] - Initial foundation
 Added:

@@ -40,28 +40,37 @@
         <a href="/admin/" class="footer-link">View Logs</a>
         <div class="footer-text muted">View system logs in admin panel</div>
       </div>
-      {% if changelog_preview %}
+      {% if show_changelog_button %}
       <div class="footer-section">
-        <div class="footer-title">Latest Changes</div>
-        <div class="footer-changelog">{{ changelog_preview|linebreaks|truncatewords:30 }}</div>
-        {% if changelog_full %}
-        <button class="footer-btn" onclick="openChangelogModal()">View Full Changelog</button>
-        {% endif %}
+        <div class="footer-title">Changelog</div>
+        <button class="footer-btn-text" onclick="openChangelogModal()">View Changelog</button>
       </div>
       {% endif %}
     </div>
   </footer>
 
   <!-- Changelog Modal -->
-  {% if changelog_full %}
+  {% if show_changelog_button %}
   <div id="changelogModal" class="modal" onclick="closeChangelogModal(event)">
     <div class="modal-content" onclick="event.stopPropagation()">
       <div class="modal-header">
-        <h2>Changelog</h2>
+        <h2>Changelog - Version {{ app_version|default:"Unknown" }}</h2>
         <button class="modal-close" onclick="closeChangelogModal(event)">&times;</button>
       </div>
       <div class="modal-body">
-        <pre class="changelog-content">{{ changelog_full|escape }}</pre>
+        {% if changelog_section %}
+        <div class="changelog-section">
+          <pre class="changelog-content">{{ changelog_section|escape }}</pre>
+        </div>
+        {% endif %}
+        {% if changelog_full %}
+        <div class="modal-actions">
+          <button class="modal-btn" onclick="toggleFullChangelog()">View Full Changelog</button>
+        </div>
+        <div id="fullChangelog" class="changelog-section" style="display: none;">
+          <pre class="changelog-content">{{ changelog_full|escape }}</pre>
+        </div>
+        {% endif %}
       </div>
     </div>
   </div>
@@ -77,6 +86,29 @@
       if (!event || event.target.classList.contains('modal') || event.target.classList.contains('modal-close')) {
         document.getElementById('changelogModal').style.display = 'none';
         document.body.style.overflow = 'auto';
+        // Reset full changelog view
+        const fullChangelog = document.getElementById('fullChangelog');
+        if (fullChangelog) {
+          fullChangelog.style.display = 'none';
+        }
+        const btn = document.querySelector('.modal-btn');
+        if (btn) {
+          btn.textContent = 'View Full Changelog';
+        }
+      }
+    }
+    
+    function toggleFullChangelog() {
+      const fullChangelog = document.getElementById('fullChangelog');
+      const btn = document.querySelector('.modal-btn');
+      if (fullChangelog && btn) {
+        if (fullChangelog.style.display === 'none') {
+          fullChangelog.style.display = 'block';
+          btn.textContent = 'Hide Full Changelog';
+        } else {
+          fullChangelog.style.display = 'none';
+          btn.textContent = 'View Full Changelog';
+        }
       }
     }
     

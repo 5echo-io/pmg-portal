@@ -10,6 +10,31 @@
 }
 
 * { box-sizing: border-box; }
+
+/* Dark mode scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) var(--bg);
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--line);
+  border-radius: 4px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: #2a3a5c;
+}
+
 body {
   margin: 0;
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
@@ -157,20 +182,20 @@ a.link:hover { color: var(--text); }
   overflow-y: auto;
 }
 
-.footer-btn {
+.footer-btn-text {
   margin-top: 8px;
-  padding: 6px 12px;
-  font-size: 11px;
-  border-radius: 6px;
-  border: 1px solid var(--line);
-  background: var(--btn);
-  color: var(--text);
+  padding: 0;
+  font-size: 12px;
+  border: none;
+  background: none;
+  color: var(--muted);
   cursor: pointer;
-  width: auto;
+  text-decoration: underline;
+  text-align: left;
 }
 
-.footer-btn:hover {
-  background: var(--btnHover);
+.footer-btn-text:hover {
+  color: var(--text);
 }
 
 /* Modal Styles */
@@ -239,6 +264,10 @@ a.link:hover { color: var(--text); }
   flex: 1;
 }
 
+.changelog-section {
+  margin-bottom: 16px;
+}
+
 .changelog-content {
   font-family: 'Courier New', monospace;
   font-size: 12px;
@@ -253,4 +282,24 @@ a.link:hover { color: var(--text); }
   margin: 0;
   max-height: 60vh;
   overflow-y: auto;
+}
+
+.modal-actions {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.modal-btn {
+  padding: 8px 16px;
+  font-size: 12px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  background: var(--btn);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.modal-btn:hover {
+  background: var(--btnHover);
 }
