@@ -2,6 +2,16 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev (suggested)
+  - Version: 0.1.0-alpha.21
+  - Summary:
+    - Removed "Change Password" link from avatar dropdown menu (available in profile settings)
+    - Password change now opens as a modal popup instead of navigating to a new page
+    - Updated profile_view to handle password change form submission
+    - Improved user experience with modal-based password change workflow
+    - Form submission handled via POST to same profile page
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev (suggested)
   - Version: 0.1.0-alpha.20
   - Summary:
     - Added auto-dismiss functionality to toast notifications (5 seconds)
@@ -240,6 +250,19 @@
     - Added interactive install wizard with .env prompts
     - Bootstrapped local Postgres during install when applicable
     - Updated default admin credentials to admin/admin and superuser check
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev
+  - Version: 0.1.0-alpha.22
+  - Summary:
+    - Fixed avatar icon vertical alignment in topbar
+    - Increased spacing between website title and menu buttons (gap: 32px)
+    - Redesigned profile settings page with left sidebar navigation menu
+    - Added sidebar menu items: Account Information, Change Password, Delete Account, Logout
+    - Implemented delete account functionality with danger zone modal
+    - Delete account requires username confirmation and permanently deletes user
+    - Added danger zone styling with warning icons and red color scheme
+    - Updated profile_view to handle delete account POST requests
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev (suggested)

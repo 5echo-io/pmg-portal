@@ -48,8 +48,40 @@ def register_view(request):
 @login_required
 def profile_view(request):
     """User profile settings page."""
+    show_password_modal = False
+    
+    if request.method == "POST":
+        if "change_password" in request.POST:
+            password_form = CustomPasswordChangeForm(request.user, request.POST)
+            show_password_modal = True  # Show modal if form was submitted
+            if password_form.is_valid():
+                user = password_form.save()
+                update_session_auth_hash(request, user)
+                messages.success(request, "Your password has been changed successfully.")
+                # Redirect to avoid resubmission on refresh
+                return redirect("/account/profile/")
+            else:
+                messages.error(request, "Please correct the errors below.")
+        elif "delete_account" in request.POST:
+            confirm_username = request.POST.get("confirm_username", "").strip()
+            if confirm_username == request.user.username:
+                # Delete the user account
+                user = request.user
+                logout(request)  # Logout before deletion
+                user.delete()
+                messages.success(request, "Your account has been permanently deleted.")
+                return redirect("/account/login/")
+            else:
+                messages.error(request, "Username confirmation does not match. Account deletion cancelled.")
+        else:
+            password_form = CustomPasswordChangeForm(request.user)
+    else:
+        password_form = CustomPasswordChangeForm(request.user)
+    
     return render(request, "accounts/profile.html", {
         "user": request.user,
+        "password_form": password_form,
+        "show_password_modal": show_password_modal,
     })
 
 

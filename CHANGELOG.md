@@ -64,6 +64,12 @@ Changed:
 - Toast notifications now auto-dismiss after 5 seconds
 - Avatar dropdown now shows full name instead of username (falls back to username if no name set)
 - Password change page buttons now match in height and are aligned to the right
+- Removed "Change Password" link from avatar dropdown menu
+- Password change now opens as a modal popup in profile settings page
+- Profile settings page redesigned with left sidebar navigation menu
+- Added "Delete Account" option in profile settings with danger zone styling
+- Increased spacing between website title and menu buttons in topbar
+- Fixed avatar icon vertical alignment in topbar
 
 Fixed:
 - Local Postgres bootstrap in installer (role/db creation)
