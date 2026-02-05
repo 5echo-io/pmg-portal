@@ -253,6 +253,16 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev
+  - Version: 0.2.0-alpha.6
+  - Summary:
+    - Fixed Recent Actions button by removing conflicting onclick attribute and improving event listener
+    - Fixed customer switcher to redirect to portal when switching from profile settings page
+    - Added even more aggressive CSS overrides for admin page width (targeting all divs with class/id containing "col", "content", "container")
+    - Added float: none to #content to prevent any float-based layout constraints
+    - Improved event listener attachment for Recent Actions button with DOMContentLoaded fallback
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev
   - Version: 0.2.0-alpha.5
   - Summary:
     - Comprehensive fix for admin page width issue

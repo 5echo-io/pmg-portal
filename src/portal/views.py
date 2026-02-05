@@ -83,5 +83,8 @@ def switch_customer(request, customer_id):
     messages.success(request, f"Switched to {membership.customer.name}")
     
     # Redirect back to referer or portal home
+    # If coming from profile page, redirect to portal instead
     referer = request.META.get("HTTP_REFERER", "/portal/")
+    if "/account/profile/" in referer:
+        return redirect("/portal/")
     return redirect(referer)

@@ -84,8 +84,11 @@ Changed:
 - Button icons improved for better contrast
 - Add button background changed from blue to green (success color) for better visual distinction
 - Comprehensive CSS overrides added to ensure admin page uses full browser width (targeting html, body, #container, #content, .colMS, .colSM, .main, and all child elements)
+- Customer switcher now redirects to portal page when switching customer from profile settings page
 
 Fixed:
+- Recent Actions button click handler improved (removed conflicting onclick, improved event listener attachment)
+- Admin page width constraints further overridden with more aggressive CSS selectors (targeting all divs with class/id containing "col", "content", "container")
 - Avatar icon vertical alignment in topbar
 - Recent Actions button vertical alignment in admin topbar
 - Recent Actions button click functionality (added onclick fallback)

@@ -332,16 +332,19 @@ body.admin-page .footer {
 }
 
 /* ===== CONTENT ===== */
-/* Override all Django admin width constraints */
+/* Override all Django admin width constraints - MUST be very aggressive */
 body.admin-page #container,
+body #container,
 #container {
   max-width: 100% !important;
   width: 100% !important;
-  margin: 0 !important;
+  margin: 0 auto !important;
   padding: 0 !important;
+  box-sizing: border-box !important;
 }
 
 body.admin-page #content,
+body #content,
 #content {
   background: var(--bg) !important;
   padding: 32px !important;
@@ -349,9 +352,14 @@ body.admin-page #content,
   width: 100% !important;
   margin: 0 !important;
   box-sizing: border-box !important;
+  float: none !important;
 }
 
 /* Override Django admin column layouts */
+body.admin-page .colMS,
+body.admin-page .colSM,
+body.admin-page .main,
+body.admin-page .content-main,
 .colMS,
 .colSM,
 .main,
@@ -360,13 +368,15 @@ body.admin-page #content,
   width: 100% !important;
   margin: 0 !important;
   float: none !important;
+  box-sizing: border-box !important;
 }
 
 /* Ensure all admin content uses full width */
 body.admin-page .dashboard,
 body.admin-page #content > *,
 body.admin-page #content > div,
-body.admin-page #content > .dashboard {
+body.admin-page #content > .dashboard,
+body.admin-page #content .dashboard {
   max-width: 100% !important;
   width: 100% !important;
   box-sizing: border-box !important;
@@ -374,9 +384,21 @@ body.admin-page #content > .dashboard {
 
 /* Override any potential wrapper constraints */
 body.admin-page #container > *,
-body.admin-page #container > div {
+body.admin-page #container > div,
+body.admin-page #container .colMS,
+body.admin-page #container .colSM {
   max-width: 100% !important;
   width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Force full width on all possible admin wrappers */
+body.admin-page div[class*="col"],
+body.admin-page div[id*="content"],
+body.admin-page div[id*="container"] {
+  max-width: 100% !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
 }
 
 #content h1 {
