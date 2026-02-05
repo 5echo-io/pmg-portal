@@ -369,28 +369,30 @@ body #container #content,
   position: relative !important;
 }
 
-/* Dashboard page needs full width - remove max-width from #content when it contains content-wrapper */
-body.admin-page #content.colMS:has(.content-wrapper),
-body.admin-page #content:has(.content-wrapper),
+/* Dashboard page - COMPLETELY remove all constraints from #content */
 body.admin-page.dashboard #content,
 body.admin-page.dashboard #content.colMS,
+body.admin-page #content.colMS:has(.content-wrapper),
+body.admin-page #content:has(.content-wrapper),
 body.admin-page #content.colMS:has(.dashboard-grid),
-body.admin-page #content:has(.dashboard-grid) {
+body.admin-page #content:has(.dashboard-grid),
+body.admin-page #content:has(.content-wrapper),
+body.admin-page #content.colMS:has(.content-wrapper) {
   max-width: 100% !important;
   width: 100% !important;
-  padding-left: 32px !important;
-  padding-right: 32px !important;
+  padding: 32px !important;
   margin-left: 0 !important;
   margin-right: 0 !important;
+  float: none !important;
 }
 
-/* Override .colMS float layout for dashboard pages */
-body.admin-page.dashboard #content.colMS,
-body.admin-page #content.colMS:has(.content-wrapper),
-body.admin-page #content.colMS:has(.dashboard-grid) {
-  float: none !important;
-  width: 100% !important;
+/* Also override .main and #main if they constrain width */
+body.admin-page.dashboard .main,
+body.admin-page.dashboard #main,
+body.admin-page #main:has(.content-wrapper) {
   max-width: 100% !important;
+  width: 100% !important;
+  float: none !important;
 }
 
 /* For dashboard specifically - ensure it uses full available width */

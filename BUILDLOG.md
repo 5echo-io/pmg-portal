@@ -253,6 +253,17 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev
+  - Version: 0.2.0-alpha.22
+  - Summary:
+    - Enhanced JavaScript to fix ALL parent containers: #content, .main, #main, #container
+    - Removes float constraints from .colMS class dynamically
+    - Added window.load event listener for final fix after all resources load
+    - Multiple setTimeout delays (50ms, 100ms, 300ms, 500ms) to catch all CSS loading scenarios
+    - Simplified CSS overrides - removed redundant selectors, kept only essential ones
+    - Added .main and #main width overrides for dashboard pages
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev
   - Version: 0.2.0-alpha.21
   - Summary:
     - Added JavaScript fallback to dynamically fix #content width constraints

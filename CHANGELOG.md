@@ -121,6 +121,9 @@ Changed:
 - Added specific overrides for #content.colMS to ensure it doesn't constrain content-wrapper width
 - Added JavaScript fallback to dynamically set #content max-width: 100% when content-wrapper is present
 - JavaScript runs immediately, on DOMContentLoaded, and after delays to ensure CSS has loaded
+- Enhanced JavaScript to also fix .main, #main, and #container width constraints
+- Added window.load event listener to ensure fixes apply after all resources load
+- Removed all max-width constraints from #content when dashboard class is present on body
 
 Fixed:
 - Recent Actions button click handler improved (removed conflicting onclick, improved event listener attachment)

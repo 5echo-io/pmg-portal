@@ -54,24 +54,45 @@
 </div>
 
 <script>
-// Force #content to use full width when it contains content-wrapper
+// Force #content and all parent containers to use full width
 (function() {
   function fixContentWidth() {
     const content = document.getElementById('content');
     const contentWrapper = document.querySelector('.content-wrapper');
+    const main = document.getElementById('main');
+    const container = document.getElementById('container');
     
     if (content && contentWrapper) {
-      // Remove max-width constraint from #content
+      // Remove ALL constraints from #content
       content.style.setProperty('max-width', '100%', 'important');
       content.style.setProperty('width', '100%', 'important');
       content.style.setProperty('margin-left', '0', 'important');
       content.style.setProperty('margin-right', '0', 'important');
+      content.style.setProperty('float', 'none', 'important');
       
-      // Ensure content-wrapper is centered with max-width: 980px
+      // Also fix .main and #main if they exist
+      if (main) {
+        main.style.setProperty('max-width', '100%', 'important');
+        main.style.setProperty('width', '100%', 'important');
+        main.style.setProperty('float', 'none', 'important');
+      }
+      
+      // Also fix #container
+      if (container) {
+        container.style.setProperty('max-width', '100%', 'important');
+        container.style.setProperty('width', '100%', 'important');
+      }
+      
+      // Ensure content-wrapper is centered with max-width: 980px (like portal)
       contentWrapper.style.setProperty('max-width', '980px', 'important');
       contentWrapper.style.setProperty('width', '100%', 'important');
       contentWrapper.style.setProperty('margin-left', 'auto', 'important');
       contentWrapper.style.setProperty('margin-right', 'auto', 'important');
+      
+      // Also remove colMS class constraints if present
+      if (content.classList.contains('colMS')) {
+        content.style.setProperty('float', 'none', 'important');
+      }
     }
   }
   
@@ -83,9 +104,14 @@
     document.addEventListener('DOMContentLoaded', fixContentWidth);
   }
   
-  // Run after CSS has loaded
+  // Run after CSS has loaded (multiple delays to catch all scenarios)
+  setTimeout(fixContentWidth, 50);
   setTimeout(fixContentWidth, 100);
+  setTimeout(fixContentWidth, 300);
   setTimeout(fixContentWidth, 500);
+  
+  // Also run on window load
+  window.addEventListener('load', fixContentWidth);
 })();
 </script>
 {% endblock %}
