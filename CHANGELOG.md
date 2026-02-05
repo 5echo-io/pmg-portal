@@ -29,7 +29,8 @@ Changed:
 - Topbar: customer picker height/alignment for consistent vertical center
 - Edit (table) button: higher contrast hover (blue background)
 - Changelog: pre-release builds (alpha, beta, rc) always show Unreleased; full release shows all sections for that major
-- Changelog modal: no scroll on modal container; only content boxes scroll; fade animation when toggling View Full / Hide Full
+- Changelog modal: no scroll on modal container; only content boxes scroll; fade animation when toggling View Full / Hide Full; button pulse animation on toggle
+- Changelog short view: only one Unreleased section (stops at next ## heading; no duplicate Added/Changed/Fixed)
 - Avatar initial: first letter of first name, then last name, then email (no longer username)
 - Login: field labeled "Email"; accepts email or username; login with email preferred
 - Registration: username hidden and set from email; new users get username = email

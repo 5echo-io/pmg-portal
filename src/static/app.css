@@ -1003,8 +1003,29 @@ a.link:hover { color: var(--text); }
 
 .modal-body {
   padding: 20px;
-  overflow-y: auto;
+  overflow: hidden;
   flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.changelog-section-wrap,
+.full-changelog-section {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  transition: opacity 0.2s ease;
+}
+
+.changelog-section-wrap.changelog-fade-out,
+.full-changelog-section.changelog-fade-out {
+  opacity: 0;
+}
+
+.changelog-section-wrap.changelog-fade-in,
+.full-changelog-section.changelog-fade-in {
+  opacity: 1;
 }
 
 .changelog-section {
@@ -1023,11 +1044,10 @@ a.link:hover { color: var(--text); }
   white-space: pre-wrap;
   word-wrap: break-word;
   margin: 0;
-  max-height: 60vh;
-  overflow-y: auto;
 }
 
 .modal-actions {
+  flex-shrink: 0;
   margin-top: 16px;
   padding-top: 16px;
   border-top: 1px solid var(--line);
@@ -1041,10 +1061,21 @@ a.link:hover { color: var(--text); }
   background: var(--btn);
   color: var(--text);
   cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease, opacity 0.25s ease;
 }
 
 .modal-btn:hover {
   background: var(--btnHover);
+}
+
+#toggleFullChangelogBtn.changelog-btn-animate {
+  animation: changelog-btn-pulse 0.4s ease;
+}
+
+@keyframes changelog-btn-pulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.03); opacity: 0.9; }
+  100% { transform: scale(1); opacity: 1; }
 }
 
 /* Profile Settings Layout */

@@ -240,7 +240,7 @@
         <div class="modal-actions">
           <button class="modal-btn" id="toggleFullChangelogBtn" onclick="toggleFullChangelog()">View Full Changelog</button>
         </div>
-        <div id="fullChangelog" class="changelog-section full-changelog-section" style="display: none;">
+        <div id="fullChangelog" class="changelog-section full-changelog-section" style="display: none; opacity: 0;">
           <pre class="changelog-content">{{ changelog_full|escape }}</pre>
         </div>
         {% endif %}
@@ -259,30 +259,51 @@
       if (!event || event.target.classList.contains('modal') || event.target.classList.contains('modal-close')) {
         document.getElementById('changelogModal').style.display = 'none';
         document.body.style.overflow = 'auto';
-        // Reset full changelog view
         const fullChangelog = document.getElementById('fullChangelog');
-        if (fullChangelog) fullChangelog.style.display = 'none';
         const shortWrap = document.getElementById('shortChangelogWrap');
-        if (shortWrap) shortWrap.style.display = '';
         const btn = document.getElementById('toggleFullChangelogBtn');
+        if (fullChangelog) { fullChangelog.style.display = 'none'; fullChangelog.classList.remove('changelog-fade-in', 'changelog-fade-out'); fullChangelog.style.opacity = ''; }
+        if (shortWrap) { shortWrap.style.display = ''; shortWrap.classList.remove('changelog-fade-in', 'changelog-fade-out'); shortWrap.style.opacity = ''; }
         if (btn) btn.textContent = 'View Full Changelog';
       }
     }
-    
+
     function toggleFullChangelog() {
       const fullChangelog = document.getElementById('fullChangelog');
       const shortWrap = document.getElementById('shortChangelogWrap');
       const btn = document.getElementById('toggleFullChangelogBtn');
-      if (fullChangelog && btn) {
-        if (fullChangelog.style.display === 'none') {
-          fullChangelog.style.display = 'block';
-          if (shortWrap) shortWrap.style.display = 'none';
-          btn.textContent = 'Hide Full Changelog';
-        } else {
+      if (!fullChangelog || !btn) return;
+      btn.classList.add('changelog-btn-animate');
+      setTimeout(function() { btn.classList.remove('changelog-btn-animate'); }, 400);
+      const showingFull = fullChangelog.style.display === 'block' && !fullChangelog.classList.contains('changelog-fade-out');
+      if (showingFull) {
+        fullChangelog.classList.add('changelog-fade-out');
+        fullChangelog.addEventListener('transitionend', function onOut() {
+          fullChangelog.removeEventListener('transitionend', onOut);
           fullChangelog.style.display = 'none';
-          if (shortWrap) shortWrap.style.display = '';
+          fullChangelog.classList.remove('changelog-fade-out');
+          if (shortWrap) {
+            shortWrap.style.display = '';
+            shortWrap.style.opacity = '0';
+            shortWrap.offsetHeight;
+            shortWrap.classList.add('changelog-fade-in');
+            shortWrap.style.opacity = '1';
+          }
           btn.textContent = 'View Full Changelog';
-        }
+        }, { once: true });
+      } else {
+        shortWrap.classList.add('changelog-fade-out');
+        shortWrap.addEventListener('transitionend', function onOut() {
+          shortWrap.removeEventListener('transitionend', onOut);
+          shortWrap.style.display = 'none';
+          shortWrap.classList.remove('changelog-fade-out');
+          fullChangelog.style.display = 'block';
+          fullChangelog.style.opacity = '0';
+          fullChangelog.offsetHeight;
+          fullChangelog.classList.add('changelog-fade-in');
+          fullChangelog.style.opacity = '1';
+          btn.textContent = 'Hide Full Changelog';
+        }, { once: true });
       }
     }
     

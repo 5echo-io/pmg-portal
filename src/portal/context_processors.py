@@ -127,14 +127,16 @@ def footer_info(request):
                         if sections:
                             changelog_section = "\n\n".join(sections)
                         elif "## [Unreleased]" in content:
-                            unreleased = content.split("## [Unreleased]")[1].split("## [")[0].strip()
+                            after = content.split("## [Unreleased]", 1)[1]
+                            unreleased = after.split("\n## ")[0].strip()
                             changelog_section = unreleased or "Ingen endringer listet."
                         else:
                             changelog_section = "Ingen endringer listet."
                     else:
-                        # Non–full MAJOR (0.x, beta, alpha): short view always shows Unreleased
+                        # Non–full MAJOR (0.x, beta, alpha): short view always shows Unreleased (one section only)
                         if "## [Unreleased]" in content:
-                            unreleased = content.split("## [Unreleased]")[1].split("## [")[0].strip()
+                            after = content.split("## [Unreleased]", 1)[1]
+                            unreleased = after.split("\n## ")[0].strip()
                             changelog_section = unreleased or "Ingen unreleased endringer."
                         else:
                             changelog_section = "Ingen unreleased endringer."

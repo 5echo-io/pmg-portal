@@ -2,6 +2,14 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev
+  - Version: 0.15.22-beta.5
+  - Summary:
+    - Changelog Unreleased: only one section shown; parse stops at next ## heading (no duplicate Added/Changed/Fixed from Previous changes)
+    - Changelog modal: animation on View Full / Hide Full Changelog button (pulse on toggle)
+    - BUILDLOG: all changes listed for each build
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev
   - Version: 0.15.22-beta.4
   - Summary:
     - Changelog: all pre-release builds (alpha, beta, rc) = Unreleased until plain MAJOR.MINOR.PATCH; one consolidated [Unreleased], no duplicates
@@ -9,13 +17,49 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev
+  - Version: 0.15.19-beta.3
+  - Summary:
+    - Customer dropdown: reduced vertical spacing between list items (min-height 0, padding 4px 12px, line-height 1.25)
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev
   - Version: 0.3.0-beta.2
   - Summary:
-    - Changelog footer shows beta version section; modal "View Full Changelog" hides short version
-    - Profile Account Information: pencil edit for email, first name, last name; Date joined in panel footer
-    - Email-as-primary: login with email (or username), registration username from email, migration syncs username=email
-    - Avatar initial from first/last name then email; customer dropdown spacing and alignment
-    - Install wizard: default admin created with username=email; migrations comment for accounts sync
+    - Added: Changelog modal "View Full Changelog" / "Hide Full Changelog" toggle
+    - Added: Profile Account Information edit (pencil) button for email, first name, last name
+    - Added: Panel footer on Account Information for "Joined [date]" and future account metadata
+    - Added: Migration accounts.0001_sync_username_from_email (User.username from User.email)
+    - Changed: Changelog in footer beta versions show version section
+    - Changed: Avatar initial: first letter of first name, then last name, then email
+    - Changed: Customer dropdown tighter row spacing (min-height 28px, padding 0 12px); wrapper align-self center
+    - Changed: Login field labeled "Email"; accepts email or username; login with email preferred
+    - Changed: Registration username hidden and set from email; new users username = email
+    - Changed: Profile delete account confirm with email instead of username
+    - Changed: Install wizard first admin created with username = email; prompt DEFAULT_ADMIN_EMAIL
+    - Fixed: Changelog footer not showing latest beta section
+    - Fixed: Profile modal Cancel/Escape restoring Account Information tab (including Escape key)
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev
+  - Version: 0.3.0-beta.1
+  - Summary:
+    - Added: Portal at site root (/) with HTMX for no-refresh navigation
+    - Added: Custom admin app at /admin/ (User management, Customers & access, Portal management)
+    - Added: Customer dropdown in header (avatar-style with search when >4 customers)
+    - Added: Superusers can switch to any customer; redirect to / after customer switch
+    - Added: Wider layout (1280px) aligned with topbar and footer
+    - Added: Admin list filters Staff/Active labels, single-row toolbar, outlined Search button
+    - Added: Admin forms card layout, two-column rows (e.g. username|email), aligned Save/Cancel
+    - Added: Profile modals Cancel restores active tab to Account Information
+    - Changed: Version scheme to beta
+    - Changed: Buttons smaller (36px height), vertically centered, Search button outlined
+    - Changed: Footer max-width 1280px, responsive padding
+    - Changed: Customer dropdown reduced row spacing (min-height 32px, padding 2px 12px)
+    - Changed: Topbar customer picker height/alignment for consistent vertical center
+    - Changed: Edit (table) button higher contrast hover (blue background)
+    - Fixed: Footer width now matches main content (1280px)
+    - Fixed: Profile Change password / Delete account Cancel returns to Account Information tab
+    - Fixed: Form button vertical alignment across admin forms
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev
