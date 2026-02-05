@@ -9,6 +9,9 @@ Last Modified: 2026-02-05
 from django.contrib import admin
 from django.urls import include, path
 
+# Import admin config for whitelabel
+from . import admin_config  # noqa: F401
+
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("account/", include("accounts.urls")),

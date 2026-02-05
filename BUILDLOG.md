@@ -7,6 +7,8 @@
     - Changed default APP_BIND to 0.0.0.0:8097 for reverse proxy compatibility
     - Fixed static files not loading: added WhiteNoise middleware for production
     - Updated templates to use Django static tag
+    - Fixed 500 errors after login and "View site" button
+    - Whitelabeled admin site (PMG Portal branding)
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev (suggested)

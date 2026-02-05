@@ -16,6 +16,9 @@ Changed:
 Fixed:
 - Local Postgres bootstrap in installer (role/db creation)
 - Static files not loading (added WhiteNoise middleware for production static file serving)
+- 500 error after login redirect (improved error handling in portal_home view)
+- "View site" button redirect error (fixed landing view to check authentication)
+- Whitelabeled admin site (removed "Django administration" branding)
 
 ## [0.1.0-alpha.1] - Initial foundation
 Added:
