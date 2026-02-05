@@ -1,6 +1,18 @@
 # BUILDLOG
 
 - 2026-02-05 (Europe/Oslo)
+  - Branch: dev
+  - Version: 0.2.0-alpha.27
+  - Summary:
+    - Completely rebuilt admin dashboard page (index.html) to fix persistent width issue
+    - Removed breadcrumbs block to prevent duplicate "Administration" title
+    - Added dashboard class to body for targeted CSS styling
+    - Enhanced JavaScript to hide breadcrumbs and duplicate h1 titles
+    - Added CSS rules to hide breadcrumbs and duplicate titles on dashboard page
+    - Dashboard now uses full browser width with centered content-wrapper (max-width: 980px)
+    - Fixed duplicate title issue - only one "Administration" heading now displays
+
+- 2026-02-05 (Europe/Oslo)
   - Branch: dev (suggested)
   - Version: 0.1.0-alpha.21
   - Summary:
