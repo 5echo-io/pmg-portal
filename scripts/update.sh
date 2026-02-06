@@ -73,6 +73,8 @@ set -a
 source "$APP_DIR/.env"
 set +a
 
+# Create migrations if needed
+sudo -E "$SRC_DIR/.venv/bin/python" manage.py makemigrations --noinput || true
 sudo -E "$SRC_DIR/.venv/bin/python" manage.py migrate --noinput
 sudo -E "$SRC_DIR/.venv/bin/python" manage.py collectstatic --noinput
 sudo -E "$SRC_DIR/.venv/bin/python" manage.py compilemessages --verbosity 0
