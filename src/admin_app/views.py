@@ -1224,6 +1224,7 @@ def ip_address_add(request, facility_slug):
         "facility": facility,
         "ip_address": None,
         "cancel_url": cancel_url,
+        "in_modal": in_modal,
     })
 
 
@@ -1292,6 +1293,7 @@ def facility_document_upload(request, facility_slug):
         "form": form,
         "facility": facility,
         "cancel_url": cancel_url,
+        "in_modal": in_modal,
     })
 
 

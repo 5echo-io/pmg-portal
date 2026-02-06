@@ -2,6 +2,13 @@
 
 - 2026-02-06 (Europe/Oslo)
   - Branch: dev
+  - Version: 4.7.0-beta.6
+  - Summary:
+    - ip_address_form.html, views.py: small tweaks
+    - Version bump: 4.7.0-beta.5 → 4.7.0-beta.6
+
+- 2026-02-06 (Europe/Oslo)
+  - Branch: dev
   - Version: 4.7.0-beta.5
   - Summary:
     - Admin: network device list page (network_device_list.html, view, URL); admin home link

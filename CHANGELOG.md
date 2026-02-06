@@ -15,6 +15,7 @@ Pre-release builds (alpha, beta, rc) are listed here. Only full releases (no bui
 - **Facility card & Rack detail**: Layout and template refinements; portal facility list and base template updates
 - **Styling**: app.css and site_footer adjustments
 - **Rack detail**: Template refactor and layout updates; IP address form, site footer, portal base and app.css tweaks
+- **IP address form & views**: Small template and view tweaks
 
 ### Added
 - **Admin – Network device list**: Dedicated network device list page (template + view + URL); admin home link
