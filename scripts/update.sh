@@ -115,7 +115,33 @@ cleanup_branch_files "$BRANCH" "$APP_DIR"
 
 # Create migrations if needed
 sudo -E "$SRC_DIR/.venv/bin/python" manage.py makemigrations --noinput || true
-sudo -E "$SRC_DIR/.venv/bin/python" manage.py migrate --noinput
+
+# Handle migration errors for existing tables
+# If migration fails with "already exists", mark it as fake
+echo "Applying migrations..."
+MIGRATE_OUTPUT=$(sudo -E "$SRC_DIR/.venv/bin/python" manage.py migrate --noinput 2>&1) || {
+    MIGRATE_EXIT_CODE=$?
+    echo "$MIGRATE_OUTPUT"
+    if echo "$MIGRATE_OUTPUT" | grep -q "already exists\|DuplicateTable\|relation.*already exists"; then
+        echo ""
+        echo "Warning: Some tables already exist. Attempting to fake the migration..."
+        # Get the migration name that failed (e.g., portal.0004_facility...)
+        FAILED_MIGRATION=$(echo "$MIGRATE_OUTPUT" | grep -oE "portal\.\d{4}_[a-zA-Z0-9_]+" | head -1 || echo "")
+        if [ -n "$FAILED_MIGRATION" ]; then
+            echo "Marking migration $FAILED_MIGRATION as fake..."
+            sudo -E "$SRC_DIR/.venv/bin/python" manage.py migrate --fake "$FAILED_MIGRATION" || true
+            # Try migrate again after faking
+            echo "Retrying migrations..."
+            sudo -E "$SRC_DIR/.venv/bin/python" manage.py migrate --noinput || true
+        else
+            echo "Could not determine failed migration name. Please run migrations manually."
+            exit $MIGRATE_EXIT_CODE
+        fi
+    else
+        echo "Migration failed with an unexpected error."
+        exit $MIGRATE_EXIT_CODE
+    fi
+}
 sudo -E "$SRC_DIR/.venv/bin/python" manage.py collectstatic --noinput
 sudo -E "$SRC_DIR/.venv/bin/python" manage.py compilemessages --verbosity 0
 

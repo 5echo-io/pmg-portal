@@ -481,12 +481,13 @@
   </div>
 
   <script>
-    function openChangelogModal() {
+    // Make functions globally available
+    window.openChangelogModal = function() {
       document.getElementById('changelogModal').style.display = 'flex';
       document.body.style.overflow = 'hidden';
-    }
+    };
     
-    function closeChangelogModal(event) {
+    window.closeChangelogModal = function(event) {
       if (!event || event.target.classList.contains('modal') || event.target.classList.contains('modal-close')) {
         const modal = document.getElementById('changelogModal');
         modal.style.display = 'none';
@@ -499,9 +500,9 @@
         if (shortWrap) { shortWrap.style.display = ''; shortWrap.classList.remove('changelog-fade-in', 'changelog-fade-out'); shortWrap.style.opacity = ''; }
         if (btn) btn.textContent = 'View Full Changelog';
       }
-    }
+    };
 
-    function toggleFullChangelog() {
+    window.toggleFullChangelog = function() {
       const modal = document.getElementById('changelogModal');
       const fullChangelog = document.getElementById('fullChangelog');
       const shortWrap = document.getElementById('shortChangelogWrap');
