@@ -146,11 +146,13 @@ fi
 if [ "$MODE" = "update" ]; then
     echo -e "${GREEN}=== Updating PMG Portal ===${NC}"
     
-    # Download latest code from main branch
+    # Download latest code from main branch (always fresh clone)
     TEMP_DIR=$(mktemp -d)
     trap "rm -rf $TEMP_DIR" EXIT
     
     echo "Downloading latest code from main branch..."
+    # Remove any existing clone first
+    rm -rf "$TEMP_DIR/pmg-portal" 2>/dev/null || true
     git clone -b "$BRANCH" "$GITHUB_REPO" "$TEMP_DIR/pmg-portal"
     REPO_DIR="$TEMP_DIR/pmg-portal"
     
@@ -183,11 +185,13 @@ fi
 # Install mode
 echo -e "${GREEN}=== Installing PMG Portal ===${NC}"
 
-# Download from main branch
+# Download from main branch (always fresh clone)
 TEMP_DIR=$(mktemp -d)
 trap "rm -rf $TEMP_DIR" EXIT
 
 echo "Downloading production code from main branch..."
+# Remove any existing clone first
+rm -rf "$TEMP_DIR/pmg-portal" 2>/dev/null || true
 git clone -b "$BRANCH" "$GITHUB_REPO" "$TEMP_DIR/pmg-portal"
 REPO_DIR="$TEMP_DIR/pmg-portal"
 
