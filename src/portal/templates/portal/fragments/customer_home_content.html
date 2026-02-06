@@ -12,8 +12,8 @@
 </div>
 {% endif %}
 <div class="customer-header">
-  {% if customer.logo %}
-  <img src="{{ customer.logo.url }}" alt="{{ customer.name }} logo" class="customer-logo" />
+  {% if customer.logo_url %}
+  <img src="{{ customer.logo_url }}" alt="{{ customer.name }} logo" class="customer-logo" onerror="this.style.display='none';" />
   {% endif %}
   <div class="customer-header-text">
     <h1 class="customer-title">{{ customer.name }}</h1>

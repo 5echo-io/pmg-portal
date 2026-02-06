@@ -22,6 +22,17 @@ class Customer(models.Model):
     def __str__(self) -> str:
         return self.name
     
+    def logo_url(self):
+        """Return logo URL if logo exists and file is present."""
+        if self.logo and self.logo.name:
+            try:
+                # Check if file exists
+                if self.logo.storage.exists(self.logo.name):
+                    return self.logo.url
+            except Exception:
+                pass
+        return None
+    
     def delete(self, *args, **kwargs):
         """Override delete to remove logo file and all related files when customer is deleted."""
         # Store logo path before deletion

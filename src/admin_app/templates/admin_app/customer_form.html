@@ -37,9 +37,9 @@
   </div>
   <div class="admin-form-field">
     <label for="{{ form.logo.id_for_label }}">{{ form.logo.label }}</label>
-    {% if customer and customer.logo %}
+    {% if customer and customer.logo_url %}
     <div class="admin-logo-preview" style="margin-bottom: 12px;">
-      <img src="{{ customer.logo.url }}" alt="{{ customer.name }} logo" style="max-width: 200px; max-height: 80px; border: 1px solid var(--line); border-radius: 4px; padding: 4px; background: var(--card);">
+      <img src="{{ customer.logo_url }}" alt="{{ customer.name }} logo" style="max-width: 200px; max-height: 80px; border: 1px solid var(--line); border-radius: 4px; padding: 4px; background: var(--card);" onerror="this.parentElement.style.display='none';">
       <p class="admin-form-help" style="margin-top: 4px; color: var(--muted); font-size: 12px;">Current logo</p>
     </div>
     {% endif %}
