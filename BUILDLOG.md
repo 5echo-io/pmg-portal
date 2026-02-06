@@ -2,6 +2,15 @@
 
 - 2026-02-06 (Europe/Oslo)
   - Branch: dev
+  - Version: 4.7.0-beta.14
+  - Summary:
+    - Facility card: refactored to use fragment templates for modals; views.py updated to serve fragments
+    - New fragment templates: facility_customers_edit_fragment, facility_document_form_fragment, ip_address_form_fragment, network_device_form_fragment, rack_form_fragment
+    - facility_card.html, views.py: +211/-107
+    - Version bump: 4.7.0-beta.13 → 4.7.0-beta.14
+
+- 2026-02-06 (Europe/Oslo)
+  - Branch: dev
   - Version: 4.7.0-beta.13
   - Summary:
     - settings.py: config update (+3 lines)

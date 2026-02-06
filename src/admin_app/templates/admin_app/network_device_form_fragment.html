@@ -1,0 +1,85 @@
+<form method="post" action="{{ form_action }}" class="admin-form admin-form--wide js-facility-modal-form">
+  {% csrf_token %}
+  {% if return_to_facility %}<input type="hidden" name="return_to" value="facility">{% endif %}
+  {% if in_modal %}<input type="hidden" name="modal" value="1">{% endif %}
+  <div class="admin-form-row">
+    <div class="admin-form-field">
+      <label for="{{ form.name.id_for_label }}">{{ form.name.label }}</label>
+      {{ form.name }}
+      {% if form.name.help_text %}<p class="admin-form-help">{{ form.name.help_text|escape }}</p>{% endif %}
+      {% if form.name.errors %}<p class="form-error">{{ form.name.errors.0 }}</p>{% endif %}
+    </div>
+    <div class="admin-form-field">
+      <label for="{{ form.device_type.id_for_label }}">{{ form.device_type.label }}</label>
+      {{ form.device_type }}
+      {% if form.device_type.errors %}<p class="form-error">{{ form.device_type.errors.0 }}</p>{% endif %}
+    </div>
+  </div>
+  <div class="admin-form-row">
+    <div class="admin-form-field">
+      <label for="{{ form.manufacturer.id_for_label }}">{{ form.manufacturer.label }}</label>
+      {{ form.manufacturer }}
+      {% if form.manufacturer.errors %}<p class="form-error">{{ form.manufacturer.errors.0 }}</p>{% endif %}
+    </div>
+    <div class="admin-form-field">
+      <label for="{{ form.model.id_for_label }}">{{ form.model.label }}</label>
+      {{ form.model }}
+      {% if form.model.errors %}<p class="form-error">{{ form.model.errors.0 }}</p>{% endif %}
+    </div>
+  </div>
+  <div class="admin-form-row">
+    <div class="admin-form-field">
+      <label for="{{ form.serial_number.id_for_label }}">{{ form.serial_number.label }}</label>
+      {{ form.serial_number }}
+      {% if form.serial_number.errors %}<p class="form-error">{{ form.serial_number.errors.0 }}</p>{% endif %}
+    </div>
+    <div class="admin-form-field">
+      <label for="{{ form.is_active.id_for_label }}">{{ form.is_active.label }}</label>
+      {{ form.is_active }}
+      {% if form.is_active.errors %}<p class="form-error">{{ form.is_active.errors.0 }}</p>{% endif %}
+    </div>
+  </div>
+  <div class="admin-form-row">
+    <div class="admin-form-field">
+      <label for="{{ form.ip_address.id_for_label }}">{{ form.ip_address.label }}</label>
+      {{ form.ip_address }}
+      {% if form.ip_address.help_text %}<p class="admin-form-help">{{ form.ip_address.help_text|escape }}</p>{% endif %}
+      {% if form.ip_address.errors %}<p class="form-error">{{ form.ip_address.errors.0 }}</p>{% endif %}
+    </div>
+    <div class="admin-form-field">
+      <label for="{{ form.mac_address.id_for_label }}">{{ form.mac_address.label }}</label>
+      {{ form.mac_address }}
+      {% if form.mac_address.help_text %}<p class="admin-form-help">{{ form.mac_address.help_text|escape }}</p>{% endif %}
+      {% if form.mac_address.errors %}<p class="form-error">{{ form.mac_address.errors.0 }}</p>{% endif %}
+    </div>
+  </div>
+  <div class="admin-form-row">
+    <div class="admin-form-field">
+      <label for="{{ form.rack.id_for_label }}">{{ form.rack.label }}</label>
+      {{ form.rack }}
+      {% if form.rack.help_text %}<p class="admin-form-help">{{ form.rack.help_text|escape }}</p>{% endif %}
+      {% if form.rack.errors %}<p class="form-error">{{ form.rack.errors.0 }}</p>{% endif %}
+      {% if rack %}
+      <p class="admin-form-help">Pre-selected: {{ rack.name }}</p>
+      {% endif %}
+    </div>
+    <div class="admin-form-field">
+      <label for="{{ form.rack_position.id_for_label }}">{{ form.rack_position.label }}</label>
+      {{ form.rack_position }}
+      {% if form.rack_position.help_text %}<p class="admin-form-help">{{ form.rack_position.help_text|escape }}</p>{% endif %}
+      {% if form.rack_position.errors %}<p class="form-error">{{ form.rack_position.errors.0 }}</p>{% endif %}
+      {% if rack %}
+      <p class="admin-form-help">Position in rack (1-{{ rack.height_units }}U)</p>
+      {% endif %}
+    </div>
+  </div>
+  <div class="admin-form-field full-width">
+    <label for="{{ form.description.id_for_label }}">{{ form.description.label }}</label>
+    {{ form.description }}
+    {% if form.description.errors %}<p class="form-error">{{ form.description.errors.0 }}</p>{% endif %}
+  </div>
+  <div class="admin-form-actions">
+    <button type="submit" class="form-btn form-btn-primary form-btn--narrow">Save</button>
+    <button type="button" class="form-btn form-btn-secondary js-facility-modal-cancel">Cancel</button>
+  </div>
+</form>

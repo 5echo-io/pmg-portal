@@ -19,8 +19,10 @@ Pre-release builds (alpha, beta, rc) are listed here. Only full releases (no bui
 - **Admin views**: View logic updates and refinements; small view tweak
 - **IP address form**: Delete button extracted to partial _ip_address_delete_btn.html; form and view tweaks; IP address form and view updates; small form and view tweaks
 - **Settings**: settings.py update (+3 lines)
+- **Facility card**: Refactored to use fragment templates for modals (customers edit, document form, IP form, network device form, rack form); views updated to serve fragments
 
 ### Added
+- **Admin – Facility card fragments**: facility_customers_edit_fragment.html, facility_document_form_fragment.html, ip_address_form_fragment.html, network_device_form_fragment.html, rack_form_fragment.html for modal/fragment rendering
 - **Admin – Network device list**: Dedicated network device list page (template + view + URL); admin home link
 
 #### Facility Management (Anlegg)

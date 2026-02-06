@@ -1,0 +1,28 @@
+{% load i18n %}
+<p class="muted">{% trans "Select which customers have access to this facility." %}</p>
+<form method="post" action="{{ form_action }}" class="admin-form admin-form--wide js-facility-modal-form">
+  {% csrf_token %}
+  {% if in_modal %}<input type="hidden" name="modal" value="1">{% endif %}
+  <div class="admin-form-field">
+    <label>{% trans "Search" %}</label>
+    <input type="text" id="customer-search" class="form-input" placeholder="{% trans 'Filter by name...' %}" autocomplete="off">
+  </div>
+  <div class="admin-form-field facility-customers-checkboxes">
+    <label>{% trans "Customers" %}</label>
+    <div class="facility-customers-checkboxes-inner">
+      {{ form.customers }}
+    </div>
+  </div>
+  {% if form.customers.errors %}<p class="form-error">{{ form.customers.errors.0 }}</p>{% endif %}
+  <div class="admin-form-actions">
+    <button type="submit" class="form-btn form-btn-primary form-btn--narrow">{% trans "Save" %}</button>
+    <button type="button" class="form-btn form-btn-secondary js-facility-modal-cancel">{% trans "Cancel" %}</button>
+  </div>
+</form>
+<style>
+.facility-customers-checkboxes .facility-customers-checkboxes-inner { max-height: 360px; overflow-y: auto; display: block; }
+.facility-customers-checkboxes ul { list-style: none; padding: 0; margin: 0 0 16px 0; display: block; }
+.facility-customers-checkboxes li { display: block; margin-bottom: 8px; }
+.facility-customers-checkboxes li label { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 400; }
+.facility-customers-checkboxes li.hidden { display: none; }
+</style>

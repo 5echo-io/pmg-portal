@@ -1,0 +1,37 @@
+{% load i18n %}
+<form method="post" action="{{ form_action }}" class="admin-form admin-form--wide js-facility-modal-form">
+  {% csrf_token %}
+  {{ modal_hidden_field }}
+  <div class="admin-form-row">
+    <div class="admin-form-field">
+      <label for="{{ form.ip_address.id_for_label }}">{{ form.ip_address.label }}</label>
+      {{ form.ip_address }}
+      {{ form_errors_html.ip_address }}
+    </div>
+    <div class="admin-form-field">
+      <label for="{{ form.subnet.id_for_label }}">{{ form.subnet.label }}</label>
+      {{ form.subnet }}
+      {{ form_errors_html.subnet }}
+    </div>
+  </div>
+  <div class="admin-form-field">
+    <label for="{{ form.reserved_for.id_for_label }}">{{ form.reserved_for.label }}</label>
+    {{ form.reserved_for }}
+    {{ form_errors_html.reserved_for }}
+  </div>
+  <div class="admin-form-field">
+    <label for="{{ form.description.id_for_label }}">{{ form.description.label }}</label>
+    {{ form.description }}
+    {{ form_errors_html.description }}
+  </div>
+  <div class="admin-form-field">
+    <label for="{{ form.device.id_for_label }}">{{ form.device.label }}</label>
+    {{ form.device }}
+    {{ form_errors_html.device }}
+  </div>
+  <div class="admin-form-actions">
+    <button type="submit" class="form-btn form-btn-primary form-btn--narrow">{% trans "Save" %}</button>
+    <button type="button" class="form-btn form-btn-secondary js-facility-modal-cancel">{% trans "Cancel" %}</button>
+    {{ delete_button_html }}
+  </div>
+</form>

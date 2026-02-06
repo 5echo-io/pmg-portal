@@ -286,7 +286,7 @@
   </div>
 </div>
 
-<!-- Customer access modal -->
+<!-- Customer access modal (inline form, no iframe) -->
 <div id="facility-customers-modal" class="rack-modal" aria-hidden="true">
   <div class="rack-modal-backdrop"></div>
   <div class="rack-modal-dialog">
@@ -294,11 +294,11 @@
       <h2 class="rack-modal-title">{% trans "Administrer tilgang" %}</h2>
       <button type="button" class="rack-modal-close facility-modal-close" aria-label="{% trans 'Lukk' %}">&times;</button>
     </div>
-    <iframe id="facility-customers-iframe" class="rack-modal-iframe" title="{% trans 'Administrer tilgang' %}"></iframe>
+    <div class="rack-modal-body" aria-live="polite"></div>
   </div>
 </div>
 
-<!-- Rack add/edit modal -->
+<!-- Rack add/edit modal (inline form, no iframe) -->
 <div id="facility-rack-modal" class="rack-modal" aria-hidden="true">
   <div class="rack-modal-backdrop"></div>
   <div class="rack-modal-dialog">
@@ -306,11 +306,11 @@
       <h2 class="rack-modal-title" id="facility-rack-modal-title">{% trans "Rack" %}</h2>
       <button type="button" class="rack-modal-close facility-rack-modal-close" aria-label="{% trans 'Lukk' %}">&times;</button>
     </div>
-    <iframe id="facility-rack-iframe" class="rack-modal-iframe" title="{% trans 'Rack' %}"></iframe>
+    <div class="rack-modal-body" aria-live="polite"></div>
   </div>
 </div>
 
-<!-- Device add modal -->
+<!-- Device add modal (inline form, no iframe) -->
 <div id="facility-device-modal" class="rack-modal" aria-hidden="true">
   <div class="rack-modal-backdrop"></div>
   <div class="rack-modal-dialog">
@@ -318,11 +318,11 @@
       <h2 class="rack-modal-title" id="facility-device-modal-title">{% trans "Legg til enhet" %}</h2>
       <button type="button" class="rack-modal-close facility-device-modal-close" aria-label="{% trans 'Lukk' %}">&times;</button>
     </div>
-    <iframe id="facility-device-iframe" class="rack-modal-iframe" title="{% trans 'Legg til enhet' %}"></iframe>
+    <div class="rack-modal-body" aria-live="polite"></div>
   </div>
 </div>
 
-<!-- IP address add modal -->
+<!-- IP address add modal (inline form, no iframe) -->
 <div id="facility-ip-modal" class="rack-modal" aria-hidden="true">
   <div class="rack-modal-backdrop"></div>
   <div class="rack-modal-dialog">
@@ -330,11 +330,11 @@
       <h2 class="rack-modal-title">{% trans "Legg til IP-adresse" %}</h2>
       <button type="button" class="rack-modal-close facility-ip-modal-close" aria-label="{% trans 'Lukk' %}">&times;</button>
     </div>
-    <iframe id="facility-ip-iframe" class="rack-modal-iframe" title="{% trans 'Legg til IP-adresse' %}"></iframe>
+    <div class="rack-modal-body" aria-live="polite"></div>
   </div>
 </div>
 
-<!-- Document upload modal -->
+<!-- Document upload modal (inline form, no iframe) -->
 <div id="facility-document-modal" class="rack-modal" aria-hidden="true">
   <div class="rack-modal-backdrop"></div>
   <div class="rack-modal-dialog">
@@ -342,7 +342,7 @@
       <h2 class="rack-modal-title">{% trans "Last opp dokument" %}</h2>
       <button type="button" class="rack-modal-close facility-document-modal-close" aria-label="{% trans 'Lukk' %}">&times;</button>
     </div>
-    <iframe id="facility-document-iframe" class="rack-modal-iframe" title="{% trans 'Last opp dokument' %}"></iframe>
+    <div class="rack-modal-body" aria-live="polite"></div>
   </div>
 </div>
 
@@ -357,6 +357,7 @@
 .rack-modal-close { background: none; border: none; font-size: 24px; line-height: 1; color: var(--muted); cursor: pointer; }
 .rack-modal-close:hover { color: var(--text); }
 .rack-modal-iframe { flex: 1; min-height: 400px; border: none; width: 100%; }
+.rack-modal-body { flex: 1; min-height: 0; overflow-y: auto; padding: 20px; }
 .facility-card-body { display: flex; gap: 0 24px; align-items: flex-start; margin-top: 0; }
 .facility-card-sidemenu { flex-shrink: 0; width: 180px; display: flex; flex-direction: column; gap: 0; margin: 0; padding: 0; border-right: 1px solid var(--line); padding-right: 16px; }
 .facility-sidemenu-item { display: block; width: 100%; padding: 10px 12px; margin: 0; text-align: left; font-size: 13px; font-weight: 500; color: var(--muted); background: transparent; border: none; border-radius: 0; cursor: pointer; transition: all 0.15s; font-family: inherit; }
@@ -389,7 +390,10 @@
   const editModal = document.getElementById('facility-edit-modal');
   const editIframe = document.getElementById('facility-edit-iframe');
   const customersModal = document.getElementById('facility-customers-modal');
-  const customersIframe = document.getElementById('facility-customers-iframe');
+  const rackModal = document.getElementById('facility-rack-modal');
+  const deviceModal = document.getElementById('facility-device-modal');
+  const ipModal = document.getElementById('facility-ip-modal');
+  const documentModal = document.getElementById('facility-document-modal');
 
   document.querySelector('.facility-edit-modal-btn')?.addEventListener('click', function(e) {
     e.preventDefault();
@@ -398,87 +402,153 @@
     editModal.classList.add('rack-modal-open');
   });
 
+  function openModalWithFragment(modal, bodyEl, fetchUrl, setTitle) {
+    if (!modal || !bodyEl) return;
+    bodyEl.innerHTML = '<p class="muted">{% trans "Laster..." %}</p>';
+    modal.setAttribute('aria-hidden', 'false');
+    modal.classList.add('rack-modal-open');
+    var url = fetchUrl + (fetchUrl.indexOf('?') !== -1 ? '&' : '?') + 'fragment=1';
+    fetch(url, { credentials: 'same-origin', headers: { 'Accept': 'text/html' } })
+      .then(function(r) { return r.text(); })
+      .then(function(html) {
+        bodyEl.innerHTML = html;
+        if (setTitle && typeof setTitle === 'function') setTitle();
+      })
+      .catch(function() {
+        bodyEl.innerHTML = '<p class="form-error">{% trans "Kunne ikke laste skjema." %}</p>';
+      });
+  }
+
+  function closeInlineModal(modal) {
+    if (!modal) return;
+    modal.setAttribute('aria-hidden', 'true');
+    modal.classList.remove('rack-modal-open');
+    var body = modal.querySelector('.rack-modal-body');
+    if (body) body.innerHTML = '';
+  }
+
   document.querySelector('.facility-customers-modal-btn')?.addEventListener('click', function() {
-    customersIframe.src = "{% url 'admin_app:admin_facility_customers_edit' facility.slug %}?modal=1";
-    customersModal.setAttribute('aria-hidden', 'false');
-    customersModal.classList.add('rack-modal-open');
+    var body = customersModal?.querySelector('.rack-modal-body');
+    openModalWithFragment(customersModal, body, "{% url 'admin_app:admin_facility_customers_edit' facility.slug %}?modal=1");
   });
 
-  const rackModal = document.getElementById('facility-rack-modal');
-  const rackIframe = document.getElementById('facility-rack-iframe');
   const rackModalTitle = document.getElementById('facility-rack-modal-title');
   document.querySelector('.facility-rack-add-modal-btn')?.addEventListener('click', function() {
-    rackIframe.src = "{% url 'admin_app:admin_rack_add' facility.slug %}?modal=1&return_to=facility";
+    var body = rackModal?.querySelector('.rack-modal-body');
+    openModalWithFragment(rackModal, body, "{% url 'admin_app:admin_rack_add' facility.slug %}?modal=1&return_to=facility", function() {
+      if (rackModalTitle) rackModalTitle.textContent = "{% trans 'Legg til rack' %}";
+    });
     if (rackModalTitle) rackModalTitle.textContent = "{% trans 'Legg til rack' %}";
-    rackModal.setAttribute('aria-hidden', 'false');
-    rackModal.classList.add('rack-modal-open');
   });
   document.querySelectorAll('.facility-rack-edit-modal-btn').forEach(function(btn) {
     btn.addEventListener('click', function() {
       var url = this.getAttribute('data-edit-url');
-      if (url && url.indexOf('return_to=facility') === -1) url += (url.indexOf('?') !== -1 ? '&' : '?') + 'return_to=facility';
-      rackIframe.src = url || '';
+      if (!url) return;
+      if (url.indexOf('return_to=facility') === -1) url += (url.indexOf('?') !== -1 ? '&' : '?') + 'return_to=facility';
+      var body = rackModal?.querySelector('.rack-modal-body');
+      openModalWithFragment(rackModal, body, url, function() {
+        if (rackModalTitle) rackModalTitle.textContent = "{% trans 'Rediger rack' %}";
+      });
       if (rackModalTitle) rackModalTitle.textContent = "{% trans 'Rediger rack' %}";
-      rackModal.setAttribute('aria-hidden', 'false');
-      rackModal.classList.add('rack-modal-open');
     });
   });
-  rackModal?.querySelector('.rack-modal-close')?.addEventListener('click', function() { rackModal.setAttribute('aria-hidden', 'true'); rackModal.classList.remove('rack-modal-open'); rackIframe.src = 'about:blank'; });
-  rackModal?.querySelector('.rack-modal-backdrop')?.addEventListener('click', function() { rackModal.setAttribute('aria-hidden', 'true'); rackModal.classList.remove('rack-modal-open'); rackIframe.src = 'about:blank'; });
 
-  const deviceModal = document.getElementById('facility-device-modal');
-  const deviceIframe = document.getElementById('facility-device-iframe');
   const deviceModalTitle = document.getElementById('facility-device-modal-title');
   document.querySelector('.facility-device-add-modal-btn')?.addEventListener('click', function() {
-    deviceIframe.src = "{% url 'admin_app:admin_network_device_add' facility.slug %}?modal=1&return_to=facility";
+    var body = deviceModal?.querySelector('.rack-modal-body');
+    openModalWithFragment(deviceModal, body, "{% url 'admin_app:admin_network_device_add' facility.slug %}?modal=1&return_to=facility", function() {
+      if (deviceModalTitle) deviceModalTitle.textContent = "{% trans 'Legg til enhet' %}";
+    });
     if (deviceModalTitle) deviceModalTitle.textContent = "{% trans 'Legg til enhet' %}";
-    deviceModal.setAttribute('aria-hidden', 'false');
-    deviceModal.classList.add('rack-modal-open');
   });
   document.querySelectorAll('.facility-device-edit-modal-btn').forEach(function(btn) {
     btn.addEventListener('click', function() {
       var url = this.getAttribute('data-edit-url');
-      if (url) deviceIframe.src = url;
+      if (!url) return;
+      var body = deviceModal?.querySelector('.rack-modal-body');
+      openModalWithFragment(deviceModal, body, url, function() {
+        if (deviceModalTitle) deviceModalTitle.textContent = "{% trans 'Rediger enhet' %}";
+      });
       if (deviceModalTitle) deviceModalTitle.textContent = "{% trans 'Rediger enhet' %}";
-      deviceModal.setAttribute('aria-hidden', 'false');
-      deviceModal.classList.add('rack-modal-open');
     });
   });
-  deviceModal?.querySelector('.rack-modal-close')?.addEventListener('click', function() { deviceModal.setAttribute('aria-hidden', 'true'); deviceModal.classList.remove('rack-modal-open'); deviceIframe.src = 'about:blank'; });
-  deviceModal?.querySelector('.rack-modal-backdrop')?.addEventListener('click', function() { deviceModal.setAttribute('aria-hidden', 'true'); deviceModal.classList.remove('rack-modal-open'); deviceIframe.src = 'about:blank'; });
 
-  const ipModal = document.getElementById('facility-ip-modal');
-  const ipIframe = document.getElementById('facility-ip-iframe');
   document.querySelector('.facility-ip-add-modal-btn')?.addEventListener('click', function() {
-    ipIframe.src = "{% url 'admin_app:admin_ip_address_add' facility.slug %}?modal=1";
-    ipModal.setAttribute('aria-hidden', 'false');
-    ipModal.classList.add('rack-modal-open');
+    var body = ipModal?.querySelector('.rack-modal-body');
+    openModalWithFragment(ipModal, body, "{% url 'admin_app:admin_ip_address_add' facility.slug %}?modal=1");
   });
-  ipModal?.querySelector('.rack-modal-close')?.addEventListener('click', function() { ipModal.setAttribute('aria-hidden', 'true'); ipModal.classList.remove('rack-modal-open'); ipIframe.src = 'about:blank'; });
-  ipModal?.querySelector('.rack-modal-backdrop')?.addEventListener('click', function() { ipModal.setAttribute('aria-hidden', 'true'); ipModal.classList.remove('rack-modal-open'); ipIframe.src = 'about:blank'; });
 
-  const documentModal = document.getElementById('facility-document-modal');
-  const documentIframe = document.getElementById('facility-document-iframe');
   document.querySelector('.facility-document-upload-modal-btn')?.addEventListener('click', function() {
-    documentIframe.src = "{% url 'admin_app:admin_facility_document_upload' facility.slug %}?modal=1";
-    documentModal.setAttribute('aria-hidden', 'false');
-    documentModal.classList.add('rack-modal-open');
+    var body = documentModal?.querySelector('.rack-modal-body');
+    openModalWithFragment(documentModal, body, "{% url 'admin_app:admin_facility_document_upload' facility.slug %}?modal=1");
   });
-  documentModal?.querySelector('.rack-modal-close')?.addEventListener('click', function() { documentModal.setAttribute('aria-hidden', 'true'); documentModal.classList.remove('rack-modal-open'); documentIframe.src = 'about:blank'; });
-  documentModal?.querySelector('.rack-modal-backdrop')?.addEventListener('click', function() { documentModal.setAttribute('aria-hidden', 'true'); documentModal.classList.remove('rack-modal-open'); documentIframe.src = 'about:blank'; });
+
+  document.body.addEventListener('submit', function(e) {
+    var form = e.target;
+    if (!form || !form.classList.contains('js-facility-modal-form')) return;
+    var modal = form.closest('.rack-modal');
+    if (!modal) return;
+    e.preventDefault();
+    var formData = new FormData(form);
+    var action = form.action || form.getAttribute('action');
+    if (!action) return;
+    fetch(action, { method: 'POST', body: formData, redirect: 'follow', credentials: 'same-origin' })
+      .then(function(response) { return response.text().then(function(html) { return { url: response.url, html: html }; }); })
+      .then(function(data) {
+        if (data.url.indexOf('modal-close') !== -1) {
+          closeInlineModal(modal);
+          window.location.reload();
+        } else {
+          var body = modal.querySelector('.rack-modal-body');
+          if (body) body.innerHTML = data.html;
+        }
+      })
+      .catch(function() {
+        var body = modal.querySelector('.rack-modal-body');
+        if (body) body.innerHTML = '<p class="form-error">{% trans "Noe gikk galt. Prøv igjen." %}</p>';
+      });
+  });
+
+  document.body.addEventListener('click', function(e) {
+    if (e.target.classList.contains('js-facility-modal-cancel')) {
+      var modal = e.target.closest('.rack-modal');
+      if (modal) closeInlineModal(modal);
+    }
+  });
+
+  document.body.addEventListener('input', function(e) {
+    if (e.target.id !== 'customer-search') return;
+    var body = e.target.closest('.rack-modal-body');
+    if (!body) return;
+    var container = body.querySelector('.facility-customers-checkboxes-inner');
+    if (!container) return;
+    var q = (e.target.value || '').trim().toLowerCase();
+    container.querySelectorAll('li').forEach(function(li) {
+      var text = (li.textContent || '').toLowerCase();
+      li.classList.toggle('hidden', q && text.indexOf(q) === -1);
+    });
+  });
+
+  rackModal?.querySelector('.rack-modal-close')?.addEventListener('click', function() { closeInlineModal(rackModal); });
+  rackModal?.querySelector('.rack-modal-backdrop')?.addEventListener('click', function() { closeInlineModal(rackModal); });
+  deviceModal?.querySelector('.rack-modal-close')?.addEventListener('click', function() { closeInlineModal(deviceModal); });
+  deviceModal?.querySelector('.rack-modal-backdrop')?.addEventListener('click', function() { closeInlineModal(deviceModal); });
+  ipModal?.querySelector('.rack-modal-close')?.addEventListener('click', function() { closeInlineModal(ipModal); });
+  ipModal?.querySelector('.rack-modal-backdrop')?.addEventListener('click', function() { closeInlineModal(ipModal); });
+  documentModal?.querySelector('.rack-modal-close')?.addEventListener('click', function() { closeInlineModal(documentModal); });
+  documentModal?.querySelector('.rack-modal-backdrop')?.addEventListener('click', function() { closeInlineModal(documentModal); });
+  customersModal?.querySelector('.rack-modal-close')?.addEventListener('click', function() { closeInlineModal(customersModal); });
+  customersModal?.querySelector('.rack-modal-backdrop')?.addEventListener('click', function() { closeInlineModal(customersModal); });
 
   function closeAllFacilityModals() {
     [editModal, customersModal, rackModal, deviceModal, ipModal, documentModal].forEach(function(m) {
       if (!m) return;
       m.setAttribute('aria-hidden', 'true');
       m.classList.remove('rack-modal-open');
+      var body = m.querySelector('.rack-modal-body');
+      if (body) body.innerHTML = '';
     });
     if (editIframe) editIframe.src = 'about:blank';
-    if (customersIframe) customersIframe.src = 'about:blank';
-    if (rackIframe) rackIframe.src = 'about:blank';
-    if (deviceIframe) deviceIframe.src = 'about:blank';
-    if (ipIframe) ipIframe.src = 'about:blank';
-    if (documentIframe) documentIframe.src = 'about:blank';
   }
   document.querySelectorAll('.facility-modal-close').forEach(function(btn) {
     btn.addEventListener('click', closeAllFacilityModals);
