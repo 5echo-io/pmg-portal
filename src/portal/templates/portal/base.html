@@ -57,7 +57,6 @@
             <div class="user-menu-name">{% if request.user.first_name or request.user.last_name %}{{ request.user.first_name }} {{ request.user.last_name }}{% else %}{{ request.user.username }}{% endif %}</div>
             <div class="user-menu-email">{{ request.user.email|default:"" }}</div>
           </div>
-          <div class="user-menu-divider"></div>
         <a href="/account/profile/" class="user-menu-item">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
@@ -86,7 +85,6 @@
         </a>
         {% endif %}
         {% if request.user.is_superuser %}
-        <div class="user-menu-divider"></div>
         <a href="/debug/" class="user-menu-item">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="10"></circle>
@@ -455,8 +453,8 @@
   <script>
     // Make functions globally available
     window.openChangelogModal = function() {
-      document.getElementById('changelogModal').style.display = 'flex';
-      document.body.style.overflow = 'hidden';
+      var modal = document.getElementById('changelogModal');
+      if (modal) { modal.style.display = 'flex'; document.body.style.overflow = 'hidden'; }
     };
     
     window.closeChangelogModal = function(event) {
@@ -513,18 +511,17 @@
       }
     }
     
-    function openAboutModal() {
-      document.getElementById('aboutModal').style.display = 'flex';
-      document.body.style.overflow = 'hidden';
-    }
-    
-    function closeAboutModal(event) {
+    window.openAboutModal = function() {
+      var modal = document.getElementById('aboutModal');
+      if (modal) { modal.style.display = 'flex'; document.body.style.overflow = 'hidden'; }
+    };
+
+    window.closeAboutModal = function(event) {
       if (!event || event.target.classList.contains('modal') || event.target.classList.contains('modal-close')) {
-        const modal = document.getElementById('aboutModal');
-        modal.style.display = 'none';
-        document.body.style.overflow = 'auto';
+        var modal = document.getElementById('aboutModal');
+        if (modal) { modal.style.display = 'none'; document.body.style.overflow = 'auto'; }
       }
-    }
+    };
     
     function checkForUpdates() {
       const btn = document.getElementById('check-updates-btn');

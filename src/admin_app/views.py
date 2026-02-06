@@ -1130,6 +1130,8 @@ def ip_address_add(request, facility_slug):
     """Add an IP address to a facility."""
     from .forms import IPAddressForm
     facility = get_object_or_404(Facility, slug=facility_slug)
+    in_modal = request.GET.get("modal") == "1"
+    detail_url = reverse("admin_app:admin_facility_detail", kwargs={"slug": facility.slug})
     
     if request.method == "POST":
         form = IPAddressForm(request.POST, facility=facility)
@@ -1137,12 +1139,14 @@ def ip_address_add(request, facility_slug):
             obj = form.save(commit=False)
             obj.facility = facility
             obj.save()
-            messages.success(request, f"IP address {obj.ip_address} added.")
+            messages.success(request, _("IP address %(ip)s added.") % {"ip": str(obj.ip_address)})
+            if in_modal:
+                return redirect(detail_url + "?modal_close=1")
             return redirect("admin_app:admin_facility_detail", slug=facility.slug)
     else:
         form = IPAddressForm(facility=facility)
     
-    cancel_url = _get_cancel_url(request, reverse("admin_app:admin_facility_detail", kwargs={"slug": facility.slug}))
+    cancel_url = (detail_url + "?modal_close=1") if in_modal else _get_cancel_url(request, detail_url)
     return render(request, "admin_app/ip_address_form.html", {
         "form": form,
         "facility": facility,
@@ -1194,6 +1198,8 @@ def facility_document_upload(request, facility_slug):
     """Upload a document to a facility."""
     from .forms import FacilityDocumentForm
     facility = get_object_or_404(Facility, slug=facility_slug)
+    in_modal = request.GET.get("modal") == "1"
+    detail_url = reverse("admin_app:admin_facility_detail", kwargs={"slug": facility.slug})
     
     if request.method == "POST":
         form = FacilityDocumentForm(request.POST, request.FILES, facility=facility)
@@ -1202,12 +1208,14 @@ def facility_document_upload(request, facility_slug):
             doc.facility = facility
             doc.uploaded_by = request.user
             doc.save()
-            messages.success(request, f"Document '{doc.title}' uploaded.")
+            messages.success(request, _("Document '%(title)s' uploaded.") % {"title": doc.title})
+            if in_modal:
+                return redirect(detail_url + "?modal_close=1")
             return redirect("admin_app:admin_facility_detail", slug=facility.slug)
     else:
         form = FacilityDocumentForm(facility=facility)
     
-    cancel_url = _get_cancel_url(request, reverse("admin_app:admin_facility_detail", kwargs={"slug": facility.slug}))
+    cancel_url = (detail_url + "?modal_close=1") if in_modal else _get_cancel_url(request, detail_url)
     return render(request, "admin_app/facility_document_form.html", {
         "form": form,
         "facility": facility,
@@ -1262,6 +1270,10 @@ def backup_restore(request):
                         tmp.write(chunk)
                     tmp_path = tmp.name
                 try:
+                    valid, err = br.validate_backup_archive(Path(tmp_path))
+                    if not valid:
+                        messages.error(request, err or "Backup file validation failed.")
+                        return redirect("admin_app:admin_backup_restore")
                     br.restore_from_archive(Path(tmp_path))
                     messages.success(request, "Restore completed successfully. Database and media have been restored.")
                 finally:

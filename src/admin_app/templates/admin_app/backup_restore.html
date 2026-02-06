@@ -16,6 +16,7 @@
       Create backup
     </div>
     <p class="admin-backup-panel-desc">Download a complete snapshot: PostgreSQL database plus all media files. The file can be restored on this server or a new installation.</p>
+    <div class="admin-backup-panel-spacer"></div>
     <form method="post" action="{% url 'admin_app:admin_backup_restore' %}" class="admin-backup-form">
       {% csrf_token %}
       <input type="hidden" name="action" value="backup">
@@ -29,17 +30,86 @@
       Restore from backup
     </div>
     <p class="admin-backup-panel-desc">Upload a .tar.gz backup file to replace the current database and media with the backup contents. <strong>This overwrites all existing data.</strong></p>
-    <form method="post" action="{% url 'admin_app:admin_backup_restore' %}" enctype="multipart/form-data" class="admin-backup-form">
+    <form method="post" action="{% url 'admin_app:admin_backup_restore' %}" id="admin-restore-form" enctype="multipart/form-data" class="admin-backup-form admin-backup-form-inline">
       {% csrf_token %}
       <input type="hidden" name="action" value="restore">
       <div class="admin-backup-file-wrap">
         <label for="id_backup_file" class="admin-backup-file-label">Backup file (.tar.gz)</label>
         <input type="file" name="backup_file" id="id_backup_file" accept=".tar.gz,application/gzip" required class="form-input admin-backup-file-input">
       </div>
-      <button type="submit" class="form-btn form-btn-danger admin-backup-btn">Restore from backup</button>
     </form>
+    <div class="admin-backup-panel-spacer"></div>
+    <div class="admin-backup-form">
+      <button type="button" class="form-btn form-btn-danger admin-backup-btn" id="restore-backup-trigger">Restore from backup</button>
+    </div>
   </div>
 </div>
+
+<!-- Restore confirmation modal -->
+<div id="restore-confirm-modal" class="modal" style="display: none;" role="dialog" aria-labelledby="restore-modal-title" aria-modal="true">
+  <div class="modal-content modal-content-danger" onclick="event.stopPropagation()">
+    <div class="modal-header modal-header-danger">
+      <h2 id="restore-modal-title">Confirm restore</h2>
+      <button type="button" class="modal-close" id="restore-modal-cancel" aria-label="Close">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="danger-zone">
+        <div class="danger-zone-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 9v2m0 4v.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+          </svg>
+        </div>
+        <h3>Warning: This will overwrite all data</h3>
+        <p>Restoring from this backup will replace the current database and all uploaded files. This action cannot be undone.</p>
+        <p><strong>Are you sure you want to continue?</strong></p>
+        <div class="admin-backup-restore-modal-actions">
+          <button type="button" class="form-btn form-btn-secondary" id="restore-modal-cancel-btn">Cancel</button>
+          <button type="button" class="form-btn form-btn-danger admin-backup-btn" id="restore-modal-confirm">Confirm restore</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  var restoreTrigger = document.getElementById('restore-backup-trigger');
+  var fileInputDisplay = document.getElementById('id_backup_file');
+  var restoreForm = document.getElementById('admin-restore-form');
+  var modal = document.getElementById('restore-confirm-modal');
+  var cancelBtn = document.getElementById('restore-modal-cancel');
+  var cancelBtn2 = document.getElementById('restore-modal-cancel-btn');
+  var confirmBtn = document.getElementById('restore-modal-confirm');
+
+  function openRestoreModal() {
+    if (!fileInputDisplay.files.length) {
+      alert('Please select a backup file first.');
+      fileInputDisplay.focus();
+      return;
+    }
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeRestoreModal() {
+    modal.style.display = 'none';
+    document.body.style.overflow = '';
+  }
+
+  function doRestore() {
+    if (!fileInputDisplay.files.length) return;
+    restoreForm.submit();
+  }
+
+  if (restoreTrigger) restoreTrigger.addEventListener('click', openRestoreModal);
+  if (cancelBtn) cancelBtn.addEventListener('click', closeRestoreModal);
+  if (cancelBtn2) cancelBtn2.addEventListener('click', closeRestoreModal);
+  if (confirmBtn) confirmBtn.addEventListener('click', doRestore);
+  modal.addEventListener('click', function(e) {
+    if (e.target === modal) closeRestoreModal();
+  });
+})();
+</script>
 
 <div class="admin-backup-note">
   <strong>Note:</strong> Backup and restore use PostgreSQL client tools (<code>pg_dump</code>, <code>psql</code>). These are installed automatically when you install PMG Portal with the standard installer.

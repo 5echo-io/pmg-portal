@@ -921,6 +921,14 @@ a.link:hover { color: var(--text); }
   box-sizing: border-box;
 }
 
+.user-menu-item:has(+ .user-menu-item) {
+  padding-bottom: 0;
+}
+
+.user-menu-item + .user-menu-item {
+  padding-top: 0;
+}
+
 .user-menu-item:hover {
   background: var(--btn);
   color: var(--text);
@@ -939,6 +947,7 @@ a.link:hover { color: var(--text); }
 
 .user-menu-item--customer-switch {
   font-weight: 500;
+  border-radius: 0;
 }
 
 .user-menu-item-wrapper {
@@ -1512,8 +1521,8 @@ a.link:hover { color: var(--text); }
   display: flex;
   flex-direction: column;
   gap: 8px;
-  align-items: flex-end;
-  text-align: right;
+  align-items: flex-start;
+  text-align: left;
 }
 
 .footer-about-btn,
@@ -1532,9 +1541,13 @@ a.link:hover { color: var(--text); }
   line-height: 1.5;
 }
 
-.footer-about-btn:hover,
 .footer-link-btn:hover {
   color: var(--text);
+}
+
+.footer-about-btn:hover,
+.footer-lang-trigger:hover {
+  color: var(--muted);
 }
 
 .footer-about-btn svg,
@@ -2141,10 +2154,18 @@ a.link:hover { color: var(--text); }
 }
 
 .admin-backup-panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 280px;
   padding: 24px;
   background: var(--card);
   border: 1px solid var(--line);
   border-radius: var(--radius-md, 12px);
+}
+
+.admin-backup-panel-spacer {
+  flex: 1;
+  min-height: 16px;
 }
 
 .admin-backup-panel-heading {
@@ -2171,12 +2192,48 @@ a.link:hover { color: var(--text); }
 .admin-backup-panel-desc {
   color: var(--muted);
   font-size: 13px;
-  margin: 0 0 20px 0;
+  margin: 0 0 16px 0;
   line-height: 1.5;
 }
 
 .admin-backup-form {
-  margin-top: 8px;
+  margin-top: 0;
+}
+
+.admin-backup-form-inline {
+  margin-bottom: 0;
+}
+
+/* Softer, diffuse button colors on backup page only */
+.admin-backup-panel .form-btn-primary {
+  background: rgba(59, 130, 246, 0.45);
+  border-color: rgba(59, 130, 246, 0.55);
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.admin-backup-panel .form-btn-primary:hover {
+  background: rgba(59, 130, 246, 0.6);
+  border-color: rgba(59, 130, 246, 0.7);
+  color: #fff;
+}
+
+.admin-backup-panel .form-btn-danger {
+  background: rgba(185, 28, 28, 0.5);
+  border-color: rgba(185, 28, 28, 0.6);
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.admin-backup-panel .form-btn-danger:hover {
+  background: rgba(185, 28, 28, 0.65);
+  border-color: rgba(185, 28, 28, 0.75);
+  color: #fff;
+}
+
+.admin-backup-restore-modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 24px;
 }
 
 .admin-backup-file-wrap {

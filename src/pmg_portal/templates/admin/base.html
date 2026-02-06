@@ -421,6 +421,32 @@ document.addEventListener('keydown', function(e) {
 </footer>
 </div>
 
+<!-- About Modal (needed for footer "About this portal" button) -->
+<div id="aboutModal" class="modal" onclick="window.closeAboutModal && window.closeAboutModal(event)" style="display: none;">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h2>About this portal - PMG Portal</h2>
+      <button class="modal-close" onclick="window.closeAboutModal && window.closeAboutModal(event)">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p><strong>Version:</strong> {{ app_version|default:"Unknown" }}</p>
+      <p class="muted">Developed by <a href="https://5echo.io" target="_blank" rel="noopener">5echo.io</a></p>
+    </div>
+  </div>
+</div>
+<script>
+window.openAboutModal = function() {
+  var modal = document.getElementById('aboutModal');
+  if (modal) { modal.style.display = 'flex'; document.body.style.overflow = 'hidden'; }
+};
+window.closeAboutModal = function(event) {
+  if (!event || event.target.classList.contains('modal') || event.target.classList.contains('modal-close')) {
+    var modal = document.getElementById('aboutModal');
+    if (modal) { modal.style.display = 'none'; document.body.style.overflow = 'auto'; }
+  }
+};
+</script>
+
 {% if show_changelog_button %}
 <!-- Changelog Modal -->
 <div id="changelogModal" class="modal" onclick="closeChangelogModal(event)">

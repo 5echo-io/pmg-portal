@@ -5,7 +5,7 @@
 {% block admin_title %}{{ rack.name }}{% endblock %}
 {% block breadcrumb_back %}<a href="{% url 'admin_app:admin_facility_detail' facility.slug %}" class="breadcrumb-back-btn" aria-label="Back to {{ facility.name }}">← {{ facility.name }}</a>{% endblock %}
 {% block breadcrumb_extra %}
-<span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_facility_list' %}">Facilities</a>
+<span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_facility_list' %}">Anlegg</a>
 <span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_facility_detail' facility.slug %}">{{ facility.name }}</a>
 <span class="breadcrumb-sep">→</span> <span>{{ rack.name }}</span>
 {% endblock %}
@@ -17,11 +17,11 @@
     <!-- Row 1 left (1/3): Rack visualization with front/rear tab -->
     <div class="rack-detail-visual-wrap" style="--rack-height-px: {% widthratio rack.height_units 1 42 %}px;">
       <div class="rack-view-tabs">
-        <button type="button" class="rack-view-tab active" data-view="front">{% trans "Front" %}</button>
-        <button type="button" class="rack-view-tab" data-view="rear">{% trans "Rear" %}</button>
+        <button type="button" class="rack-view-tab active" data-view="front">{% trans "Foran" %}</button>
+        <button type="button" class="rack-view-tab" data-view="rear">{% trans "Bak" %}</button>
       </div>
       <div class="rack-detail-visual rack-view-content" data-view="front" style="min-height: var(--rack-height-px, 120px);">
-        <div class="rack-visual">
+        <div class="rack-visual rack-view-front">
           {% for u in u_positions %}
           <div class="rack-unit" data-u="{{ u }}">
             <div class="rack-unit-number">{{ u }}</div>
@@ -31,13 +31,13 @@
                 <div class="rack-device" data-device-id="{{ device.pk }}" data-device-name="{{ device.name }}" data-rack-position="{{ u }}" onclick="openDeviceModal({{ device.pk }})">
                   <div class="rack-device-name">{{ device.name }}</div>
                   <div class="rack-device-type">{{ device.get_device_type_display }}</div>
-                  <button type="button" class="rack-device-remove" onclick="event.stopPropagation(); removeDeviceFromRack({{ device.pk }})" title="{% trans 'Remove device' %}">×</button>
+                  <button type="button" class="rack-device-remove" onclick="event.stopPropagation(); removeDeviceFromRack({{ device.pk }})" title="{% trans 'Fjern enhet' %}">×</button>
                 </div>
                 {% endif %}
               {% endfor %}
               {% if u not in devices_by_position %}
-                <div class="rack-unit-empty" data-rack-position="{{ u }}" onclick="openDeviceModal(null, {{ u }})" title="{% blocktrans with u=u %}Click to add device at U{{ u }}{% endblocktrans %}">
-                  <span class="rack-unit-empty-text">{% trans "Empty" %}</span>
+                <div class="rack-unit-empty" data-rack-position="{{ u }}" onclick="openDeviceModal(null, {{ u }})" title="{% blocktrans with u=u %}Klikk for å legge til enhet i U{{ u }}{% endblocktrans %}">
+                  <span class="rack-unit-empty-text">{% trans "Tom" %}</span>
                 </div>
               {% endif %}
             </div>
@@ -51,7 +51,20 @@
           <div class="rack-unit" data-u="{{ u }}">
             <div class="rack-unit-number">{{ u }}</div>
             <div class="rack-unit-content">
-              <span class="rack-unit-empty-text">{% trans "Rear" %}</span>
+              {% for device in devices %}
+                {% if device.rack_position == u %}
+                <div class="rack-device" data-device-id="{{ device.pk }}" data-device-name="{{ device.name }}" data-rack-position="{{ u }}" onclick="openDeviceModal({{ device.pk }})">
+                  <div class="rack-device-name">{{ device.name }}</div>
+                  <div class="rack-device-type">{{ device.get_device_type_display }}</div>
+                  <button type="button" class="rack-device-remove" onclick="event.stopPropagation(); removeDeviceFromRack({{ device.pk }})" title="{% trans 'Fjern enhet' %}">×</button>
+                </div>
+                {% endif %}
+              {% endfor %}
+              {% if u not in devices_by_position %}
+                <div class="rack-unit-empty" data-rack-position="{{ u }}" onclick="openDeviceModal(null, {{ u }})" title="{% blocktrans with u=u %}Klikk for å legge til enhet i U{{ u }}{% endblocktrans %}">
+                  <span class="rack-unit-empty-text">{% trans "Bak" %}</span>
+                </div>
+              {% endif %}
             </div>
           </div>
           {% endfor %}
@@ -79,21 +92,21 @@
             <div class="customer-card-name-wrapper">
               <h1 class="customer-card-name">{{ rack.name }}</h1>
               <div class="rack-detail-card-actions">
-                <span class="rack-detail-badge rack-detail-badge--{% if rack.is_active %}active{% else %}inactive{% endif %}">{% if rack.is_active %}Active{% else %}Inactive{% endif %}</span>
-                <a href="{% url 'admin_app:admin_rack_edit' facility.slug rack.pk %}?modal=1" class="customer-card-icon-btn customer-card-icon-btn--edit rack-edit-modal-btn" title="Edit Rack">
+                <span class="rack-detail-badge rack-detail-badge--{% if rack.is_active %}active{% else %}inactive{% endif %}">{% if rack.is_active %}{% trans "Aktiv" %}{% else %}{% trans "Inaktiv" %}{% endif %}</span>
+                <a href="{% url 'admin_app:admin_rack_edit' facility.slug rack.pk %}?modal=1" class="customer-card-icon-btn customer-card-icon-btn--edit rack-edit-modal-btn" title="{% trans 'Rediger rack' %}">
                   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                     <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                   </svg>
                 </a>
-                <a href="{% url 'admin_app:admin_rack_seal_add' facility.slug rack.pk %}" class="customer-card-icon-btn rack-detail-add-seal-btn" title="Add Seal">
+                <a href="{% url 'admin_app:admin_rack_seal_add' facility.slug rack.pk %}" class="customer-card-icon-btn rack-detail-add-seal-btn" title="{% trans 'Legg til segl' %}">
                   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M12 5v14M5 12h14"></path>
                   </svg>
                 </a>
               </div>
             </div>
-            <p class="customer-card-meta">Created {{ rack.created_at|date:"M j, Y" }} · Updated {{ rack.updated_at|date:"M j, Y" }}</p>
+            <p class="customer-card-meta">{% trans "Opprettet" %} {{ rack.created_at|date:"d.m.Y" }} · {% trans "Oppdatert" %} {{ rack.updated_at|date:"d.m.Y" }}</p>
             <div class="rack-detail-card-meta-block">
               <span class="rack-detail-meta-item">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2"/></svg>
@@ -121,37 +134,29 @@
   </div>
 
   <div class="rack-detail-bottom">
-    <!-- Row 2 left (2/8): Side menu -->
-    <nav class="rack-detail-sidemenu" aria-label="{% trans 'Rack sections' %}">
-      <button type="button" class="rack-sidemenu-item active" data-tab="visual">{% trans "Visual Rack" %}</button>
-      <button type="button" class="rack-sidemenu-item" data-tab="devices">{% trans "Devices" %} ({{ devices|length }})</button>
-      <button type="button" class="rack-sidemenu-item" data-tab="seals">{% trans "Seals" %} ({{ active_seals|length }})</button>
+    <!-- Row 2 left (1/8): Side menu -->
+    <nav class="rack-detail-sidemenu" aria-label="{% trans 'Rack-seksjoner' %}">
+      <button type="button" class="rack-sidemenu-item active" data-tab="devices">{% trans "Enheter" %} ({{ devices|length }})</button>
+      <button type="button" class="rack-sidemenu-item" data-tab="seals">{% trans "Segl" %} ({{ active_seals|length }})</button>
     </nav>
 
-    <!-- Row 2 right (6/8): Tab content -->
+    <!-- Row 2 right (7/8): Tab content -->
     <main class="rack-detail-main">
-      <div class="rack-tab-panel active" id="tab-visual">
+      <div class="rack-tab-panel active" id="tab-devices">
         <div class="rack-section-header">
-          <h2>{% trans "Rack view" %}</h2>
-        </div>
-        <p class="muted">{% trans "The rack is shown above. Click a unit to add or edit a device." %}</p>
-      </div>
-
-      <div class="rack-tab-panel" id="tab-devices">
-        <div class="rack-section-header">
-          <h2>{% trans "Devices in Rack" %}</h2>
+          <h2>{% trans "Enheter i rack" %}</h2>
         </div>
         {% if devices %}
         <div class="admin-table-wrap">
           <table class="admin-table">
             <thead>
               <tr>
-                <th>{% trans "Position (U)" %}</th>
-                <th>{% trans "Name" %}</th>
+                <th>{% trans "Posisjon (U)" %}</th>
+                <th>{% trans "Navn" %}</th>
                 <th>{% trans "Type" %}</th>
-                <th>{% trans "Manufacturer" %}</th>
-                <th>{% trans "Model" %}</th>
-                <th>{% trans "IP Address" %}</th>
+                <th>{% trans "Produsent" %}</th>
+                <th>{% trans "Modell" %}</th>
+                <th>{% trans "IP-adresse" %}</th>
                 <th class="admin-table-actions"></th>
               </tr>
             </thead>
@@ -165,8 +170,8 @@
                 <td>{{ device.model|default:"—" }}</td>
                 <td><code>{{ device.ip_address|default:"—" }}</code></td>
                 <td class="admin-table-actions">
-                  <button type="button" class="admin-btn-sm" onclick="editDevice({{ device.pk }})">{% trans "Edit" %}</button>
-                  <button type="button" class="admin-btn-sm admin-btn-danger" onclick="removeDeviceFromRack({{ device.pk }})">{% trans "Remove" %}</button>
+                  <button type="button" class="admin-btn-sm" onclick="editDevice({{ device.pk }})">{% trans "Rediger" %}</button>
+                  <button type="button" class="admin-btn-sm admin-btn-danger" onclick="removeDeviceFromRack({{ device.pk }})">{% trans "Fjern" %}</button>
                 </td>
               </tr>
               {% endfor %}
@@ -174,27 +179,27 @@
           </table>
         </div>
         {% else %}
-        <p class="muted">{% trans "No devices in this rack." %}</p>
+        <p class="muted">{% trans "Ingen enheter i dette racket." %}</p>
         {% endif %}
       </div>
 
       <div class="rack-tab-panel" id="tab-seals">
         <div class="rack-section-header">
-          <h2>{% trans "Seals" %}</h2>
-          <a href="{% url 'admin_app:admin_rack_seal_add' facility.slug rack.pk %}" class="admin-toolbar-add-btn">{% trans "Add Seal" %}</a>
+          <h2>{% trans "Segl" %}</h2>
+          <a href="{% url 'admin_app:admin_rack_seal_add' facility.slug rack.pk %}" class="admin-toolbar-add-btn admin-toolbar-add-btn--fit">{% trans "Legg til segl" %}</a>
         </div>
 
         {% if active_seals %}
         <div class="rack-seals-section">
-          <h3>{% trans "Active Seals" %}</h3>
+          <h3>{% trans "Aktive segl" %}</h3>
           <div class="admin-table-wrap">
             <table class="admin-table">
               <thead>
                 <tr>
-                  <th>{% trans "Seal ID" %}</th>
-                  <th>{% trans "Location" %}</th>
-                  <th>{% trans "Installed By" %}</th>
-                  <th>{% trans "Installed At" %}</th>
+                  <th>{% trans "Segl-ID" %}</th>
+                  <th>{% trans "Plassering" %}</th>
+                  <th>{% trans "Montert av" %}</th>
+                  <th>{% trans "Montert" %}</th>
                   <th class="admin-table-actions"></th>
                 </tr>
               </thead>
@@ -206,7 +211,7 @@
                   <td>{% if seal.installed_by %}{{ seal.installed_by.get_full_name|default:seal.installed_by.username }}{% else %}—{% endif %}</td>
                   <td>{{ seal.installed_at|date:"Y-m-d H:i" }}</td>
                   <td class="admin-table-actions">
-                    <a href="{% url 'admin_app:admin_rack_seal_remove' facility.slug rack.pk seal.pk %}" class="admin-btn-sm admin-btn-danger">{% trans "Remove" %}</a>
+                    <a href="{% url 'admin_app:admin_rack_seal_remove' facility.slug rack.pk seal.pk %}" class="admin-btn-sm admin-btn-danger">{% trans "Fjern" %}</a>
                   </td>
                 </tr>
                 {% endfor %}
@@ -218,18 +223,18 @@
 
         {% if all_seals %}
         <div class="rack-seals-section" style="margin-top: 32px;">
-          <h3>{% trans "Seal History" %}</h3>
+          <h3>{% trans "Seglhistorikk" %}</h3>
           <div class="admin-table-wrap">
             <table class="admin-table">
               <thead>
                 <tr>
-                  <th>{% trans "Seal ID" %}</th>
-                  <th>{% trans "Location" %}</th>
-                  <th>{% trans "Installed By" %}</th>
-                  <th>{% trans "Installed At" %}</th>
-                  <th>{% trans "Removed By" %}</th>
-                  <th>{% trans "Removed At" %}</th>
-                  <th>{% trans "Reason" %}</th>
+                  <th>{% trans "Segl-ID" %}</th>
+                  <th>{% trans "Plassering" %}</th>
+                  <th>{% trans "Montert av" %}</th>
+                  <th>{% trans "Montert" %}</th>
+                  <th>{% trans "Fjernet av" %}</th>
+                  <th>{% trans "Fjernet" %}</th>
+                  <th>{% trans "Årsak" %}</th>
                 </tr>
               </thead>
               <tbody>
@@ -251,7 +256,7 @@
         {% endif %}
 
         {% if not active_seals and not all_seals %}
-        <p class="muted">{% trans "No seals configured for this rack." %}</p>
+        <p class="muted">{% trans "Ingen segl konfigurert for dette racket." %}</p>
         {% endif %}
       </div>
     </main>
@@ -284,7 +289,7 @@
 
 <script>
 (function() {
-  const tabIds = ['visual', 'devices', 'seals'];
+  const tabIds = ['devices', 'seals'];
   const sidemenuItems = document.querySelectorAll('.rack-sidemenu-item');
   const panels = document.querySelectorAll('.rack-detail-main .rack-tab-panel');
 
@@ -353,10 +358,10 @@
     var url;
     if (deviceId) {
       url = editUrl.replace('/0/', '/' + deviceId + '/') + '?modal=1';
-      deviceModalTitle.textContent = 'Edit Device';
+      deviceModalTitle.textContent = '{% trans "Rediger enhet" %}';
     } else {
       url = rackPosition ? addAtPositionUrl.replace('/0/', '/' + rackPosition + '/') + '?modal=1' : addUrl + '?modal=1';
-      deviceModalTitle.textContent = 'Add Device';
+      deviceModalTitle.textContent = '{% trans "Legg til enhet" %}';
     }
     deviceIframe.src = url;
     deviceModal.setAttribute('aria-hidden', 'false');
@@ -410,15 +415,15 @@
 <style>
 .rack-detail-top {
   display: grid;
-  grid-template-columns: 1fr 2fr;
+  grid-template-columns: 1fr 4fr;
   gap: 24px 32px;
   align-items: start;
   margin-bottom: 24px;
 }
 .rack-detail-bottom {
   display: grid;
-  grid-template-columns: 2fr 6fr;
-  gap: 0 32px;
+  grid-template-columns: 1fr 7fr;
+  gap: 0 24px;
   align-items: start;
 }
 @media (max-width: 900px) {
@@ -547,11 +552,14 @@
   display: flex;
   flex-direction: column;
   gap: 0;
+  margin: 0;
+  padding: 0;
 }
 .rack-sidemenu-item {
   display: block;
   width: 100%;
-  padding: 10px 14px;
+  padding: 8px 12px;
+  margin: 0;
   text-align: left;
   font-size: 13px;
   font-weight: 500;
@@ -559,9 +567,13 @@
   background: transparent;
   border: none;
   border-radius: 0;
+  border-bottom: 1px solid var(--line);
   cursor: pointer;
   transition: all 0.15s;
   font-family: inherit;
+}
+.rack-sidemenu-item:last-child {
+  border-bottom: none;
 }
 .rack-sidemenu-item:hover {
   color: var(--text);

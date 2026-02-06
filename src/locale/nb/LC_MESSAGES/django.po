@@ -184,6 +184,9 @@ msgstr "Sist oppdatert"
 msgid "Facilities available for"
 msgstr "Anlegg tilgjengelig for"
 
+msgid "Available facilities for %(name)s"
+msgstr "Tilgjengelige anlegg for %(name)s"
+
 msgid "No facilities available for this customer profile."
 msgstr "Ingen anlegg tilgjengelig for denne kundeprofilen."
 

@@ -2,6 +2,19 @@
 
 - 2026-02-06 (Europe/Oslo)
   - Branch: dev
+  - Version: 4.7.0-beta.3
+  - Summary:
+    - backup_restore.py + backup_restore.html: backup/restore logic and UI improvements
+    - facility_card.html, rack_detail.html: layout and template refinements
+    - admin home.html, views.py: small updates
+    - admin base.html, site_footer.html, portal base.html: layout/footer tweaks
+    - portal facility_list + facility_list_content: updates
+    - app.css: styling changes
+    - locale nb django.po: +3 strings
+    - Version bump: 4.7.0-beta.2 → 4.7.0-beta.3
+
+- 2026-02-06 (Europe/Oslo)
+  - Branch: dev
   - Version: 4.7.0-beta.2
   - Summary:
     - Locale: removed duplicate msgid entries in src/locale/nb/LC_MESSAGES/django.po so compilemessages (msgfmt) succeeds on install/update

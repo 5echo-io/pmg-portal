@@ -132,9 +132,63 @@ def create_backup_archive() -> bytes:
                 pass
 
 
+def validate_backup_archive(archive_path: Path) -> tuple[bool, str | None]:
+    """
+    Check that the file is a valid PMG backup archive (structure + manifest + database.sql).
+    Returns (True, None) if valid, (False, error_message) otherwise.
+    """
+    try:
+        with tarfile.open(archive_path, mode="r:gz") as tar:
+            names = tar.getnames()
+    except tarfile.ReadError as e:
+        return False, f"Not a valid .tar.gz archive: {e}"
+    except OSError as e:
+        return False, f"Cannot read file: {e}"
+
+    if MANIFEST_FILENAME not in names:
+        return False, "Invalid backup: missing manifest.json. This does not look like a PMG Portal backup file."
+    if DATABASE_FILENAME not in names:
+        return False, "Invalid backup: missing database.sql. This backup file is incomplete or corrupted."
+
+    try:
+        with tarfile.open(archive_path, mode="r:gz") as tar:
+            m = tar.getmember(MANIFEST_FILENAME)
+            if not m.isfile():
+                return False, "Invalid backup: manifest.json is not a file."
+            f = tar.extractfile(MANIFEST_FILENAME)
+            if f is None:
+                return False, "Invalid backup: cannot read manifest.json."
+            manifest = json.loads(f.read().decode("utf-8"))
+    except json.JSONDecodeError as e:
+        return False, f"Invalid backup: manifest.json is not valid JSON ({e})."
+    except OSError as e:
+        return False, f"Invalid backup: error reading archive ({e})."
+
+    if manifest.get("version") != BACKUP_VERSION:
+        return False, f"Unsupported backup version: {manifest.get('version')}. This installer expects version {BACKUP_VERSION}."
+    if manifest.get("db_engine") != "postgresql":
+        return False, "This backup is for a different database engine. PMG Portal backup/restore requires PostgreSQL."
+
+    # Check database.sql exists and has content
+    try:
+        with tarfile.open(archive_path, mode="r:gz") as tar:
+            sql_m = tar.getmember(DATABASE_FILENAME)
+            if not sql_m.isfile():
+                return False, "Invalid backup: database.sql is not a file."
+            if sql_m.size < 100:
+                return False, "Invalid backup: database.sql is too small to be a valid database dump."
+    except KeyError:
+        return False, "Invalid backup: missing database.sql."
+    except OSError as e:
+        return False, f"Invalid backup: error reading database.sql ({e})."
+
+    return True, None
+
+
 def restore_from_archive(archive_path: Path) -> None:
     """
     Restore from a PMG backup .tar.gz: restore database then overwrite media with archive contents.
+    Call validate_backup_archive() first.
     """
     db = _get_db_config()
     media_root = Path(settings.MEDIA_ROOT)

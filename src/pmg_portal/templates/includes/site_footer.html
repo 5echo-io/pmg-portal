@@ -10,7 +10,7 @@ Uses footer_info context processor (app_version, copyright_year, show_changelog_
     <div class="footer-text muted">Copyright &copy; {{ copyright_year|default:"2026" }} <a href="https://5echo.io" target="_blank" rel="noopener" class="footer-link">5echo.io</a></div>
   </div>
   <div class="footer-section footer-section-right">
-    <button type="button" class="footer-about-btn" onclick="openAboutModal()" id="footer-about-btn">
+    <button type="button" class="footer-link footer-link-btn footer-about-btn" onclick="if(window.openAboutModal) window.openAboutModal();" id="footer-about-btn">
       <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
         <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
@@ -21,7 +21,7 @@ Uses footer_info context processor (app_version, copyright_year, show_changelog_
       {% endif %}
     </button>
     {% if show_changelog_button %}
-    <a href="#" class="footer-link footer-link-btn" onclick="openChangelogModal(); return false;">
+    <a href="#" class="footer-link footer-link-btn" onclick="if(window.openChangelogModal) window.openChangelogModal(); return false;">
       <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
         <polyline points="14 2 14 8 20 8"></polyline>
@@ -33,7 +33,7 @@ Uses footer_info context processor (app_version, copyright_year, show_changelog_
     </a>
     {% endif %}
     <div class="footer-lang-dropdown" id="footer-lang-dropdown">
-      <button type="button" class="footer-link footer-link-btn footer-lang-trigger" id="footer-lang-trigger" aria-haspopup="listbox" aria-expanded="false" aria-label="{% trans 'Select language' %}">
+      <button type="button" class="footer-link-btn footer-lang-trigger" id="footer-lang-trigger" aria-haspopup="listbox" aria-expanded="false" aria-label="{% trans 'Select language' %}">
         <span class="user-menu-lang-flag" aria-hidden="true">
           {% if current_language_code == 'nb' %}
           <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 22 16"><rect width="22" height="16" fill="#ba0c2f"/><rect x="6" y="0" width="4" height="16" fill="#fff"/><rect x="0" y="6" width="22" height="4" fill="#fff"/><rect x="7" y="0" width="2" height="16" fill="#00205b"/><rect x="0" y="7" width="22" height="2" fill="#00205b"/></svg>
