@@ -1197,11 +1197,35 @@ def network_device_delete(request, facility_slug, device_id):
 
 
 # ----- IP Addresses -----
+def _debug_log(hypothesis_id, location, message, data=None):
+    # #region agent log
+    try:
+        import json
+        _p = Path(__file__).resolve().parent.parent.parent / ".cursor" / "debug.log"
+        _p.parent.mkdir(parents=True, exist_ok=True)
+        with open(_p, "a", encoding="utf-8") as _f:
+            _f.write(json.dumps({"sessionId": "debug-session", "runId": "run1", "hypothesisId": hypothesis_id, "location": location, "message": message, "data": data or {}, "timestamp": __import__("time").time() * 1000}) + "\n")
+    except Exception:
+        pass
+    # #endregion
+
 @staff_required
 def ip_address_add(request, facility_slug):
     """Add an IP address to a facility."""
+    # #region agent log
+    _debug_log("H4", "views.py:ip_address_add:entry", "ip_address_add called", {"path": request.path, "method": request.method, "GET": dict(request.GET), "facility_slug": facility_slug})
+    # #endregion
     from .forms import IPAddressForm
-    facility = get_object_or_404(Facility, slug=facility_slug)
+    try:
+        facility = get_object_or_404(Facility, slug=facility_slug)
+    except Exception as e:
+        # #region agent log
+        _debug_log("H2", "views.py:ip_address_add:get_facility", "get_object_or_404 raised", {"error": type(e).__name__, "message": str(e)})
+        # #endregion
+        raise
+    # #region agent log
+    _debug_log("H2", "views.py:ip_address_add:after_facility", "facility resolved", {"facility_pk": facility.pk, "facility_name": getattr(facility, "name", None)})
+    # #endregion
     in_modal = request.GET.get("modal") == "1"
     detail_url = reverse("admin_app:admin_facility_detail", kwargs={"slug": facility.slug})
     
@@ -1219,13 +1243,27 @@ def ip_address_add(request, facility_slug):
         form = IPAddressForm(facility=facility)
     
     cancel_url = reverse("admin_app:admin_facility_modal_close", kwargs={"facility_slug": facility.slug}) if in_modal else _get_cancel_url(request, detail_url)
-    return render(request, "admin_app/ip_address_form.html", {
-        "form": form,
-        "facility": facility,
-        "ip_address": None,
-        "cancel_url": cancel_url,
-        "in_modal": in_modal,
-    })
+    # #region agent log
+    _debug_log("H3", "views.py:ip_address_add:before_render", "about to render template", {"template": "admin_app/ip_address_form.html", "in_modal": in_modal, "form_errors": form.errors if hasattr(form, "errors") else None})
+    # #endregion
+    try:
+        response = render(request, "admin_app/ip_address_form.html", {
+            "form": form,
+            "facility": facility,
+            "ip_address": None,
+            "cancel_url": cancel_url,
+            "in_modal": in_modal,
+        })
+        # #region agent log
+        _debug_log("H3", "views.py:ip_address_add:after_render", "render succeeded", {"status": response.status_code})
+        # #endregion
+        return response
+    except Exception as e:
+        # #region agent log
+        _debug_log("H1", "views.py:ip_address_add:render_exception", "render raised (template or variable error)", {"error": type(e).__name__, "message": str(e)})
+        _debug_log("H5", "views.py:ip_address_add:render_exception", "render raised", {"error": type(e).__name__, "message": str(e)})
+        # #endregion
+        raise
 
 
 @staff_required

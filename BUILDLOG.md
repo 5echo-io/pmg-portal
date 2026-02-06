@@ -2,6 +2,13 @@
 
 - 2026-02-06 (Europe/Oslo)
   - Branch: dev
+  - Version: 4.7.0-beta.7
+  - Summary:
+    - views.py: admin view logic updates and refinements (+46/-8)
+    - Version bump: 4.7.0-beta.6 → 4.7.0-beta.7
+
+- 2026-02-06 (Europe/Oslo)
+  - Branch: dev
   - Version: 4.7.0-beta.6
   - Summary:
     - ip_address_form.html, views.py: small tweaks
