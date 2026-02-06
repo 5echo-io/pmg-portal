@@ -2691,6 +2691,7 @@ a.link:hover { color: var(--text); }
   overflow-y: auto;
   flex: 1;
   padding-right: 4px;
+  min-height: 0;
 }
 
 .customer-selection-item {
