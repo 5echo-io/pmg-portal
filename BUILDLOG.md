@@ -2,6 +2,13 @@
 
 - 2026-02-06 (Europe/Oslo)
   - Branch: dev
+  - Version: 4.7.0-beta.11
+  - Summary:
+    - ip_address_form.html, views.py: IP address form and view updates (+26/-6)
+    - Version bump: 4.7.0-beta.10 → 4.7.0-beta.11
+
+- 2026-02-06 (Europe/Oslo)
+  - Branch: dev
   - Version: 4.7.0-beta.10
   - Summary:
     - ip_address_form.html, views.py: IP address form and view tweaks

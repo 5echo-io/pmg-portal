@@ -17,7 +17,7 @@ Pre-release builds (alpha, beta, rc) are listed here. Only full releases (no bui
 - **Rack detail**: Template refactor and layout updates; IP address form, site footer, portal base and app.css tweaks
 - **IP address form & views**: Small template and view tweaks
 - **Admin views**: View logic updates and refinements; small view tweak
-- **IP address form**: Delete button extracted to partial _ip_address_delete_btn.html; form and view tweaks
+- **IP address form**: Delete button extracted to partial _ip_address_delete_btn.html; form and view tweaks; IP address form and view updates
 
 ### Added
 - **Admin – Network device list**: Dedicated network device list page (template + view + URL); admin home link

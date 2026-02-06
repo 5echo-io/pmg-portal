@@ -1199,6 +1199,18 @@ def network_device_delete(request, facility_slug, device_id):
 
 
 # ----- IP Addresses -----
+def _ip_form_errors_html(form):
+    """Return dict of field_name -> safe HTML for first error (or empty string). Avoids {% if %} in template."""
+    out = {}
+    for name in ("ip_address", "subnet", "reserved_for", "description", "device"):
+        errors = form.errors.get(name)
+        if errors:
+            out[name] = mark_safe(f'<p class="form-error">{escape(str(errors[0]))}</p>')
+        else:
+            out[name] = mark_safe("")
+    return out
+
+
 def _debug_log(hypothesis_id, location, message, data=None):
     # #region agent log
     try:
@@ -1245,6 +1257,8 @@ def ip_address_add(request, facility_slug):
     
     cancel_url = reverse("admin_app:admin_facility_modal_close", kwargs={"facility_slug": facility.slug}) if in_modal else _get_cancel_url(request, detail_url)
     delete_button_html = mark_safe("")  # Add form has no IP to delete
+    page_title = _("Add IP Address")
+    form_errors_html = _ip_form_errors_html(form)
     # #region agent log
     _debug_log("H3", "views.py:ip_address_add:before_render", "about to render template", {"template": "admin_app/ip_address_form.html", "in_modal": in_modal, "form_errors": form.errors if hasattr(form, "errors") else None})
     # #endregion
@@ -1256,6 +1270,8 @@ def ip_address_add(request, facility_slug):
             "cancel_url": cancel_url,
             "in_modal": in_modal,
             "delete_button_html": delete_button_html,
+            "page_title": page_title,
+            "form_errors_html": form_errors_html,
         })
         # #region agent log
         _debug_log("H3", "views.py:ip_address_add:after_render", "render succeeded", {"status": response.status_code})
@@ -1290,12 +1306,16 @@ def ip_address_edit(request, facility_slug, ip_id):
     delete_msg = escape(_("Are you sure you want to delete this IP address?"))
     delete_label = escape(_("Delete"))
     delete_button_html = mark_safe(f'<button type="button" class="form-btn form-btn-danger" data-delete-url="{delete_url}" data-delete-message="{delete_msg}">{delete_label}</button>')
+    page_title = _("Edit IP Address")
+    form_errors_html = _ip_form_errors_html(form)
     return render(request, "admin_app/ip_address_form.html", {
         "form": form,
         "facility": facility,
         "ip_address": ip_address,
         "cancel_url": cancel_url,
         "delete_button_html": delete_button_html,
+        "page_title": page_title,
+        "form_errors_html": form_errors_html,
     })
 
 
