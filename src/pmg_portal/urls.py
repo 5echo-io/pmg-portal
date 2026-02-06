@@ -8,6 +8,8 @@ Last Modified: 2026-02-05
 """
 from django.contrib import admin
 from django.urls import include, path
+from django.conf import settings
+from django.conf.urls.static import static
 
 # Import admin config for whitelabel
 from . import admin_config  # noqa: F401
@@ -23,3 +25,7 @@ urlpatterns = [
     path("", include("portal.urls")),
     path("debug/", include("web.urls")),
 ]
+
+# Serve media files in development
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

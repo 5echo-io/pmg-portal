@@ -88,6 +88,20 @@ body {
 }
 
 h1 { margin: 0 0 6px 0; font-size: 22px; }
+
+.customer-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 6px 0;
+}
+
+.customer-logo {
+  max-width: 60px;
+  max-height: 60px;
+  object-fit: contain;
+  border-radius: 4px;
+}
 h2 { margin: 0 0 10px 0; font-size: 16px; }
 .muted { color: var(--muted); }
 

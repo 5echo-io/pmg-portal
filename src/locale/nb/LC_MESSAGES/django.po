@@ -234,3 +234,6 @@ msgstr "Filer"
 
 msgid "All rights reserved."
 msgstr "Alle rettigheter reservert."
+
+msgid "Customer logo displayed on dashboard"
+msgstr "Kundelogo vist på dashboard"

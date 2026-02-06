@@ -10,6 +10,7 @@ class Customer(models.Model):
     slug = models.SlugField(max_length=80, unique=True)
     org_number = models.CharField(max_length=32, blank=True, default="")
     contact_info = models.TextField(blank=True, default="")
+    logo = models.ImageField(upload_to="customer_logos/", blank=True, null=True, help_text="Customer logo displayed on dashboard")
     primary_contact = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
@@ -20,6 +21,28 @@ class Customer(models.Model):
 
     def __str__(self) -> str:
         return self.name
+    
+    def delete(self, *args, **kwargs):
+        """Override delete to remove logo file and all related files when customer is deleted."""
+        # Store logo path before deletion
+        logo_path = None
+        if self.logo:
+            try:
+                logo_path = self.logo.path
+            except Exception:
+                pass
+        
+        # Delete the customer (this will cascade delete CustomerMembership and PortalLink)
+        super().delete(*args, **kwargs)
+        
+        # Delete logo file after model deletion
+        if logo_path:
+            try:
+                import os
+                if os.path.exists(logo_path):
+                    os.remove(logo_path)
+            except Exception:
+                pass  # Silently fail if file deletion fails
 
 
 class CustomerMembership(models.Model):

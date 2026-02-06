@@ -16,6 +16,7 @@ Added:
 - Animated transitions between login and register pages (fade out/in, card height expansion)
 - Loading spinner indicator on Sign in button when form is submitted
 - Copyright notice in login page footer (left side)
+- Customer logo upload: ImageField added to Customer model; logo upload in admin customer form with preview; logo displayed next to customer name on dashboard; automatic logo file deletion when customer is deleted
 - About modal: accessible from avatar menu (all users); shows app version, 5echo.io info, developer credits (Head developer: Kevin Jung Park)
 - About modal: update check for admins (compares current version with GitHub main branch); update notification badge in avatar menu when update available
 - Norwegian (Norsk) as second language: full i18n with Django LOCALE_PATHS, locale/nb, and set_language switcher

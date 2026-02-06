@@ -3,7 +3,12 @@
 {% block title %}{{ customer.name }} | {% trans "PMG Portal" %}{% endblock %}
 
 {% block content %}
-  <h1>{{ customer.name }}</h1>
+  <h1 class="customer-title">
+    {% if customer.logo %}
+    <img src="{{ customer.logo.url }}" alt="{{ customer.name }} logo" class="customer-logo" />
+    {% endif %}
+    <span>{{ customer.name }}</span>
+  </h1>
   <p class="muted">{% trans "This is your customer portal. Content will expand over time." %}</p>
 
   <div class="panel">

@@ -157,7 +157,7 @@ def customer_list(request):
 def customer_add(request):
     from .forms import CustomerForm
     if request.method == "POST":
-        form = CustomerForm(request.POST)
+        form = CustomerForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
             messages.success(request, "Customer created.")
@@ -172,8 +172,18 @@ def customer_edit(request, pk):
     from .forms import CustomerForm
     customer = get_object_or_404(Customer, pk=pk)
     if request.method == "POST":
-        form = CustomerForm(request.POST, instance=customer)
+        # Store old logo path before form processing
+        old_logo = customer.logo.path if customer.logo else None
+        form = CustomerForm(request.POST, request.FILES, instance=customer)
         if form.is_valid():
+            # If a new logo is uploaded, delete the old one
+            if old_logo and form.cleaned_data.get('logo') and old_logo != customer.logo.path:
+                try:
+                    import os
+                    if os.path.exists(old_logo):
+                        os.remove(old_logo)
+                except Exception:
+                    pass  # Silently fail if file deletion fails
             form.save()
             messages.success(request, "Customer updated.")
             return redirect("admin_app:admin_customer_list")

@@ -32,9 +32,10 @@ class UserEditForm(forms.ModelForm):
 class CustomerForm(forms.ModelForm):
     class Meta:
         model = Customer
-        fields = ("name", "slug", "org_number", "contact_info", "primary_contact")
+        fields = ("name", "slug", "org_number", "contact_info", "logo", "primary_contact")
         widgets = {
             "contact_info": forms.Textarea(attrs={"rows": 3}),
+            "logo": forms.FileInput(attrs={"accept": "image/*"}),
         }
 
     def __init__(self, *args, **kwargs):

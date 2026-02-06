@@ -9,7 +9,7 @@
 {% block admin_content %}
 <h1 class="admin-page-title">{% if customer %}Edit customer{% else %}Add customer{% endif %}</h1>
 
-<form method="post" action="" class="admin-form">
+<form method="post" action="" class="admin-form" enctype="multipart/form-data">
   {% csrf_token %}
   <div class="admin-form-field">
     <label for="{{ form.name.id_for_label }}">{{ form.name.label }}</label>
@@ -34,6 +34,18 @@
     {{ form.contact_info }}
     {% if form.contact_info.help_text %}<p class="admin-form-help">{{ form.contact_info.help_text|escape }}</p>{% endif %}
     {% if form.contact_info.errors %}<p class="form-error">{{ form.contact_info.errors.0 }}</p>{% endif %}
+  </div>
+  <div class="admin-form-field">
+    <label for="{{ form.logo.id_for_label }}">{{ form.logo.label }}</label>
+    {% if customer and customer.logo %}
+    <div class="admin-logo-preview" style="margin-bottom: 12px;">
+      <img src="{{ customer.logo.url }}" alt="{{ customer.name }} logo" style="max-width: 200px; max-height: 80px; border: 1px solid var(--line); border-radius: 4px; padding: 4px; background: var(--card);">
+      <p class="admin-form-help" style="margin-top: 4px; color: var(--muted); font-size: 12px;">Current logo</p>
+    </div>
+    {% endif %}
+    {{ form.logo }}
+    {% if form.logo.help_text %}<p class="admin-form-help">{{ form.logo.help_text|escape }}</p>{% endif %}
+    {% if form.logo.errors %}<p class="form-error">{{ form.logo.errors.0 }}</p>{% endif %}
   </div>
   <div class="admin-form-field">
     <label for="{{ form.primary_contact.id_for_label }}">{{ form.primary_contact.label }}</label>
