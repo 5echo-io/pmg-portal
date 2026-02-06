@@ -119,11 +119,10 @@
         {% endif %}
         <button type="button" class="user-menu-item" onclick="openAboutModal()" id="about-menu-item">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10"></circle>
-            <line x1="12" y1="16" x2="12" y2="12"></line>
-            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
           </svg>
-          {% trans "About" %}
+          {% trans "About this portal" %}
           {% if has_update_available %}
           <span class="about-update-badge" title="{% trans 'Update available' %}">●</span>
           {% endif %}
@@ -318,7 +317,7 @@
   <div id="aboutModal" class="modal" onclick="closeAboutModal(event)">
     <div class="modal-content" onclick="event.stopPropagation()">
       <div class="modal-header">
-        <h2>{% trans "About" %} - {% trans "PMG Portal" %}</h2>
+        <h2>{% trans "About this portal" %} - {% trans "PMG Portal" %}</h2>
         <button class="modal-close" onclick="closeAboutModal(event)">&times;</button>
       </div>
       <div class="modal-body">
@@ -339,6 +338,9 @@
           </p>
           <p class="about-muted">
             {% trans "PMG Portal is developed and maintained by 5echo.io" %}
+          </p>
+          <p class="about-muted">
+            <strong>{% trans "Head developer" %}:</strong> Kevin Jung Park
           </p>
         </div>
 

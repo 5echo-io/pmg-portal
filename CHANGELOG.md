@@ -8,7 +8,7 @@ This project follows Semantic Versioning (SemVer).
 Pre-release builds (alpha, beta, rc) are listed here. Only full releases (no build suffix) get a dedicated version section below.
 
 Added:
-- About modal: accessible from avatar menu (all users); shows app version, 5echo.io info, developer credits
+- About modal: accessible from avatar menu (all users); shows app version, 5echo.io info, developer credits (Head developer: Kevin Jung Park)
 - About modal: update check for admins (compares current version with GitHub main branch); update notification badge in avatar menu when update available
 - Norwegian (Norsk) as second language: full i18n with Django LOCALE_PATHS, locale/nb, and set_language switcher
 - Language switcher in avatar dropdown (Norsk/English with flags; current language hidden from submenu; open on click, close on mouse leave)
@@ -66,6 +66,7 @@ Changed:
 - Changelog: only full releases (no -beta/-alpha/-rc) get version sections; pre-releases stay under Unreleased
 - Sign in button: short pulse border animation in loop around button only (no fill); dampened hover brightness
 - Facility: Norwegian translation changed from "Fasilitet" to "Anlegg"
+- About button: renamed to "About this portal" (EN) / "Om portalen" (NO); icon changed to book/document icon (different from Debug)
 
 Fixed:
 - Norwegian flag was wrong (corrected to official Norway flag)

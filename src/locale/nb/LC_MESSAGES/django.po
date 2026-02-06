@@ -190,8 +190,11 @@ msgstr "Du har ikke tillatelse til å se eller redigere noe."
 msgid "Select language"
 msgstr "Velg språk"
 
-msgid "About"
-msgstr "Om"
+msgid "About this portal"
+msgstr "Om portalen"
+
+msgid "Head developer"
+msgstr "Hovedutvikler"
 
 msgid "Developed by"
 msgstr "Utviklet av"

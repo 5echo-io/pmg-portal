@@ -2,6 +2,14 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev
+  - Version: 1.17.41-beta.16
+  - Summary:
+    - About modal: added "Head developer: Kevin Jung Park" in developer section
+    - About button: renamed to "About this portal" (EN) / "Om portalen" (NO); icon changed to book/document icon
+    - django.po: added "Head developer" / "Hovedutvikler" translation
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev
   - Version: 1.17.40-beta.15
   - Summary:
     - About modal: accessible from avatar menu (all users); shows version, 5echo.io info, developer credits
