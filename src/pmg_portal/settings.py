@@ -165,6 +165,9 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 SESSION_COOKIE_SECURE = not DEBUG
 CSRF_COOKIE_SECURE = not DEBUG
 
+# Allow same-origin iframes so facility modals (IP add, document upload, etc.) work
+X_FRAME_OPTIONS = "SAMEORIGIN"
+
 # Logging configuration for debugging
 LOGGING = {
     "version": 1,

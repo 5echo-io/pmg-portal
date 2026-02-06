@@ -2,6 +2,13 @@
 
 - 2026-02-06 (Europe/Oslo)
   - Branch: dev
+  - Version: 4.7.0-beta.13
+  - Summary:
+    - settings.py: config update (+3 lines)
+    - Version bump: 4.7.0-beta.12 → 4.7.0-beta.13
+
+- 2026-02-06 (Europe/Oslo)
+  - Branch: dev
   - Version: 4.7.0-beta.12
   - Summary:
     - ip_address_form.html, views.py: small form and view tweaks
