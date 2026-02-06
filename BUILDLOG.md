@@ -2,6 +2,19 @@
 
 - 2026-02-06 (Europe/Oslo)
   - Branch: dev
+  - Version: 1.17.50-beta.27
+  - Summary:
+    - Customer selection flow: implemented explicit customer profile selection on login (no auto-select for multiple customers)
+    - Customer selection page: compact list layout with search field (when >4 customers), scroll only on list not entire page
+    - Customer switch: moved from topbar dropdown to avatar menu with modal interface
+    - Auto-selection: automatically select single customer profile when user has access to only one
+    - UI improvements: changed text to "customer profile" throughout, updated icons, fixed scroll behavior
+    - Translations: added Norwegian translations for all customer profile selection texts
+    - JavaScript: fixed syntax errors by replacing inline onclick with data attributes and event listeners
+    - CSS: improved customer selection container layout with proper flexbox and overflow handling
+
+- 2026-02-06 (Europe/Oslo)
+  - Branch: dev
   - Version: 1.17.50-beta.26
   - Summary:
     - Customer card page: modern customer detail page with logo upload/delete, member management, and portal links tabs

@@ -7,6 +7,30 @@ This project follows Semantic Versioning (SemVer).
 
 Pre-release builds (alpha, beta, rc) are listed here. Only full releases (no build suffix) get a dedicated version section below.
 
+### [1.17.50-beta.27] - 2026-02-06
+
+Fixed:
+- Customer selection page: fixed scroll behavior - only customer list scrolls, not entire page
+- Customer name display: ensure customer name only shows in topbar when customer profile is actually selected
+- Duplicate divider: removed extra divider line before "Switch Customer Profile" button in avatar menu
+- JavaScript syntax errors: replaced inline onclick handlers with data attributes and event listeners
+
+Changed:
+- Customer selection: changed text from "Select Customer" to "Select Customer Profile" (Norwegian: "Velg kundeprofil")
+- Customer switching: changed text from "Switch Customer" to "Switch Customer Profile" (Norwegian: "Bytt kundeprofil")
+- Customer selection UI: made cards more compact and less overwhelming (reduced padding, smaller logos, list layout instead of grid)
+- Customer switch icon: changed from pencil icon to building/company icon
+- Search placeholder: updated from "Search customers" to "Search customer profiles" (Norwegian: "Søk etter kundeprofiler")
+- Customer selection scroll: container uses flexbox with overflow hidden, only list scrolls when needed
+
+Added:
+- Customer selection flow: no automatic customer selection on login - users must explicitly choose a customer profile
+- Customer selection page: dedicated page showing all available customer profiles with logos and org numbers
+- Customer switch modal: modal accessible from avatar menu for switching between customer profiles
+- Search field: added search functionality to customer selection page when more than 4 customers available
+- Auto-selection: automatically select and hide switch option when user has access to only one customer profile
+- Customer switch button: added to avatar menu below user name/email for switching customer profiles
+
 ### [1.17.50-beta.26] - 2026-02-06
 
 Fixed:
