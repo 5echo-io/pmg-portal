@@ -2,6 +2,14 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev
+  - Version: 1.17.37-beta.12
+  - Summary:
+    - update.sh + install.sh: run compilemessages so Norsk works after pull and on fresh install
+    - update.sh: comment documents update command (cd /opt/pmg-portal && sudo git pull origin dev && sudo bash scripts/update.sh)
+    - SETUP_GUIDE.md: "Updating the app" section with exact command
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev
   - Version: 1.17.36-beta.11
   - Summary:
     - Norwegian (Norsk) added: Django i18n (LocaleMiddleware, LOCALE_PATHS, set_language), locale/nb/LC_MESSAGES/django.po with translations

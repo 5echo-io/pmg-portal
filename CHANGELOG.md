@@ -7,6 +7,13 @@ This project follows Semantic Versioning (SemVer).
 
 No changes yet.
 
+## [1.17.37-beta.12] - 2026-02-05
+
+Changed:
+- update.sh: run `compilemessages` after collectstatic so Norwegian works after git pull; comment documents full update command (`cd /opt/pmg-portal && sudo git pull origin dev && sudo bash scripts/update.sh`)
+- install.sh: run `compilemessages` after collectstatic so Norwegian works on fresh install
+- SETUP_GUIDE.md: added "Updating the app" section with the exact update command
+
 ## [1.17.36-beta.11] - 2026-02-05
 
 **MAJOR:** Norwegian (Norsk) + full i18n. **MINOR:** 17 Added. **PATCH:** 33 Changed + 3 Fixed.

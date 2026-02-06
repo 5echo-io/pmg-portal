@@ -148,7 +148,7 @@ sudo python3 -m venv "$SRC_DIR/.venv"
 sudo "$SRC_DIR/.venv/bin/pip" install --upgrade pip
 sudo "$SRC_DIR/.venv/bin/pip" install -r "$SRC_DIR/requirements.txt"
 
-echo "Running migrations + collectstatic..."
+echo "Running migrations + collectstatic + compilemessages..."
 set -a
 source "$APP_DIR/.env"
 set +a
@@ -156,6 +156,7 @@ set +a
 # Migrations include accounts: syncs User.username from User.email (email-as-primary)
 sudo -E "$SRC_DIR/.venv/bin/python" manage.py migrate --noinput
 sudo -E "$SRC_DIR/.venv/bin/python" manage.py collectstatic --noinput
+sudo -E "$SRC_DIR/.venv/bin/python" manage.py compilemessages --verbosity 0
 
 echo "Creating default admin (if missing)..."
 sudo -E "$SRC_DIR/.venv/bin/python" - <<'PY'
