@@ -439,7 +439,8 @@ set -a
 source "$APP_DIR/.env"
 set +a
 
-# Migrations include accounts: syncs User.username from User.email (email-as-primary)
+# Create migrations if needed, then apply them
+sudo -E "$SRC_DIR/.venv/bin/python" manage.py makemigrations --noinput || true
 sudo -E "$SRC_DIR/.venv/bin/python" manage.py migrate --noinput
 sudo -E "$SRC_DIR/.venv/bin/python" manage.py collectstatic --noinput
 sudo -E "$SRC_DIR/.venv/bin/python" manage.py compilemessages --verbosity 0
