@@ -1079,6 +1079,15 @@ def rack_seal_remove(request, facility_slug, rack_id, seal_id):
 
 # ----- Network Devices (global list) -----
 @staff_required
+def network_device_add_choose_facility(request):
+    """Choose a facility before adding a device (used from the global devices list)."""
+    facilities = Facility.objects.filter(is_active=True).order_by("name")
+    return render(request, "admin_app/network_device_add_choose.html", {
+        "facilities": facilities,
+    })
+
+
+@staff_required
 def network_device_list(request):
     """List all network devices across facilities with search and filter."""
     qs = NetworkDevice.objects.select_related("facility", "rack").filter(is_active=True).order_by("facility__name", "name")

@@ -3572,10 +3572,28 @@ button.admin-btn-sm {
   color: var(--text);
 }
 
+.facility-list-subtitle {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--muted);
+}
+
 .facility-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 20px;
+}
+
+@media (max-width: 900px) {
+  .facility-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .facility-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .facility-card {

@@ -5,7 +5,10 @@
 {% block content %}
   <div class="facility-list-container">
     <div class="facility-list-header">
-      <h1>{% if customer %}{% blocktrans with name=customer.name %}Available facilities for {{ name }}{% endblocktrans %}{% else %}{% trans "Facilities" %}{% endif %}</h1>
+      <h1>{% trans "Facilities" %}</h1>
+      {% if customer %}
+      <p class="facility-list-subtitle">{% blocktrans with name=customer.name %}Available facilities for {{ name }}{% endblocktrans %}</p>
+      {% endif %}
     </div>
 
     {% if facilities %}

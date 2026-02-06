@@ -1,13 +1,14 @@
 {% extends "admin_app/base.html" %}
 {% load i18n %}
 
-{% block admin_title %}{% trans "Network devices" %}{% endblock %}
-{% block breadcrumb_extra %}<span class="breadcrumb-sep">→</span> <span>{% trans "Network devices" %}</span>{% endblock %}
+{% block admin_title %}{% trans "Devices" %}{% endblock %}
+{% block breadcrumb_extra %}<span class="breadcrumb-sep">→</span> <span>{% trans "Devices" %}</span>{% endblock %}
 
 {% block admin_content %}
-<h1 class="admin-page-title">{% trans "Network devices" %}</h1>
+<h1 class="admin-page-title">{% trans "Devices" %}</h1>
 
 <div class="admin-toolbar admin-toolbar--single-row">
+  <a href="{% url 'admin_app:admin_network_device_add_choose' %}" class="admin-toolbar-add-btn">{% trans "Add device" %}</a>
   <form method="get" action="" class="admin-toolbar-form">
     <div class="admin-search-wrap">
       <div class="admin-search-group">
@@ -62,7 +63,7 @@
       </tr>
       {% empty %}
       <tr>
-        <td colspan="9">{% trans "Ingen nettverksenheter funnet." %}</td>
+        <td colspan="9">{% trans "Ingen enheter funnet." %}</td>
       </tr>
       {% endfor %}
     </tbody>

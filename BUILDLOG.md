@@ -2,6 +2,15 @@
 
 - 2026-02-06 (Europe/Oslo)
   - Branch: dev
+  - Version: 4.7.0-beta.15
+  - Summary:
+    - Admin: network device add – choose facility (network_device_add_choose.html, view, URL); home.html, network_device_list.html, urls.py, views.py updates
+    - Portal: facility_list.html, facility_list_content.html tweaks
+    - app.css: +20 lines; locale nb django.po: +6 strings
+    - Version bump: 4.7.0-beta.14 → 4.7.0-beta.15
+
+- 2026-02-06 (Europe/Oslo)
+  - Branch: dev
   - Version: 4.7.0-beta.14
   - Summary:
     - Facility card: refactored to use fragment templates for modals; views.py updated to serve fragments

@@ -29,6 +29,7 @@ urlpatterns = [
     path("portal-links/add/", views.portal_link_add, name="admin_portal_link_add"),
     path("portal-links/<int:pk>/edit/", views.portal_link_edit, name="admin_portal_link_edit"),
     path("network-devices/", views.network_device_list, name="admin_network_device_list"),
+    path("network-devices/add/", views.network_device_add_choose_facility, name="admin_network_device_add_choose"),
     path("facilities/", views.facility_list, name="admin_facility_list"),
     path("facilities/add/", views.facility_add, name="admin_facility_add"),
     path("facilities/<slug:slug>/", views.facility_detail, name="admin_facility_detail"),

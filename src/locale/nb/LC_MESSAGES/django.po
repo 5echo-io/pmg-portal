@@ -46,6 +46,12 @@ msgstr "Nettverk"
 msgid "Network Devices"
 msgstr "Nettverksenheter"
 
+msgid "Devices"
+msgstr "Enheter"
+
+msgid "Add device"
+msgstr "Legg til enhet"
+
 msgid "IP Addresses"
 msgstr "IP-adresser"
 

@@ -20,8 +20,10 @@ Pre-release builds (alpha, beta, rc) are listed here. Only full releases (no bui
 - **IP address form**: Delete button extracted to partial _ip_address_delete_btn.html; form and view tweaks; IP address form and view updates; small form and view tweaks
 - **Settings**: settings.py update (+3 lines)
 - **Facility card**: Refactored to use fragment templates for modals (customers edit, document form, IP form, network device form, rack form); views updated to serve fragments
+- **Network device list**: Add flow with facility chooser (network_device_add_choose.html); portal facility list and app.css updates; Norwegian strings
 
 ### Added
+- **Admin – Network device add (choose facility)**: network_device_add_choose.html template, view, URL; home and network_device_list links
 - **Admin – Facility card fragments**: facility_customers_edit_fragment.html, facility_document_form_fragment.html, ip_address_form_fragment.html, network_device_form_fragment.html, rack_form_fragment.html for modal/fragment rendering
 - **Admin – Network device list**: Dedicated network device list page (template + view + URL); admin home link
 
