@@ -14,7 +14,7 @@
     <div class="topbar-left">
       <div class="brand">PMG Portal</div>
       <div class="topbar-nav">
-        <a class="topbar-btn {% if request.path == '/' %}active{% endif %}" href="/" hx-get="/" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="true">Portal</a>
+        <a class="topbar-btn {% if request.path == '/' %}active{% endif %}" href="/" hx-get="/" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="true">Dashboard</a>
         <span class="topbar-btn topbar-btn--disabled" title="This feature is under development">Facility</span>
       </div>
     </div>
@@ -68,20 +68,15 @@
           </svg>
           Profile Settings
         </a>
-        <div class="user-menu-item-wrapper user-menu-item-wrapper--lang">
-          <div class="user-menu-item user-menu-item--lang-trigger">
+        <div class="user-menu-item-wrapper user-menu-item-wrapper--lang" id="user-menu-lang-wrap">
+          <div class="user-menu-item user-menu-item--lang-trigger" id="user-menu-lang-trigger" role="button" tabindex="0" aria-expanded="false" aria-haspopup="true">
             <span class="user-menu-lang-flag" aria-hidden="true">
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="14" viewBox="0 0 60 30" fill="none"><rect width="60" height="30" fill="#012169"/><path d="M0 0l60 30M60 0L0 30" stroke="#fff" stroke-width="6"/><path d="M0 0l60 30M60 0L0 30" stroke="#C8102E" stroke-width="4"/><path d="M30 0v30M0 15h60" stroke="#fff" stroke-width="10"/><path d="M30 0v30M0 15h60" stroke="#C8102E" stroke-width="6"/></svg>
             </span>
-            English
+            <span class="user-menu-lang-label">English</span>
           </div>
-          <div class="user-menu-submenu">
-            <button type="button" class="user-menu-item user-menu-submenu-item">
-              <span class="user-menu-lang-flag" aria-hidden="true">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="14" viewBox="0 0 60 30" fill="none"><rect width="60" height="30" fill="#012169"/><path d="M0 0l60 30M60 0L0 30" stroke="#fff" stroke-width="6"/><path d="M0 0l60 30M60 0L0 30" stroke="#C8102E" stroke-width="4"/><path d="M30 0v30M0 15h60" stroke="#fff" stroke-width="10"/><path d="M30 0v30M0 15h60" stroke="#C8102E" stroke-width="6"/></svg>
-              </span>
-              English
-            </button>
+          <div class="user-menu-submenu" id="user-menu-lang-submenu">
+            <!-- Only languages other than current are shown; when only English is selected, submenu is empty -->
           </div>
         </div>
         {% if request.user.is_superuser %}
@@ -185,10 +180,29 @@
       }
     }
     
+    // Language submenu: open on click, close on mouse leave
+    (function() {
+      var wrap = document.getElementById('user-menu-lang-wrap');
+      var trigger = document.getElementById('user-menu-lang-trigger');
+      var sub = document.getElementById('user-menu-lang-submenu');
+      if (!wrap || !trigger || !sub) return;
+      trigger.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        wrap.classList.toggle('user-menu-submenu-open');
+        trigger.setAttribute('aria-expanded', wrap.classList.contains('user-menu-submenu-open'));
+      });
+      wrap.addEventListener('mouseleave', function() {
+        wrap.classList.remove('user-menu-submenu-open');
+        trigger.setAttribute('aria-expanded', 'false');
+      });
+    })();
+
     // Close menu on Escape key
     document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape') {
         document.querySelectorAll('.user-menu').forEach(m => m.classList.remove('open'));
+        document.querySelectorAll('.user-menu-item-wrapper--lang').forEach(w => w.classList.remove('user-menu-submenu-open'));
         document.querySelectorAll('.customer-menu').forEach(m => m.classList.remove('open'));
       }
     });

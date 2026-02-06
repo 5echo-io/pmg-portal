@@ -51,6 +51,10 @@ Changed:
 - Customer dropdown: active customer shown with checkmark icon in list
 - Topbar: Facility button (grayed out, tooltip "This feature is under development")
 - Avatar menu: Language (English) with UK flag icon; hover shows submenu with English option
+- Topbar: "Portal" renamed to "Dashboard"
+- Avatar menu: Language submenu opens on click (not hover), closes when mouse leaves; current language not shown in submenu
+- Login page: version below card (left), language selector below card (right)
+- Sign in button: single moving pulse animation around button when ready (narrow green wedge)
 
 Fixed:
 - Footer width now matches main content (1280px)

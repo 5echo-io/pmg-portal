@@ -2,6 +2,15 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev
+  - Version: 0.15.36-beta.10
+  - Summary:
+    - Topbar: "Portal" renamed to "Dashboard"
+    - Avatar menu: Language submenu on click (not hover), close on mouse leave; current language hidden in submenu
+    - Login page: version below card (left), language (English + flag) below card (right)
+    - Sign in: single moving pulse animation around button when ready; MINOR/PATCH from changelog (0.15.36)
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev
   - Version: 0.15.22-beta.9
   - Summary:
     - Login Sign in: animated circulating green stripe around button when ready
