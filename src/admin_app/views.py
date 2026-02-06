@@ -13,6 +13,8 @@ from django.views.decorators.http import require_POST, require_http_methods
 from django.http import JsonResponse, HttpResponse
 from django.conf import settings
 from django.utils import timezone
+from django.utils.safestring import mark_safe
+from django.utils.html import escape
 import os
 import tempfile
 from pathlib import Path
@@ -1242,6 +1244,7 @@ def ip_address_add(request, facility_slug):
         form = IPAddressForm(facility=facility)
     
     cancel_url = reverse("admin_app:admin_facility_modal_close", kwargs={"facility_slug": facility.slug}) if in_modal else _get_cancel_url(request, detail_url)
+    delete_button_html = mark_safe("")  # Add form has no IP to delete
     # #region agent log
     _debug_log("H3", "views.py:ip_address_add:before_render", "about to render template", {"template": "admin_app/ip_address_form.html", "in_modal": in_modal, "form_errors": form.errors if hasattr(form, "errors") else None})
     # #endregion
@@ -1252,6 +1255,7 @@ def ip_address_add(request, facility_slug):
             "ip_address": None,
             "cancel_url": cancel_url,
             "in_modal": in_modal,
+            "delete_button_html": delete_button_html,
         })
         # #region agent log
         _debug_log("H3", "views.py:ip_address_add:after_render", "render succeeded", {"status": response.status_code})
@@ -1282,11 +1286,16 @@ def ip_address_edit(request, facility_slug, ip_id):
         form = IPAddressForm(instance=ip_address, facility=facility)
     
     cancel_url = _get_cancel_url(request, reverse("admin_app:admin_facility_detail", kwargs={"slug": facility.slug}))
+    delete_url = reverse("admin_app:admin_ip_address_delete", kwargs={"facility_slug": facility.slug, "ip_id": ip_address.pk})
+    delete_msg = escape(_("Are you sure you want to delete this IP address?"))
+    delete_label = escape(_("Delete"))
+    delete_button_html = mark_safe(f'<button type="button" class="form-btn form-btn-danger" data-delete-url="{delete_url}" data-delete-message="{delete_msg}">{delete_label}</button>')
     return render(request, "admin_app/ip_address_form.html", {
         "form": form,
         "facility": facility,
         "ip_address": ip_address,
         "cancel_url": cancel_url,
+        "delete_button_html": delete_button_html,
     })
 
 

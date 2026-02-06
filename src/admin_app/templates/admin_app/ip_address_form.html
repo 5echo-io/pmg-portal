@@ -44,7 +44,7 @@
   <div class="admin-form-actions">
     <button type="submit" class="form-btn form-btn-primary form-btn--narrow">{% trans "Save" %}</button>
     <a href="{{ cancel_url }}" class="form-btn form-btn-secondary">{% trans "Cancel" %}</a>
-    {% include "admin_app/_ip_address_delete_btn.html" %}
+    {{ delete_button_html }}
   </div>
 </form>
 {% endblock %}
