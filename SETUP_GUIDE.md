@@ -74,3 +74,7 @@
 
 **Can't see Customers/Memberships/Links in admin?**
 - Make sure you're logged in as a superuser (admin account)
+
+## Internationalization (Languages)
+
+The portal supports **Norwegian (Bokmål)** and **English**. Users can switch language from the avatar menu (when logged in) or from the login page footer. For adding or editing translated strings, see **[docs/I18N.md](docs/I18N.md)**.

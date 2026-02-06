@@ -2,6 +2,16 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev
+  - Version: 1.17.36-beta.11
+  - Summary:
+    - Norwegian (Norsk) added: Django i18n (LocaleMiddleware, LOCALE_PATHS, set_language), locale/nb/LC_MESSAGES/django.po with translations
+    - Avatar menu: language dropdown shows Norsk and English (with flags); current language not listed in submenu; switch via POST to /i18n/setlang/
+    - Login page footer (right): current language + link to switch to other language
+    - All portal/accounts templates use {% trans %}/{% blocktrans %}; site_footer and changelog modal translated
+    - docs/I18N.md: guide for adding and translating strings (Norsk + English) when building further
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev
   - Version: 0.15.36-beta.10
   - Summary:
     - Topbar: "Portal" renamed to "Dashboard"

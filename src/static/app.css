@@ -204,6 +204,51 @@ button:hover { background: var(--btnHover); }
   flex-shrink: 0;
 }
 
+.login-lang-switcher {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.login-lang-current {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.login-lang-form {
+  display: inline;
+  margin: 0;
+}
+
+.login-lang-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  margin: 0;
+  background: none;
+  border: none;
+  color: var(--link);
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.login-lang-link:hover {
+  text-decoration: underline;
+}
+
+.login-lang-link .user-menu-lang-flag svg,
+.login-lang-current .user-menu-lang-flag svg {
+  width: 18px;
+  height: 14px;
+  border-radius: 2px;
+}
+
 .login-lang {
   display: inline-flex;
   align-items: center;
@@ -694,10 +739,33 @@ a.link:hover { color: var(--text); }
   visibility: visible;
 }
 
-.user-menu-submenu-item {
+.user-menu-lang-form {
+  margin: 0;
+  display: block;
+}
+
+.user-menu-submenu-item,
+.user-menu-lang-option {
   border-radius: 6px;
   margin: 4px;
   width: calc(100% - 8px);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: left;
+  background: none;
+  border: none;
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+}
+
+.user-menu-lang-option:hover,
+.user-menu-submenu-item:hover {
+  background: var(--hover);
 }
 
 .main-content {

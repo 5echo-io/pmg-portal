@@ -1,0 +1,188 @@
+# Norwegian (Bokmål) translations for PMG Portal.
+# Copyright (c) 2026 5echo.io
+# This file is distributed under the same license as the PMG Portal project.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PMG Portal\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-02-05 12:00+0000\n"
+"PO-Revision-Date: 2026-02-05 12:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: Norwegian Bokmål\n"
+"Language: nb\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "PMG Portal"
+msgstr "PMG Portal"
+
+msgid "Dashboard"
+msgstr "Dashboard"
+
+msgid "This feature is under development"
+msgstr "Denne funksjonen er under utvikling"
+
+msgid "Facility"
+msgstr "Fasilitet"
+
+msgid "Select customer"
+msgstr "Velg kunde"
+
+msgid "Search customers…"
+msgstr "Søk kunder…"
+
+msgid "Search customers"
+msgstr "Søk kunder"
+
+msgid "Profile Settings"
+msgstr "Profilinnstillinger"
+
+msgid "Admin Panel"
+msgstr "Admin-panel"
+
+msgid "Debug"
+msgstr "Feilsøking"
+
+msgid "Logout"
+msgstr "Logg ut"
+
+msgid "Changelog"
+msgstr "Endringslogg"
+
+msgid "Version"
+msgstr "Versjon"
+
+msgid "View Full Changelog"
+msgstr "Vis full endringslogg"
+
+msgid "Hide Full Changelog"
+msgstr "Skjul full endringslogg"
+
+msgid "View Changelog"
+msgstr "Vis endringslogg"
+
+msgid "Login"
+msgstr "Logg inn"
+
+msgid "Sign in to continue."
+msgstr "Logg inn for å fortsette."
+
+msgid "Email"
+msgstr "E-post"
+
+msgid "Password"
+msgstr "Passord"
+
+msgid "Sign in"
+msgstr "Logg inn"
+
+msgid "Create account"
+msgstr "Opprett konto"
+
+msgid "Register"
+msgstr "Registrer"
+
+msgid "Confirm password"
+msgstr "Bekreft passord"
+
+msgid "Back to login"
+msgstr "Tilbake til innlogging"
+
+msgid "Change Password"
+msgstr "Bytt passord"
+
+msgid "Current Password"
+msgstr "Nåværende passord"
+
+msgid "New Password"
+msgstr "Nytt passord"
+
+msgid "Confirm New Password"
+msgstr "Bekreft nytt passord"
+
+msgid "Cancel"
+msgstr "Avbryt"
+
+msgid "Account Information"
+msgstr "Kontoinformasjon"
+
+msgid "Delete Account"
+msgstr "Slett konto"
+
+msgid "Edit account information"
+msgstr "Rediger kontoinformasjon"
+
+msgid "First name"
+msgstr "Fornavn"
+
+msgid "Last name"
+msgstr "Etternavn"
+
+msgid "Not set"
+msgstr "Ikke satt"
+
+msgid "Save"
+msgstr "Lagre"
+
+msgid "Joined %(date)s"
+msgstr "Ble med %(date)s"
+
+msgid "Confirm Logout"
+msgstr "Bekreft utlogging"
+
+msgid "Are you sure you want to logout?"
+msgstr "Er du sikker på at du vil logge ut?"
+
+msgid "Warning: This action cannot be undone"
+msgstr "Advarsel: Denne handlingen kan ikke angres"
+
+msgid "Deleting your account will permanently remove all your data, including:"
+msgstr "Sletting av kontoen din vil permanent fjerne alle dine data, inkludert:"
+
+msgid "Your user profile and account information"
+msgstr "Din brukerprofil og kontoinformasjon"
+
+msgid "All customer memberships and access permissions"
+msgstr "Alle kundemedlemskap og tilgangsrettigheter"
+
+msgid "All associated data and settings"
+msgstr "Alle tilknyttede data og innstillinger"
+
+msgid "This action is irreversible."
+msgstr "Denne handlingen er irreversibel."
+
+msgid "Type your email to confirm:"
+msgstr "Skriv inn e-posten din for å bekrefte:"
+
+msgid "Delete My Account"
+msgstr "Slett min konto"
+
+msgid "This is your customer portal. Content will expand over time."
+msgstr "Dette er din kundeportal. Innholdet vil utvides over tid."
+
+msgid "Quick links"
+msgstr "Hurtiglenker"
+
+msgid "No links yet. An admin can add links for this customer in the admin panel."
+msgstr "Ingen lenker ennå. En administrator kan legge til lenker for denne kunden i admin-panelet."
+
+msgid "No customer access"
+msgstr "Ingen kundetilgang"
+
+msgid "Your account is active, but you are not assigned to any customer yet. Please contact an admin."
+msgstr "Kontoen din er aktiv, men du er ikke tilknyttet noen kunde ennå. Vennligst kontakt en administrator."
+
+msgid "Add"
+msgstr "Legg til"
+
+msgid "View"
+msgstr "Vis"
+
+msgid "Change"
+msgstr "Endre"
+
+msgid "You don't have permission to view or edit anything."
+msgstr "Du har ikke tillatelse til å se eller redigere noe."

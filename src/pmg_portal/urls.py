@@ -13,6 +13,7 @@ from django.urls import include, path
 from . import admin_config  # noqa: F401
 
 urlpatterns = [
+    path("i18n/", include("django.conf.urls.i18n")),
     # Custom admin (new UI) at /admin/ (namespace admin_app for {% url 'admin_app:...' %})
     path("admin/", include(("admin_app.urls", "admin_app"))),
     # Django's built-in admin at /admin-django/ (no collision)

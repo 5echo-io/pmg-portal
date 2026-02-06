@@ -1,23 +1,23 @@
-{% load static %}
+{% load static i18n %}
 <!doctype html>
-<html lang="en">
+<html lang="{{ current_language_code|default:'en' }}">
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Login | PMG Portal</title>
+  <title>{% trans "Login" %} | {% trans "PMG Portal" %}</title>
   <link rel="stylesheet" href="{% static 'app.css' %}">
 </head>
 <body class="page">
   <div class="card">
-    <h1>PMG Portal</h1>
-    <p class="muted">Sign in to continue.</p>
+    <h1>{% trans "PMG Portal" %}</h1>
+    <p class="muted">{% trans "Sign in to continue." %}</p>
 
     <form method="post" id="login-form">
       {% csrf_token %}
-      <label>Email</label>
+      <label>{% trans "Email" %}</label>
       {{ form.username }}
 
-      <label>Password</label>
+      <label>{% trans "Password" %}</label>
       {{ form.password }}
 
       {% if form.non_field_errors %}
@@ -25,23 +25,42 @@
       {% endif %}
 
       <div class="signin-btn-wrap" id="signin-btn-wrap">
-        <button type="submit" id="signin-btn" disabled>Sign in</button>
+        <button type="submit" id="signin-btn" disabled>{% trans "Sign in" %}</button>
       </div>
     </form>
 
     <div class="row row--centered">
-      <a href="/account/register/" class="auth-link">Create account</a>
+      <a href="/account/register/" class="auth-link">{% trans "Create account" %}</a>
     </div>
   </div>
   <div class="login-page-footer">
     <div class="login-footer-left">{{ app_version|default:"Unknown" }}</div>
-    <div class="login-footer-right">
-      <span class="login-lang">
+    <div class="login-footer-right login-lang-switcher">
+      <span class="login-lang-current">
         <span class="user-menu-lang-flag" aria-hidden="true">
+          {% if current_language_code == 'nb' %}
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="14" viewBox="0 0 60 30" fill="none"><rect width="60" height="30" fill="#ba0c2f"/><path d="M0 0h60v30H0z" fill="#00205b"/><path d="M20 0h6v30h-6zM0 12h60v6H0z" fill="#fff"/><path d="M22 0h2v30h-2zM0 13h60v4H0z" fill="#ba0c2f"/></svg>
+          {% else %}
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="14" viewBox="0 0 60 30" fill="none"><rect width="60" height="30" fill="#012169"/><path d="M0 0l60 30M60 0L0 30" stroke="#fff" stroke-width="6"/><path d="M0 0l60 30M60 0L0 30" stroke="#C8102E" stroke-width="4"/><path d="M30 0v30M0 15h60" stroke="#fff" stroke-width="10"/><path d="M30 0v30M0 15h60" stroke="#C8102E" stroke-width="6"/></svg>
+          {% endif %}
         </span>
-        English
+        {{ current_language_name }}
       </span>
+      {% for lang in other_languages %}
+      <form method="post" action="{% url 'set_language' %}" class="login-lang-form">
+        {% csrf_token %}
+        <input type="hidden" name="language" value="{{ lang.code }}">
+        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+        <button type="submit" class="login-lang-link">
+          {% if lang.code == 'nb' %}
+          <span class="user-menu-lang-flag" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="14" viewBox="0 0 60 30" fill="none"><rect width="60" height="30" fill="#ba0c2f"/><path d="M0 0h60v30H0z" fill="#00205b"/><path d="M20 0h6v30h-6zM0 12h60v6H0z" fill="#fff"/><path d="M22 0h2v30h-2zM0 13h60v4H0z" fill="#ba0c2f"/></svg></span>
+          {% else %}
+          <span class="user-menu-lang-flag" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="14" viewBox="0 0 60 30" fill="none"><rect width="60" height="30" fill="#012169"/><path d="M0 0l60 30M60 0L0 30" stroke="#fff" stroke-width="6"/><path d="M0 0l60 30M60 0L0 30" stroke="#C8102E" stroke-width="4"/><path d="M30 0v30M0 15h60" stroke="#fff" stroke-width="10"/><path d="M30 0v30M0 15h60" stroke="#C8102E" stroke-width="6"/></svg></span>
+          {% endif %}
+          {{ lang.name }}
+        </button>
+      </form>
+      {% endfor %}
     </div>
   </div>
   <script>

@@ -9,7 +9,23 @@ Last Modified: 2026-02-05
 from pathlib import Path
 from types import SimpleNamespace
 from django.conf import settings
+from django.utils import translation
 from .models import CustomerMembership, Customer
+
+
+def language_menu(request):
+    """Add current language and other languages for the language switcher (avatar menu and login page)."""
+    current = translation.get_language() or settings.LANGUAGE_CODE
+    # Normalize to base code (e.g. en-us -> en)
+    current_base = current.split("-")[0] if current else "en"
+    languages = list(settings.LANGUAGES)
+    current_name = dict(languages).get(current_base, "English")
+    other_languages = [{"code": code, "name": name} for code, name in languages if code != current_base]
+    return {
+        "current_language_code": current_base,
+        "current_language_name": current_name,
+        "other_languages": other_languages,
+    }
 
 
 def user_customers(request):

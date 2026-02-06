@@ -1,3 +1,4 @@
+{% load i18n %}
 {% if messages %}
 <div class="toast-container">
   {% for message in messages %}
@@ -11,10 +12,10 @@
 </div>
 {% endif %}
 <h1>{{ customer.name }}</h1>
-<p class="muted">This is your customer portal. Content will expand over time.</p>
+<p class="muted">{% trans "This is your customer portal. Content will expand over time." %}</p>
 
 <div class="panel">
-  <h2>Quick links</h2>
+  <h2>{% trans "Quick links" %}</h2>
 
   {% if links %}
   <ul class="list">
@@ -26,6 +27,6 @@
     {% endfor %}
   </ul>
   {% else %}
-  <p class="muted">No links yet. An admin can add links for this customer in the admin panel.</p>
+  <p class="muted">{% trans "No links yet. An admin can add links for this customer in the admin panel." %}</p>
   {% endif %}
 </div>

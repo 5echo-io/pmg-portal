@@ -1,38 +1,38 @@
-{% load static %}
+{% load static i18n %}
 <!doctype html>
-<html lang="en">
+<html lang="{{ current_language_code|default:'en' }}">
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Register | PMG Portal</title>
+  <title>{% trans "Register" %} | {% trans "PMG Portal" %}</title>
   <link rel="stylesheet" href="{% static 'app.css' %}">
 </head>
 <body class="page">
   <div class="card">
-    <h1>Create account</h1>
+    <h1>{% trans "Create account" %}</h1>
 
     <form method="post">
       {% csrf_token %}
       {{ form.username }}
 
-      <label>Email</label>
+      <label>{% trans "Email" %}</label>
       {{ form.email }}
 
-      <label>Password</label>
+      <label>{% trans "Password" %}</label>
       {{ form.password1 }}
 
-      <label>Confirm password</label>
+      <label>{% trans "Confirm password" %}</label>
       {{ form.password2 }}
 
       {% if form.errors %}
         <div class="alert">{{ form.errors }}</div>
       {% endif %}
 
-      <button type="submit">Create account</button>
+      <button type="submit">{% trans "Create account" %}</button>
     </form>
 
     <div class="row row--centered">
-      <a href="/account/login/" class="auth-link">Back to login</a>
+      <a href="/account/login/" class="auth-link">{% trans "Back to login" %}</a>
     </div>
   </div>
 </body>

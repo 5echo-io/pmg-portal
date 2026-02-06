@@ -5,9 +5,18 @@ This project follows Semantic Versioning (SemVer).
 
 ## [Unreleased]
 
-All pre-release builds (alpha, beta, rc) are shown as Unreleased.
+No changes yet.
+
+## [1.17.36-beta.11] - 2026-02-05
+
+**MAJOR:** Norwegian (Norsk) + full i18n. **MINOR:** 17 Added. **PATCH:** 33 Changed + 3 Fixed.
 
 Added:
+- Norwegian (Norsk) as second language: full i18n with Django LOCALE_PATHS, locale/nb, and set_language switcher
+- Language switcher in avatar dropdown (Norsk/English with flags; current language hidden from submenu; open on click, close on mouse leave)
+- Language switcher on login page footer (right): current language + link to switch to the other
+- All portal and account templates translated ({% trans %}/{% blocktrans %}); Norwegian translations in locale/nb/LC_MESSAGES/django.po
+- docs/I18N.md: how to add and translate strings (Norsk + English) when building the site further
 - Portal at site root (/) with HTMX for no-refresh navigation
 - Custom admin app at /admin/ (User management, Customers & access, Portal management)
 - Customer dropdown in header (avatar-style with search when >4 customers)

@@ -1,3 +1,4 @@
+{% load i18n %}
 {% if messages %}
 <div class="toast-container">
   {% for message in messages %}
@@ -10,8 +11,7 @@
   {% endfor %}
 </div>
 {% endif %}
-<h1>No customer access</h1>
+<h1>{% trans "No customer access" %}</h1>
 <p class="muted">
-  Your account is active, but you are not assigned to any customer yet.
-  Please contact an admin.
+  {% trans "Your account is active, but you are not assigned to any customer yet. Please contact an admin." %}
 </p>
