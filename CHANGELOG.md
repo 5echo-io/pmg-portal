@@ -7,6 +7,33 @@ This project follows Semantic Versioning (SemVer).
 
 Pre-release builds (alpha, beta, rc) are listed here. Only full releases (no build suffix) get a dedicated version section below.
 
+### [1.17.50-beta.26] - 2026-02-06
+
+Fixed:
+- Customer logo upload: files now properly saved to disk using explicit storage.save() before model assignment
+- Media file serving: Django view added to serve media files in production as fallback when nginx is not configured
+- Logo deletion: improved cleanup of old logo files when replacing logos or deleting customers
+- File storage: ensure customer_logos directory exists before saving files
+- URL routing: fixed duplicate import in urls.py
+
+Changed:
+- Customer management: redirect to modern customer card page instead of edit form after add/edit operations
+- Logo upload: AJAX-based upload with client-side preview and cache-busting for immediate display
+- Logging: added admin_app logger with INFO level for better debugging of file operations
+
+Added:
+- Customer card page: modern detail view with logo upload/delete, member management, and portal links tabs
+- File storage debugging: enhanced logging with file existence checks, directory listings, and permissions verification
+
+### [1.17.50-beta.25] - 2026-02-06
+
+Fixed:
+- Customer logo display: fixed layout with logo on left (120x120px), customer name and description text on right
+- Media files: updated nginx config to serve /media/ files; Django serves media files as fallback
+
+Changed:
+- CSS: improved customer-header layout with flexbox for better alignment
+
 Added:
 - Service desk button in topbar (right side, before avatar) with icon; shows "under development" tooltip on hover
 - Custom tooltip component for Facility and Service desk buttons (styled to match site design, appears on hover)

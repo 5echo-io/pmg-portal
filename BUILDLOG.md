@@ -2,6 +2,20 @@
 
 - 2026-02-06 (Europe/Oslo)
   - Branch: dev
+  - Version: 1.17.50-beta.26
+  - Summary:
+    - Customer card page: modern customer detail page with logo upload/delete, member management, and portal links tabs
+    - Logo upload: AJAX-based upload with client-side preview, automatic old logo deletion when replacing
+    - Logo storage: explicit file saving to Django storage before model assignment to ensure files are written to disk
+    - Media file serving: Django view added to serve media files in production as fallback when nginx is not serving them
+    - Logo deletion: improved cleanup of old logo files when new logos are uploaded or customers are deleted
+    - Logging: added admin_app logger with INFO level for debugging logo upload and file storage issues
+    - File storage debugging: enhanced logging with file existence checks, directory listings, and permissions verification
+    - Customer form: improved redirect flow to customer card page after add/edit operations
+    - URL routing: fixed duplicate import and added proper media file serving for production environments
+
+- 2026-02-06 (Europe/Oslo)
+  - Branch: dev
   - Version: 1.17.50-beta.25
   - Summary:
     - Customer logo display: fixed layout with logo on left (120x120px), customer name and description text on right
