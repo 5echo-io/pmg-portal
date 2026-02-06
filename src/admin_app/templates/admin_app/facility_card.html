@@ -1,0 +1,338 @@
+{% extends "admin_app/base.html" %}
+{% load static %}
+
+{% block admin_title %}{{ facility.name }}{% endblock %}
+{% block breadcrumb_extra %}
+<span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_facility_list' %}">Facilities</a>
+<span class="breadcrumb-sep">→</span> <span>{{ facility.name }}</span>
+{% endblock %}
+
+{% block admin_content %}
+{% csrf_token %}
+<div class="customer-card-container">
+  <!-- Header Section -->
+  <div class="customer-card-header">
+    <div class="customer-card-logo-section">
+      <div class="customer-logo-upload-area" style="cursor: default;">
+        <div class="customer-logo-placeholder">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+          </svg>
+          <span>Facility</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="customer-card-info">
+      <h1 class="customer-card-name">{{ facility.name }}</h1>
+      {% if facility.city %}
+      <p class="customer-card-org">{{ facility.city }}{% if facility.country %}, {{ facility.country }}{% endif %}</p>
+      {% endif %}
+      {% if facility.address %}
+      <p class="customer-card-contact">{{ facility.address }}</p>
+      {% endif %}
+      <div class="customer-card-actions">
+        <a href="{% url 'admin_app:admin_facility_edit' facility.pk %}" class="form-btn form-btn-secondary">Edit Details</a>
+        <button type="button" class="form-btn form-btn-danger" data-delete-url="{% url 'admin_app:admin_facility_delete' facility.pk %}" data-delete-message="Are you sure you want to delete the facility '{{ facility.name }}'? This will also delete all racks, network devices, IP addresses, and documents associated with this facility.">Delete Facility</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs Section -->
+  <div class="customer-card-tabs">
+    <button class="customer-tab active" data-tab="customers">Customers ({{ customers|length }})</button>
+    <button class="customer-tab" data-tab="racks">Racks ({{ racks|length }})</button>
+    <button class="customer-tab" data-tab="network">Network Devices ({{ network_devices|length }})</button>
+    <button class="customer-tab" data-tab="ip">IP Addresses ({{ ip_addresses|length }})</button>
+    <button class="customer-tab" data-tab="documents">Documents ({{ documents|length }})</button>
+    <button class="customer-tab" data-tab="info">Information</button>
+  </div>
+
+  <!-- Tab Content -->
+  <div class="customer-card-content">
+    <!-- Customers Tab -->
+    <div class="customer-tab-panel active" id="tab-customers">
+      <div class="customer-section-header">
+        <h2>Customers with Access</h2>
+      </div>
+      {% if customers %}
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Customer</th>
+              <th>Org. no.</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for customer in customers %}
+            <tr>
+              <td><a href="{% url 'admin_app:admin_customer_detail' customer.pk %}">{{ customer.name }}</a></td>
+              <td>{{ customer.org_number|default:"—" }}</td>
+              <td>
+                <a href="{% url 'admin_app:admin_customer_detail' customer.pk %}" class="admin-btn-sm">View</a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <p class="muted">No customers have access to this facility.</p>
+      {% endif %}
+    </div>
+
+    <!-- Racks Tab -->
+    <div class="customer-tab-panel" id="tab-racks">
+      <div class="customer-section-header">
+        <h2>Racks</h2>
+        <button type="button" class="form-btn form-btn-primary form-btn--narrow" disabled>Add Rack</button>
+      </div>
+      {% if racks %}
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Location</th>
+              <th>Height (U)</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for rack in racks %}
+            <tr>
+              <td>{{ rack.name }}</td>
+              <td>{{ rack.location|default:"—" }}</td>
+              <td>{{ rack.height_units }}U</td>
+              <td>
+                <button type="button" class="admin-btn-sm" disabled>Edit</button>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <p class="muted">No racks configured for this facility.</p>
+      {% endif %}
+    </div>
+
+    <!-- Network Devices Tab -->
+    <div class="customer-tab-panel" id="tab-network">
+      <div class="customer-section-header">
+        <h2>Network Devices</h2>
+        <button type="button" class="form-btn form-btn-primary form-btn--narrow" disabled>Add Device</button>
+      </div>
+      {% if network_devices %}
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Type</th>
+              <th>Manufacturer</th>
+              <th>Model</th>
+              <th>IP Address</th>
+              <th>Rack</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for device in network_devices %}
+            <tr>
+              <td>{{ device.name }}</td>
+              <td>{{ device.get_device_type_display }}</td>
+              <td>{{ device.manufacturer|default:"—" }}</td>
+              <td>{{ device.model|default:"—" }}</td>
+              <td>{{ device.ip_address|default:"—" }}</td>
+              <td>{% if device.rack %}{{ device.rack.name }}{% else %}—{% endif %}</td>
+              <td>
+                <button type="button" class="admin-btn-sm" disabled>Edit</button>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <p class="muted">No network devices configured for this facility.</p>
+      {% endif %}
+    </div>
+
+    <!-- IP Addresses Tab -->
+    <div class="customer-tab-panel" id="tab-ip">
+      <div class="customer-section-header">
+        <h2>IP Addresses</h2>
+        <button type="button" class="form-btn form-btn-primary form-btn--narrow" disabled>Add IP Address</button>
+      </div>
+      {% if ip_addresses %}
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>IP Address</th>
+              <th>Subnet</th>
+              <th>Reserved For</th>
+              <th>Device</th>
+              <th>In Use</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for ip in ip_addresses %}
+            <tr>
+              <td><code>{{ ip.ip_address }}</code></td>
+              <td>{{ ip.subnet|default:"—" }}</td>
+              <td>{{ ip.reserved_for|default:"—" }}</td>
+              <td>{% if ip.device %}{{ ip.device.name }}{% else %}—{% endif %}</td>
+              <td>{% if ip.is_in_use %}Yes{% else %}No{% endif %}</td>
+              <td>
+                <button type="button" class="admin-btn-sm" disabled>Edit</button>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <p class="muted">No IP addresses reserved for this facility.</p>
+      {% endif %}
+    </div>
+
+    <!-- Documents Tab -->
+    <div class="customer-tab-panel" id="tab-documents">
+      <div class="customer-section-header">
+        <h2>Documents</h2>
+        <button type="button" class="form-btn form-btn-primary form-btn--narrow" disabled>Upload Document</button>
+      </div>
+      {% if documents %}
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Category</th>
+              <th>Uploaded</th>
+              <th>Uploaded By</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for doc in documents %}
+            <tr>
+              <td>{{ doc.title }}</td>
+              <td>{{ doc.get_category_display }}</td>
+              <td>{{ doc.uploaded_at|date:"Y-m-d H:i" }}</td>
+              <td>{% if doc.uploaded_by %}{{ doc.uploaded_by.get_full_name|default:doc.uploaded_by.username }}{% else %}—{% endif %}</td>
+              <td>
+                <a href="{{ doc.file.url }}" target="_blank" class="admin-btn-sm">Download</a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <p class="muted">No documents uploaded for this facility.</p>
+      {% endif %}
+    </div>
+
+    <!-- Information Tab -->
+    <div class="customer-tab-panel" id="tab-info">
+      <div class="customer-info-grid">
+        <div class="customer-info-item">
+          <label>Name</label>
+          <p>{{ facility.name }}</p>
+        </div>
+        <div class="customer-info-item">
+          <label>Slug</label>
+          <p><code>{{ facility.slug }}</code></p>
+        </div>
+        {% if facility.description %}
+        <div class="customer-info-item customer-info-item--full">
+          <label>Description</label>
+          <p style="white-space: pre-wrap;">{{ facility.description }}</p>
+        </div>
+        {% endif %}
+        {% if facility.address %}
+        <div class="customer-info-item customer-info-item--full">
+          <label>Address</label>
+          <p>{{ facility.address }}</p>
+        </div>
+        {% endif %}
+        {% if facility.city %}
+        <div class="customer-info-item">
+          <label>City</label>
+          <p>{{ facility.city }}</p>
+        </div>
+        {% endif %}
+        {% if facility.postal_code %}
+        <div class="customer-info-item">
+          <label>Postal Code</label>
+          <p>{{ facility.postal_code }}</p>
+        </div>
+        {% endif %}
+        {% if facility.country %}
+        <div class="customer-info-item">
+          <label>Country</label>
+          <p>{{ facility.country }}</p>
+        </div>
+        {% endif %}
+        {% if facility.contact_person %}
+        <div class="customer-info-item">
+          <label>Contact Person</label>
+          <p>{{ facility.contact_person }}</p>
+        </div>
+        {% endif %}
+        {% if facility.contact_email %}
+        <div class="customer-info-item">
+          <label>Contact Email</label>
+          <p><a href="mailto:{{ facility.contact_email }}">{{ facility.contact_email }}</a></p>
+        </div>
+        {% endif %}
+        {% if facility.contact_phone %}
+        <div class="customer-info-item">
+          <label>Contact Phone</label>
+          <p>{{ facility.contact_phone }}</p>
+        </div>
+        {% endif %}
+        <div class="customer-info-item">
+          <label>Active Status</label>
+          <p>{% if facility.is_active %}Yes{% else %}No{% endif %}</p>
+        </div>
+        <div class="customer-info-item">
+          <label>Created</label>
+          <p>{{ facility.created_at|date:"Y-m-d H:i" }}</p>
+        </div>
+        <div class="customer-info-item">
+          <label>Last Updated</label>
+          <p>{{ facility.updated_at|date:"Y-m-d H:i" }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  // Tab switching
+  const tabs = document.querySelectorAll('.customer-tab');
+  const panels = document.querySelectorAll('.customer-tab-panel');
+  
+  tabs.forEach(tab => {
+    tab.addEventListener('click', function() {
+      const targetTab = this.dataset.tab;
+      
+      tabs.forEach(t => t.classList.remove('active'));
+      panels.forEach(p => p.classList.remove('active'));
+      
+      this.classList.add('active');
+      document.getElementById('tab-' + targetTab)?.classList.add('active');
+    });
+  });
+})();
+</script>
+{% endblock %}

@@ -1,0 +1,316 @@
+{% extends "portal/base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Profile Settings" %} | {% trans "PMG Portal" %}{% endblock %}
+
+{% block content %}
+  <div class="profile-layout">
+    <aside class="profile-sidebar">
+      <nav class="profile-nav">
+        <a href="#account-info" class="profile-nav-item active" onclick="showSection('account-info'); return false;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+          {% trans "Account Information" %}
+        </a>
+        <a href="#change-password" class="profile-nav-item" onclick="openPasswordChangeModal(); return false;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          {% trans "Change Password" %}
+        </a>
+        <a href="#delete-account" class="profile-nav-item profile-nav-item-danger" onclick="openDeleteAccountModal(); return false;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 6h18"></path>
+            <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+            <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+          </svg>
+          {% trans "Delete Account" %}
+        </a>
+        <div class="profile-nav-divider"></div>
+        <a href="#logout" class="profile-nav-item" onclick="openLogoutModal(); return false;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+          {% trans "Logout" %}
+        </a>
+      </nav>
+    </aside>
+    
+    <main class="profile-content">
+      <div id="account-info-section" class="profile-section active">
+        <div class="profile-section-header">
+          <h1>{% trans "Account Information" %}</h1>
+          <button type="button" class="profile-edit-btn" id="accountEditBtn" onclick="toggleAccountEdit()" aria-label="{% trans 'Edit account information' %}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+          </button>
+        </div>
+        <div class="panel">
+          <div id="accountInfoView" class="account-info-view">
+            <div class="account-info-row"><strong>{% trans "Email" %}</strong><span>{% if user.email %}{{ user.email }}{% else %}{% trans "Not set" %}{% endif %}</span></div>
+            <div class="account-info-row"><strong>{% trans "First name" %}</strong><span>{% if user.first_name %}{{ user.first_name }}{% else %}{% trans "Not set" %}{% endif %}</span></div>
+            <div class="account-info-row"><strong>{% trans "Last name" %}</strong><span>{% if user.last_name %}{{ user.last_name }}{% else %}{% trans "Not set" %}{% endif %}</span></div>
+          </div>
+          <form method="post" id="accountInfoForm" class="account-info-form" style="display: none;">
+            {% csrf_token %}
+            <input type="hidden" name="update_account" value="1">
+            <div class="account-edit-field">
+              <label for="id_email">{% trans "Email" %}</label>
+              <input type="email" name="email" value="{{ user.email|default:'' }}" id="id_email" class="form-input" required>
+              {% if account_form.email.errors %}<p class="form-error">{{ account_form.email.errors.0 }}</p>{% endif %}
+            </div>
+            <div class="account-edit-field">
+              <label for="id_first_name">{% trans "First name" %}</label>
+              <input type="text" name="first_name" value="{{ user.first_name|default:'' }}" id="id_first_name" class="form-input">
+            </div>
+            <div class="account-edit-field">
+              <label for="id_last_name">{% trans "Last name" %}</label>
+              <input type="text" name="last_name" value="{{ user.last_name|default:'' }}" id="id_last_name" class="form-input">
+            </div>
+            <div class="account-edit-actions">
+              <button type="button" class="form-btn form-btn-secondary" onclick="toggleAccountEdit()">{% trans "Cancel" %}</button>
+              <button type="submit" class="form-btn form-btn-primary">{% trans "Save" %}</button>
+            </div>
+          </form>
+          <div class="panel-footer">
+            <span class="panel-footer-item">{% blocktrans with date=user.date_joined|date:"F d, Y" %}Joined {{ date }}{% endblocktrans %}</span>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Password Change Modal -->
+  <div id="passwordChangeModal" class="modal" {% if show_password_modal %}style="display: flex;"{% else %}style="display: none;"{% endif %} onclick="closePasswordChangeModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h2>{% trans "Change Password" %}</h2>
+        <button class="modal-close" onclick="closePasswordChangeModal(event)">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form method="post" id="password-change-form">
+          {% csrf_token %}
+          <input type="hidden" name="change_password" value="1">
+          
+          <label>{% trans "Current Password" %}</label>
+          {{ password_form.old_password }}
+          {% if password_form.old_password.errors %}
+            <div class="alert">{{ password_form.old_password.errors }}</div>
+          {% endif %}
+          
+          <label>{% trans "New Password" %}</label>
+          {{ password_form.new_password1 }}
+          {% if password_form.new_password1.errors %}
+            <div class="alert">{{ password_form.new_password1.errors }}</div>
+          {% endif %}
+          {% if password_form.new_password1.help_text %}
+            <div class="muted" style="font-size: 12px; margin-top: 4px;">{{ password_form.new_password1.help_text }}</div>
+          {% endif %}
+          
+          <label>{% trans "Confirm New Password" %}</label>
+          {{ password_form.new_password2 }}
+          {% if password_form.new_password2.errors %}
+            <div class="alert">{{ password_form.new_password2.errors }}</div>
+          {% endif %}
+          
+          {% if password_form.non_field_errors %}
+            <div class="alert">{{ password_form.non_field_errors }}</div>
+          {% endif %}
+          
+          <div style="display: flex; gap: 12px; margin-top: 20px; justify-content: flex-end;">
+            <button type="button" onclick="closePasswordChangeModal(event)" class="form-btn form-btn-secondary">{% trans "Cancel" %}</button>
+            <button type="submit" class="form-btn form-btn-primary">{% trans "Change Password" %}</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Logout Confirmation Modal -->
+  <div id="logoutModal" class="modal" style="display: none;" onclick="closeLogoutModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h2>{% trans "Confirm Logout" %}</h2>
+        <button class="modal-close" onclick="closeLogoutModal(event)">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>{% trans "Are you sure you want to logout?" %}</p>
+        <div style="display: flex; gap: 12px; margin-top: 20px; justify-content: flex-end;">
+          <button type="button" onclick="closeLogoutModal(event)" class="form-btn form-btn-secondary">{% trans "Cancel" %}</button>
+          <a href="/account/logout/" class="form-btn form-btn-primary" style="text-decoration: none;">{% trans "Logout" %}</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Account Modal -->
+  <div id="deleteAccountModal" class="modal" style="display: none;" onclick="closeDeleteAccountModal(event)">
+    <div class="modal-content modal-content-danger" onclick="event.stopPropagation()">
+      <div class="modal-header modal-header-danger">
+        <h2>{% trans "Delete Account" %}</h2>
+        <button class="modal-close" onclick="closeDeleteAccountModal(event)">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="danger-zone">
+          <div class="danger-zone-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 6h18"></path>
+              <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+              <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+            </svg>
+          </div>
+          <h3>{% trans "Warning: This action cannot be undone" %}</h3>
+          <p>{% trans "Deleting your account will permanently remove all your data, including:" %}</p>
+          <ul class="danger-list">
+            <li>{% trans "Your user profile and account information" %}</li>
+            <li>{% trans "All customer memberships and access permissions" %}</li>
+            <li>{% trans "All associated data and settings" %}</li>
+          </ul>
+          <p><strong>{% trans "This action is irreversible." %}</strong></p>
+          <form method="post" id="delete-account-form" style="margin-top: 24px;">
+            {% csrf_token %}
+            <input type="hidden" name="delete_account" value="1">
+            <label>
+              <strong>{% trans "Type your email to confirm:" %}</strong>
+              <input type="email" name="confirm_email" class="form-input" placeholder="{{ user.email|default:'' }}" required style="margin-top: 8px;">
+            </label>
+            <div style="display: flex; gap: 12px; margin-top: 20px; justify-content: flex-end;">
+              <button type="button" onclick="closeDeleteAccountModal(event)" class="form-btn form-btn-secondary">{% trans "Cancel" %}</button>
+              <button type="submit" class="form-btn form-btn-danger">{% trans "Delete My Account" %}</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function toggleAccountEdit() {
+      var view = document.getElementById('accountInfoView');
+      var form = document.getElementById('accountInfoForm');
+      var btn = document.getElementById('accountEditBtn');
+      if (form.style.display === 'none') {
+        form.style.display = 'block';
+        view.style.display = 'none';
+        if (btn) btn.classList.add('active');
+      } else {
+        form.style.display = 'none';
+        view.style.display = 'block';
+        if (btn) btn.classList.remove('active');
+      }
+    }
+
+    function showSection(sectionId) {
+      // Update active nav item
+      document.querySelectorAll('.profile-nav-item').forEach(item => {
+        item.classList.remove('active');
+      });
+      event.target.closest('.profile-nav-item')?.classList.add('active');
+    }
+
+    function openPasswordChangeModal() {
+      const modal = document.getElementById('passwordChangeModal');
+      if (modal) {
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        const form = document.getElementById('password-change-form');
+        if (form) {
+          form.reset();
+        }
+      }
+    }
+    
+    function closePasswordChangeModal(event) {
+      var shouldClose = !event || event.target.classList.contains('modal') || event.target.classList.contains('modal-close');
+      if (!shouldClose && event.target && event.target.tagName === 'BUTTON' && event.target.textContent.trim() === 'Cancel') shouldClose = true;
+      if (!shouldClose && event && event.key === 'Escape') shouldClose = true;
+      if (shouldClose) {
+        var modal = document.getElementById('passwordChangeModal');
+        if (modal) {
+          modal.style.display = 'none';
+          document.body.style.overflow = 'auto';
+        }
+        document.querySelectorAll('.profile-nav-item').forEach(function(item) { item.classList.remove('active'); });
+        document.querySelector('.profile-nav-item[href="#account-info"]')?.classList.add('active');
+      }
+    }
+
+    function openDeleteAccountModal() {
+      const modal = document.getElementById('deleteAccountModal');
+      if (modal) {
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        const form = document.getElementById('delete-account-form');
+        if (form) {
+          form.reset();
+        }
+      }
+    }
+
+    function closeDeleteAccountModal(event) {
+      var shouldClose = !event || (event.target && (event.target.classList.contains('modal') || event.target.classList.contains('modal-close')));
+      if (!shouldClose && event.target && event.target.tagName === 'BUTTON' && event.target.textContent.trim() === 'Cancel') shouldClose = true;
+      if (!shouldClose && event && event.key === 'Escape') shouldClose = true;
+      if (shouldClose) {
+        var modal = document.getElementById('deleteAccountModal');
+        if (modal) {
+          modal.style.display = 'none';
+          document.body.style.overflow = 'auto';
+        }
+        document.querySelectorAll('.profile-nav-item').forEach(function(item) { item.classList.remove('active'); });
+        document.querySelector('.profile-nav-item[href="#account-info"]')?.classList.add('active');
+      }
+    }
+
+    function openLogoutModal() {
+      const modal = document.getElementById('logoutModal');
+      if (modal) {
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+      }
+    }
+
+    function closeLogoutModal(event) {
+      var shouldClose = !event || (event.target && (event.target.classList.contains('modal') || event.target.classList.contains('modal-close')));
+      if (!shouldClose && event.target && event.target.tagName === 'BUTTON' && event.target.textContent.trim() === 'Cancel') shouldClose = true;
+      if (!shouldClose && event && event.key === 'Escape') shouldClose = true;
+      if (shouldClose) {
+        var modal = document.getElementById('logoutModal');
+        if (modal) {
+          modal.style.display = 'none';
+          document.body.style.overflow = 'auto';
+        }
+        document.querySelectorAll('.profile-nav-item').forEach(function(item) { item.classList.remove('active'); });
+        document.querySelector('.profile-nav-item[href="#account-info"]')?.classList.add('active');
+      }
+    }
+    
+    // Auto-open password modal if there are form errors
+    {% if show_password_modal %}
+    document.addEventListener('DOMContentLoaded', function() {
+      openPasswordChangeModal();
+    });
+    {% endif %}
+    
+    // Close modals on Escape key
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape') {
+        const passwordModal = document.getElementById('passwordChangeModal');
+        const deleteModal = document.getElementById('deleteAccountModal');
+        const logoutModal = document.getElementById('logoutModal');
+        if (passwordModal && passwordModal.style.display === 'flex') {
+          closePasswordChangeModal(event);
+        }
+        if (deleteModal && deleteModal.style.display === 'flex') {
+          closeDeleteAccountModal(event);
+        }
+        if (logoutModal && logoutModal.style.display === 'flex') {
+          closeLogoutModal(event);
+        }
+      }
+    });
+  </script>
+{% endblock %}
