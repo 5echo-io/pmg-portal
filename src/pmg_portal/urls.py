@@ -28,4 +28,6 @@ urlpatterns = [
 
 # Serve media files (in development, or as fallback in production if nginx is not configured)
 # In production, nginx should serve /media/ directly for better performance
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# Note: static() works in both DEBUG and non-DEBUG modes, but nginx is preferred for production
+if settings.MEDIA_ROOT.exists():
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
