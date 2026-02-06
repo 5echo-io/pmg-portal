@@ -24,7 +24,9 @@
         <div class="alert">{{ form.non_field_errors }}</div>
       {% endif %}
 
-      <button type="submit" id="signin-btn" disabled>Sign in</button>
+      <div class="signin-btn-wrap" id="signin-btn-wrap">
+        <button type="submit" id="signin-btn" disabled>Sign in</button>
+      </div>
     </form>
 
     <div class="row row--centered">
@@ -38,12 +40,14 @@
       if (!form || !btn) return;
       var email = form.querySelector('input[name="username"], input[type="email"]');
       var pass = form.querySelector('input[name="password"]');
+      var wrap = document.getElementById('signin-btn-wrap');
       function check() {
         var e = (email && email.value.trim()) || '';
         var p = (pass && pass.value) || '';
         var ready = e.length > 0 && p.length > 0;
         btn.disabled = !ready;
         btn.classList.toggle('ready', ready);
+        if (wrap) wrap.classList.toggle('ready', ready);
       }
       if (email) email.addEventListener('input', check);
       if (email) email.addEventListener('change', check);

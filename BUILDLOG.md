@@ -2,6 +2,15 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev
+  - Version: 0.15.22-beta.9
+  - Summary:
+    - Login Sign in: animated circulating green stripe around button when ready
+    - Customer dropdown: active customer indicated with checkmark icon
+    - Topbar: Facility button (disabled, tooltip "This feature is under development")
+    - Avatar menu: Language (English) with UK flag; hover submenu to select English
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev
   - Version: 0.15.22-beta.8
   - Summary:
     - Login: Create account link less bold and centered; Sign in button disabled until email+password filled, green border when ready

@@ -47,6 +47,10 @@ Changed:
 - Login: "Create account" link less bold and centered; Sign in button disabled until email and password filled, then green border/glow when ready
 - Register: removed "This creates a user." text; "Back to login" less bold and centered
 - Customer dropdown: more padding on menu items; no vertical gap between items; dropdown closer to trigger (2px); topbar alignment with avatar
+- Login Sign in: animated green stripe circulating around button when ready (conic-gradient rotation)
+- Customer dropdown: active customer shown with checkmark icon in list
+- Topbar: Facility button (grayed out, tooltip "This feature is under development")
+- Avatar menu: Language (English) with UK flag icon; hover shows submenu with English option
 
 Fixed:
 - Footer width now matches main content (1280px)

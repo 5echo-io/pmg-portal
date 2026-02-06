@@ -15,6 +15,7 @@
       <div class="brand">PMG Portal</div>
       <div class="topbar-nav">
         <a class="topbar-btn {% if request.path == '/' %}active{% endif %}" href="/" hx-get="/" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="true">Portal</a>
+        <span class="topbar-btn topbar-btn--disabled" title="This feature is under development">Facility</span>
       </div>
     </div>
     <div class="topbar-right">
@@ -32,7 +33,12 @@
           {% endif %}
           <div class="customer-menu-list">
             {% for membership in user_customers %}
-            <button type="button" class="customer-menu-item" data-customer-id="{{ membership.customer.id }}" data-customer-name="{{ membership.customer.name }}" onclick="selectCustomer({{ membership.customer.id }})">{{ membership.customer.name }}</button>
+            <button type="button" class="customer-menu-item {% if membership.customer.id == active_customer_id %}customer-menu-item--active{% endif %}" data-customer-id="{{ membership.customer.id }}" data-customer-name="{{ membership.customer.name }}" onclick="selectCustomer({{ membership.customer.id }})">
+              <span class="customer-menu-item-text">{{ membership.customer.name }}</span>
+              {% if membership.customer.id == active_customer_id %}
+              <svg class="customer-menu-item-check" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              {% endif %}
+            </button>
             {% endfor %}
           </div>
         </div>
@@ -62,6 +68,22 @@
           </svg>
           Profile Settings
         </a>
+        <div class="user-menu-item-wrapper user-menu-item-wrapper--lang">
+          <div class="user-menu-item user-menu-item--lang-trigger">
+            <span class="user-menu-lang-flag" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="14" viewBox="0 0 60 30" fill="none"><rect width="60" height="30" fill="#012169"/><path d="M0 0l60 30M60 0L0 30" stroke="#fff" stroke-width="6"/><path d="M0 0l60 30M60 0L0 30" stroke="#C8102E" stroke-width="4"/><path d="M30 0v30M0 15h60" stroke="#fff" stroke-width="10"/><path d="M30 0v30M0 15h60" stroke="#C8102E" stroke-width="6"/></svg>
+            </span>
+            English
+          </div>
+          <div class="user-menu-submenu">
+            <button type="button" class="user-menu-item user-menu-submenu-item">
+              <span class="user-menu-lang-flag" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="14" viewBox="0 0 60 30" fill="none"><rect width="60" height="30" fill="#012169"/><path d="M0 0l60 30M60 0L0 30" stroke="#fff" stroke-width="6"/><path d="M0 0l60 30M60 0L0 30" stroke="#C8102E" stroke-width="4"/><path d="M30 0v30M0 15h60" stroke="#fff" stroke-width="10"/><path d="M30 0v30M0 15h60" stroke="#C8102E" stroke-width="6"/></svg>
+              </span>
+              English
+            </button>
+          </div>
+        </div>
         {% if request.user.is_superuser %}
         <div class="user-menu-divider"></div>
         <a href="/admin/" class="user-menu-item">
