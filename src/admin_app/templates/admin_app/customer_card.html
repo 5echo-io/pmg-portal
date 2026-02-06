@@ -53,6 +53,7 @@
       {% endif %}
       <div class="customer-card-actions">
         <a href="{% url 'admin_app:admin_customer_edit' customer.pk %}" class="form-btn form-btn-secondary">Edit Details</a>
+        <button type="button" class="form-btn form-btn-danger" data-delete-url="{% url 'admin_app:admin_customer_delete' customer.pk %}" data-delete-message="Are you sure you want to delete the customer '{{ customer.name }}'? This will also delete all memberships and portal links associated with this customer.">Delete Customer</button>
       </div>
     </div>
   </div>

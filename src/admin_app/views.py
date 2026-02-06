@@ -94,6 +94,26 @@ def user_edit(request, pk):
     return render(request, "admin_app/user_form.html", {"form": form, "user_obj": user_obj})
 
 
+@superuser_required
+@require_POST
+def user_delete(request, pk):
+    """Delete a user and all related data."""
+    user_obj = get_object_or_404(User, pk=pk)
+    
+    # Prevent deleting yourself
+    if user_obj == request.user:
+        messages.error(request, "You cannot delete your own account.")
+        return redirect("admin_app:admin_user_list")
+    
+    username = user_obj.username
+    
+    # Delete user (this will cascade delete CustomerMembership)
+    user_obj.delete()
+    
+    messages.success(request, f"User '{username}' has been deleted.")
+    return redirect("admin_app:admin_user_list")
+
+
 # ----- Roles (Groups, superuser only) -----
 @superuser_required
 def role_list(request):
@@ -428,6 +448,21 @@ def customer_edit(request, pk):
     else:
         form = CustomerForm(instance=customer)
     return render(request, "admin_app/customer_form.html", {"form": form, "customer": customer})
+
+
+@staff_required
+@require_POST
+def customer_delete(request, pk):
+    """Delete a customer and all related data."""
+    customer = get_object_or_404(Customer, pk=pk)
+    customer_name = customer.name
+    
+    # Delete customer (this will cascade delete CustomerMembership and PortalLink)
+    # The model's delete() method will also handle logo file deletion
+    customer.delete()
+    
+    messages.success(request, f"Customer '{customer_name}' has been deleted.")
+    return redirect("admin_app:admin_customer_list")
 
 
 # ----- Customer access (CustomerMembership, staff) -----

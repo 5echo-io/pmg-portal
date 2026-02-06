@@ -54,6 +54,9 @@
   <div class="admin-form-actions">
     <button type="submit" class="form-btn form-btn-primary form-btn--narrow">Save</button>
     <a href="{% url 'admin_app:admin_user_list' %}" class="form-btn form-btn-secondary">Cancel</a>
+    {% if user_obj and user_obj.pk != request.user.pk %}
+    <button type="button" class="form-btn form-btn-danger" data-delete-url="{% url 'admin_app:admin_user_delete' user_obj.pk %}" data-delete-message="Are you sure you want to delete the user '{{ user_obj.username }}'? This will also remove all customer memberships for this user.">Delete User</button>
+    {% endif %}
   </div>
 </form>
 {% endblock %}
