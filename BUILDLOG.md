@@ -1,5 +1,15 @@
 # BUILDLOG
 
+- 2026-02-06 (Europe/Oslo)
+  - Branch: dev
+  - Version: 3.0.2-alpha.1
+  - Summary:
+    - Migration handling: improved migration error handling in update.sh script
+    - Enhanced migration name detection with multiple patterns (Applying portal.XXXX_, portal.XXXX_ anywhere, Django showmigrations fallback)
+    - Better error messages and fallback instructions when migration detection fails
+    - Improved error handling to continue with other steps instead of exiting on migration detection failure
+    - Version bump: PATCH increment from 3.0.1-alpha.1 to 3.0.2-alpha.1 (bugfix/stability improvement)
+
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev
   - Version: 3.0.0-alpha.1

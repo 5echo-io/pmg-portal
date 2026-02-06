@@ -125,17 +125,43 @@ MIGRATE_OUTPUT=$(sudo -E "$SRC_DIR/.venv/bin/python" manage.py migrate --noinput
     if echo "$MIGRATE_OUTPUT" | grep -q "already exists\|DuplicateTable\|relation.*already exists"; then
         echo ""
         echo "Warning: Some tables already exist. Attempting to fake the migration..."
-        # Get the migration name that failed (e.g., portal.0004_facility...)
-        FAILED_MIGRATION=$(echo "$MIGRATE_OUTPUT" | grep -oE "portal\.\d{4}_[a-zA-Z0-9_]+" | head -1 || echo "")
+        
+        # Try multiple patterns to extract the migration name
+        # Pattern 1: Look for "Applying portal.XXXX_..." in the output
+        FAILED_MIGRATION=$(echo "$MIGRATE_OUTPUT" | grep -oE "Applying portal\.[0-9]{4}_[a-zA-Z0-9_]+" | sed 's/Applying //' | head -1)
+        
+        # Pattern 2: Look for "portal.XXXX_..." anywhere in the output
+        if [ -z "$FAILED_MIGRATION" ]; then
+            FAILED_MIGRATION=$(echo "$MIGRATE_OUTPUT" | grep -oE "portal\.[0-9]{4}_[a-zA-Z0-9_]+" | head -1)
+        fi
+        
+        # Pattern 3: Check Django migration state for unapplied migrations
+        if [ -z "$FAILED_MIGRATION" ]; then
+            echo "Checking Django migration state for unapplied migrations..."
+            SHOWMIGRATIONS=$(sudo -E "$SRC_DIR/.venv/bin/python" manage.py showmigrations portal 2>&1 || echo "")
+            # Find the first unapplied migration (marked with [ ])
+            FAILED_MIGRATION=$(echo "$SHOWMIGRATIONS" | grep -E "^\[ \]" | head -1 | sed 's/^\[ \] *//' | sed 's/^/portal./')
+        fi
+        
         if [ -n "$FAILED_MIGRATION" ]; then
+            echo "Detected failed migration: $FAILED_MIGRATION"
             echo "Marking migration $FAILED_MIGRATION as fake..."
-            sudo -E "$SRC_DIR/.venv/bin/python" manage.py migrate --fake "$FAILED_MIGRATION" || true
+            sudo -E "$SRC_DIR/.venv/bin/python" manage.py migrate --fake "$FAILED_MIGRATION" || {
+                echo "Warning: Failed to fake migration $FAILED_MIGRATION, trying to continue..."
+            }
             # Try migrate again after faking
             echo "Retrying migrations..."
-            sudo -E "$SRC_DIR/.venv/bin/python" manage.py migrate --noinput || true
+            sudo -E "$SRC_DIR/.venv/bin/python" manage.py migrate --noinput || {
+                echo "Warning: Some migrations may still need attention. Continuing with other steps..."
+            }
         else
-            echo "Could not determine failed migration name. Please run migrations manually."
-            exit $MIGRATE_EXIT_CODE
+            echo "Could not determine failed migration name automatically."
+            echo "Please run migrations manually:"
+            echo "  cd $SRC_DIR"
+            echo "  sudo -E $SRC_DIR/.venv/bin/python manage.py showmigrations"
+            echo "  sudo -E $SRC_DIR/.venv/bin/python manage.py migrate --fake <migration_name>"
+            echo ""
+            echo "Attempting to continue with other steps..."
         fi
     else
         echo "Migration failed with an unexpected error."
