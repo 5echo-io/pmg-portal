@@ -1,6 +1,22 @@
 # BUILDLOG
 
 - 2026-02-06 (Europe/Oslo)
+  - Branch: dev → main
+  - Version: 2.0.0
+  - Release Type: Final Release (Major)
+  - Summary:
+    - Final release v2.0.0: Major release consolidating all features and improvements from 0.1.0-alpha.1 through 1.18.0-beta.1
+    - Complete admin panel: Custom admin app with user management, customer management, and portal management
+    - Customer management: Logo upload, customer card page, selection flow, switch modal, search functionality
+    - User management: User card page, profile settings, delete functionality with confirmation modals
+    - Internationalization: Full Norwegian (Norsk) support with language switcher
+    - UI/UX: Modern dark theme, responsive design, toast notifications, animated transitions
+    - Developer tools: Debug view, comprehensive logging, update checks
+    - Documentation: Setup guides, i18n documentation, admin layout documentation
+    - Hundreds of bug fixes, improvements, and enhancements across all areas
+    - Version bump: Major version from 0.1.0 to 2.0.0 reflecting significant feature additions and improvements
+
+- 2026-02-06 (Europe/Oslo)
   - Branch: dev
   - Version: 1.18.0-beta.1
   - Summary:

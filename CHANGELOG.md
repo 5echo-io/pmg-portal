@@ -7,6 +7,173 @@ This project follows Semantic Versioning (SemVer).
 
 Pre-release builds (alpha, beta, rc) are listed here. Only full releases (no build suffix) get a dedicated version section below.
 
+## [2.0.0] - 2026-02-06
+
+### Added
+
+#### Admin Panel
+- Custom admin app at `/admin/` with User management, Customers & access, Portal management
+- Customer card page: Modern detail view with logo upload/delete, member management, and portal links tabs
+- User card page: User detail page similar to customer card, showing user information, memberships, and details
+- Delete functionality: Ability to delete customers and users with confirmation modal and 3-second countdown
+- Admin dashboard: Redesigned with modern minimalist design, panel-based layout
+- Recent Actions modal: Accessible via clock icon in admin header
+- View button: Added View button to user list for accessing user card page
+
+#### Customer Management
+- Customer logo upload: ImageField support with preview, automatic file deletion
+- Customer selection flow: Explicit customer profile selection on login (no auto-select for multiple customers)
+- Customer selection page: Dedicated page showing all available customer profiles with logos and org numbers
+- Customer switch modal: Modal accessible from avatar menu for switching between customer profiles
+- Auto-selection: Automatically selects single customer profile when user has access to only one
+- Search functionality: Search field on customer selection page when more than 4 customers
+
+#### User Experience
+- Profile settings page: Redesigned with left sidebar navigation menu
+- Password change modal: Integrated into profile settings
+- Delete account functionality: With danger zone confirmation modal
+- Logout confirmation modal: In profile settings sidebar
+- Language preference synchronization: User's language choice persists across login page and main site
+- Animated transitions: Between login and register pages (fade out/in, card height expansion)
+- Loading spinner indicator: On Sign in button when form is submitted
+
+#### Internationalization
+- Norwegian (Norsk): Full i18n with Django LOCALE_PATHS, locale/nb, and set_language switcher
+- Language switcher: In avatar dropdown (Norsk/English with flags; current language hidden from submenu)
+- Login page footer: Language dropdown listing all languages
+- All portal and account templates translated: Using {% trans %}/{% blocktrans %} with Norwegian translations
+- Documentation: docs/I18N.md guide for adding and translating strings
+
+#### Portal Features
+- Portal at site root (`/`) with HTMX for no-refresh navigation
+- Customer dropdown: In header (avatar-style with search when >4 customers)
+- Wider layout: 1280px aligned with topbar and footer
+- Service desk button: In topbar (right side, before avatar) - under development
+- Projects button: In topbar navigation - under development
+- Files button: In topbar navigation - under development
+
+#### UI/UX Components
+- Topbar redesign: Menu buttons on left, customer dropdown in middle-right, user avatar on far right
+- Avatar dropdown: Shows full name, logout, admin panel access, language switcher
+- Toast notifications: Unified across portal and admin, positioned bottom right, auto-dismiss after 5 seconds
+- Footer: Full width with copyright, version, and changelog button
+- Dark mode scrollbar: Styled to match site design
+- Custom tooltip component: For Facility and Service desk buttons (styled to match site design)
+- About modal: Accessible from avatar menu (all users); shows app version, 5echo.io info, developer credits
+- About modal update check: For admins (compares current version with GitHub main branch); update notification badge in avatar menu
+
+#### Developer Tools
+- Debug view: Accessible via avatar menu for superusers at `/debug/`
+- Comprehensive logging: Backend request/response tracking, frontend event tracking
+- Copy to clipboard: Functionality for debug data export
+- File storage debugging: Enhanced logging with file existence checks, directory listings, and permissions verification
+
+#### Documentation
+- SETUP_GUIDE.md: Detailed installation and update instructions
+- docs/I18N.md: How to add and translate strings (Norsk + English)
+- docs/ADMIN_LAYOUT.md: Admin layout documentation
+- README.md: Improved with detailed installation and update instructions
+- IMPROVEMENTS.md: Comprehensive improvement ideas and future features
+
+### Changed
+
+#### Authentication & User Management
+- Login: Field labeled "Email"; accepts email or username; login with email preferred
+- Registration: Username hidden and set from email; new users get username = email
+- Profile delete account: Confirm with email instead of username
+- Migration: `accounts.0001_sync_username_from_email` syncs User.username from User.email for existing users
+
+#### Admin Interface
+- Modernized Django admin: Dark theme matching portal design
+- Admin list filters: Staff/Active labels, single-row toolbar, outlined Search button
+- Admin forms: Card layout, two-column rows (e.g. username|email), aligned Save/Cancel
+- Admin tables: Modern styling, zebra striping, improved spacing
+- SVG icons: Replaced default Django admin icons with modern minimalist SVG icons
+- Customer management: Redirect to modern customer card page instead of edit form after add/edit operations
+
+#### Layout & Styling
+- Standardized layout: Consistent structure across all pages (portal and admin)
+- Flexbox layout: Footer always at bottom, proper spacing
+- Button styling: Smaller (36px height), vertically centered, consistent widths
+- Customer dropdown: Reduced vertical spacing, improved positioning
+- Footer width: Matches main content (1280px → 980px)
+- Customer selection width: Increased from 600px to 800px, then to 1000px for better visibility
+- Customer card width: Changed to use full width (100%) instead of fixed 1280px max-width
+
+#### Customer Selection
+- Text updates: "Select Customer" → "Select Customer Profile" (Norwegian: "Velg kundeprofil")
+- Customer switching: "Switch Customer" → "Switch Customer Profile" (Norwegian: "Bytt kundeprofil")
+- UI improvements: Compact list layout instead of grid, smaller logos, better spacing
+- Icon updates: Building/company icon for customer switch
+- Search placeholder: "Search customer profiles" (Norwegian: "Søk etter kundeprofiler")
+
+#### Delete Functionality
+- Delete buttons: Narrower, darker red (#991b1b) for better danger indication
+- Delete modal design: Updated to match profile settings modal design with centered positioning and danger zone styling
+- Button widths: Standardized View/Edit/Delete buttons (8px 12px padding, auto width)
+
+#### Logo Management
+- Logo upload: AJAX-based upload with client-side preview and cache-busting for immediate display
+- Logo deletion: Improved cleanup of old logo files when replacing logos or deleting customers
+- Logging: Added admin_app logger with INFO level for better debugging of file operations
+
+### Fixed
+
+#### Critical Fixes
+- Customer logo upload: Files now properly saved to disk using explicit storage.save() before model assignment
+- Media file serving: Django view added to serve media files in production as fallback when nginx is not configured
+- Logo deletion: Improved cleanup of old logo files when replacing logos or deleting customers
+- File storage: Ensure customer_logos directory exists before saving files
+- URL routing: Fixed duplicate import in urls.py
+- 500 errors: Fixed multiple admin panel errors (Customer save, CustomerMembership, context processor)
+- Database tables: Created initial migrations for portal models
+- Static files: Added WhiteNoise middleware for production static file serving
+
+#### UI Fixes
+- Customer selection scroll: Fixed scroll behavior - only customer list scrolls, not entire page
+- Customer name display: Only shows in topbar when customer profile is actually selected
+- Duplicate divider: Removed extra divider line before "Switch Customer Profile" button
+- JavaScript syntax errors: Replaced inline onclick handlers with data attributes and event listeners
+- Delete modal positioning: Fixed to be centered on screen instead of appearing top-left
+- View button width: Made consistent with other action buttons
+- Footer positioning: Fixed to always be at bottom of screen
+- Avatar alignment: Fixed vertical alignment in topbar
+- Form button alignment: Fixed vertical alignment across admin forms
+- CSS layout: Improved flexbox layout for customer selection container and main content area to properly constrain scrolling
+
+#### Translation Fixes
+- compilemessages error: Fixed "Can't find msgfmt" by installing gettext in install scripts
+- Duplicate translations: Removed duplicate entries in django.po file
+- Norwegian flag: Corrected to official Norway flag
+
+#### Admin Fixes
+- Admin dashboard width: Completely rebuilt to use full browser width
+- Duplicate titles: Removed duplicate "Administration" title on admin dashboard
+- Breadcrumbs: Removed from dashboard page
+- Sidebar: Admin nav sidebar toggle removed and sidebar forced visible
+- Customer dropdown: Active customer shown with checkmark icon, disabled state
+
+### Technical Improvements
+
+#### Dependencies
+- Pillow: Added Pillow==10.4.0 for ImageField support
+- System dependencies: Updated install scripts with libjpeg-dev, libpng-dev, zlib1g-dev
+- gettext: Added to install.sh/update.sh for translation support
+
+#### File Structure
+- Media files: Nginx configuration updated to serve /media/ files; Django serves media files as fallback
+- Static files: WhiteNoise middleware for production static file serving
+- Logging: Added admin_app logger with INFO level for better debugging
+
+#### Code Quality
+- Error handling: Improved error handling throughout admin panel
+- Logging: Enhanced logging with file existence checks, directory listings, permissions verification
+- Code organization: Better separation of concerns, improved template structure
+
+---
+
+## Previous Beta Releases (Merged into 2.0.0)
+
 ### [1.18.0-beta.1] - 2026-02-06
 
 Added:
@@ -375,8 +542,9 @@ Fixed:
 - Toast notifications unified across portal and admin, positioned bottom right
 - Active page indication added to topbar navigation buttons
 
-## [0.1.0-alpha.1] - Initial foundation
-Added:
+## [0.1.0-alpha.1] - 2026-01-XX - Initial foundation
+
+### Added
 - Login-first site flow
 - Registration page (optional)
 - Customer model and membership
