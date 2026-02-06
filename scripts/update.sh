@@ -33,6 +33,20 @@ if [ "$NEED_UPDATE" = "true" ]; then
   sudo apt-get install -y gettext libjpeg-dev libpng-dev zlib1g-dev
 fi
 
+echo "Ensuring media directory exists..."
+MEDIA_DIR="$APP_DIR/media"
+sudo mkdir -p "$MEDIA_DIR"
+# Set ownership to the user running the service (typically www-data or the app user)
+# Try to detect the service user, fallback to www-data
+SERVICE_USER="${SERVICE_USER:-www-data}"
+if id "$SERVICE_USER" &>/dev/null; then
+  sudo chown -R "$SERVICE_USER:$SERVICE_USER" "$MEDIA_DIR"
+else
+  # If www-data doesn't exist, use the current user
+  sudo chown -R "$(whoami):$(whoami)" "$MEDIA_DIR"
+fi
+sudo chmod -R 755 "$MEDIA_DIR"
+
 echo "Migrating + collectstatic + compilemessages..."
 set -a
 source "$APP_DIR/.env"
