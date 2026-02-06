@@ -2663,105 +2663,102 @@ a.link:hover { color: var(--text); }
 
 /* Customer Selection Page */
 .customer-selection-container {
-  max-width: 1200px;
+  max-width: 600px;
   margin: 0 auto;
-  padding: 40px 20px;
+  padding: 32px 20px;
 }
 
 .customer-selection-header {
-  text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 24px;
 }
 
 .customer-selection-header h1 {
-  font-size: 32px;
+  font-size: 24px;
   font-weight: 600;
-  margin-bottom: 8px;
+  margin: 0;
   color: var(--text);
 }
 
-.customer-selection-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 24px;
+.customer-selection-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
-.customer-card {
+.customer-selection-item {
   background: var(--card);
   border: 1px solid var(--line);
-  border-radius: 12px;
-  padding: 24px;
+  border-radius: 8px;
+  padding: 12px 16px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
   display: flex;
   align-items: center;
-  gap: 16px;
-  position: relative;
+  gap: 12px;
 }
 
-.customer-card:hover {
+.customer-selection-item:hover {
   border-color: var(--btnHover);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background: var(--btn);
 }
 
-.customer-card-logo {
-  width: 64px;
-  height: 64px;
+.customer-selection-item-logo {
+  width: 40px;
+  height: 40px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   background: var(--bg);
-  border-radius: 8px;
+  border-radius: 6px;
   border: 1px solid var(--line);
   overflow: hidden;
 }
 
-.customer-card-logo img {
+.customer-selection-item-logo img {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  padding: 8px;
+  padding: 6px;
 }
 
-.customer-card-logo--placeholder {
+.customer-selection-item-logo--placeholder {
   color: var(--muted);
 }
 
-.customer-card-logo--placeholder svg {
-  width: 32px;
-  height: 32px;
+.customer-selection-item-logo--placeholder svg {
+  width: 20px;
+  height: 20px;
 }
 
-.customer-card-content {
+.customer-selection-item-content {
   flex: 1;
   min-width: 0;
 }
 
-.customer-card-name {
-  font-size: 18px;
-  font-weight: 600;
-  margin: 0 0 4px 0;
+.customer-selection-item-name {
+  font-size: 15px;
+  font-weight: 500;
+  margin: 0 0 2px 0;
   color: var(--text);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.customer-card-org {
-  font-size: 13px;
+.customer-selection-item-org {
+  font-size: 12px;
   margin: 0;
 }
 
-.customer-card-arrow {
+.customer-selection-item-arrow {
   color: var(--muted);
   flex-shrink: 0;
-  transition: transform 0.2s;
+  transition: transform 0.15s;
 }
 
-.customer-card:hover .customer-card-arrow {
-  transform: translateX(4px);
+.customer-selection-item:hover .customer-selection-item-arrow {
+  transform: translateX(2px);
   color: var(--text);
 }
 
@@ -2812,12 +2809,12 @@ a.link:hover { color: var(--text); }
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 24px;
+  padding: 16px 20px;
   border-bottom: 1px solid var(--line);
 }
 
 .customer-switch-modal-header h2 {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
   margin: 0;
   color: var(--text);
@@ -2842,7 +2839,7 @@ a.link:hover { color: var(--text); }
 }
 
 .customer-switch-modal-search {
-  padding: 16px 24px;
+  padding: 12px 20px;
   border-bottom: 1px solid var(--line);
 }
 
@@ -2863,7 +2860,7 @@ a.link:hover { color: var(--text); }
 }
 
 .customer-switch-modal-list {
-  padding: 16px;
+  padding: 12px;
   overflow-y: auto;
   flex: 1;
 }
@@ -2872,11 +2869,11 @@ a.link:hover { color: var(--text); }
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px;
-  border-radius: 8px;
+  padding: 10px 12px;
+  border-radius: 6px;
   cursor: pointer;
   transition: all 0.15s;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
 
 .customer-switch-card:last-child {
@@ -2894,8 +2891,8 @@ a.link:hover { color: var(--text); }
 }
 
 .customer-switch-card-logo {
-  width: 48px;
-  height: 48px;
+  width: 36px;
+  height: 36px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -2910,7 +2907,7 @@ a.link:hover { color: var(--text); }
   width: 100%;
   height: 100%;
   object-fit: contain;
-  padding: 6px;
+  padding: 5px;
 }
 
 .customer-switch-card-logo--placeholder {
@@ -2918,8 +2915,8 @@ a.link:hover { color: var(--text); }
 }
 
 .customer-switch-card-logo--placeholder svg {
-  width: 24px;
-  height: 24px;
+  width: 18px;
+  height: 18px;
 }
 
 .customer-switch-card-content {
@@ -2928,9 +2925,9 @@ a.link:hover { color: var(--text); }
 }
 
 .customer-switch-card-name {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 500;
-  margin: 0 0 2px 0;
+  margin: 0 0 1px 0;
   color: var(--text);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -2938,7 +2935,7 @@ a.link:hover { color: var(--text); }
 }
 
 .customer-switch-card-org {
-  font-size: 12px;
+  font-size: 11px;
   margin: 0;
 }
 
@@ -2946,6 +2943,12 @@ a.link:hover { color: var(--text); }
 .customer-switch-card-arrow {
   color: var(--muted);
   flex-shrink: 0;
+}
+
+.customer-switch-card-check svg,
+.customer-switch-card-arrow svg {
+  width: 16px;
+  height: 16px;
 }
 
 .customer-switch-card--active .customer-switch-card-check {
@@ -2958,8 +2961,8 @@ a.link:hover { color: var(--text); }
 }
 
 @media (max-width: 768px) {
-  .customer-selection-grid {
-    grid-template-columns: 1fr;
+  .customer-selection-container {
+    padding: 24px 16px;
   }
   
   .customer-switch-modal-content {

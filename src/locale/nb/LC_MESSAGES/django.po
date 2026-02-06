@@ -237,3 +237,24 @@ msgstr "Alle rettigheter reservert."
 
 msgid "Customer logo displayed on dashboard"
 msgstr "Kundelogo vist på dashboard"
+
+msgid "Select Customer"
+msgstr "Velg kunde"
+
+msgid "Select a Customer"
+msgstr "Velg en kunde"
+
+msgid "Choose a customer to access their portal"
+msgstr "Velg en kunde for å få tilgang til deres portal"
+
+msgid "Switch Customer"
+msgstr "Bytt kunde"
+
+msgid "Search customers…"
+msgstr "Søk etter kunder…"
+
+msgid "Search customers"
+msgstr "Søk etter kunder"
+
+msgid "Close"
+msgstr "Lukk"
