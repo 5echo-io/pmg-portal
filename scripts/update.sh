@@ -184,7 +184,10 @@ MIGRATE_OUTPUT=$(sudo -E "$SRC_DIR/.venv/bin/python" manage.py migrate --noinput
     fi
 }
 sudo -E "$SRC_DIR/.venv/bin/python" manage.py collectstatic --noinput
-sudo -E "$SRC_DIR/.venv/bin/python" manage.py compilemessages --verbosity 0
+sudo -E "$SRC_DIR/.venv/bin/python" manage.py compilemessages --verbosity 1 || {
+    echo "compilemessages failed. Common cause: duplicate msgid in .po (run: msguniq -o django.po django.po in the locale LC_MESSAGES dir to merge duplicates)."
+    exit 1
+}
 
 sudo systemctl start "$SERVICE_NAME"
 sudo systemctl status "$SERVICE_NAME" --no-pager -l || true

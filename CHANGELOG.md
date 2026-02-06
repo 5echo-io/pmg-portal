@@ -5,7 +5,10 @@ This project follows Semantic Versioning (SemVer).
 
 ## [Unreleased]
 
-Pre-release builds (alpha, beta, rc) are listed here. Only full releases (no build suffix) get a dedicated version section below.
+Pre-release builds (alpha, beta, rc) are listed here.
+
+### Fixed
+- **compilemessages**: Removed duplicate msgid entries in locale nb django.po so msgfmt succeeds on update; update.sh shows clearer error when compilemessages fails. Only full releases (no build suffix) get a dedicated version section below.
 
 ### Added
 

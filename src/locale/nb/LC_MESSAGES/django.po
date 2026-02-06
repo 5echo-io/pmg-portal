@@ -484,18 +484,6 @@ msgstr "Enheter i rack"
 msgid "Position (U)"
 msgstr "Posisjon (U)"
 
-msgid "Type"
-msgstr "Type"
-
-msgid "Manufacturer"
-msgstr "Produsent"
-
-msgid "Model"
-msgstr "Modell"
-
-msgid "IP Address"
-msgstr "IP-adresse"
-
 msgid "Edit"
 msgstr "Rediger"
 
@@ -541,14 +529,8 @@ msgstr "Ingen segl konfigurert for dette racket."
 msgid "Edit Rack"
 msgstr "Rediger rack"
 
-msgid "Device"
-msgstr "Enhet"
-
 msgid "Add Device"
 msgstr "Legg til enhet"
-
-msgid "Close"
-msgstr "Lukk"
 
 msgid "Rack sections"
 msgstr "Rackseksjoner"
@@ -571,56 +553,9 @@ msgstr "Funksjon for å legge til IP-adresse kommer snart"
 msgid "Upload Document functionality coming soon"
 msgstr "Funksjon for opplasting av dokument kommer snart"
 
-msgid "View"
-msgstr "Vis"
-
 msgid "Delete"
 msgstr "Slett"
 
-msgid "No network devices configured for this facility."
-msgstr "Ingen nettverksenheter konfigurert for dette anlegget."
-
-msgid "Subnet"
-msgstr "Undernett"
-
-msgid "Reserved For"
-msgstr "Reservert for"
-
-msgid "Device"
-msgstr "Enhet"
-
-msgid "In Use"
-msgstr "I bruk"
-
-msgid "Yes"
-msgstr "Ja"
-
-msgid "No"
-msgstr "Nei"
-
-msgid "No IP addresses reserved for this facility."
-msgstr "Ingen IP-adresser reservert for dette anlegget."
-
-msgid "Title"
-msgstr "Tittel"
-
-msgid "Category"
-msgstr "Kategori"
-
-msgid "Uploaded"
-msgstr "Lastet opp"
-
-msgid "Uploaded By"
-msgstr "Lastet opp av"
-
-msgid "Download"
-msgstr "Last ned"
-
-msgid "No documents uploaded for this facility."
-msgstr "Ingen dokumenter lastet opp for dette anlegget."
-
-msgid "Rack"
-msgstr "Rack"
-
 msgid "Edit Device"
 msgstr "Rediger enhet"
+

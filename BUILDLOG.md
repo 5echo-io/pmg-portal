@@ -2,6 +2,14 @@
 
 - 2026-02-06 (Europe/Oslo)
   - Branch: dev
+  - Version: 4.7.0-beta.2
+  - Summary:
+    - Locale: removed duplicate msgid entries in src/locale/nb/LC_MESSAGES/django.po so compilemessages (msgfmt) succeeds on install/update
+    - update.sh: compilemessages with verbosity 1 and clearer error message on failure
+    - Version bump: 4.7.0-beta.1 → 4.7.0-beta.2
+
+- 2026-02-06 (Europe/Oslo)
+  - Branch: dev
   - Version: 4.7.0-beta.1
   - Summary:
     - Stage: alpha → beta (features complete, ready for testing)
