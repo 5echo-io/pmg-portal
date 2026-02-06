@@ -664,8 +664,8 @@ def facility_list(request):
     )
 
 
-@staff_required
-@beta_required
+@superuser_required
+@dev_required
 def facility_add(request):
     from .forms import FacilityForm
     if request.method == "POST":
@@ -704,8 +704,8 @@ def facility_detail(request, pk):
     )
 
 
-@staff_required
-@beta_required
+@superuser_required
+@dev_required
 def facility_edit(request, pk):
     from .forms import FacilityForm
     facility = get_object_or_404(Facility, pk=pk)
