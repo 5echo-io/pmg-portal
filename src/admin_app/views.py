@@ -214,11 +214,28 @@ def customer_logo_upload(request, pk):
             pass
     
     # Save new logo
+    import logging
+    logger = logging.getLogger(__name__)
+    
     customer.logo = logo_file
     customer.save()
     
     # Refresh from database to get updated logo info
     customer.refresh_from_db()
+    
+    # Verify file was saved
+    if customer.logo:
+        try:
+            saved_path = customer.logo.path
+            file_exists = os.path.exists(saved_path)
+            logger.info(f"Logo saved: {customer.logo.name}, path: {saved_path}, exists: {file_exists}")
+            if not file_exists:
+                logger.warning(f"Logo file not found at expected path: {saved_path}")
+                # Check MEDIA_ROOT
+                from django.conf import settings
+                logger.info(f"MEDIA_ROOT: {settings.MEDIA_ROOT}, exists: {settings.MEDIA_ROOT.exists()}")
+        except Exception as e:
+            logger.error(f"Error checking logo path: {e}")
     
     # Delete old logo file if it exists and is different from new one
     if old_logo_path and old_logo_name:
@@ -227,6 +244,7 @@ def customer_logo_upload(request, pk):
             if customer.logo and customer.logo.name != old_logo_name:
                 if os.path.exists(old_logo_path):
                     os.remove(old_logo_path)
+                    logger.info(f"Deleted old logo: {old_logo_path}")
                     # Also try to remove directory if empty
                     try:
                         old_dir = os.path.dirname(old_logo_path)
@@ -235,16 +253,18 @@ def customer_logo_upload(request, pk):
                     except Exception:
                         pass
         except Exception as e:
-            # Log error but don't fail the upload
-            import logging
-            logger = logging.getLogger(__name__)
             logger.warning(f"Failed to delete old logo: {e}")
     
-    # Get logo URL
-    logo_url = customer.logo_url()
-    if not logo_url:
-        # Fallback: try to construct URL manually
-        if customer.logo and customer.logo.name:
+    # Get logo URL - always return URL even if file check fails
+    logo_url = None
+    if customer.logo and customer.logo.name:
+        try:
+            logo_url = customer.logo_url()
+        except Exception as e:
+            logger.error(f"Error getting logo_url: {e}")
+        
+        # Fallback: construct URL manually
+        if not logo_url:
             from django.conf import settings
             logo_url = settings.MEDIA_URL + customer.logo.name
     
