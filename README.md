@@ -14,12 +14,12 @@ A Django + Postgres portal foundation:
 
 **Fresh Installation:**
 ```bash
-curl -fsSL https://raw.githubusercontent.com/5echo-io/pmg-portal/dev/install.sh | sudo bash
+curl -fsSL https://raw.githubusercontent.com/5echo-io/pmg-portal/main/install.sh | sudo bash
 ```
 
 **Update Existing Installation:**
 ```bash
-curl -fsSL https://raw.githubusercontent.com/5echo-io/pmg-portal/dev/install.sh | sudo bash
+curl -fsSL https://raw.githubusercontent.com/5echo-io/pmg-portal/main/install.sh | sudo bash
 ```
 The installer will automatically detect if PMG Portal is already installed and prompt you to choose:
 - **1) Update** - Preserves database and `.env` file, updates code and dependencies
@@ -29,6 +29,25 @@ The installer will automatically detect if PMG Portal is already installed and p
 **Interactive Mode:**
 When run in an interactive terminal, you'll be prompted to choose between Update/Uninstall/Cancel.
 When run non-interactively (piped from curl), it defaults to Update mode.
+
+### Option 1b: Dual Installation (Production + Development)
+
+**Install both production and development environments side-by-side:**
+```bash
+# Clone the repository first
+git clone https://github.com/5echo-io/pmg-portal.git
+cd pmg-portal
+sudo bash scripts/install-dual.sh
+```
+
+This will install:
+- **Production** at `/opt/pmg-portal` (port 8097, main branch)
+- **Development** at `/opt/pmg-portal-dev` (port 8098, dev branch)
+
+**Update both environments:**
+```bash
+sudo bash scripts/update-dual.sh
+```
 
 **What the installer does:**
 - Installs OS dependencies (Python, Postgres, etc.)
