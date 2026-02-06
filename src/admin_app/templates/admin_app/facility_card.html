@@ -125,7 +125,7 @@
     <div class="customer-tab-panel" id="tab-network">
       <div class="customer-section-header">
         <h2>Network Devices</h2>
-        <a href="#" class="form-btn form-btn-primary form-btn--narrow" onclick="alert('Add Device functionality coming soon'); return false;">Add Device</a>
+        <a href="{% url 'admin_app:admin_network_device_add' facility.slug %}" class="form-btn form-btn-primary form-btn--narrow">Add Device</a>
       </div>
       {% if network_devices %}
       <div class="admin-table-wrap">
@@ -149,9 +149,9 @@
               <td>{{ device.manufacturer|default:"—" }}</td>
               <td>{{ device.model|default:"—" }}</td>
               <td>{{ device.ip_address|default:"—" }}</td>
-              <td>{% if device.rack %}{{ device.rack.name }}{% else %}—{% endif %}</td>
+              <td>{% if device.rack %}<a href="{% url 'admin_app:admin_rack_detail' facility.slug device.rack.pk %}">{{ device.rack.name }}</a>{% if device.rack_position %} (U{{ device.rack_position }}){% endif %}{% else %}—{% endif %}</td>
               <td>
-                <button type="button" class="admin-btn-sm" disabled>Edit</button>
+                <a href="{% url 'admin_app:admin_network_device_edit' facility.slug device.pk %}" class="admin-btn-sm">Edit</a>
               </td>
             </tr>
             {% endfor %}

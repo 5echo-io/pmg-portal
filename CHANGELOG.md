@@ -26,10 +26,27 @@ Pre-release builds (alpha, beta, rc) are listed here. Only full releases (no bui
   - Facility button in topbar (active when customer profile is selected)
 - **Related Models**:
   - `FacilityDocument`: Document uploads for facilities (manuals, diagrams, certificates, reports)
-  - `Rack`: Rack management within facilities (name, location, height in U)
+  - `Rack`: Rack management within facilities (name, location, height in U, serial number)
   - `NetworkDevice`: Network equipment tracking (switches, routers, firewalls, servers, etc.)
   - `IPAddress`: IP address reservation and tracking
+  - `RackSeal`: Security seal tracking for racks with installation/removal history
 - **Context Processor**: Updated to include `user_facilities` based on active customer
+- **Rack Management**:
+  - Rack CRUD operations in admin panel (add, edit, delete, detail view)
+  - Rack detail page with interactive U-position visualization
+  - Rack serial number field for asset tracking
+  - Rack seal management: install and remove security seals with tracking
+  - Seal removal tracking with reason and notes
+  - Active seal validation to prevent duplicate seal IDs
+  - Rack name uniqueness validation within facility
+- **Network Device Management**:
+  - Network device CRUD operations in admin panel (add, edit)
+  - NetworkDeviceForm with facility and rack filtering
+  - Add device directly from rack detail view with pre-selected rack and position
+  - Add device at specific U-position from rack visualization
+  - Remove device from rack (clears rack assignment while keeping device in facility)
+  - Edit device with automatic redirect back to rack if assigned
+  - Device links in facility and rack views showing rack name and U-position
 
 ### Changed
 - **Removed Dev Feature Protection**: Removed `ENABLE_DEV_FEATURES` and `DEV_ACCESS_USERS` feature flags - Facility features are now directly available

@@ -2,6 +2,24 @@
 
 - 2026-02-06 (Europe/Oslo)
   - Branch: dev
+  - Version: 4.2.0-alpha.1
+  - Summary:
+    - Network Device Management: complete CRUD operations for network devices in admin panel
+    - NetworkDeviceForm: new form with facility and rack filtering, pre-selection of rack and position
+    - Network device views: network_device_add, network_device_edit, network_device_remove_from_rack
+    - Add device from rack: can add device directly from rack detail view with rack and position pre-selected
+    - Add device at position: can add device at specific U-position from rack visualization
+    - Remove from rack: removes device from rack (clears rack and rack_position) while keeping device in facility
+    - Device links: network devices in facility and rack views show rack name and U-position as clickable links
+    - Edit device: automatic redirect back to rack detail if device is assigned to rack
+    - Network device URLs: nested under facility URLs (facilities/<slug>/devices/<id>/)
+    - Rack integration: rack detail view JavaScript functions now redirect to actual device forms
+    - Template: network_device_form.html for adding/editing network devices
+    - Migration reorganization: deleted 0004_rack_serial_and_seals.py, created 0004_facility_and_racks.py and 0005_rack_serial_and_seals.py
+    - Version bump: MINOR increment from 4.1.0-alpha.1 to 4.2.0-alpha.1 (new features: Network Device Management)
+
+- 2026-02-06 (Europe/Oslo)
+  - Branch: dev
   - Version: 4.1.0-alpha.1
   - Summary:
     - Rack Management: complete CRUD operations for racks in admin panel

@@ -41,4 +41,10 @@ urlpatterns = [
     # Rack Seals
     path("facilities/<slug:facility_slug>/racks/<int:rack_id>/seals/add/", views.rack_seal_add, name="admin_rack_seal_add"),
     path("facilities/<slug:facility_slug>/racks/<int:rack_id>/seals/<int:seal_id>/remove/", views.rack_seal_remove, name="admin_rack_seal_remove"),
+    # Network Devices
+    path("facilities/<slug:facility_slug>/devices/add/", views.network_device_add, name="admin_network_device_add"),
+    path("facilities/<slug:facility_slug>/racks/<int:rack_id>/devices/add/", views.network_device_add, name="admin_network_device_add_to_rack"),
+    path("facilities/<slug:facility_slug>/racks/<int:rack_id>/devices/add/<int:rack_position>/", views.network_device_add, name="admin_network_device_add_to_position"),
+    path("facilities/<slug:facility_slug>/devices/<int:device_id>/edit/", views.network_device_edit, name="admin_network_device_edit"),
+    path("facilities/<slug:facility_slug>/racks/<int:rack_id>/devices/<int:device_id>/remove/", views.network_device_remove_from_rack, name="admin_network_device_remove_from_rack"),
 ]

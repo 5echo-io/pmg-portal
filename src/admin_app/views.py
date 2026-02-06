@@ -12,7 +12,7 @@ from django.views.decorators.http import require_POST
 from django.http import JsonResponse
 import os
 
-from portal.models import Customer, CustomerMembership, PortalLink, Facility, Rack, RackSeal
+from portal.models import Customer, CustomerMembership, PortalLink, Facility, Rack, RackSeal, NetworkDevice
 from django.utils import timezone
 
 User = get_user_model()
@@ -874,3 +874,82 @@ def rack_seal_remove(request, facility_slug, rack_id, seal_id):
         "rack": rack,
         "seal": seal,
     })
+
+
+# ----- Network Devices -----
+@staff_required
+def network_device_add(request, facility_slug, rack_id=None, rack_position=None):
+    """Add a new network device to a facility, optionally to a specific rack and position."""
+    from .forms import NetworkDeviceForm
+    facility = get_object_or_404(Facility, slug=facility_slug)
+    rack = None
+    if rack_id:
+        rack = get_object_or_404(Rack, pk=rack_id, facility=facility)
+    
+    if request.method == "POST":
+        form = NetworkDeviceForm(request.POST, facility=facility, rack=rack, rack_position=rack_position)
+        if form.is_valid():
+            device = form.save(commit=False)
+            device.facility = facility
+            if rack:
+                device.rack = rack
+            if rack_position:
+                device.rack_position = rack_position
+            device.save()
+            messages.success(request, "Network device created.")
+            if rack:
+                return redirect("admin_app:admin_rack_detail", facility_slug=facility.slug, rack_id=rack.pk)
+            else:
+                return redirect("admin_app:admin_facility_detail", slug=facility.slug)
+    else:
+        form = NetworkDeviceForm(facility=facility, rack=rack, rack_position=rack_position)
+    
+    return render(request, "admin_app/network_device_form.html", {
+        "form": form,
+        "facility": facility,
+        "rack": rack,
+        "device": None,
+    })
+
+
+@staff_required
+def network_device_edit(request, facility_slug, device_id):
+    """Edit a network device."""
+    from .forms import NetworkDeviceForm
+    facility = get_object_or_404(Facility, slug=facility_slug)
+    device = get_object_or_404(NetworkDevice, pk=device_id, facility=facility)
+    
+    if request.method == "POST":
+        form = NetworkDeviceForm(request.POST, instance=device, facility=facility)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Network device updated.")
+            if device.rack:
+                return redirect("admin_app:admin_rack_detail", facility_slug=facility.slug, rack_id=device.rack.pk)
+            else:
+                return redirect("admin_app:admin_facility_detail", slug=facility.slug)
+    else:
+        form = NetworkDeviceForm(instance=device, facility=facility)
+    
+    return render(request, "admin_app/network_device_form.html", {
+        "form": form,
+        "facility": facility,
+        "rack": device.rack,
+        "device": device,
+    })
+
+
+@staff_required
+@require_POST
+def network_device_remove_from_rack(request, facility_slug, rack_id, device_id):
+    """Remove a device from a rack (clear rack and rack_position)."""
+    facility = get_object_or_404(Facility, slug=facility_slug)
+    rack = get_object_or_404(Rack, pk=rack_id, facility=facility)
+    device = get_object_or_404(NetworkDevice, pk=device_id, facility=facility, rack=rack)
+    
+    device.rack = None
+    device.rack_position = None
+    device.save()
+    
+    messages.success(request, f"Device '{device.name}' removed from rack.")
+    return redirect("admin_app:admin_rack_detail", facility_slug=facility.slug, rack_id=rack.pk)

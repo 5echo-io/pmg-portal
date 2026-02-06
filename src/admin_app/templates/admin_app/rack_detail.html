@@ -256,25 +256,33 @@
 
   // Add device to rack
   window.addDeviceToRack = function() {
-    alert('Add Device functionality - will redirect to device form with rack pre-selected');
-    // TODO: Implement redirect to device add/edit form
+    window.location.href = "{% url 'admin_app:admin_network_device_add_to_rack' facility.slug rack.pk %}";
   };
 
   window.addDeviceAtPosition = function(uPosition) {
-    alert('Add Device at U' + uPosition + ' - will redirect to device form with rack and position pre-selected');
-    // TODO: Implement redirect to device add/edit form with position
+    window.location.href = "{% url 'admin_app:admin_network_device_add_to_position' facility.slug rack.pk 0 %}".replace('/0/', '/' + uPosition + '/');
   };
 
   window.removeDeviceFromRack = function(deviceId) {
-    if (confirm('Remove this device from the rack?')) {
-      alert('Remove device functionality - will clear rack and rack_position');
-      // TODO: Implement device removal from rack
+    if (confirm('Remove this device from the rack? The device will remain in the facility but will no longer be assigned to this rack.')) {
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = "{% url 'admin_app:admin_network_device_remove_from_rack' facility.slug rack.pk 0 %}".replace('/0/', '/' + deviceId + '/');
+      const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
+      if (csrfToken) {
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = 'csrfmiddlewaretoken';
+        csrfInput.value = csrfToken.value;
+        form.appendChild(csrfInput);
+      }
+      document.body.appendChild(form);
+      form.submit();
     }
   };
 
   window.editDevice = function(deviceId) {
-    alert('Edit device functionality - will redirect to device edit form');
-    // TODO: Implement redirect to device edit form
+    window.location.href = "{% url 'admin_app:admin_network_device_edit' facility.slug 0 %}".replace('/0/', '/' + deviceId + '/');
   };
 })();
 </script>

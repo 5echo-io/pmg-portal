@@ -5,7 +5,7 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm as BaseUserCreationForm
 from django.contrib.auth.models import Group
-from portal.models import Customer, CustomerMembership, PortalLink, Facility, Rack, RackSeal
+from portal.models import Customer, CustomerMembership, PortalLink, Facility, Rack, RackSeal, NetworkDevice
 
 User = get_user_model()
 
@@ -160,5 +160,41 @@ class RackSealRemovalForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if self.user:
             self.instance.removed_by = self.user
+
+
+class NetworkDeviceForm(forms.ModelForm):
+    class Meta:
+        model = NetworkDevice
+        fields = (
+            "name", "device_type", "manufacturer", "model", "serial_number",
+            "ip_address", "mac_address", "rack", "rack_position", "description", "is_active"
+        )
+        widgets = {
+            "description": forms.Textarea(attrs={"rows": 3}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        self.facility = kwargs.pop("facility", None)
+        self.rack = kwargs.pop("rack", None)
+        self.rack_position = kwargs.pop("rack_position", None)
+        super().__init__(*args, **kwargs)
+        
+        if self.facility:
+            self.instance.facility = self.facility
+            # Filter racks to only show racks from this facility
+            if "rack" in self.fields:
+                self.fields["rack"].queryset = Rack.objects.filter(facility=self.facility, is_active=True).order_by("name")
+                self.fields["rack"].required = False
+        
+        # Pre-select rack and position if provided
+        if self.rack:
+            self.instance.rack = self.rack
+            if "rack" in self.fields:
+                self.fields["rack"].initial = self.rack
+        
+        if self.rack_position:
+            self.instance.rack_position = self.rack_position
+            if "rack_position" in self.fields:
+                self.fields["rack_position"].initial = self.rack_position
 
 

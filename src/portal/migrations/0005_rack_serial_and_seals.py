@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ("portal", "0003_customer_logo"),
+        ("portal", "0004_facility_and_racks"),
     ]
 
     operations = [
