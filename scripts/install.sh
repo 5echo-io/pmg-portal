@@ -18,9 +18,9 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-# Check if already installed
+# Check if already installed (use sudo to check since we'll need sudo anyway)
 PROD_EXISTS=false
-if [ -d "$APP_DIR" ] && [ -f "$APP_DIR/.env" ]; then
+if sudo [ -d "$APP_DIR" ] && sudo [ -f "$APP_DIR/.env" ]; then
     PROD_EXISTS=true
 fi
 
@@ -43,15 +43,27 @@ if [ "$PROD_EXISTS" = "true" ]; then
         echo ""
         echo "  0) Cancel"
         echo ""
-        read -rp "Enter choice: " choice
+        read -rp "Enter choice [1-2, 0 to cancel]: " choice
         
         case "$choice" in
-            1) MODE="update" ;;
-            2) MODE="uninstall" ;;
-            0|*) echo "Cancelled."; exit 0 ;;
+            1) 
+                MODE="update"
+                echo ""
+                echo -e "${GREEN}Selected: Update Production${NC}"
+                ;;
+            2) 
+                MODE="uninstall"
+                echo ""
+                echo -e "${YELLOW}Selected: Uninstall Production${NC}"
+                ;;
+            0|*) 
+                echo "Cancelled."
+                exit 0 
+                ;;
         esac
     else
         # Non-interactive mode - default to update
+        echo "Non-interactive mode detected. Defaulting to Update mode."
         MODE="update"
     fi
 else
