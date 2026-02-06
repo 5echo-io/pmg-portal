@@ -7,6 +7,41 @@ This project follows Semantic Versioning (SemVer).
 
 Pre-release builds (alpha, beta, rc) are listed here. Only full releases (no build suffix) get a dedicated version section below.
 
+### Added
+
+#### Facility Management (Anlegg)
+- **Facility Model**: New Facility model with comprehensive fields (name, slug, description, address, city, postal code, country, contact information)
+- **Customer-Facility Relationship**: Many-to-many relationship allowing customers to have access to multiple facilities
+- **Admin Panel - Facilities**:
+  - Facility list page with search and filtering (active/inactive)
+  - Facility add/edit form with customer assignment
+  - Facility detail card page with tabs for customers, racks, network devices, IP addresses, documents, and information
+  - Facility delete functionality with confirmation modal
+  - Added to Portal management section in admin home
+- **Portal - Facilities**:
+  - Facility list page showing all facilities the active customer has access to
+  - Facility detail page with comprehensive information
+  - Overview tab with statistics (racks, network devices, IP addresses, documents)
+  - Tabs for Racks, Network Devices, IP Addresses, Documents, and Information
+  - Facility button in topbar (active when customer profile is selected)
+- **Related Models**:
+  - `FacilityDocument`: Document uploads for facilities (manuals, diagrams, certificates, reports)
+  - `Rack`: Rack management within facilities (name, location, height in U)
+  - `NetworkDevice`: Network equipment tracking (switches, routers, firewalls, servers, etc.)
+  - `IPAddress`: IP address reservation and tracking
+- **Context Processor**: Updated to include `user_facilities` based on active customer
+
+### Changed
+- **Removed Dev Feature Protection**: Removed `ENABLE_DEV_FEATURES` and `DEV_ACCESS_USERS` feature flags - Facility features are now directly available
+- **Simplified Access Control**: Facility views use standard `@staff_required` decorator (admin) and `@login_required` (portal) instead of `@dev_required`
+- **Context Processor**: Simplified to directly return `user_facilities` without dev feature checks
+- **Templates**: Removed conditional dev feature checks - Facility button shows when customer profile is selected
+- **Install Script**: Updated rsync to use `--delete` flag to ensure all template files are properly synced
+
+### Fixed
+- **Context Processor**: Added missing Facility model import to fix 500 error when accessing Facility features
+- **Template Sync**: Fixed install.sh to ensure Facility template files are properly copied to server
+
 ## [3.0.0-alpha.1] - 2026-02-06
 
 ### Added

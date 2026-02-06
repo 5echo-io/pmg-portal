@@ -331,7 +331,8 @@ sudo apt-get install -y python3 python3-venv python3-pip postgresql postgresql-c
 echo ""
 echo "Installing application files..."
 sudo mkdir -p "$APP_DIR"
-sudo rsync -a --exclude='.git' "$REPO_DIR/" "$APP_DIR/"
+# Use rsync with --delete to ensure all files are synced, including templates
+sudo rsync -a --delete --exclude='.git' "$REPO_DIR/" "$APP_DIR/"
 
 # Cleanup branch-specific files
 echo ""
