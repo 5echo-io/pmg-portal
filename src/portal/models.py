@@ -111,9 +111,6 @@ class PortalLink(models.Model):
 
     def __str__(self) -> str:
         return f"{self.customer}: {self.title}"
-
-
-class Facility(models.Model):
     """
     Facility (Anlegg) - Physical locations/sites that customers can have access to.
     Facilities contain installations, management info, operations, maintenance, documentation, network, racks, IP addresses, etc.
