@@ -850,16 +850,21 @@ def rack_edit(request, facility_slug, rack_id):
     facility = get_object_or_404(Facility, slug=facility_slug)
     rack = get_object_or_404(Rack, pk=rack_id, facility=facility)
     
+    in_modal = request.GET.get("modal") == "1"
     if request.method == "POST":
         form = RackForm(request.POST, instance=rack, facility=facility)
         if form.is_valid():
             form.save()
             messages.success(request, "Rack updated.")
-            return redirect("admin_app:admin_rack_detail", facility_slug=facility.slug, rack_id=rack.pk)
+            detail_url = reverse("admin_app:admin_rack_detail", kwargs={"facility_slug": facility.slug, "rack_id": rack.pk})
+            if in_modal:
+                detail_url += "?modal_close=1"
+            return redirect(detail_url)
     else:
         form = RackForm(instance=rack, facility=facility)
     
-    cancel_url = _get_cancel_url(request, reverse("admin_app:admin_rack_detail", kwargs={"facility_slug": facility.slug, "rack_id": rack.pk}))
+    detail_url = reverse("admin_app:admin_rack_detail", kwargs={"facility_slug": facility.slug, "rack_id": rack.pk})
+    cancel_url = detail_url + "?modal_close=1" if in_modal else _get_cancel_url(request, detail_url)
     return render(request, "admin_app/rack_form.html", {
         "form": form,
         "facility": facility,

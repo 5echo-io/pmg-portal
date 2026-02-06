@@ -77,6 +77,10 @@ Pre-release builds (alpha, beta, rc) are listed here. Only full releases (no bui
 - **Rack Detail Header**: Rack detail page uses card-style header matching facility/customer cards (icon, title block, badge, Edit/Add Seal, meta)
 - **Breadcrumb Back Button**: Styled as pill button with border and hover state
 - **Table Action Buttons**: View/non-danger buttons use minimal outline style; danger button uses red tint and clear hover
+- **Rack Detail Layout**: Two-column layout with left sidebar (visualization, info card, side menu) and right main content; Edit Rack opens in modal (iframe) with close/refresh on save
+- **Rack Edit Modal**: rack_edit view supports ?modal=1 and redirects with ?modal_close=1 for parent to close modal and refresh
+- **Danger Button Hover**: Softer hover styles (rgba) for form-btn-danger, admin-btn-danger, and admin-btn-sm.admin-btn-danger
+- **Rack Detail Width**: Container constrained to max-width 1280px (aligned with dashboard)
 
 ### Fixed
 - **Context Processor**: Added missing Facility model import to fix 500 error when accessing Facility features

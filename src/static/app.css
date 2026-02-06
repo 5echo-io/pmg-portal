@@ -1904,8 +1904,8 @@ a.link:hover { color: var(--text); }
 }
 
 .form-btn-danger:hover:not(:disabled) {
-  background: #dc2626;
-  border-color: #dc2626;
+  background: rgba(239, 68, 68, 0.85);
+  border-color: rgba(239, 68, 68, 0.9);
   color: white;
 }
 
@@ -1927,9 +1927,9 @@ a.link:hover { color: var(--text); }
 }
 
 .admin-btn-danger:hover {
-  background: #7f1d1d;
-  border-color: #7f1d1d;
-  color: white;
+  background: rgba(239, 68, 68, 0.4);
+  border-color: rgba(239, 68, 68, 0.6);
+  color: #fca5a5;
 }
 
 
@@ -1939,7 +1939,7 @@ a.link:hover { color: var(--text); }
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 12px;
+  margin-bottom: 24px;
 }
 
 .breadcrumb-back-btn {
@@ -2350,9 +2350,9 @@ button.admin-btn-sm {
 }
 
 .admin-btn-sm.admin-btn-danger:hover {
-  background: #b91c1c;
-  border-color: #b91c1c;
-  color: white;
+  background: rgba(239, 68, 68, 0.25);
+  border-color: rgba(239, 68, 68, 0.5);
+  color: #fca5a5;
 }
 
 .admin-btn-sm:not(.admin-btn-danger):hover {
@@ -2580,24 +2580,17 @@ button.admin-btn-sm {
   }
 }
 
-/* Rack detail page: use full width of viewport */
-.container:has(.rack-detail-container) {
-  max-width: none;
-  width: 100%;
-}
-
+/* Rack detail page: same max-width as dashboard (1280px) */
 .rack-detail-container {
+  max-width: 1280px;
+  margin-left: auto;
+  margin-right: auto;
   width: 100%;
-  max-width: none;
 }
 
 .rack-card-header .rack-card-icon-wrap {
   width: 120px;
   height: 120px;
-}
-
-.rack-detail-tabs {
-  margin-bottom: 24px;
 }
 
 /* Customer Card Styles */

@@ -2,6 +2,17 @@
 
 - 2026-02-06 (Europe/Oslo)
   - Branch: dev
+  - Version: 4.6.0-alpha.1
+  - Summary:
+    - Rack detail: two-column layout (rack-detail-layout) – left: rack-detail-left (visual + rack-detail-card + rack-detail-sidemenu), right: rack-detail-main with tab panels
+    - Edit Rack in modal: Edit link uses ?modal=1; rack-edit-modal with backdrop, dialog, iframe; JS opens iframe to edit URL, closes on backdrop/close button; iframe detects modal_close=1 and posts message to parent to close and reload
+    - rack_edit view: in_modal=request.GET.get('modal')==1; redirect appends ?modal_close=1 when in_modal; cancel_url uses modal_close when in_modal
+    - Danger buttons: form-btn-danger and admin-btn hover use rgba for softer look; admin-btn-sm.admin-btn-danger hover rgba
+    - Rack container: max-width 1280px, margin auto (removed full-width override); breadcrumb-row margin-bottom 24px; removed .rack-detail-tabs margin
+    - Version bump: MINOR increment from 4.5.0-alpha.1 to 4.6.0-alpha.1 (rack detail layout and edit modal)
+
+- 2026-02-06 (Europe/Oslo)
+  - Branch: dev
   - Version: 4.5.0-alpha.1
   - Summary:
     - Facility customer access: FacilityCustomerAddForm; facility_customer_add and facility_customer_remove views to add/remove customers from facility
