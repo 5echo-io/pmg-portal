@@ -281,7 +281,10 @@ if [ "$MODE" = "update" ]; then
             echo "  ✓ Removed dev-specific files"
         elif [ "$install_branch" = "dev" ]; then
             echo "  Ensuring dev-specific files are present..."
-            # Dev branch should have all files
+            # Dev branch should have all files - verify Facility templates exist
+            if [ ! -f "$src_dir/portal/templates/portal/facility_list.html" ]; then
+                echo "  WARNING: Facility templates missing - they should be in the repository"
+            fi
             echo "  ✓ Dev branch files verified"
         fi
     }
