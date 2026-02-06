@@ -105,6 +105,12 @@ h1 { margin: 0 0 6px 0; font-size: 22px; }
   background: var(--card);
   border: 1px solid var(--line);
   padding: 8px;
+  display: block;
+}
+
+.customer-logo[src=""],
+.customer-logo:not([src]) {
+  display: none;
 }
 
 .customer-header-text {
