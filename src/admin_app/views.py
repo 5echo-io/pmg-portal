@@ -228,6 +228,7 @@ def customer_logo_upload(request, pk):
         logger.error(f"Failed to create customer_logos directory: {e}")
     
     # Save the logo
+    logger.info(f"About to save logo file: {logo_file.name}, size: {logo_file.size}")
     customer.logo = logo_file
     customer.save()
     
@@ -247,11 +248,23 @@ def customer_logo_upload(request, pk):
                     if os.path.exists(customer_logos_dir):
                         files_in_dir = os.listdir(customer_logos_dir)
                         logger.info(f"Files in customer_logos directory: {files_in_dir}")
-                except Exception:
-                    pass
+                    else:
+                        logger.warning(f"customer_logos directory does not exist: {customer_logos_dir}")
+                except Exception as e:
+                    logger.error(f"Error listing directory: {e}")
                 logger.info(f"MEDIA_ROOT: {media_root}, exists: {media_root.exists()}")
+                # Check permissions
+                try:
+                    import stat
+                    if os.path.exists(media_root):
+                        st = os.stat(media_root)
+                        logger.info(f"MEDIA_ROOT permissions: {oct(stat.S_IMODE(st.st_mode))}, owner: {st.st_uid}, group: {st.st_gid}")
+                except Exception as e:
+                    logger.error(f"Error checking permissions: {e}")
         except Exception as e:
             logger.error(f"Error checking logo path: {e}")
+            import traceback
+            logger.error(traceback.format_exc())
     
     # Delete old logo file if it exists and is different from new one
     if old_logo_path and old_logo_name:

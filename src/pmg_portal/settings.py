@@ -167,5 +167,10 @@ LOGGING = {
             "level": "DEBUG",
             "propagate": False,
         },
+        "admin_app": {
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": False,
+        },
     },
 }
