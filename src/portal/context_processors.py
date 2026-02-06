@@ -15,8 +15,7 @@ import re
 import urllib.request
 import urllib.error
 import json
-from .models import CustomerMembership, Customer
-from django.conf import settings
+from .models import CustomerMembership, Customer, Facility
 
 
 def language_menu(request):
