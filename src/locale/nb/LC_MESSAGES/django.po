@@ -186,3 +186,6 @@ msgstr "Endre"
 
 msgid "You don't have permission to view or edit anything."
 msgstr "Du har ikke tillatelse til å se eller redigere noe."
+
+msgid "Select language"
+msgstr "Velg språk"

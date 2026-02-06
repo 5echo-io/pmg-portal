@@ -2,6 +2,16 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev
+  - Version: 1.17.39-beta.14
+  - Summary:
+    - Norwegian flag: correct SVG (red field, white-outlined blue cross, 22:16)
+    - Login page: language selector is a dropdown (all languages, current marked); closes on outside click / mouse leave
+    - CHANGELOG: only full releases get version sections; pre-releases stay under Unreleased
+    - Sign in button: short pulse border in loop (narrow wedge), no solid glow; dampened hover (brightness 1.08)
+    - django.po: "Select language" for login dropdown aria-label
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev
   - Version: 1.17.38-beta.13
   - Summary:
     - install.sh: add gettext to apt-get install so msgfmt is available for compilemessages

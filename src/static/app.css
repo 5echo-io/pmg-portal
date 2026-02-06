@@ -159,14 +159,14 @@ button:hover { background: var(--btnHover); }
   overflow: visible;
 }
 
-/* Single moving pulse (narrow wedge) that flies around the button */
+/* Short pulse that runs around the button border only (no fill behind button) */
 .signin-btn-wrap.ready::before {
   content: "";
   position: absolute;
   inset: -2px;
   border-radius: 10px;
-  background: conic-gradient(from 0deg, transparent 0deg, transparent 310deg, rgba(34, 197, 94, 0.4) 325deg, #22c55e 340deg, rgba(34, 197, 94, 0.4) 355deg, transparent 370deg);
-  animation: signin-pulse-rotate 1.8s linear infinite;
+  background: conic-gradient(from 0deg, transparent 0deg, transparent 320deg, rgba(34, 197, 94, 0.5) 332deg, #22c55e 340deg, rgba(34, 197, 94, 0.5) 348deg, transparent 360deg);
+  animation: signin-pulse-rotate 2s linear infinite;
   z-index: 0;
 }
 
@@ -181,7 +181,7 @@ button:hover { background: var(--btnHover); }
   margin-top: 0;
   border-radius: 8px;
   background: var(--btn);
-  border-color: var(--line);
+  border: 1px solid var(--line);
 }
 
 .login-page-footer {
@@ -202,6 +202,90 @@ button:hover { background: var(--btnHover); }
 
 .login-footer-right {
   flex-shrink: 0;
+}
+
+.login-lang-dropdown {
+  position: relative;
+}
+
+.login-lang-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  margin: 0;
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--muted);
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.login-lang-trigger:hover {
+  border-color: var(--text);
+  color: var(--text);
+}
+
+.login-lang-chevron {
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+.login-lang-menu {
+  position: absolute;
+  right: 0;
+  bottom: 100%;
+  margin-bottom: 6px;
+  min-width: 140px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  padding: 6px;
+  z-index: 50;
+  display: none;
+}
+
+.login-lang-menu[aria-hidden="false"] {
+  display: block;
+}
+
+.login-lang-option-form {
+  margin: 0;
+  display: block;
+}
+
+.login-lang-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 10px;
+  margin: 0;
+  background: none;
+  border: none;
+  border-radius: 6px;
+  color: var(--text);
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-align: left;
+}
+
+.login-lang-option:hover {
+  background: var(--hover);
+}
+
+.login-lang-option--current {
+  color: var(--muted);
+  cursor: default;
+}
+
+.login-lang-option .user-menu-lang-flag svg,
+.login-lang-trigger .user-menu-lang-flag svg {
+  width: 18px;
+  height: 14px;
+  border-radius: 2px;
 }
 
 .login-lang-switcher {
@@ -268,13 +352,12 @@ button:hover { background: var(--btnHover); }
 }
 
 .card button[type="submit"].ready {
-  border-color: rgba(34, 197, 94, 0.5);
   cursor: pointer;
 }
 
 .card .signin-btn-wrap.ready button:hover {
-  border-color: #22c55e;
-  background: var(--btnHover);
+  background: var(--btn);
+  filter: brightness(1.08);
 }
 
 a { color: var(--text); }

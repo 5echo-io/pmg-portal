@@ -5,31 +5,12 @@ This project follows Semantic Versioning (SemVer).
 
 ## [Unreleased]
 
-No changes yet.
-
-## [1.17.38-beta.13] - 2026-02-05
-
-Fixed:
-- compilemessages failing with "Can't find msgfmt": install.sh now installs `gettext` (GNU gettext tools); update.sh installs gettext if `msgfmt` is missing so updates succeed on existing servers
-
-Changed:
-- docs/I18N.md: note that install/update scripts install gettext on Debian/Ubuntu
-
-## [1.17.37-beta.12] - 2026-02-05
-
-Changed:
-- update.sh: run `compilemessages` after collectstatic so Norwegian works after git pull; comment documents full update command (`cd /opt/pmg-portal && sudo git pull origin dev && sudo bash scripts/update.sh`)
-- install.sh: run `compilemessages` after collectstatic so Norwegian works on fresh install
-- SETUP_GUIDE.md: added "Updating the app" section with the exact update command
-
-## [1.17.36-beta.11] - 2026-02-05
-
-**MAJOR:** Norwegian (Norsk) + full i18n. **MINOR:** 17 Added. **PATCH:** 33 Changed + 3 Fixed.
+Pre-release builds (alpha, beta, rc) are listed here. Only full releases (no build suffix) get a dedicated version section below.
 
 Added:
 - Norwegian (Norsk) as second language: full i18n with Django LOCALE_PATHS, locale/nb, and set_language switcher
 - Language switcher in avatar dropdown (Norsk/English with flags; current language hidden from submenu; open on click, close on mouse leave)
-- Language switcher on login page footer (right): current language + link to switch to the other
+- Login page footer (right): language dropdown listing all languages
 - All portal and account templates translated ({% trans %}/{% blocktrans %}); Norwegian translations in locale/nb/LC_MESSAGES/django.po
 - docs/I18N.md: how to add and translate strings (Norsk + English) when building the site further
 - Portal at site root (/) with HTMX for no-refresh navigation
@@ -79,11 +60,16 @@ Changed:
 - Avatar menu: Language submenu opens on click (not hover), closes when mouse leaves; current language not shown in submenu
 - Login page: version below card (left), language selector below card (right)
 - Sign in button: single moving pulse animation around button when ready (narrow green wedge)
+- Norwegian flag: correct SVG (red field, white-outlined blue cross per 22:16 proportions)
+- Changelog: only full releases (no -beta/-alpha/-rc) get version sections; pre-releases stay under Unreleased
+- Sign in button: short pulse border animation in loop around button only (no fill); dampened hover brightness
 
 Fixed:
+- Norwegian flag was wrong (corrected to official Norway flag)
 - Footer width now matches main content (1280px)
 - Profile: Change password / Delete account Cancel returns to Account Information tab; modal Cancel/Escape restores tab (including Escape key)
 - Form button vertical alignment across admin forms
+- compilemessages failing with "Can't find msgfmt": install.sh and update.sh install gettext when needed
 
 ## Previous changes (pre-0.3.0)
 Added:
