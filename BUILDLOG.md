@@ -1,5 +1,19 @@
 # BUILDLOG
 
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev
+  - Version: 3.0.0-alpha.1
+  - Release Type: Alpha Release
+  - Summary:
+    - Initial Facility (Anlegg) management system implementation
+    - Added Facility model with comprehensive fields and customer-facility many-to-many relationship
+    - Admin panel: Facility CRUD operations, list, detail card page with tabs
+    - Portal: Facility list and detail pages with overview, racks, network devices, IP addresses, documents tabs
+    - Related models: FacilityDocument, Rack, NetworkDevice, IPAddress for complete facility management
+    - UI/UX: Modern facility cards, tabbed detail view, responsive design
+    - Context processor updated to include user facilities based on active customer
+    - Foundation for future facility features: installations, management, operations, maintenance, documentation, network management
+
 - 2026-02-06 (Europe/Oslo)
   - Branch: dev → main
   - Version: 2.0.0
