@@ -19,6 +19,12 @@ echo "Re-installing python deps..."
 cd "$SRC_DIR"
 sudo "$SRC_DIR/.venv/bin/pip" install -r "$SRC_DIR/requirements.txt"
 
+echo "Ensuring gettext (msgfmt) is installed for compilemessages..."
+if ! command -v msgfmt >/dev/null 2>&1; then
+  sudo apt-get update -y
+  sudo apt-get install -y gettext
+fi
+
 echo "Migrating + collectstatic + compilemessages..."
 set -a
 source "$APP_DIR/.env"

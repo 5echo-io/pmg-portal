@@ -7,6 +7,14 @@ This project follows Semantic Versioning (SemVer).
 
 No changes yet.
 
+## [1.17.38-beta.13] - 2026-02-05
+
+Fixed:
+- compilemessages failing with "Can't find msgfmt": install.sh now installs `gettext` (GNU gettext tools); update.sh installs gettext if `msgfmt` is missing so updates succeed on existing servers
+
+Changed:
+- docs/I18N.md: note that install/update scripts install gettext on Debian/Ubuntu
+
 ## [1.17.37-beta.12] - 2026-02-05
 
 Changed:

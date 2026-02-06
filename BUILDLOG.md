@@ -2,6 +2,14 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev
+  - Version: 1.17.38-beta.13
+  - Summary:
+    - install.sh: add gettext to apt-get install so msgfmt is available for compilemessages
+    - update.sh: if msgfmt missing, install gettext so compilemessages succeeds on existing servers
+    - docs/I18N.md: note that gettext is installed by install/update scripts
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev
   - Version: 1.17.37-beta.12
   - Summary:
     - update.sh + install.sh: run compilemessages so Norsk works after pull and on fresh install
