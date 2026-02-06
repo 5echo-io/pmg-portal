@@ -44,6 +44,10 @@ Changed:
 - Footer "View Changelog": added document icon to match "About this portal" styling
 - Footer buttons: unified styling for "About this portal" and "View Changelog" (consistent hover and layout)
 - Login page footer: further reduced margin-top from 16px to 8px to bring version and language selector much closer to login box
+- Login page footer: moved version and language selector to right side (together)
+- Customer dropdown menu: active customer now shown as disabled (non-clickable) with checkmark; only other customers can be selected
+- Login page language dropdown: only shows other languages (not current language), matching avatar menu behavior
+- Language preference: custom set_language view saves preference to session; middleware applies it for authenticated users; login view restores preferred language
 - Edit (table) button: higher contrast hover (blue background)
 - Changelog: pre-release builds (alpha, beta, rc) always show Unreleased; full release shows all sections for that major
 - Changelog modal: no scroll on modal container; only content boxes scroll; fade animation when toggling View Full / Hide Full; button pulse animation on toggle

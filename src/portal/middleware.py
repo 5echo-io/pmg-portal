@@ -18,7 +18,8 @@ class LanguagePreferenceMiddleware:
     
     def __call__(self, request):
         # If user is authenticated and has a preferred language in session, use it
-        if request.user.is_authenticated:
+        # Note: This middleware must be placed after AuthenticationMiddleware
+        if hasattr(request, 'user') and request.user.is_authenticated:
             preferred_lang = request.session.get('user_preferred_language')
             if preferred_lang and preferred_lang in dict(settings.LANGUAGES):
                 translation.activate(preferred_lang)

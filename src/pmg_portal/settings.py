@@ -43,10 +43,10 @@ MIDDLEWARE = [
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
-    "portal.middleware.LanguagePreferenceMiddleware",  # Custom language preference
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "portal.middleware.LanguagePreferenceMiddleware",  # Custom language preference (after AuthenticationMiddleware)
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "pmg_portal.logging_middleware.DebugLoggingMiddleware",  # Debug logging (last)
