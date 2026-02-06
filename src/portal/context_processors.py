@@ -16,7 +16,12 @@ import urllib.request
 import urllib.error
 import json
 from django.conf import settings
-from .models import CustomerMembership, Customer, Facility
+from .models import CustomerMembership, Customer
+try:
+    from .models import Facility
+    FACILITY_MODEL_AVAILABLE = True
+except ImportError:
+    FACILITY_MODEL_AVAILABLE = False
 
 
 def language_menu(request):
@@ -73,13 +78,13 @@ def user_customers(request):
         # Save to session so it persists
         request.session["active_customer_id"] = active_customer_id
 
-    # Get user's facilities based on active customer
+    # Get user's facilities based on active customer (only if Facility model exists)
     user_facilities = []
-    if active_customer_id:
+    if active_customer_id and FACILITY_MODEL_AVAILABLE:
         try:
             active_customer = Customer.objects.get(pk=active_customer_id)
             user_facilities = active_customer.facilities.filter(is_active=True).order_by("name")
-        except Customer.DoesNotExist:
+        except (Customer.DoesNotExist, AttributeError):
             pass
     
     # Check dev access (only for superusers/admins)
