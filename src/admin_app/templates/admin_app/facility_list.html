@@ -1,0 +1,75 @@
+{% extends "admin_app/base.html" %}
+
+{% block admin_title %}Facilities{% endblock %}
+{% block breadcrumb_extra %}<span class="breadcrumb-sep">→</span> <span>Facilities</span>{% endblock %}
+
+{% block admin_content %}
+<h1 class="admin-page-title">Facilities</h1>
+
+<div class="admin-toolbar admin-toolbar--single-row">
+  <form method="get" action="" class="admin-toolbar-form">
+    <div class="admin-search-wrap">
+      <label class="admin-search-label" for="id_q_facilities">SEARCH</label>
+      <div class="admin-search-row">
+        <input type="text" name="q" id="id_q_facilities" value="{{ search }}" placeholder="Search facilities…" class="form-input admin-search-input">
+        <div class="admin-filter-group">
+          <label class="admin-filter-label" for="id_filter_active">Active</label>
+          <select name="active" id="id_filter_active" class="form-input">
+            <option value="">All</option>
+            <option value="1" {% if request.GET.active == "1" %}selected{% endif %}>Active</option>
+            <option value="0" {% if request.GET.active == "0" %}selected{% endif %}>Inactive</option>
+          </select>
+        </div>
+        <button type="submit" class="form-btn form-btn-secondary admin-search-btn">Search</button>
+      </div>
+    </div>
+  </form>
+  <a href="{% url 'admin_app:admin_facility_add' %}" class="admin-btn-sm admin-btn-primary admin-toolbar-add-btn">Add facility</a>
+</div>
+
+<p class="muted">{{ total_count }} facilit{{ total_count|pluralize:"y,ies" }}</p>
+
+<div class="admin-table-wrap">
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Location</th>
+        <th>Customers</th>
+        <th>Active</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for f in page_obj %}
+      <tr>
+        <td><a href="{% url 'admin_app:admin_facility_detail' f.pk %}">{{ f.name }}</a></td>
+        <td>{% if f.city %}{{ f.city }}{% if f.country %}, {{ f.country }}{% endif %}{% else %}—{% endif %}</td>
+        <td>{{ f.get_customer_count }}</td>
+        <td>{% if f.is_active %}Yes{% else %}No{% endif %}</td>
+        <td style="white-space: nowrap;">
+          <a href="{% url 'admin_app:admin_facility_detail' f.pk %}" class="admin-btn-sm">View</a>
+          <button type="button" class="admin-btn-sm admin-btn-danger" data-delete-url="{% url 'admin_app:admin_facility_delete' f.pk %}" data-delete-message="Are you sure you want to delete the facility '{{ f.name }}'? This will also delete all racks, network devices, IP addresses, and documents associated with this facility.">Delete</button>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="5">No facilities found.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% if page_obj.has_other_pages %}
+<nav class="admin-pagination">
+  {% if page_obj.has_previous %}
+  <a href="?page={{ page_obj.previous_page_number }}{% if search %}&q={{ search }}{% endif %}{% if request.GET.active %}&active={{ request.GET.active }}{% endif %}">Previous</a>
+  {% endif %}
+  <span class="current">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+  {% if page_obj.has_next %}
+  <a href="?page={{ page_obj.next_page_number }}{% if search %}&q={{ search }}{% endif %}{% if request.GET.active %}&active={{ request.GET.active }}{% endif %}">Next</a>
+  {% endif %}
+</nav>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,318 @@
+{% extends "portal/base.html" %}
+{% block title %}Debug Information | PMG Portal{% endblock %}
+
+{% block content %}
+  <h1>Debug Information</h1>
+  
+  <div class="panel">
+    <h2>System Information</h2>
+    <div style="margin-top: 16px;">
+      <div style="margin-bottom: 12px;">
+        <strong>Python Version:</strong> {{ debug_data.system.python_version|default:"Unknown" }}
+      </div>
+      <div style="margin-bottom: 12px;">
+        <strong>Django Debug Mode:</strong> {{ debug_data.system.debug|default:"Unknown" }}
+      </div>
+      <div style="margin-bottom: 12px;">
+        <strong>Base Directory:</strong> {{ debug_data.system.base_dir|default:"Unknown" }}
+      </div>
+      {% if debug_data.system.pid %}
+      <div style="margin-bottom: 12px;">
+        <strong>Process ID:</strong> {{ debug_data.system.pid }}
+      </div>
+      {% endif %}
+      {% if debug_data.system.cwd %}
+      <div style="margin-bottom: 12px;">
+        <strong>Working Directory:</strong> {{ debug_data.system.cwd }}
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Database Information</h2>
+    <div style="margin-top: 16px;">
+      <div style="margin-bottom: 12px;">
+        <strong>PostgreSQL Version:</strong> {{ debug_data.database.postgres_version|default:"Unknown" }}
+      </div>
+      <div style="margin-bottom: 12px;">
+        <strong>Database Name:</strong> {{ debug_data.database.database_name|default:"Unknown" }}
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>File Information</h2>
+    <div style="margin-top: 16px;">
+      <div style="margin-bottom: 12px;">
+        <strong>VERSION File:</strong> {{ debug_data.files.version_file|default:"Not found" }}
+      </div>
+      {% if debug_data.files.version_content %}
+      <div style="margin-bottom: 12px;">
+        <strong>Version:</strong> {{ debug_data.files.version_content }}
+      </div>
+      {% endif %}
+      <div style="margin-bottom: 12px;">
+        <strong>CHANGELOG.md File:</strong> {{ debug_data.files.changelog_file|default:"Not found" }}
+      </div>
+      {% if debug_data.files.changelog_size %}
+      <div style="margin-bottom: 12px;">
+        <strong>CHANGELOG.md Size:</strong> {{ debug_data.files.changelog_size }} bytes
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Django Configuration</h2>
+    <div style="margin-top: 16px;">
+      <div style="margin-bottom: 12px;">
+        <strong>Context Processors:</strong>
+        <ul style="margin-top: 8px; padding-left: 20px;">
+          {% for cp in debug_data.django.context_processors %}
+          <li>{{ cp }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% if debug_data.logging %}
+      <div style="margin-bottom: 12px;">
+        <strong>Logging Level:</strong> {{ debug_data.logging.level }}
+      </div>
+      <div style="margin-bottom: 12px;">
+        <strong>Log Handlers:</strong> {{ debug_data.logging.handlers|join:", " }}
+      </div>
+      {% if debug_data.logging.loggers %}
+      <details style="margin-top: 12px;">
+        <summary style="cursor: pointer; color: var(--accent);">Show Loggers ({{ debug_data.logging.loggers|length }})</summary>
+        <ul style="margin-top: 8px; padding-left: 20px;">
+          {% for logger_name in debug_data.logging.loggers %}
+          <li style="font-size: 12px;">{{ logger_name }}</li>
+          {% endfor %}
+        </ul>
+      </details>
+      {% endif %}
+      {% endif %}
+
+      {% if debug_data.django.installed_apps %}
+      <details style="margin-top: 12px;">
+        <summary style="cursor: pointer; color: var(--accent);">Installed Apps ({{ debug_data.django.installed_apps|length }})</summary>
+        <ul style="margin-top: 8px; padding-left: 20px;">
+          {% for app in debug_data.django.installed_apps %}
+          <li style="font-size: 12px;">{{ app }}</li>
+          {% endfor %}
+        </ul>
+      </details>
+      {% endif %}
+
+      {% if debug_data.django.middleware %}
+      <details style="margin-top: 12px;">
+        <summary style="cursor: pointer; color: var(--accent);">Middleware ({{ debug_data.django.middleware|length }})</summary>
+        <ul style="margin-top: 8px; padding-left: 20px;">
+          {% for mw in debug_data.django.middleware %}
+          <li style="font-size: 12px;">{{ mw }}</li>
+          {% endfor %}
+        </ul>
+      </details>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if debug_data.request_logs %}
+  <div class="panel">
+    <h2>Recent Requests (Last {{ debug_data.request_logs|length }})</h2>
+    <div style="margin-top: 16px; max-height: 600px; overflow-y: auto;">
+      <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+          <tr style="border-bottom: 1px solid var(--line);">
+            <th style="text-align: left; padding: 8px;">Time</th>
+            <th style="text-align: left; padding: 8px;">Method</th>
+            <th style="text-align: left; padding: 8px;">Path</th>
+            <th style="text-align: left; padding: 8px;">View</th>
+            <th style="text-align: left; padding: 8px;">Template</th>
+            <th style="text-align: left; padding: 8px;">Status</th>
+            <th style="text-align: left; padding: 8px;">User</th>
+            <th style="text-align: right; padding: 8px;">Time (ms)</th>
+            <th style="text-align: right; padding: 8px;">DB (count / ms)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for log in debug_data.request_logs reversed %}
+          <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+            <td style="padding: 8px; font-size: 12px; color: var(--text-tertiary);">
+              {{ log.timestamp|date:"H:i:s" }}
+            </td>
+            <td style="padding: 8px;">
+              <span style="padding: 2px 6px; background: {% if log.method == 'GET' %}rgba(59, 130, 246, 0.2){% elif log.method == 'POST' %}rgba(16, 185, 129, 0.2){% else %}rgba(255,255,255,0.1){% endif %}; border-radius: 4px; font-size: 11px;">
+                {{ log.method }}
+              </span>
+            </td>
+            <td style="padding: 8px; font-family: monospace; font-size: 12px;">
+              {{ log.path }}{% if log.query_string %}?{{ log.query_string }}{% endif %}
+            </td>
+            <td style="padding: 8px; font-size: 12px;">
+              {% if log.view %}
+                {{ log.view.view_name|default:log.view.view_func }}
+              {% else %}
+                -
+              {% endif %}
+            </td>
+            <td style="padding: 8px; font-size: 12px;">
+              {% if log.template_rendered %}
+                {{ log.template_rendered|join:", " }}
+              {% else %}
+                -
+              {% endif %}
+            </td>
+            <td style="padding: 8px;">
+              <span style="padding: 2px 6px; background: {% if log.status_code == 200 %}rgba(16, 185, 129, 0.2){% elif log.status_code >= 400 %}rgba(239, 68, 68, 0.2){% else %}rgba(255,255,255,0.1){% endif %}; border-radius: 4px; font-size: 11px;">
+                {{ log.status_code|default:log.status }}
+              </span>
+            </td>
+            <td style="padding: 8px; font-size: 12px;">{{ log.user }}</td>
+            <td style="padding: 8px; text-align: right; font-size: 12px;">{{ log.processing_time|default:"-" }}</td>
+            <td style="padding: 8px; text-align: right; font-size: 12px;">
+              {{ log.db_queries_count|default:0 }} / {{ log.db_time_ms|default:"-" }}
+            </td>
+          </tr>
+          {% if log.exception %}
+          <tr>
+            <td colspan="8" style="padding: 8px; background: rgba(239, 68, 68, 0.1); color: #ef4444; font-size: 11px;">
+              <strong>Exception:</strong> {{ log.exception_type }}: {{ log.exception }}
+            </td>
+          </tr>
+          {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %}
+
+  {% if debug_data.database.queries %}
+  <div class="panel">
+    <h2>Recent Database Queries (Last {{ debug_data.database.queries|length }})</h2>
+    <div style="margin-top: 16px; max-height: 400px; overflow-y: auto;">
+      <details style="margin-bottom: 8px;">
+        <summary style="cursor: pointer; color: var(--accent);">Show All Queries ({{ debug_data.database.total_queries }} total)</summary>
+        <div style="margin-top: 8px;">
+          {% for query in debug_data.database.queries %}
+          <div style="margin-bottom: 12px; padding: 8px; background: rgba(255,255,255,0.03); border-radius: 4px; font-family: monospace; font-size: 11px;">
+            <div style="color: var(--text-secondary); margin-bottom: 4px;">{{ query.time }}ms</div>
+            <div style="color: var(--text-primary);">{{ query.sql|truncatewords:50 }}</div>
+          </div>
+          {% endfor %}
+        </div>
+      </details>
+    </div>
+  </div>
+  {% endif %}
+
+  {% if debug_data.error %}
+  <div class="panel" style="border-color: #ef4444;">
+    <h2 style="color: #ef4444;">Error</h2>
+    <div style="margin-top: 16px;">
+      <pre style="background: rgba(239, 68, 68, 0.1); padding: 12px; border-radius: 8px; overflow-x: auto;">{{ debug_data.error }}</pre>
+      {% if debug_data.traceback %}
+      <details style="margin-top: 12px;">
+        <summary style="cursor: pointer; color: #ef4444;">Show Traceback</summary>
+        <pre style="background: rgba(239, 68, 68, 0.1); padding: 12px; border-radius: 8px; overflow-x: auto; margin-top: 8px;">{{ debug_data.traceback }}</pre>
+      </details>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="panel">
+    <h2>Frontend Logs</h2>
+    <div style="margin-top: 16px;">
+      <p style="color: var(--text-secondary); margin-bottom: 12px;">
+        Frontend logs are collected via JavaScript. Open browser console and run: <code style="background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px;">window.getPmgDebugLogs()</code>
+      </p>
+      <button onclick="showFrontendLogs()" class="form-btn form-btn-secondary">Show Frontend Logs</button>
+      <div id="frontend-logs-container" style="margin-top: 16px; display: none;">
+        <pre id="frontend-logs-content" style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px; overflow-x: auto; max-height: 400px; overflow-y: auto; font-size: 11px;"></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Export</h2>
+    <div style="margin-top: 16px; display: flex; gap: 12px; align-items: center;">
+      <a href="?format=json" class="form-btn form-btn-primary" target="_blank" style="text-decoration: none; display: inline-block;">Export as JSON</a>
+      <button onclick="copyDebugToClipboard(event)" class="form-btn form-btn-secondary" type="button">Copy to Clipboard</button>
+    </div>
+  </div>
+
+  <script>
+    function showFrontendLogs() {
+      const container = document.getElementById('frontend-logs-container');
+      const content = document.getElementById('frontend-logs-content');
+      
+      if (window.getPmgDebugLogs) {
+        const logs = window.getPmgDebugLogs();
+        if (logs.length > 0) {
+          content.textContent = JSON.stringify(logs, null, 2);
+          container.style.display = 'block';
+        } else {
+          content.textContent = 'No frontend logs available yet. Interact with the page to generate logs.';
+          container.style.display = 'block';
+        }
+      } else {
+        content.textContent = 'Frontend logging not initialized. Refresh the page.';
+        container.style.display = 'block';
+      }
+    }
+    
+    async function copyDebugToClipboard(event) {
+      const btn = event ? event.target : document.querySelector('button[onclick*="copyDebugToClipboard"]');
+      
+      try {
+        // Fetch JSON data
+        const response = await fetch('?format=json');
+        if (!response.ok) {
+          throw new Error('Failed to fetch JSON data');
+        }
+        const data = await response.json();
+        const jsonString = JSON.stringify(data, null, 2);
+        
+        // Copy to clipboard - try modern API first, fallback to old method
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(jsonString);
+        } else {
+          // Fallback for older browsers
+          const textArea = document.createElement('textarea');
+          textArea.value = jsonString;
+          textArea.style.position = 'fixed';
+          textArea.style.left = '-999999px';
+          textArea.style.top = '-999999px';
+          document.body.appendChild(textArea);
+          textArea.focus();
+          textArea.select();
+          try {
+            document.execCommand('copy');
+          } catch (e) {
+            throw new Error('Clipboard API not available');
+          }
+          document.body.removeChild(textArea);
+        }
+        
+        // Show success feedback
+        if (btn) {
+          const originalText = btn.textContent;
+          btn.textContent = 'Copied!';
+          btn.style.background = 'var(--success)';
+          btn.style.color = 'white';
+          
+          setTimeout(() => {
+            btn.textContent = originalText;
+            btn.style.background = '';
+            btn.style.color = '';
+          }, 2000);
+        }
+      } catch (err) {
+        console.error('Failed to copy:', err);
+        alert('Failed to copy to clipboard: ' + err.message + '. Please use Export as JSON instead.');
+      }
+    }
+  </script>
+{% endblock %}

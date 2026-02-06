@@ -1,0 +1,27 @@
+{% extends "admin_app/base.html" %}
+
+{% block admin_title %}{% if link %}Edit portal link{% else %}Add portal link{% endif %}{% endblock %}
+{% block breadcrumb_extra %}
+<span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_portal_link_list' %}">Portal links</a>
+<span class="breadcrumb-sep">→</span> <span>{% if link %}Edit{% else %}Add{% endif %}</span>
+{% endblock %}
+
+{% block admin_content %}
+<h1 class="admin-page-title">{% if link %}Edit portal link{% else %}Add portal link{% endif %}</h1>
+
+<form method="post" action="" class="admin-form">
+  {% csrf_token %}
+  {% for field in form %}
+  <div class="admin-form-field">
+    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+    {{ field }}
+    {% if field.help_text %}<p class="admin-form-help">{{ field.help_text }}</p>{% endif %}
+    {% if field.errors %}<p class="form-error">{{ field.errors.0 }}</p>{% endif %}
+  </div>
+  {% endfor %}
+  <div class="admin-form-actions">
+    <button type="submit" class="form-btn form-btn-primary">Save</button>
+    <a href="{% url 'admin_app:admin_portal_link_list' %}" class="form-btn form-btn-secondary">Cancel</a>
+  </div>
+</form>
+{% endblock %}

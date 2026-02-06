@@ -1,0 +1,33 @@
+{% extends "portal/base.html" %}
+{% load i18n %}
+{% block title %}{{ customer.name }} | {% trans "PMG Portal" %}{% endblock %}
+
+{% block content %}
+  <div class="customer-header">
+    {% if customer.logo_url %}
+    <img src="{{ customer.logo_url }}" alt="{{ customer.name }} logo" class="customer-logo" onerror="this.style.display='none';" />
+    {% endif %}
+    <div class="customer-header-text">
+      <h1 class="customer-title">{{ customer.name }}</h1>
+      <p class="muted">{% trans "This is your customer portal. Content will expand over time." %}</p>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>{% trans "Quick links" %}</h2>
+
+    {% if links %}
+      <ul class="list">
+        {% for item in links %}
+          <li class="list-item">
+            <div class="list-title"><a href="{{ item.url }}" target="_blank" rel="noreferrer">{{ item.title }}</a></div>
+            {% if item.description %}<div class="muted">{{ item.description }}</div>{% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="muted">{% trans "No links yet. An admin can add links for this customer in the admin panel." %}</p>
+    {% endif %}
+  </div>
+
+{% endblock %}

@@ -1,0 +1,10 @@
+{% extends "portal/base.html" %}
+{% load i18n %}
+{% block title %}{% trans "No customer access" %} | {% trans "PMG Portal" %}{% endblock %}
+
+{% block content %}
+  <h1>{% trans "No customer access" %}</h1>
+  <p class="muted">
+    {% trans "Your account is active, but you are not assigned to any customer yet. Please contact an admin." %}
+  </p>
+{% endblock %}
