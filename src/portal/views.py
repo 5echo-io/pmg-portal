@@ -46,16 +46,27 @@ def portal_home(request):
                     r["HX-Trigger"] = '{"setTitle": {"title": "No customer access | PMG Portal"}}'
                     return r
                 return render(request, "portal/no_customer.html")
-            # Resolve active from session or first
+            # Resolve active from session (don't auto-select first)
             active_customer_id = request.session.get("active_customer_id")
             active_customer = None
-            for c in customers:
-                if c.id == active_customer_id:
-                    active_customer = c
-                    break
+            if active_customer_id:
+                for c in customers:
+                    if c.id == active_customer_id:
+                        active_customer = c
+                        break
+            
+            # If no active customer, show selection page
             if not active_customer:
-                active_customer = customers[0]
-                request.session["active_customer_id"] = active_customer.id
+                ctx = {
+                    "customers": customers,
+                    "is_superuser": True,
+                }
+                if is_htmx:
+                    r = render(request, "portal/fragments/customer_selection_content.html", ctx)
+                    r["HX-Trigger"] = '{"setTitle": {"title": "Select Customer | PMG Portal"}}'
+                    return r
+                return render(request, "portal/customer_selection.html", ctx)
+            
             customer = active_customer
             links = list(customer.links.all())
             ctx = _portal_home_context(request, customer, links, memberships=[SimpleNamespace(customer=c) for c in customers])
@@ -76,13 +87,26 @@ def portal_home(request):
 
             active_customer_id = request.session.get("active_customer_id")
             active = None
-            for m in memberships_list:
-                if m.customer_id == active_customer_id:
-                    active = m
-                    break
+            if active_customer_id:
+                for m in memberships_list:
+                    if m.customer_id == active_customer_id:
+                        active = m
+                        break
+            
+            # If no active customer, show selection page
             if not active:
-                active = memberships_list[0]
-                request.session["active_customer_id"] = active.customer_id
+                customers = [m.customer for m in memberships_list]
+                ctx = {
+                    "customers": customers,
+                    "memberships": memberships_list,
+                    "is_superuser": False,
+                }
+                if is_htmx:
+                    r = render(request, "portal/fragments/customer_selection_content.html", ctx)
+                    r["HX-Trigger"] = '{"setTitle": {"title": "Select Customer | PMG Portal"}}'
+                    return r
+                return render(request, "portal/customer_selection.html", ctx)
+            
             customer = active.customer
             links = list(customer.links.all())
             ctx = _portal_home_context(request, customer, links, active.role, memberships_list)
