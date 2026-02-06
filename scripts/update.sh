@@ -145,10 +145,22 @@ MIGRATE_OUTPUT=$(sudo -E "$SRC_DIR/.venv/bin/python" manage.py migrate --noinput
         
         if [ -n "$FAILED_MIGRATION" ]; then
             echo "Detected failed migration: $FAILED_MIGRATION"
-            echo "Marking migration $FAILED_MIGRATION as fake..."
-            sudo -E "$SRC_DIR/.venv/bin/python" manage.py migrate --fake "$FAILED_MIGRATION" || {
-                echo "Warning: Failed to fake migration $FAILED_MIGRATION, trying to continue..."
-            }
+            # Extract app label and migration name (format: app.0004_name)
+            # Django's migrate --fake expects: migrate --fake <app_label> <migration_name>
+            if echo "$FAILED_MIGRATION" | grep -qE "^[a-zA-Z_]+\.[0-9]"; then
+                APP_LABEL=$(echo "$FAILED_MIGRATION" | cut -d'.' -f1)
+                MIGRATION_NAME=$(echo "$FAILED_MIGRATION" | cut -d'.' -f2-)
+                echo "Marking migration $APP_LABEL.$MIGRATION_NAME as fake..."
+                sudo -E "$SRC_DIR/.venv/bin/python" manage.py migrate --fake "$APP_LABEL" "$MIGRATION_NAME" || {
+                    echo "Warning: Failed to fake migration $FAILED_MIGRATION, trying to continue..."
+                }
+            else
+                # If format doesn't match expected pattern, try as-is
+                echo "Marking migration $FAILED_MIGRATION as fake..."
+                sudo -E "$SRC_DIR/.venv/bin/python" manage.py migrate --fake "$FAILED_MIGRATION" || {
+                    echo "Warning: Failed to fake migration $FAILED_MIGRATION, trying to continue..."
+                }
+            fi
             # Try migrate again after faking
             echo "Retrying migrations..."
             sudo -E "$SRC_DIR/.venv/bin/python" manage.py migrate --noinput || {

@@ -2,6 +2,16 @@
 
 - 2026-02-06 (Europe/Oslo)
   - Branch: dev
+  - Version: 3.0.3-alpha.1
+  - Summary:
+    - Migration fake command: fixed Django migrate --fake syntax to use separate app label and migration name arguments
+    - Split migration identifier (e.g., "portal.0004_facility") into APP_LABEL and MIGRATION_NAME for correct Django command format
+    - Added fallback to old format if migration identifier doesn't match expected pattern
+    - Improved migration faking reliability by using correct Django command syntax: migrate --fake <app_label> <migration_name>
+    - Version bump: PATCH increment from 3.0.2-alpha.1 to 3.0.3-alpha.1 (bugfix/stability improvement)
+
+- 2026-02-06 (Europe/Oslo)
+  - Branch: dev
   - Version: 3.0.2-alpha.1
   - Summary:
     - Migration handling: improved migration error handling in update.sh script

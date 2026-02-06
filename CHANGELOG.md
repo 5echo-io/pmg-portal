@@ -42,6 +42,7 @@ Pre-release builds (alpha, beta, rc) are listed here. Only full releases (no bui
 - **Context Processor**: Added missing Facility model import to fix 500 error when accessing Facility features
 - **Template Sync**: Fixed install.sh to ensure Facility template files are properly copied to server
 - **Migration Handling**: Improved migration error handling in update.sh with better migration name detection using multiple patterns and fallback to Django showmigrations command
+- **Migration Fake Command**: Fixed Django migrate --fake command syntax to use separate app label and migration name arguments instead of combined format
 
 ## [3.0.0-alpha.1] - 2026-02-06
 
