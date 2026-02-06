@@ -228,3 +228,6 @@ msgstr "Service desk"
 
 msgid "Projects"
 msgstr "Prosjekter"
+
+msgid "Files"
+msgstr "Filer"

@@ -75,10 +75,21 @@ body {
 .card {
   width: 100%;
   max-width: 420px;
+  min-height: 400px;
   background: var(--card);
   border: 1px solid var(--line);
   border-radius: 14px;
   padding: 22px;
+  transition: min-height 0.4s ease, opacity 0.3s ease;
+  overflow: hidden;
+}
+
+.card.fade-out {
+  opacity: 0;
+}
+
+.card.fade-in {
+  opacity: 1;
 }
 
 h1 { margin: 0 0 6px 0; font-size: 22px; }

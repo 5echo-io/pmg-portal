@@ -30,7 +30,7 @@
     </form>
 
     <div class="row row--centered">
-      <a href="/account/register/" class="auth-link">{% trans "Create account" %}</a>
+      <a href="/account/register/" class="auth-link" id="register-link">{% trans "Create account" %}</a>
     </div>
   </div>
   <div class="login-page-footer">
@@ -112,6 +112,23 @@
           trigger.setAttribute('aria-expanded', 'false');
         }
       });
+    })();
+    (function() {
+      var registerLink = document.getElementById('register-link');
+      var card = document.getElementById('login-card');
+      if (registerLink && card) {
+        registerLink.addEventListener('click', function(e) {
+          e.preventDefault();
+          card.classList.add('fade-out');
+          setTimeout(function() {
+            window.location.href = registerLink.href;
+          }, 300);
+        });
+      }
+      // Set initial height
+      if (card) {
+        card.style.minHeight = '400px';
+      }
     })();
   </script>
 </body>

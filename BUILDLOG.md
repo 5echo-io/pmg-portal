@@ -1,5 +1,17 @@
 # BUILDLOG
 
+- 2026-02-06 (Europe/Oslo)
+  - Branch: dev
+  - Version: 1.17.47-beta.22
+  - Summary:
+    - Files button: added to topbar navigation after Facility with "under development" tooltip
+    - Login/register card: fixed min-height (400px login, 500px register) to prevent resizing when filling forms
+    - Register page: added footer with version and language selector (matches login page layout)
+    - Login/register transitions: fade out animation (300ms) when clicking links; register page expands height and fades in on load
+    - django.po: added "Files" / "Filer" translation
+    - Fixed: LANGUAGE_SESSION_KEY error (using 'django_language' string directly)
+    - Fixed: LanguagePreferenceMiddleware moved after AuthenticationMiddleware
+
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev
   - Version: 1.17.46-beta.21

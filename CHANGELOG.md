@@ -11,7 +11,9 @@ Added:
 - Service desk button in topbar (right side, before avatar) with icon; shows "under development" tooltip on hover
 - Custom tooltip component for Facility and Service desk buttons (styled to match site design, appears on hover)
 - Projects button in topbar navigation (between Dashboard and Facility); shows "under development" tooltip on hover
+- Files button in topbar navigation (after Facility); shows "under development" tooltip on hover
 - Language preference synchronization: user's language choice persists across login page and main site; preferred language stored in session and applied automatically on login
+- Animated transitions between login and register pages (fade out/in, card height expansion)
 - About modal: accessible from avatar menu (all users); shows app version, 5echo.io info, developer credits (Head developer: Kevin Jung Park)
 - About modal: update check for admins (compares current version with GitHub main branch); update notification badge in avatar menu when update available
 - Norwegian (Norsk) as second language: full i18n with Django LOCALE_PATHS, locale/nb, and set_language switcher
