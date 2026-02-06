@@ -37,6 +37,8 @@ Pre-release builds (alpha, beta, rc) are listed here. Only full releases (no bui
 - **Context Processor**: Simplified to directly return `user_facilities` without dev feature checks
 - **Templates**: Removed conditional dev feature checks - Facility button shows when customer profile is selected
 - **Install Script**: Updated rsync to use `--delete` flag to ensure all template files are properly synced
+- **Facility Templates**: Facility templates are now production-ready and kept in main branch (no longer removed during main branch cleanup)
+- **HTMX Navigation**: Added HTMX support to Facility list and detail views for seamless navigation without full page reloads
 
 ### Fixed
 - **Context Processor**: Added missing Facility model import to fix 500 error when accessing Facility features

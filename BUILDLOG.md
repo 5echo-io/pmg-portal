@@ -2,6 +2,18 @@
 
 - 2026-02-06 (Europe/Oslo)
   - Branch: dev
+  - Version: 3.1.0-alpha.1
+  - Summary:
+    - HTMX support: added HTMX navigation to Facility list and detail views for seamless page transitions
+    - Facility views: detect HX-Request header and return fragment templates for HTMX requests
+    - Facility link: added HTMX attributes (hx-get, hx-target, hx-swap, hx-push-url) to Facility button in topbar
+    - Title updates: Facility views set HX-Trigger header to update page title dynamically
+    - Production readiness: Facility templates now kept in main branch (no longer removed during cleanup)
+    - Install/update scripts: updated to keep Facility templates in production (commented out removal logic)
+    - Version bump: MINOR increment from 3.0.3-alpha.1 to 3.1.0-alpha.1 (new features/UI improvements)
+
+- 2026-02-06 (Europe/Oslo)
+  - Branch: dev
   - Version: 3.0.3-alpha.1
   - Summary:
     - Migration fake command: fixed Django migrate --fake syntax to use separate app label and migration name arguments

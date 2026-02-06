@@ -264,14 +264,18 @@ def facility_list(request):
     # Get facilities for this customer
     facilities = Facility.objects.filter(customers=customer, is_active=True).order_by("name")
     
-    return render(
-        request,
-        "portal/facility_list.html",
-        {
-            "facilities": facilities,
-            "customer": customer,
-        },
-    )
+    is_htmx = request.headers.get("HX-Request") == "true"
+    context = {
+        "facilities": facilities,
+        "customer": customer,
+    }
+    
+    if is_htmx:
+        r = render(request, "portal/fragments/facility_list_content.html", context)
+        r["HX-Trigger"] = '{"setTitle": {"title": "Facilities | PMG Portal"}}'
+        return r
+    
+    return render(request, "portal/facility_list.html", context)
 
 
 @login_required
@@ -308,16 +312,20 @@ def facility_detail(request, pk):
         "documents_count": documents.count(),
     }
     
-    return render(
-        request,
-        "portal/facility_detail.html",
-        {
-            "facility": facility,
-            "customer": customer,
-            "racks": racks,
-            "network_devices": network_devices,
-            "ip_addresses": ip_addresses,
-            "documents": documents,
-            "stats": stats,
-        },
-    )
+    is_htmx = request.headers.get("HX-Request") == "true"
+    context = {
+        "facility": facility,
+        "customer": customer,
+        "racks": racks,
+        "network_devices": network_devices,
+        "ip_addresses": ip_addresses,
+        "documents": documents,
+        "stats": stats,
+    }
+    
+    if is_htmx:
+        r = render(request, "portal/fragments/facility_detail_content.html", context)
+        r["HX-Trigger"] = '{"setTitle": {"title": "' + (facility.name + " | PMG Portal").replace('"', '\\"') + '"}}'
+        return r
+    
+    return render(request, "portal/facility_detail.html", context)

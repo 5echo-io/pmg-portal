@@ -84,14 +84,17 @@ cleanup_branch_files() {
     if [ "$install_branch" = "main" ]; then
         echo "  Removing dev-specific files for main branch..."
         
-        # Remove Facility templates (dev feature)
-        sudo rm -f "$src_dir/portal/templates/portal/facility_list.html" 2>/dev/null || true
-        sudo rm -f "$src_dir/portal/templates/portal/facility_detail.html" 2>/dev/null || true
-        sudo rm -f "$src_dir/portal/templates/portal/fragments/facility_list_content.html" 2>/dev/null || true
-        sudo rm -f "$src_dir/portal/templates/portal/fragments/facility_detail_content.html" 2>/dev/null || true
-        sudo rm -f "$src_dir/admin_app/templates/admin_app/facility_list.html" 2>/dev/null || true
-        sudo rm -f "$src_dir/admin_app/templates/admin_app/facility_form.html" 2>/dev/null || true
-        sudo rm -f "$src_dir/admin_app/templates/admin_app/facility_card.html" 2>/dev/null || true
+        # Note: Facility templates are now production-ready and kept for both HTMX and regular requests
+        # Portal facility templates are kept:
+        # - portal/templates/portal/facility_list.html
+        # - portal/templates/portal/facility_detail.html
+        # - portal/templates/portal/fragments/facility_list_content.html
+        # - portal/templates/portal/fragments/facility_detail_content.html
+        
+        # Remove admin_app Facility templates (admin-only, can be removed if not needed)
+        # sudo rm -f "$src_dir/admin_app/templates/admin_app/facility_list.html" 2>/dev/null || true
+        # sudo rm -f "$src_dir/admin_app/templates/admin_app/facility_form.html" 2>/dev/null || true
+        # sudo rm -f "$src_dir/admin_app/templates/admin_app/facility_card.html" 2>/dev/null || true
         
         # Remove dev feature decorators
         sudo rm -f "$src_dir/portal/decorators.py" 2>/dev/null || true
