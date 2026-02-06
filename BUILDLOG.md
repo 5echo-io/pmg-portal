@@ -2,6 +2,17 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev
+  - Version: 1.17.46-beta.21
+  - Summary:
+    - Login page footer: moved version and language selector to right side together
+    - Customer dropdown menu: active customer shown as disabled div (non-clickable) with checkmark; only other customers selectable
+    - Login page language dropdown: uses other_languages context (excludes current language) to match avatar menu behavior
+    - Language preference sync: custom set_language_custom view saves preference to session; LanguagePreferenceMiddleware applies it; login_view restores preferred language on login
+    - Projects button: added to topbar navigation between Dashboard and Facility with "under development" tooltip
+    - django.po: added "Projects" / "Prosjekter" translation
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev
   - Version: 1.17.45-beta.20
   - Summary:
     - Footer "View Changelog": added document icon to match "About this portal" styling

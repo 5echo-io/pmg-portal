@@ -16,6 +16,10 @@
       <div class="topbar-nav">
         <a class="topbar-btn {% if request.path == '/' %}active{% endif %}" href="/" hx-get="/" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="true">{% trans "Dashboard" %}</a>
         <span class="topbar-btn topbar-btn--disabled topbar-btn--with-tooltip">
+          {% trans "Projects" %}
+          <span class="tooltip">{% trans "This feature is under development" %}</span>
+        </span>
+        <span class="topbar-btn topbar-btn--disabled topbar-btn--with-tooltip">
           {% trans "Facility" %}
           <span class="tooltip">{% trans "This feature is under development" %}</span>
         </span>
@@ -36,12 +40,16 @@
           {% endif %}
           <div class="customer-menu-list">
             {% for membership in user_customers %}
-            <button type="button" class="customer-menu-item {% if membership.customer.id == active_customer_id %}customer-menu-item--active{% endif %}" data-customer-id="{{ membership.customer.id }}" data-customer-name="{{ membership.customer.name|escape }}" onclick="selectCustomer(this.dataset.customerId)">
+            {% if membership.customer.id != active_customer_id %}
+            <button type="button" class="customer-menu-item" data-customer-id="{{ membership.customer.id }}" data-customer-name="{{ membership.customer.name|escape }}" onclick="selectCustomer(this.dataset.customerId)">
               <span class="customer-menu-item-text">{{ membership.customer.name }}</span>
-              {% if membership.customer.id == active_customer_id %}
-              <svg class="customer-menu-item-check" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
-              {% endif %}
             </button>
+            {% else %}
+            <div class="customer-menu-item customer-menu-item--active customer-menu-item--disabled">
+              <span class="customer-menu-item-text">{{ membership.customer.name }}</span>
+              <svg class="customer-menu-item-check" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+            {% endif %}
             {% endfor %}
           </div>
         </div>
@@ -91,7 +99,7 @@
           </div>
           <div class="user-menu-submenu" id="user-menu-lang-submenu">
             {% for lang in other_languages %}
-            <form method="post" action="{% url 'set_language' %}" class="user-menu-lang-form">
+            <form method="post" action="{% url 'set_language_custom' %}" class="user-menu-lang-form">
               {% csrf_token %}
               <input type="hidden" name="language" value="{{ lang.code }}">
               <input type="hidden" name="next" value="{{ request.get_full_path }}">

@@ -1,3 +1,11 @@
+"""
+Copyright (c) 2026 5echo.io
+Project: PMG Portal
+Purpose: Portal views
+Path: src/portal/views.py
+Created: 2026-02-05
+Last Modified: 2026-02-05
+"""
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Prefetch
@@ -7,6 +15,7 @@ from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 from django.core.cache import cache
 from django.conf import settings
+from django.utils import translation
 from pathlib import Path
 import re
 import urllib.request
@@ -183,3 +192,21 @@ def check_updates(request):
         "latest_version": latest_version,
         "current_version": current_version,
     })
+
+
+@require_POST
+def set_language_custom(request):
+    """Custom set_language view that saves user preference."""
+    from django.views.i18n import set_language as django_set_language
+    
+    # Call Django's set_language view first
+    response = django_set_language(request)
+    
+    # If user is authenticated, save language preference to session
+    if request.user.is_authenticated:
+        language = request.POST.get('language', '')
+        if language in dict(settings.LANGUAGES):
+            # Store in session for persistence
+            request.session['user_preferred_language'] = language
+    
+    return response

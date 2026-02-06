@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.contrib.auth import login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
+from django.utils import translation
 
 from .forms import LoginForm, RegisterForm, CustomPasswordChangeForm, AccountEditForm
 
@@ -16,7 +17,21 @@ def login_view(request):
 
     form = LoginForm(request, data=request.POST or None)
     if request.method == "POST" and form.is_valid():
-        login(request, form.get_user())
+        user = form.get_user()
+        login(request, user)
+        
+        # Set user's preferred language from session if available
+        preferred_lang = request.session.get('user_preferred_language')
+        if preferred_lang and preferred_lang in dict(settings.LANGUAGES):
+            translation.activate(preferred_lang)
+            request.session[translation.LANGUAGE_SESSION_KEY] = preferred_lang
+        else:
+            # If no preferred language, check if there's a language in session from login page
+            current_lang = request.session.get(translation.LANGUAGE_SESSION_KEY)
+            if current_lang and current_lang in dict(settings.LANGUAGES):
+                # Save it as preferred for future logins
+                request.session['user_preferred_language'] = current_lang
+        
         return redirect("/")
 
     return render(request, "accounts/login.html", {"form": form})

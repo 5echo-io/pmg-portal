@@ -225,3 +225,6 @@ msgstr "Kunne ikke sjekke etter oppdateringer. Prøv igjen senere."
 
 msgid "Service desk"
 msgstr "Service desk"
+
+msgid "Projects"
+msgstr "Prosjekter"
