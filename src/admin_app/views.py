@@ -229,8 +229,44 @@ def customer_logo_upload(request, pk):
     
     # Save the logo
     logger.info(f"About to save logo file: {logo_file.name}, size: {logo_file.size}")
-    customer.logo = logo_file
-    customer.save()
+    
+    # Explicitly save the file to storage before assigning to model
+    # This ensures the file is actually written to disk
+    from django.core.files.storage import default_storage
+    from django.core.files.base import ContentFile
+    
+    # Read file content
+    logo_file.seek(0)  # Reset file pointer
+    file_content = logo_file.read()
+    logo_file.seek(0)  # Reset again for Django
+    
+    # Generate filename
+    import uuid
+    file_ext = os.path.splitext(logo_file.name)[1]
+    unique_filename = f"{os.path.splitext(logo_file.name)[0]}_{uuid.uuid4().hex[:8]}{file_ext}"
+    storage_path = f"customer_logos/{unique_filename}"
+    
+    # Save file to storage
+    try:
+        saved_name = default_storage.save(storage_path, ContentFile(file_content))
+        logger.info(f"File saved to storage: {saved_name}")
+        
+        # Now assign to model
+        customer.logo = saved_name
+        customer.save()
+        
+        # Verify the file exists
+        if default_storage.exists(saved_name):
+            logger.info(f"Verified file exists in storage: {saved_name}")
+        else:
+            logger.error(f"File does not exist in storage after save: {saved_name}")
+    except Exception as e:
+        logger.error(f"Error saving file to storage: {e}")
+        import traceback
+        logger.error(traceback.format_exc())
+        # Fallback to original method
+        customer.logo = logo_file
+        customer.save()
     
     # Refresh from database to get updated logo info
     customer.refresh_from_db()
