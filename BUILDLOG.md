@@ -2,6 +2,30 @@
 
 - 2026-02-06 (Europe/Oslo)
   - Branch: dev
+  - Version: 1.17.50-beta.25
+  - Summary:
+    - Customer logo display: fixed layout with logo on left (120x120px), customer name and description text on right
+    - Media files: updated nginx config to serve /media/ files; Django serves media files as fallback
+    - CSS: improved customer-header layout with flexbox for better alignment
+
+- 2026-02-06 (Europe/Oslo)
+  - Branch: dev
+  - Version: 1.17.49-beta.24
+  - Summary:
+    - Customer logo: added ImageField to Customer model with upload_to="customer_logos/"
+    - Customer form: added logo upload field with preview of current logo (if exists)
+    - Media files: configured MEDIA_ROOT and MEDIA_URL in settings; added URL routing for media files in development
+    - Dashboard: logo displayed next to customer name on dashboard (customer_home.html and fragments)
+    - File cleanup: Customer.delete() override to automatically delete logo file when customer is deleted
+    - Admin views: updated customer_add and customer_edit to handle request.FILES for logo uploads
+    - CSS: added .customer-title and .customer-logo styles for logo display
+    - Migration: created 0003_customer_logo.py migration
+    - Translations: added Norwegian translation for logo help text
+    - Pillow dependency: added Pillow==10.4.0 to requirements.txt for ImageField support
+    - Install scripts: updated install.sh and update.sh to install Pillow system dependencies (libjpeg-dev, libpng-dev, zlib1g-dev)
+
+- 2026-02-06 (Europe/Oslo)
+  - Branch: dev
   - Version: 1.17.48-beta.23
   - Summary:
     - Login card: centered content horizontally and vertically using flexbox; removed fixed min-height for dynamic sizing
