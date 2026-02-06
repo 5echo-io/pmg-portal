@@ -11,7 +11,6 @@ from django.urls import include, path
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views.static import serve
-from django.contrib.staticfiles.views import serve as staticfiles_serve
 
 # Import admin config for whitelabel
 from . import admin_config  # noqa: F401
