@@ -2,6 +2,16 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev
+  - Version: 1.17.42-beta.17
+  - Summary:
+    - Service desk button: added to topbar-right (before avatar) with message icon; shows "under development" tooltip on hover
+    - Custom tooltip component: created for Facility and Service desk buttons (styled to match site design, appears on hover)
+    - About this portal: moved from avatar menu to footer (right side)
+    - Footer layout: changed from grid to flex with space-between for left/right sections
+    - django.po: added "Service desk" translation
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev
   - Version: 1.17.41-beta.16
   - Summary:
     - About modal: added "Head developer: Kevin Jung Park" in developer section

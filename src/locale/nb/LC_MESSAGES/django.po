@@ -222,3 +222,6 @@ msgstr "Du kjører den nyeste versjonen."
 
 msgid "Could not check for updates. Please try again later."
 msgstr "Kunne ikke sjekke etter oppdateringer. Prøv igjen senere."
+
+msgid "Service desk"
+msgstr "Service desk"

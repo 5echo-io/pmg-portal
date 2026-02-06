@@ -8,6 +8,8 @@ This project follows Semantic Versioning (SemVer).
 Pre-release builds (alpha, beta, rc) are listed here. Only full releases (no build suffix) get a dedicated version section below.
 
 Added:
+- Service desk button in topbar (right side, before avatar) with icon; shows "under development" tooltip on hover
+- Custom tooltip component for Facility and Service desk buttons (styled to match site design, appears on hover)
 - About modal: accessible from avatar menu (all users); shows app version, 5echo.io info, developer credits (Head developer: Kevin Jung Park)
 - About modal: update check for admins (compares current version with GitHub main branch); update notification badge in avatar menu when update available
 - Norwegian (Norsk) as second language: full i18n with Django LOCALE_PATHS, locale/nb, and set_language switcher
@@ -48,6 +50,8 @@ Changed:
 - Install wizard: first admin created with username = email; prompt "DEFAULT_ADMIN_EMAIL (login email for first admin)"
 - Admin users/roles/customers/access lists: SEARCH label above field; narrower Search button; Add button 36px height; wider search input; single-row toolbar with aligned search and Add button
 - Admin user add/edit: checkbox layout for Staff/Active/Superuser; Save and Cancel same height; narrow Save button
+- About this portal: moved from avatar menu to footer (right side)
+- Footer layout: changed from grid to flex with space-between for left/right sections
 - Admin role and customer add/edit: narrow Save button
 - Admin customer access add form: centered layout
 - RoleForm (name only) for roles add/edit to fix 500; CustomerForm primary_contact queryset in __init__ for customers add

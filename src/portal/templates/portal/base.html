@@ -15,7 +15,10 @@
       <div class="brand">{% trans "PMG Portal" %}</div>
       <div class="topbar-nav">
         <a class="topbar-btn {% if request.path == '/' %}active{% endif %}" href="/" hx-get="/" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="true">{% trans "Dashboard" %}</a>
-        <span class="topbar-btn topbar-btn--disabled" title="{% trans 'This feature is under development' %}">{% trans "Facility" %}</span>
+        <span class="topbar-btn topbar-btn--disabled topbar-btn--with-tooltip">
+          {% trans "Facility" %}
+          <span class="tooltip">{% trans "This feature is under development" %}</span>
+        </span>
       </div>
     </div>
     <div class="topbar-right">
@@ -49,6 +52,13 @@
       {% elif user_customers|length == 1 %}
       <span class="topbar-customer-name">{{ user_customers.0.customer.name }}</span>
       {% endif %}
+      <span class="topbar-btn topbar-btn--disabled topbar-btn--with-tooltip">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+        </svg>
+        {% trans "Service desk" %}
+        <span class="tooltip">{% trans "This feature is under development" %}</span>
+      </span>
       <div class="user-avatar-wrapper">
         <button class="user-avatar-btn" onclick="toggleUserMenu(event)" aria-label="User menu">
           <div class="user-avatar">
@@ -117,16 +127,6 @@
           {% trans "Debug" %}
         </a>
         {% endif %}
-        <button type="button" class="user-menu-item" onclick="openAboutModal()" id="about-menu-item">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-          </svg>
-          {% trans "About this portal" %}
-          {% if has_update_available %}
-          <span class="about-update-badge" title="{% trans 'Update available' %}">●</span>
-          {% endif %}
-        </button>
         <div class="user-menu-divider"></div>
         <a href="/account/logout/" class="user-menu-item">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

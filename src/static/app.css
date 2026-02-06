@@ -476,6 +476,66 @@ a.link:hover { color: var(--text); }
   pointer-events: auto;
 }
 
+.topbar-btn--with-tooltip {
+  position: relative;
+}
+
+.topbar-btn svg {
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  margin-right: 6px;
+}
+
+/* Custom tooltip */
+.topbar-btn--with-tooltip .tooltip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(-4px);
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 12px;
+  color: var(--text);
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
+}
+
+.topbar-btn--with-tooltip:hover .tooltip,
+.topbar-btn--with-tooltip:focus .tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+
+.topbar-btn--with-tooltip .tooltip::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: var(--card);
+}
+
+.topbar-btn--with-tooltip .tooltip::before {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 7px solid transparent;
+  border-top-color: var(--line);
+  margin-top: -1px;
+}
+
 /* Customer picker (dropdown like avatar) */
 .customer-picker-wrapper {
   position: relative;
@@ -1293,8 +1353,9 @@ a.link:hover { color: var(--text); }
   margin: 0 auto;
   padding: 0 32px;
   box-sizing: border-box;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
   gap: 24px;
 }
 
@@ -1330,6 +1391,28 @@ a.link:hover { color: var(--text); }
 }
 
 .footer-link:hover {
+  color: var(--text);
+}
+
+.footer-section-right {
+  align-items: flex-end;
+  text-align: right;
+}
+
+.footer-about-btn {
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  font-size: 12px;
+  cursor: pointer;
+  padding: 4px 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+}
+
+.footer-about-btn:hover {
   color: var(--text);
 }
 

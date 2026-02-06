@@ -12,4 +12,12 @@ Uses footer_info context processor (app_version, copyright_year, show_changelog_
     <a href="#" class="footer-link" onclick="openChangelogModal(); return false;" style="margin-top: 8px; display: inline-block;">{% trans "View Changelog" %}</a>
     {% endif %}
   </div>
+  <div class="footer-section footer-section-right">
+    <button type="button" class="footer-about-btn" onclick="openAboutModal()" id="footer-about-btn">
+      {% trans "About this portal" %}
+      {% if has_update_available %}
+      <span class="about-update-badge" title="{% trans 'Update available' %}">●</span>
+      {% endif %}
+    </button>
+  </div>
 </div>
