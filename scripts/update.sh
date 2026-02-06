@@ -19,10 +19,18 @@ echo "Re-installing python deps..."
 cd "$SRC_DIR"
 sudo "$SRC_DIR/.venv/bin/pip" install -r "$SRC_DIR/requirements.txt"
 
-echo "Ensuring gettext (msgfmt) is installed for compilemessages..."
+echo "Ensuring system dependencies are installed..."
+NEED_UPDATE=false
 if ! command -v msgfmt >/dev/null 2>&1; then
+  NEED_UPDATE=true
+fi
+# Check if Pillow build dependencies are installed
+if [ ! -f /usr/include/jpeglib.h ] || [ ! -f /usr/include/png.h ]; then
+  NEED_UPDATE=true
+fi
+if [ "$NEED_UPDATE" = "true" ]; then
   sudo apt-get update -y
-  sudo apt-get install -y gettext
+  sudo apt-get install -y gettext libjpeg-dev libpng-dev zlib1g-dev
 fi
 
 echo "Migrating + collectstatic + compilemessages..."

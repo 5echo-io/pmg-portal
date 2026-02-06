@@ -17,7 +17,7 @@ sudo rsync -a --delete "$REPO_DIR/" "$APP_DIR/"
 
 echo "Installing OS dependencies..."
 sudo apt-get update -y
-sudo apt-get install -y python3 python3-venv python3-pip postgresql postgresql-client rsync gettext
+sudo apt-get install -y python3 python3-venv python3-pip postgresql postgresql-client rsync gettext libjpeg-dev libpng-dev zlib1g-dev
 
 prompt_default() {
   local var_name="$1"
