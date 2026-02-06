@@ -11,14 +11,36 @@
 
 <form method="post" action="" class="admin-form">
   {% csrf_token %}
-  {% for field in form %}
   <div class="admin-form-field">
-    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-    {{ field }}
-    {% if field.help_text %}<p class="admin-form-help">{{ field.help_text }}</p>{% endif %}
-    {% if field.errors %><p class="form-error">{{ field.errors.0 }}</p>{% endif %}
+    <label for="{{ form.name.id_for_label }}">{{ form.name.label }}</label>
+    {{ form.name }}
+    {% if form.name.help_text %}<p class="admin-form-help">{{ form.name.help_text|escape }}</p>{% endif %}
+    {% if form.name.errors %}<p class="form-error">{{ form.name.errors.0 }}</p>{% endif %}
   </div>
-  {% endfor %}
+  <div class="admin-form-field">
+    <label for="{{ form.slug.id_for_label }}">{{ form.slug.label }}</label>
+    {{ form.slug }}
+    {% if form.slug.help_text %}<p class="admin-form-help">{{ form.slug.help_text|escape }}</p>{% endif %}
+    {% if form.slug.errors %}<p class="form-error">{{ form.slug.errors.0 }}</p>{% endif %}
+  </div>
+  <div class="admin-form-field">
+    <label for="{{ form.org_number.id_for_label }}">{{ form.org_number.label }}</label>
+    {{ form.org_number }}
+    {% if form.org_number.help_text %}<p class="admin-form-help">{{ form.org_number.help_text|escape }}</p>{% endif %}
+    {% if form.org_number.errors %}<p class="form-error">{{ form.org_number.errors.0 }}</p>{% endif %}
+  </div>
+  <div class="admin-form-field">
+    <label for="{{ form.contact_info.id_for_label }}">{{ form.contact_info.label }}</label>
+    {{ form.contact_info }}
+    {% if form.contact_info.help_text %}<p class="admin-form-help">{{ form.contact_info.help_text|escape }}</p>{% endif %}
+    {% if form.contact_info.errors %}<p class="form-error">{{ form.contact_info.errors.0 }}</p>{% endif %}
+  </div>
+  <div class="admin-form-field">
+    <label for="{{ form.primary_contact.id_for_label }}">{{ form.primary_contact.label }}</label>
+    {{ form.primary_contact }}
+    {% if form.primary_contact.help_text %}<p class="admin-form-help">{{ form.primary_contact.help_text|escape }}</p>{% endif %}
+    {% if form.primary_contact.errors %}<p class="form-error">{{ form.primary_contact.errors.0 }}</p>{% endif %}
+  </div>
   <div class="admin-form-actions">
     <button type="submit" class="form-btn form-btn-primary form-btn--narrow">Save</button>
     <a href="{% url 'admin_app:admin_customer_list' %}" class="form-btn form-btn-secondary">Cancel</a>
