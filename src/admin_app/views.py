@@ -8,6 +8,9 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.db.models import Q
 from django.core.paginator import Paginator
 from django.contrib import messages
+from django.views.decorators.http import require_POST
+from django.http import JsonResponse
+import os
 
 from portal.models import Customer, CustomerMembership, PortalLink
 
@@ -159,12 +162,85 @@ def customer_add(request):
     if request.method == "POST":
         form = CustomerForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            customer = form.save()
             messages.success(request, "Customer created.")
-            return redirect("admin_app:admin_customer_list")
+            return redirect("admin_app:admin_customer_detail", pk=customer.pk)
     else:
         form = CustomerForm()
     return render(request, "admin_app/customer_form.html", {"form": form, "customer": None})
+
+
+@staff_required
+def customer_detail(request, pk):
+    """Modern customer card view showing all customer information."""
+    customer = get_object_or_404(Customer, pk=pk)
+    memberships = CustomerMembership.objects.filter(customer=customer).select_related("user").order_by("user__username")
+    portal_links = PortalLink.objects.filter(customer=customer).order_by("sort_order", "title")
+    
+    return render(
+        request,
+        "admin_app/customer_card.html",
+        {
+            "customer": customer,
+            "memberships": memberships,
+            "portal_links": portal_links,
+        },
+    )
+
+
+@staff_required
+@require_POST
+def customer_logo_upload(request, pk):
+    """Handle logo upload via AJAX."""
+    customer = get_object_or_404(Customer, pk=pk)
+    
+    if "logo" not in request.FILES:
+        return JsonResponse({"error": "No file provided"}, status=400)
+    
+    logo_file = request.FILES["logo"]
+    
+    # Validate file type
+    if not logo_file.content_type.startswith("image/"):
+        return JsonResponse({"error": "File must be an image"}, status=400)
+    
+    # Delete old logo if exists
+    if customer.logo:
+        try:
+            old_path = customer.logo.path
+            if os.path.exists(old_path):
+                os.remove(old_path)
+        except Exception:
+            pass
+    
+    # Save new logo
+    customer.logo = logo_file
+    customer.save()
+    
+    logo_url = customer.logo_url()
+    return JsonResponse({"success": True, "logo_url": logo_url})
+
+
+@staff_required
+@require_POST
+def customer_logo_delete(request, pk):
+    """Handle logo deletion via AJAX."""
+    customer = get_object_or_404(Customer, pk=pk)
+    
+    if not customer.logo:
+        return JsonResponse({"error": "No logo to delete"}, status=400)
+    
+    try:
+        logo_path = customer.logo.path
+        customer.logo.delete()  # This deletes the file and clears the field
+        customer.save()
+        
+        # Also try to remove file if still exists
+        if os.path.exists(logo_path):
+            os.remove(logo_path)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
+    
+    return JsonResponse({"success": True})
 
 
 @staff_required
@@ -172,34 +248,11 @@ def customer_edit(request, pk):
     from .forms import CustomerForm
     customer = get_object_or_404(Customer, pk=pk)
     if request.method == "POST":
-        # Store old logo info before form processing
-        old_logo_name = customer.logo.name if customer.logo else None
-        old_logo_path = None
-        if old_logo_name:
-            try:
-                old_logo_path = customer.logo.path
-            except Exception:
-                pass
-        
         form = CustomerForm(request.POST, request.FILES, instance=customer)
         if form.is_valid():
-            # Check if a new logo file was actually uploaded
-            new_logo_uploaded = 'logo' in request.FILES and request.FILES['logo']
-            
-            # Save the form (this will save the new logo if uploaded)
-            saved_customer = form.save()
-            
-            # If a new logo was uploaded and we had an old one, delete the old file
-            if new_logo_uploaded and old_logo_path:
-                try:
-                    import os
-                    if os.path.exists(old_logo_path):
-                        os.remove(old_logo_path)
-                except Exception:
-                    pass  # Silently fail if file deletion fails
-            
+            form.save()
             messages.success(request, "Customer updated.")
-            return redirect("admin_app:admin_customer_list")
+            return redirect("admin_app:admin_customer_detail", pk=customer.pk)
     else:
         form = CustomerForm(instance=customer)
     return render(request, "admin_app/customer_form.html", {"form": form, "customer": customer})

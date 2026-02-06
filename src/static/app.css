@@ -2415,3 +2415,254 @@ a.link:hover { color: var(--text); }
     grid-template-columns: 1fr;
   }
 }
+
+/* Customer Card Styles */
+.customer-card-container {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.customer-card-header {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 32px;
+  margin-bottom: 24px;
+  display: flex;
+  gap: 32px;
+  align-items: flex-start;
+}
+
+.customer-card-logo-section {
+  flex-shrink: 0;
+}
+
+.customer-logo-upload-area {
+  width: 200px;
+  height: 200px;
+  border: 2px dashed var(--line);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: var(--bg);
+  position: relative;
+  overflow: hidden;
+}
+
+.customer-logo-upload-area:hover {
+  border-color: #3b82f6;
+  background: rgba(59, 130, 246, 0.05);
+}
+
+.customer-logo-preview-wrapper {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.customer-logo-preview {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.logo-delete-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: none;
+  background: rgba(255, 77, 77, 0.9);
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  opacity: 0;
+}
+
+.customer-logo-preview-wrapper:hover .logo-delete-btn {
+  opacity: 1;
+}
+
+.logo-delete-btn:hover {
+  background: var(--danger);
+  transform: scale(1.1);
+}
+
+.customer-logo-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: var(--muted);
+  text-align: center;
+  padding: 20px;
+}
+
+.customer-logo-placeholder svg {
+  opacity: 0.5;
+}
+
+.customer-logo-placeholder span {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.customer-logo-upload-info {
+  margin-top: 12px;
+  text-align: center;
+}
+
+.customer-logo-upload-info p {
+  margin: 4px 0;
+}
+
+.customer-card-info {
+  flex: 1;
+}
+
+.customer-card-name {
+  font-size: 28px;
+  font-weight: 600;
+  margin: 0 0 12px 0;
+  color: var(--text);
+}
+
+.customer-card-org,
+.customer-card-contact {
+  font-size: 14px;
+  color: var(--muted);
+  margin: 8px 0;
+}
+
+.customer-card-actions {
+  margin-top: 20px;
+}
+
+.customer-card-tabs {
+  display: flex;
+  gap: 8px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 24px;
+}
+
+.customer-tab {
+  padding: 12px 20px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: -1px;
+}
+
+.customer-tab:hover {
+  color: var(--text);
+}
+
+.customer-tab.active {
+  color: var(--text);
+  border-bottom-color: #3b82f6;
+}
+
+.customer-card-content {
+  min-height: 400px;
+}
+
+.customer-tab-panel {
+  display: none;
+}
+
+.customer-tab-panel.active {
+  display: block;
+}
+
+.customer-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.customer-section-header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.customer-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+.customer-info-item {
+  padding: 16px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.customer-info-item--full {
+  grid-column: 1 / -1;
+}
+
+.customer-info-item label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.customer-info-item p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.customer-info-item code {
+  background: var(--bg);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #3b82f6;
+}
+
+.role-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.role-badge--member {
+  background: rgba(59, 130, 246, 0.2);
+  color: #60a5fa;
+}
+
+.role-badge--admin {
+  background: rgba(34, 197, 94, 0.2);
+  color: #4ade80;
+}

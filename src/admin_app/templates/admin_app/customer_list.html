@@ -35,11 +35,11 @@
     <tbody>
       {% for c in page_obj %}
       <tr>
-        <td><a href="{% url 'admin_app:admin_customer_edit' c.pk %}">{{ c.name }}</a></td>
+        <td><a href="{% url 'admin_app:admin_customer_detail' c.pk %}">{{ c.name }}</a></td>
         <td>{{ c.slug }}</td>
         <td>{{ c.org_number|default:"—" }}</td>
         <td>{% if c.primary_contact %}{{ c.primary_contact.get_full_name|default:c.primary_contact.username }}{% else %}—{% endif %}</td>
-        <td><a href="{% url 'admin_app:admin_customer_edit' c.pk %}" class="admin-btn-sm">Edit</a></td>
+        <td><a href="{% url 'admin_app:admin_customer_detail' c.pk %}" class="admin-btn-sm">View</a></td>
       </tr>
       {% empty %}
       <tr>
