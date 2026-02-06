@@ -138,17 +138,20 @@ def portal_home(request):
 
 @login_required
 def switch_customer(request, customer_id):
-    """Switch active customer; always redirect to portal home (/) after switch."""
+    """Switch active customer; redirect back to the referring page after switch."""
     if request.method != "POST":
         messages.error(request, "Invalid request method.")
-        return redirect("/")
+        return redirect(request.META.get('HTTP_REFERER', '/'))
+
+    # Get the referring page to redirect back to it
+    referer = request.META.get('HTTP_REFERER', '/')
 
     # Superusers can switch to any customer (no membership required)
     if request.user.is_superuser:
         customer = get_object_or_404(Customer, pk=customer_id)
         request.session["active_customer_id"] = customer_id
         messages.success(request, f"Switched to {customer.name}")
-        return redirect("/")
+        return redirect(referer)
 
     # Verify user has access to this customer
     membership = get_object_or_404(
@@ -158,7 +161,7 @@ def switch_customer(request, customer_id):
     )
     request.session["active_customer_id"] = customer_id
     messages.success(request, f"Switched to {membership.customer.name}")
-    return redirect("/")
+    return redirect(referer)
 
 
 @login_required

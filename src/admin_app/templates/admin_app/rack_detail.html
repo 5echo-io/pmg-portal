@@ -1,0 +1,476 @@
+{% extends "admin_app/base.html" %}
+{% load static %}
+
+{% block admin_title %}{{ rack.name }}{% endblock %}
+{% block breadcrumb_extra %}
+<span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_facility_list' %}">Facilities</a>
+<span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_facility_detail' facility.slug %}">{{ facility.name }}</a>
+<span class="breadcrumb-sep">→</span> <span>{{ rack.name }}</span>
+{% endblock %}
+
+{% block admin_content %}
+<div class="rack-detail-container">
+  <!-- Header -->
+  <div class="rack-detail-header">
+    <div>
+      <h1 class="rack-detail-name">{{ rack.name }}</h1>
+      <p class="muted">
+        {% if rack.location %}{{ rack.location }}{% endif %}
+        {% if rack.serial_number %} | Serial: {{ rack.serial_number }}{% endif %}
+        | {{ rack.height_units }}U
+      </p>
+    </div>
+    <div class="rack-detail-actions">
+      <a href="{% url 'admin_app:admin_rack_edit' facility.slug rack.pk %}" class="form-btn form-btn-secondary">Edit Rack</a>
+      <a href="{% url 'admin_app:admin_rack_seal_add' facility.slug rack.pk %}" class="form-btn form-btn-primary">Add Seal</a>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="rack-detail-tabs">
+    <button class="rack-tab active" data-tab="visual">Visual Rack</button>
+    <button class="rack-tab" data-tab="devices">Devices ({{ devices|length }})</button>
+    <button class="rack-tab" data-tab="seals">Seals ({{ active_seals|length }})</button>
+    <button class="rack-tab" data-tab="info">Information</button>
+  </div>
+
+  <!-- Tab Content -->
+  <div class="rack-detail-content">
+    <!-- Visual Rack Tab -->
+    <div class="rack-tab-panel active" id="tab-visual">
+      <div class="rack-visual-container">
+        <div class="rack-visual-header">
+          <h2>Rack Front View - {{ rack.height_units }}U</h2>
+          <button type="button" class="form-btn form-btn-primary form-btn--narrow" onclick="addDeviceToRack()">Add Device</button>
+        </div>
+        <div class="rack-visual">
+          {% for u in u_positions %}
+          <div class="rack-unit" data-u="{{ u }}">
+            <div class="rack-unit-number">{{ u }}</div>
+            <div class="rack-unit-content">
+              {% for device in devices %}
+                {% if device.rack_position == u %}
+                <div class="rack-device" data-device-id="{{ device.pk }}" data-device-name="{{ device.name }}">
+                  <div class="rack-device-name">{{ device.name }}</div>
+                  <div class="rack-device-type">{{ device.get_device_type_display }}</div>
+                  <button type="button" class="rack-device-remove" onclick="removeDeviceFromRack({{ device.pk }})" title="Remove device">×</button>
+                </div>
+                {% endif %}
+              {% endfor %}
+              {% if u not in devices_by_position %}
+                <div class="rack-unit-empty" onclick="addDeviceAtPosition({{ u }})" title="Click to add device at U{{ u }}">
+                  <span class="rack-unit-empty-text">Empty</span>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Devices Tab -->
+    <div class="rack-tab-panel" id="tab-devices">
+      <div class="rack-section-header">
+        <h2>Devices in Rack</h2>
+        <button type="button" class="form-btn form-btn-primary form-btn--narrow" onclick="addDeviceToRack()">Add Device</button>
+      </div>
+      {% if devices %}
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Position (U)</th>
+              <th>Name</th>
+              <th>Type</th>
+              <th>Manufacturer</th>
+              <th>Model</th>
+              <th>IP Address</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for device in devices %}
+            <tr>
+              <td>{% if device.rack_position %}U{{ device.rack_position }}{% else %}—{% endif %}</td>
+              <td><strong>{{ device.name }}</strong></td>
+              <td>{{ device.get_device_type_display }}</td>
+              <td>{{ device.manufacturer|default:"—" }}</td>
+              <td>{{ device.model|default:"—" }}</td>
+              <td><code>{{ device.ip_address|default:"—" }}</code></td>
+              <td>
+                <button type="button" class="admin-btn-sm" onclick="editDevice({{ device.pk }})">Edit</button>
+                <button type="button" class="admin-btn-sm" onclick="removeDeviceFromRack({{ device.pk }})">Remove</button>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <p class="muted">No devices in this rack.</p>
+      {% endif %}
+    </div>
+
+    <!-- Seals Tab -->
+    <div class="rack-tab-panel" id="tab-seals">
+      <div class="rack-section-header">
+        <h2>Seals</h2>
+        <a href="{% url 'admin_app:admin_rack_seal_add' facility.slug rack.pk %}" class="form-btn form-btn-primary form-btn--narrow">Add Seal</a>
+      </div>
+      
+      <!-- Active Seals -->
+      {% if active_seals %}
+      <div class="rack-seals-section">
+        <h3>Active Seals</h3>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Seal ID</th>
+                <th>Location</th>
+                <th>Installed By</th>
+                <th>Installed At</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for seal in active_seals %}
+              <tr>
+                <td><strong>{{ seal.seal_id }}</strong></td>
+                <td>{{ seal.location_description|default:"—" }}</td>
+                <td>{% if seal.installed_by %}{{ seal.installed_by.get_full_name|default:seal.installed_by.username }}{% else %}—{% endif %}</td>
+                <td>{{ seal.installed_at|date:"Y-m-d H:i" }}</td>
+                <td>
+                  <a href="{% url 'admin_app:admin_rack_seal_remove' facility.slug rack.pk seal.pk %}" class="admin-btn-sm admin-btn-danger">Remove</a>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Removed Seals -->
+      {% if all_seals %}
+      <div class="rack-seals-section" style="margin-top: 32px;">
+        <h3>Seal History</h3>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Seal ID</th>
+                <th>Location</th>
+                <th>Installed By</th>
+                <th>Installed At</th>
+                <th>Removed By</th>
+                <th>Removed At</th>
+                <th>Reason</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for seal in all_seals %}
+              <tr class="{% if seal.removed_at %}rack-seal-removed{% endif %}">
+                <td><strong>{{ seal.seal_id }}</strong></td>
+                <td>{{ seal.location_description|default:"—" }}</td>
+                <td>{% if seal.installed_by %}{{ seal.installed_by.get_full_name|default:seal.installed_by.username }}{% else %}—{% endif %}</td>
+                <td>{{ seal.installed_at|date:"Y-m-d H:i" }}</td>
+                <td>{% if seal.removed_by %}{{ seal.removed_by.get_full_name|default:seal.removed_by.username }}{% else %}—{% endif %}</td>
+                <td>{% if seal.removed_at %}{{ seal.removed_at|date:"Y-m-d H:i" }}{% else %}—{% endif %}</td>
+                <td>{% if seal.removal_reason %}{{ seal.get_removal_reason_display }}{% else %}—{% endif %}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      {% endif %}
+
+      {% if not active_seals and not all_seals %}
+      <p class="muted">No seals configured for this rack.</p>
+      {% endif %}
+    </div>
+
+    <!-- Information Tab -->
+    <div class="rack-tab-panel" id="tab-info">
+      <div class="customer-info-grid">
+        <div class="customer-info-item">
+          <label>Name</label>
+          <p>{{ rack.name }}</p>
+        </div>
+        <div class="customer-info-item">
+          <label>Location</label>
+          <p>{{ rack.location|default:"—" }}</p>
+        </div>
+        {% if rack.serial_number %}
+        <div class="customer-info-item">
+          <label>Serial Number</label>
+          <p>{{ rack.serial_number }}</p>
+        </div>
+        {% endif %}
+        <div class="customer-info-item">
+          <label>Height (U)</label>
+          <p>{{ rack.height_units }}U</p>
+        </div>
+        <div class="customer-info-item">
+          <label>Active Status</label>
+          <p>{% if rack.is_active %}Yes{% else %}No{% endif %}</p>
+        </div>
+        {% if rack.description %}
+        <div class="customer-info-item customer-info-item--full">
+          <label>Description</label>
+          <p style="white-space: pre-wrap;">{{ rack.description }}</p>
+        </div>
+        {% endif %}
+        <div class="customer-info-item">
+          <label>Created</label>
+          <p>{{ rack.created_at|date:"Y-m-d H:i" }}</p>
+        </div>
+        <div class="customer-info-item">
+          <label>Last Updated</label>
+          <p>{{ rack.updated_at|date:"Y-m-d H:i" }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  // Tab switching
+  const tabs = document.querySelectorAll('.rack-tab');
+  const panels = document.querySelectorAll('.rack-tab-panel');
+  
+  tabs.forEach(tab => {
+    tab.addEventListener('click', function() {
+      const targetTab = this.dataset.tab;
+      
+      tabs.forEach(t => t.classList.remove('active'));
+      panels.forEach(p => p.classList.remove('active'));
+      
+      this.classList.add('active');
+      document.getElementById('tab-' + targetTab)?.classList.add('active');
+    });
+  });
+
+  // Add device to rack
+  window.addDeviceToRack = function() {
+    alert('Add Device functionality - will redirect to device form with rack pre-selected');
+    // TODO: Implement redirect to device add/edit form
+  };
+
+  window.addDeviceAtPosition = function(uPosition) {
+    alert('Add Device at U' + uPosition + ' - will redirect to device form with rack and position pre-selected');
+    // TODO: Implement redirect to device add/edit form with position
+  };
+
+  window.removeDeviceFromRack = function(deviceId) {
+    if (confirm('Remove this device from the rack?')) {
+      alert('Remove device functionality - will clear rack and rack_position');
+      // TODO: Implement device removal from rack
+    }
+  };
+
+  window.editDevice = function(deviceId) {
+    alert('Edit device functionality - will redirect to device edit form');
+    // TODO: Implement redirect to device edit form
+  };
+})();
+</script>
+
+<style>
+.rack-detail-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.rack-detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--line);
+}
+
+.rack-detail-name {
+  margin: 0 0 8px 0;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.rack-detail-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.rack-detail-tabs {
+  display: flex;
+  gap: 8px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 24px;
+}
+
+.rack-tab {
+  padding: 12px 20px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: -1px;
+}
+
+.rack-tab:hover {
+  color: var(--text);
+}
+
+.rack-tab.active {
+  color: var(--text);
+  border-bottom-color: #3b82f6;
+}
+
+.rack-tab-panel {
+  display: none;
+}
+
+.rack-tab-panel.active {
+  display: block;
+}
+
+.rack-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.rack-visual-container {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.rack-visual-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.rack-visual {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.rack-unit {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  min-height: 40px;
+}
+
+.rack-unit-number {
+  width: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--btn);
+  border-right: 1px solid var(--line);
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.rack-unit-content {
+  flex: 1;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+}
+
+.rack-unit-empty {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s;
+  border-radius: 4px;
+}
+
+.rack-unit-empty:hover {
+  background: var(--btn);
+}
+
+.rack-unit-empty-text {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.rack-device {
+  width: 100%;
+  padding: 8px 12px;
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  border-radius: 6px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.rack-device-name {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.rack-device-type {
+  font-size: 12px;
+  color: var(--muted);
+  margin-left: 12px;
+}
+
+.rack-device-remove {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #ef4444;
+  border-radius: 4px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  padding: 0;
+}
+
+.rack-device-remove:hover {
+  background: rgba(239, 68, 68, 0.2);
+}
+
+.rack-seals-section {
+  margin-bottom: 32px;
+}
+
+.rack-seals-section h3 {
+  margin: 0 0 16px 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.rack-seal-removed {
+  opacity: 0.6;
+}
+</style>
+{% endblock %}

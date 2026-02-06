@@ -12,7 +12,8 @@ from django.views.decorators.http import require_POST
 from django.http import JsonResponse
 import os
 
-from portal.models import Customer, CustomerMembership, PortalLink, Facility
+from portal.models import Customer, CustomerMembership, PortalLink, Facility, Rack, RackSeal
+from django.utils import timezone
 
 User = get_user_model()
 
@@ -727,3 +728,149 @@ def facility_delete(request, slug):
     
     messages.success(request, f"Facility '{facility_name}' has been deleted.")
     return redirect("admin_app:admin_facility_list")
+
+
+# ----- Racks -----
+@staff_required
+def rack_add(request, facility_slug):
+    """Add a new rack to a facility."""
+    from .forms import RackForm
+    facility = get_object_or_404(Facility, slug=facility_slug)
+    
+    if request.method == "POST":
+        form = RackForm(request.POST, facility=facility)
+        if form.is_valid():
+            rack = form.save(commit=False)
+            rack.facility = facility
+            rack.save()
+            messages.success(request, "Rack created.")
+            return redirect("admin_app:admin_rack_detail", facility_slug=facility.slug, rack_id=rack.pk)
+    else:
+        form = RackForm(facility=facility)
+    
+    return render(request, "admin_app/rack_form.html", {
+        "form": form,
+        "facility": facility,
+        "rack": None,
+    })
+
+
+@staff_required
+def rack_detail(request, facility_slug, rack_id):
+    """View rack details with interactive rack visualization."""
+    facility = get_object_or_404(Facility, slug=facility_slug)
+    rack = get_object_or_404(Rack, pk=rack_id, facility=facility)
+    active_seals = rack.get_active_seals()
+    all_seals = rack.seals.all().order_by("-installed_at")
+    devices = rack.get_devices_by_position()
+    
+    # Create a list of U positions (1 to height_units)
+    u_positions = list(range(1, rack.height_units + 1))
+    # Create a dict mapping U position to device
+    devices_by_position = {device.rack_position: device for device in devices if device.rack_position}
+    
+    return render(request, "admin_app/rack_detail.html", {
+        "facility": facility,
+        "rack": rack,
+        "active_seals": active_seals,
+        "all_seals": all_seals,
+        "devices": devices,
+        "u_positions": u_positions,
+        "devices_by_position": devices_by_position,
+    })
+
+
+@staff_required
+def rack_edit(request, facility_slug, rack_id):
+    """Edit a rack."""
+    from .forms import RackForm
+    facility = get_object_or_404(Facility, slug=facility_slug)
+    rack = get_object_or_404(Rack, pk=rack_id, facility=facility)
+    
+    if request.method == "POST":
+        form = RackForm(request.POST, instance=rack, facility=facility)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Rack updated.")
+            return redirect("admin_app:admin_rack_detail", facility_slug=facility.slug, rack_id=rack.pk)
+    else:
+        form = RackForm(instance=rack, facility=facility)
+    
+    return render(request, "admin_app/rack_form.html", {
+        "form": form,
+        "facility": facility,
+        "rack": rack,
+    })
+
+
+@staff_required
+@require_POST
+def rack_delete(request, facility_slug, rack_id):
+    """Delete a rack."""
+    facility = get_object_or_404(Facility, slug=facility_slug)
+    rack = get_object_or_404(Rack, pk=rack_id, facility=facility)
+    rack_name = rack.name
+    
+    rack.delete()
+    
+    messages.success(request, f"Rack '{rack_name}' has been deleted.")
+    return redirect("admin_app:admin_facility_detail", slug=facility.slug)
+
+
+# ----- Rack Seals -----
+@staff_required
+def rack_seal_add(request, facility_slug, rack_id):
+    """Add a seal to a rack."""
+    from .forms import RackSealForm
+    facility = get_object_or_404(Facility, slug=facility_slug)
+    rack = get_object_or_404(Rack, pk=rack_id, facility=facility)
+    
+    if request.method == "POST":
+        form = RackSealForm(request.POST, rack=rack, user=request.user)
+        if form.is_valid():
+            seal = form.save(commit=False)
+            seal.rack = rack
+            seal.installed_by = request.user
+            seal.save()
+            messages.success(request, f"Seal '{seal.seal_id}' installed.")
+            return redirect("admin_app:admin_rack_detail", facility_slug=facility.slug, rack_id=rack.pk)
+    else:
+        form = RackSealForm(rack=rack, user=request.user)
+    
+    return render(request, "admin_app/rack_seal_form.html", {
+        "form": form,
+        "facility": facility,
+        "rack": rack,
+    })
+
+
+@staff_required
+def rack_seal_remove(request, facility_slug, rack_id, seal_id):
+    """Remove a seal from a rack."""
+    from .forms import RackSealRemovalForm
+    facility = get_object_or_404(Facility, slug=facility_slug)
+    rack = get_object_or_404(Rack, pk=rack_id, facility=facility)
+    seal = get_object_or_404(RackSeal, pk=seal_id, rack=rack)
+    
+    if seal.removed_at:
+        messages.error(request, "This seal has already been removed.")
+        return redirect("admin_app:admin_rack_detail", facility_slug=facility.slug, rack_id=rack.pk)
+    
+    if request.method == "POST":
+        form = RackSealRemovalForm(request.POST, instance=seal, user=request.user)
+        if form.is_valid():
+            seal = form.save(commit=False)
+            seal.removed_at = timezone.now()
+            seal.removed_by = request.user
+            seal.save()
+            messages.success(request, f"Seal '{seal.seal_id}' removed.")
+            return redirect("admin_app:admin_rack_detail", facility_slug=facility.slug, rack_id=rack.pk)
+    else:
+        form = RackSealRemovalForm(instance=seal, user=request.user)
+    
+    return render(request, "admin_app/rack_seal_remove_form.html", {
+        "form": form,
+        "facility": facility,
+        "rack": rack,
+        "seal": seal,
+    })

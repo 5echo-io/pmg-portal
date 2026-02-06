@@ -1,0 +1,63 @@
+{% extends "admin_app/base.html" %}
+
+{% block admin_title %}{% if rack %}Edit rack{% else %}Add rack{% endif %}{% endblock %}
+{% block breadcrumb_extra %}
+<span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_facility_list' %}">Facilities</a>
+<span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_facility_detail' facility.slug %}">{{ facility.name }}</a>
+<span class="breadcrumb-sep">→</span> <span>{% if rack %}Edit Rack{% else %}Add Rack{% endif %}</span>
+{% endblock %}
+
+{% block admin_content %}
+<h1 class="admin-page-title">{% if rack %}Edit rack{% else %}Add rack{% endif %}</h1>
+
+<form method="post" action="" class="admin-form admin-form--wide">
+  {% csrf_token %}
+  <div class="admin-form-row">
+    <div class="admin-form-field">
+      <label for="{{ form.name.id_for_label }}">{{ form.name.label }}</label>
+      {{ form.name }}
+      {% if form.name.help_text %}<p class="admin-form-help">{{ form.name.help_text|escape }}</p>{% endif %}
+      {% if form.name.errors %}<p class="form-error">{{ form.name.errors.0 }}</p>{% endif %}
+    </div>
+    <div class="admin-form-field">
+      <label for="{{ form.height_units.id_for_label }}">{{ form.height_units.label }}</label>
+      {{ form.height_units }}
+      {% if form.height_units.help_text %}<p class="admin-form-help">{{ form.height_units.help_text|escape }}</p>{% endif %}
+      {% if form.height_units.errors %}<p class="form-error">{{ form.height_units.errors.0 }}</p>{% endif %}
+    </div>
+  </div>
+  <div class="admin-form-row">
+    <div class="admin-form-field">
+      <label for="{{ form.location.id_for_label }}">{{ form.location.label }}</label>
+      {{ form.location }}
+      {% if form.location.help_text %}<p class="admin-form-help">{{ form.location.help_text|escape }}</p>{% endif %}
+      {% if form.location.errors %}<p class="form-error">{{ form.location.errors.0 }}</p>{% endif %}
+    </div>
+    <div class="admin-form-field">
+      <label for="{{ form.serial_number.id_for_label }}">{{ form.serial_number.label }}</label>
+      {{ form.serial_number }}
+      {% if form.serial_number.help_text %}<p class="admin-form-help">{{ form.serial_number.help_text|escape }}</p>{% endif %}
+      {% if form.serial_number.errors %}<p class="form-error">{{ form.serial_number.errors.0 }}</p>{% endif %}
+    </div>
+  </div>
+  <div class="admin-form-field full-width">
+    <label for="{{ form.description.id_for_label }}">{{ form.description.label }}</label>
+    {{ form.description }}
+    {% if form.description.help_text %}<p class="admin-form-help">{{ form.description.help_text|escape }}</p>{% endif %}
+    {% if form.description.errors %}<p class="form-error">{{ form.description.errors.0 }}</p>{% endif %}
+  </div>
+  <div class="admin-form-field">
+    <label for="{{ form.is_active.id_for_label }}">{{ form.is_active.label }}</label>
+    {{ form.is_active }}
+    {% if form.is_active.help_text %}<p class="admin-form-help">{{ form.is_active.help_text|escape }}</p>{% endif %}
+    {% if form.is_active.errors %}<p class="form-error">{{ form.is_active.errors.0 }}</p>{% endif %}
+  </div>
+  <div class="admin-form-actions">
+    <button type="submit" class="form-btn form-btn-primary form-btn--narrow">Save</button>
+    <a href="{% url 'admin_app:admin_facility_detail' facility.slug %}" class="form-btn form-btn-secondary">Cancel</a>
+    {% if rack %}
+    <button type="button" class="form-btn form-btn-danger" data-delete-url="{% url 'admin_app:admin_rack_delete' facility.slug rack.pk %}" data-delete-message="Are you sure you want to delete the rack '{{ rack.name }}'? This will also delete all seals and devices associated with this rack.">Delete Rack</button>
+    {% endif %}
+  </div>
+</form>
+{% endblock %}

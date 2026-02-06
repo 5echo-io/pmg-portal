@@ -3168,27 +3168,6 @@ a.link:hover { color: var(--text); }
   justify-content: center;
 }
 
-/* Facility Breadcrumb */
-.facility-breadcrumb {
-  margin-bottom: 16px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--line);
-}
-
-.facility-breadcrumb a {
-  color: var(--link);
-  text-decoration: none;
-}
-
-.facility-breadcrumb a:hover {
-  text-decoration: underline;
-}
-
-.facility-breadcrumb .breadcrumb-sep {
-  margin: 0 8px;
-  color: var(--muted);
-}
-
 /* Facility Back Button */
 .facility-back-button {
   margin-bottom: 24px;

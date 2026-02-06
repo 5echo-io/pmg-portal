@@ -2,6 +2,26 @@
 
 - 2026-02-06 (Europe/Oslo)
   - Branch: dev
+  - Version: 4.1.0-alpha.1
+  - Summary:
+    - Rack Management: complete CRUD operations for racks in admin panel
+    - Rack model: added serial_number field for asset tracking
+    - Rack methods: added get_active_seals() and get_devices_by_position() helper methods
+    - RackSeal model: new model for tracking security seals on racks with installation/removal history
+    - Rack forms: RackForm with name uniqueness validation within facility, RackSealForm with active seal validation, RackSealRemovalForm for seal removal tracking
+    - Rack views: rack_add, rack_detail, rack_edit, rack_delete views with full CRUD functionality
+    - Rack detail page: interactive rack visualization showing U-positions and devices
+    - Rack seal management: rack_seal_add and rack_seal_remove views for seal installation/removal
+    - Seal tracking: tracks installed_by, installed_at, removed_by, removed_at, removal_reason, removal_notes
+    - Active seal validation: prevents duplicate active seal IDs on same rack
+    - Rack URLs: nested under facility URLs (facilities/<slug>/racks/<id>/)
+    - Templates: rack_detail.html with U-position visualization, rack_form.html, rack_seal_form.html, rack_seal_remove_form.html
+    - Migration: 0004_rack_serial_and_seals.py adds serial_number to Rack and creates RackSeal model
+    - UI improvements: unified breadcrumb styling (admin-breadcrumb class), customer switch redirects to referer
+    - Version bump: MINOR increment from 4.0.0-alpha.1 to 4.1.0-alpha.1 (new features: Rack Management)
+
+- 2026-02-06 (Europe/Oslo)
+  - Branch: dev
   - Version: 4.0.0-alpha.1
   - Summary:
     - URL structure: changed Facility URLs from primary key (pk) to slug-based (slug) for better SEO and user-friendly URLs

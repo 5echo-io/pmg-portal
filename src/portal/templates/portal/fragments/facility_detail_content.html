@@ -1,7 +1,7 @@
 {% load i18n static %}
 <div class="facility-detail-container">
-  <!-- Breadcrumb -->
-  <nav class="breadcrumb facility-breadcrumb" aria-label="Breadcrumb">
+  <!-- Breadcrumb (universal design – same as admin) -->
+  <nav class="breadcrumb admin-breadcrumb" aria-label="Breadcrumb">
     <a href="{% url 'facility_list' %}" hx-get="{% url 'facility_list' %}" hx-target="#main-content" hx-push-url="true">{% trans "Facilities" %}</a>
     <span class="breadcrumb-sep">→</span>
     <span>{{ facility.name }}</span>

@@ -1,0 +1,34 @@
+{% extends "admin_app/base.html" %}
+
+{% block admin_title %}Add Seal{% endblock %}
+{% block breadcrumb_extra %}
+<span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_facility_list' %}">Facilities</a>
+<span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_facility_detail' facility.slug %}">{{ facility.name }}</a>
+<span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_rack_detail' facility.slug rack.pk %}">{{ rack.name }}</a>
+<span class="breadcrumb-sep">→</span> <span>Add Seal</span>
+{% endblock %}
+
+{% block admin_content %}
+<h1 class="admin-page-title">Add Seal to {{ rack.name }}</h1>
+
+<form method="post" action="" class="admin-form admin-form--wide">
+  {% csrf_token %}
+  <div class="admin-form-field">
+    <label for="{{ form.seal_id.id_for_label }}">{{ form.seal_id.label }}</label>
+    {{ form.seal_id }}
+    {% if form.seal_id.help_text %}<p class="admin-form-help">{{ form.seal_id.help_text|escape }}</p>{% endif %}
+    {% if form.seal_id.errors %}<p class="form-error">{{ form.seal_id.errors.0 }}</p>{% endif %}
+  </div>
+  <div class="admin-form-field full-width">
+    <label for="{{ form.location_description.id_for_label }}">{{ form.location_description.label }}</label>
+    {{ form.location_description }}
+    {% if form.location_description.help_text %}<p class="admin-form-help">{{ form.location_description.help_text|escape }}</p>{% endif %}
+    {% if form.location_description.errors %}<p class="form-error">{{ form.location_description.errors.0 }}</p>{% endif %}
+  </div>
+  <p class="muted">The seal will be logged as installed by you ({{ request.user.get_full_name|default:request.user.username }}) at the current time.</p>
+  <div class="admin-form-actions">
+    <button type="submit" class="form-btn form-btn-primary form-btn--narrow">Install Seal</button>
+    <a href="{% url 'admin_app:admin_rack_detail' facility.slug rack.pk %}" class="form-btn form-btn-secondary">Cancel</a>
+  </div>
+</form>
+{% endblock %}

@@ -189,6 +189,7 @@ class Rack(models.Model):
     name = models.CharField(max_length=100, help_text="Rack name/number (e.g., 'Rack 01', 'A1')")
     location = models.CharField(max_length=200, blank=True, default="", help_text="Physical location within facility")
     description = models.TextField(blank=True, default="")
+    serial_number = models.CharField(max_length=100, blank=True, default="", help_text="Rack serial number")
     height_units = models.PositiveIntegerField(default=42, help_text="Height in rack units (U)")
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -200,6 +201,14 @@ class Rack(models.Model):
 
     def __str__(self) -> str:
         return f"{self.facility.name} - {self.name}"
+    
+    def get_active_seals(self):
+        """Return all active (not removed) seals for this rack."""
+        return self.seals.filter(removed_at__isnull=True)
+    
+    def get_devices_by_position(self):
+        """Return devices ordered by rack position."""
+        return self.devices.filter(is_active=True).order_by("rack_position")
 
 
 class NetworkDevice(models.Model):
@@ -258,3 +267,58 @@ class IPAddress(models.Model):
 
     def __str__(self) -> str:
         return f"{self.facility.name} - {self.ip_address}"
+
+
+class RackSeal(models.Model):
+    """
+    Security seals on racks to track access and tampering.
+    """
+    REMOVAL_REASONS = [
+        ("service", "Service/Maintenance"),
+        ("replace", "Replace seal"),
+        ("broken", "Already broken"),
+        ("upgrade", "Upgrade/Modification"),
+        ("other", "Other"),
+    ]
+    
+    rack = models.ForeignKey(Rack, on_delete=models.CASCADE, related_name="seals")
+    seal_id = models.CharField(max_length=100, help_text="Unique seal identifier/ID")
+    location_description = models.TextField(blank=True, default="", help_text="Description of where the seal is placed on the rack")
+    installed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="installed_seals",
+        help_text="User who installed the seal"
+    )
+    installed_at = models.DateTimeField(auto_now_add=True, help_text="When the seal was installed")
+    removed_at = models.DateTimeField(null=True, blank=True, help_text="When the seal was removed")
+    removed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="removed_seals",
+        help_text="User who removed the seal"
+    )
+    removal_reason = models.CharField(
+        max_length=50,
+        choices=REMOVAL_REASONS,
+        blank=True,
+        default="",
+        help_text="Reason for removing the seal"
+    )
+    removal_notes = models.TextField(blank=True, default="", help_text="Additional notes about the removal")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-installed_at"]
+
+    def __str__(self) -> str:
+        return f"{self.rack} - Seal {self.seal_id}"
+    
+    @property
+    def is_active(self):
+        """Check if seal is currently active (not removed)."""
+        return self.removed_at is None

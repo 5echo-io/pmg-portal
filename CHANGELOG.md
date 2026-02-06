@@ -42,6 +42,8 @@ Pre-release builds (alpha, beta, rc) are listed here. Only full releases (no bui
 - **URL Structure**: Changed Facility URLs from primary key (`pk`) to slug-based (`slug`) for better SEO and user-friendly URLs (BREAKING CHANGE)
 - **Facility Detail UI**: Added breadcrumb navigation and back button for better user experience
 - **Network Tab**: Combined Network Devices and IP Addresses into a single Network tab with combined statistics
+- **Breadcrumb Styling**: Unified breadcrumb styling to use admin-breadcrumb class for consistent design across admin and portal
+- **Customer Switch**: Customer switch now redirects back to referring page instead of always redirecting to portal home
 
 ### Fixed
 - **Context Processor**: Added missing Facility model import to fix 500 error when accessing Facility features

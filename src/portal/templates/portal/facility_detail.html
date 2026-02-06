@@ -4,8 +4,8 @@
 
 {% block content %}
 <div class="facility-detail-container">
-  <!-- Breadcrumb -->
-  <nav class="breadcrumb facility-breadcrumb" aria-label="Breadcrumb">
+  <!-- Breadcrumb (universal design – same as admin) -->
+  <nav class="breadcrumb admin-breadcrumb" aria-label="Breadcrumb">
     <a href="{% url 'facility_list' %}">{% trans "Facilities" %}</a>
     <span class="breadcrumb-sep">→</span>
     <span>{{ facility.name }}</span>

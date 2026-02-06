@@ -88,7 +88,7 @@
     <div class="customer-tab-panel" id="tab-racks">
       <div class="customer-section-header">
         <h2>Racks</h2>
-        <a href="#" class="form-btn form-btn-primary form-btn--narrow" onclick="alert('Add Rack functionality coming soon'); return false;">Add Rack</a>
+        <a href="{% url 'admin_app:admin_rack_add' facility.slug %}" class="form-btn form-btn-primary form-btn--narrow">Add Rack</a>
       </div>
       {% if racks %}
       <div class="admin-table-wrap">
@@ -104,11 +104,12 @@
           <tbody>
             {% for rack in racks %}
             <tr>
-              <td>{{ rack.name }}</td>
+              <td><a href="{% url 'admin_app:admin_rack_detail' facility.slug rack.pk %}">{{ rack.name }}</a></td>
               <td>{{ rack.location|default:"—" }}</td>
               <td>{{ rack.height_units }}U</td>
               <td>
-                <button type="button" class="admin-btn-sm" disabled>Edit</button>
+                <a href="{% url 'admin_app:admin_rack_detail' facility.slug rack.pk %}" class="admin-btn-sm">View</a>
+                <a href="{% url 'admin_app:admin_rack_edit' facility.slug rack.pk %}" class="admin-btn-sm">Edit</a>
               </td>
             </tr>
             {% endfor %}

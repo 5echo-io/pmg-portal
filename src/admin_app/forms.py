@@ -5,7 +5,7 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm as BaseUserCreationForm
 from django.contrib.auth.models import Group
-from portal.models import Customer, CustomerMembership, PortalLink, Facility
+from portal.models import Customer, CustomerMembership, PortalLink, Facility, Rack, RackSeal
 
 User = get_user_model()
 
@@ -90,5 +90,75 @@ class FacilityForm(forms.ModelForm):
             if queryset.exists():
                 raise forms.ValidationError("This slug is already in use. Please choose a different one.")
         return slug
+
+
+class RackForm(forms.ModelForm):
+    class Meta:
+        model = Rack
+        fields = ("name", "location", "description", "serial_number", "height_units", "is_active")
+        widgets = {
+            "description": forms.Textarea(attrs={"rows": 3}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        self.facility = kwargs.pop("facility", None)
+        super().__init__(*args, **kwargs)
+        if self.facility:
+            self.instance.facility = self.facility
+    
+    def clean_name(self):
+        name = self.cleaned_data.get("name")
+        if name and self.facility:
+            # Check if name is already in use by another rack in the same facility
+            queryset = Rack.objects.filter(facility=self.facility, name=name)
+            if self.instance.pk:
+                queryset = queryset.exclude(pk=self.instance.pk)
+            if queryset.exists():
+                raise forms.ValidationError("A rack with this name already exists in this facility.")
+        return name
+
+
+class RackSealForm(forms.ModelForm):
+    class Meta:
+        model = RackSeal
+        fields = ("seal_id", "location_description")
+        widgets = {
+            "location_description": forms.Textarea(attrs={"rows": 3}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        self.rack = kwargs.pop("rack", None)
+        self.user = kwargs.pop("user", None)
+        super().__init__(*args, **kwargs)
+        if self.rack:
+            self.instance.rack = self.rack
+        if self.user:
+            self.instance.installed_by = self.user
+    
+    def clean_seal_id(self):
+        seal_id = self.cleaned_data.get("seal_id")
+        if seal_id and self.rack:
+            # Check if an active (not removed) seal with this ID already exists on this rack
+            queryset = RackSeal.objects.filter(rack=self.rack, seal_id=seal_id, removed_at__isnull=True)
+            if self.instance.pk:
+                queryset = queryset.exclude(pk=self.instance.pk)
+            if queryset.exists():
+                raise forms.ValidationError("An active seal with this ID already exists on this rack.")
+        return seal_id
+
+
+class RackSealRemovalForm(forms.ModelForm):
+    class Meta:
+        model = RackSeal
+        fields = ("removal_reason", "removal_notes")
+        widgets = {
+            "removal_notes": forms.Textarea(attrs={"rows": 3}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop("user", None)
+        super().__init__(*args, **kwargs)
+        if self.user:
+            self.instance.removed_by = self.user
 
 

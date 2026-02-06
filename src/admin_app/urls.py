@@ -33,4 +33,12 @@ urlpatterns = [
     path("facilities/<slug:slug>/", views.facility_detail, name="admin_facility_detail"),
     path("facilities/<slug:slug>/edit/", views.facility_edit, name="admin_facility_edit"),
     path("facilities/<slug:slug>/delete/", views.facility_delete, name="admin_facility_delete"),
+    # Racks
+    path("facilities/<slug:facility_slug>/racks/add/", views.rack_add, name="admin_rack_add"),
+    path("facilities/<slug:facility_slug>/racks/<int:rack_id>/", views.rack_detail, name="admin_rack_detail"),
+    path("facilities/<slug:facility_slug>/racks/<int:rack_id>/edit/", views.rack_edit, name="admin_rack_edit"),
+    path("facilities/<slug:facility_slug>/racks/<int:rack_id>/delete/", views.rack_delete, name="admin_rack_delete"),
+    # Rack Seals
+    path("facilities/<slug:facility_slug>/racks/<int:rack_id>/seals/add/", views.rack_seal_add, name="admin_rack_seal_add"),
+    path("facilities/<slug:facility_slug>/racks/<int:rack_id>/seals/<int:seal_id>/remove/", views.rack_seal_remove, name="admin_rack_seal_remove"),
 ]
