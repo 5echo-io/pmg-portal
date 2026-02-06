@@ -14,7 +14,7 @@ A Django + Postgres portal foundation:
 
 **Install or Update PMG Portal:**
 ```bash
-sudo apt install curl -y && curl -fsSL https://raw.githubusercontent.com/5echo-11/pmg-portal/main/scripts/install.sh | sudo bash
+sudo apt install curl -y && curl -fsSL https://raw.githubusercontent.com/5echo-io/pmg-portal/main/scripts/install.sh | sudo bash
 ```
 
 The installer automatically detects if PMG Portal is already installed and presents options:
