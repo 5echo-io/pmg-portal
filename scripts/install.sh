@@ -9,16 +9,178 @@ APP_NAME="pmg-portal"
 APP_DIR="/opt/pmg-portal"
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 SRC_DIR="$APP_DIR/src"
+GITHUB_REPO="https://github.com/5echo-io/pmg-portal.git"
+BRANCH="main"
 
-echo "=== Installing $APP_NAME ==="
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
 
-sudo mkdir -p "$APP_DIR"
-sudo rsync -a --delete "$REPO_DIR/" "$APP_DIR/"
+# Check if already installed
+PROD_EXISTS=false
+if [ -d "$APP_DIR" ] && [ -f "$APP_DIR/.env" ]; then
+    PROD_EXISTS=true
+fi
 
+echo -e "${GREEN}=== PMG Portal Installation Wizard ===${NC}"
+echo ""
+
+# Determine mode based on what exists
+if [ "$PROD_EXISTS" = "true" ]; then
+    # Update/Uninstall mode
+    echo "Existing installation detected:"
+    echo "  ✓ Production: $APP_DIR"
+    echo ""
+    
+    if [ -t 0 ] && [ -t 1 ]; then
+        echo "What would you like to do?"
+        echo ""
+        echo "Production:"
+        echo "  1) Update Production (from main branch, preserves database)"
+        echo "  2) Uninstall Production"
+        echo ""
+        echo "  0) Cancel"
+        echo ""
+        read -rp "Enter choice: " choice
+        
+        case "$choice" in
+            1) MODE="update" ;;
+            2) MODE="uninstall" ;;
+            0|*) echo "Cancelled."; exit 0 ;;
+        esac
+    else
+        # Non-interactive mode - default to update
+        MODE="update"
+    fi
+else
+    # Fresh install mode
+    if [ -t 0 ] && [ -t 1 ]; then
+        echo "No existing installation found."
+        echo ""
+        echo "What would you like to install?"
+        echo "  1) Install Production (main branch)"
+        echo "  0) Cancel"
+        echo ""
+        read -rp "Enter choice: " choice
+        
+        case "$choice" in
+            1) MODE="install" ;;
+            0|*) echo "Cancelled."; exit 0 ;;
+        esac
+    else
+        # Non-interactive - default to install
+        MODE="install"
+    fi
+fi
+
+# Uninstall mode
+if [ "$MODE" = "uninstall" ]; then
+    echo -e "${RED}=== Uninstalling PMG Portal ===${NC}"
+    
+    # Backup .env before removal for database cleanup
+    TEMP_ENV_BACKUP=""
+    if [ -f "$APP_DIR/.env" ]; then
+        TEMP_ENV_BACKUP=$(mktemp)
+        sudo cp "$APP_DIR/.env" "$TEMP_ENV_BACKUP"
+        set -a
+        source "$APP_DIR/.env"
+        set +a
+        
+        echo ""
+        if [ -t 0 ] && [ -t 1 ]; then
+            read -rp "Remove Postgres database? (y/N): " remove_db
+        else
+            echo "Non-interactive mode: preserving database."
+            remove_db="N"
+        fi
+        if [[ "$remove_db" =~ ^[Yy]$ ]]; then
+            if [ "${POSTGRES_HOST:-127.0.0.1}" = "127.0.0.1" ] || [ "${POSTGRES_HOST:-127.0.0.1}" = "localhost" ]; then
+                echo "Removing Postgres database..."
+                sudo -u postgres psql -c "DROP DATABASE IF EXISTS \"${POSTGRES_DB}\";" 2>/dev/null || true
+                sudo -u postgres psql -c "DROP USER IF EXISTS \"${POSTGRES_USER}\";" 2>/dev/null || true
+            fi
+            echo -e "${GREEN}Database removed.${NC}"
+        else
+            echo "Database preserved."
+        fi
+        rm -f "$TEMP_ENV_BACKUP"
+    fi
+    
+    echo "Stopping service..."
+    sudo systemctl stop pmg-portal.service 2>/dev/null || true
+    sudo systemctl disable pmg-portal.service 2>/dev/null || true
+    sudo rm -f /etc/systemd/system/pmg-portal.service
+    sudo systemctl daemon-reload
+    
+    echo "Removing application files..."
+    sudo rm -rf "$APP_DIR"
+    
+    echo -e "${GREEN}Uninstall complete.${NC}"
+    exit 0
+fi
+
+# Update mode
+if [ "$MODE" = "update" ]; then
+    echo -e "${GREEN}=== Updating PMG Portal ===${NC}"
+    
+    # Download latest code from main branch
+    TEMP_DIR=$(mktemp -d)
+    trap "rm -rf $TEMP_DIR" EXIT
+    
+    echo "Downloading latest code from main branch..."
+    git clone -b "$BRANCH" "$GITHUB_REPO" "$TEMP_DIR/pmg-portal"
+    REPO_DIR="$TEMP_DIR/pmg-portal"
+    
+    # Preserve .env
+    if [ -f "$APP_DIR/.env" ]; then
+        echo "Preserving existing .env file..."
+        sudo cp "$APP_DIR/.env" "$TEMP_DIR/.env.backup"
+    fi
+    
+    # Stop service
+    sudo systemctl stop pmg-portal.service || true
+    
+    # Update files (preserve .env and .venv)
+    echo "Updating application files (preserving .env and .venv)..."
+    sudo rsync -a --exclude='.env' --exclude='.venv' --exclude='staticfiles' --exclude='media' "$REPO_DIR/" "$APP_DIR/"
+    
+    # Restore .env
+    if [ -f "$TEMP_DIR/.env.backup" ]; then
+        sudo cp "$TEMP_DIR/.env.backup" "$APP_DIR/.env"
+    fi
+    
+    # Run update steps
+    echo "Running update steps..."
+    sudo bash "$APP_DIR/scripts/update.sh"
+    
+    echo -e "${GREEN}Update complete!${NC}"
+    exit 0
+fi
+
+# Install mode
+echo -e "${GREEN}=== Installing PMG Portal ===${NC}"
+
+# Download from main branch
+TEMP_DIR=$(mktemp -d)
+trap "rm -rf $TEMP_DIR" EXIT
+
+echo "Downloading production code from main branch..."
+git clone -b "$BRANCH" "$GITHUB_REPO" "$TEMP_DIR/pmg-portal"
+REPO_DIR="$TEMP_DIR/pmg-portal"
+
+# Install OS dependencies
 echo "Installing OS dependencies..."
 sudo apt-get update -y
 sudo apt-get install -y python3 python3-venv python3-pip postgresql postgresql-client rsync gettext libjpeg-dev libpng-dev zlib1g-dev
 
+# Copy files
+echo "Installing application files..."
+sudo mkdir -p "$APP_DIR"
+sudo rsync -a --exclude='.git' "$REPO_DIR/" "$APP_DIR/"
+
+# Helper function for prompts
 prompt_default() {
   local var_name="$1"
   local prompt_text="$2"
@@ -137,6 +299,8 @@ if [ "$POSTGRES_HOST" = "127.0.0.1" ] || [ "$POSTGRES_HOST" = "localhost" ]; the
   db_exists="$(sudo -u postgres psql -tAc "SELECT 1 FROM pg_database WHERE datname = '${db_name_lit}'")"
   if [ "$db_exists" != "1" ]; then
     sudo -u postgres psql -v ON_ERROR_STOP=1 -c "CREATE DATABASE \"${db_name_ident}\" OWNER \"${db_user_ident}\";"
+  else
+    echo "Database already exists. Preserving existing database."
   fi
 else
   echo "Skipping local Postgres setup (host: $POSTGRES_HOST)."
@@ -144,7 +308,9 @@ fi
 
 echo "Creating venv..."
 cd "$SRC_DIR"
-sudo python3 -m venv "$SRC_DIR/.venv"
+if [ ! -d "$SRC_DIR/.venv" ]; then
+    sudo python3 -m venv "$SRC_DIR/.venv"
+fi
 sudo "$SRC_DIR/.venv/bin/pip" install --upgrade pip
 sudo "$SRC_DIR/.venv/bin/pip" install -r "$SRC_DIR/requirements.txt"
 
@@ -201,6 +367,6 @@ sudo cp "$APP_DIR/deploy/systemd/pmg-portal.service" /etc/systemd/system/pmg-por
 sudo systemctl daemon-reload
 sudo systemctl enable --now pmg-portal.service
 
-echo "Done."
+echo -e "${GREEN}Done.${NC}"
 echo "Open: http://$APP_BIND (or via your reverse proxy)"
 echo "Logs: sudo journalctl -u pmg-portal.service -f --no-pager"

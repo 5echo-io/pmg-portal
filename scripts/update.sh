@@ -1,19 +1,45 @@
 #!/usr/bin/env bash
-# Purpose: Update app in-place. Run from repo or /opt/pmg-portal; do git pull first, e.g.:
-#   cd /opt/pmg-portal && sudo git pull origin dev && sudo bash scripts/update.sh
+# Purpose: Update app in-place. Automatically detects if running from production.
+# Usage: sudo bash scripts/update.sh
+#   OR: cd /opt/pmg-portal && sudo bash scripts/update.sh
 set -euo pipefail
 
-APP_DIR="/opt/pmg-portal"
+# Detect installation directory and branch
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+if [ -d "/opt/pmg-portal" ] && [ "$SCRIPT_DIR" = "/opt/pmg-portal" ]; then
+    APP_DIR="/opt/pmg-portal"
+    BRANCH="main"
+    SERVICE_NAME="pmg-portal.service"
+    ENV_TYPE="production"
+else
+    # Default to production if script is run from repo
+    APP_DIR="/opt/pmg-portal"
+    BRANCH="main"
+    SERVICE_NAME="pmg-portal.service"
+    ENV_TYPE="production"
+fi
+
 SRC_DIR="$APP_DIR/src"
 
-echo "=== Updating pmg-portal ==="
+echo "=== Updating $ENV_TYPE environment (branch: $BRANCH) ==="
 
 if [ ! -d "$APP_DIR" ]; then
   echo "ERROR: $APP_DIR not found. Run install.sh first."
   exit 1
 fi
 
-sudo systemctl stop pmg-portal.service || true
+# Pull latest code from correct branch (if git repo exists)
+if [ -d "$APP_DIR/.git" ]; then
+    echo "Pulling latest code from $BRANCH branch..."
+    cd "$APP_DIR"
+    sudo git fetch origin
+    sudo git checkout "$BRANCH"
+    sudo git pull origin "$BRANCH"
+else
+    echo "WARNING: Not a git repository. Skipping git pull."
+fi
+
+sudo systemctl stop "$SERVICE_NAME" || true
 
 echo "Re-installing python deps..."
 cd "$SRC_DIR"
@@ -58,7 +84,7 @@ sudo -E "$SRC_DIR/.venv/bin/python" manage.py migrate --noinput
 sudo -E "$SRC_DIR/.venv/bin/python" manage.py collectstatic --noinput
 sudo -E "$SRC_DIR/.venv/bin/python" manage.py compilemessages --verbosity 0
 
-sudo systemctl start pmg-portal.service
-sudo systemctl status pmg-portal.service --no-pager -l || true
+sudo systemctl start "$SERVICE_NAME"
+sudo systemctl status "$SERVICE_NAME" --no-pager -l || true
 
 echo "Done."
