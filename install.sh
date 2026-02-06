@@ -9,8 +9,8 @@ set -euo pipefail
 APP_NAME="pmg-portal"
 APP_DIR="/opt/pmg-portal"
 GITHUB_REPO="https://github.com/5echo-io/pmg-portal.git"
-GITHUB_BRANCH="main"
-GITHUB_RAW_BASE="https://raw.githubusercontent.com/5echo-io/pmg-portal/main"
+GITHUB_BRANCH="dev"
+GITHUB_RAW_BASE="https://raw.githubusercontent.com/5echo-io/pmg-portal/dev"
 
 # Colors for output
 RED='\033[0;31m'
