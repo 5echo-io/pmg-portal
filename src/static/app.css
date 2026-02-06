@@ -2831,6 +2831,14 @@ a.link:hover { color: var(--text); }
   justify-content: center;
   border-radius: 6px;
   transition: all 0.15s;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+.customer-switch-modal-close svg {
+  width: 18px;
+  height: 18px;
 }
 
 .customer-switch-modal-close:hover {

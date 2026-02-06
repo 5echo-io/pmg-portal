@@ -32,7 +32,10 @@ msgid "Select customer"
 msgstr "Velg kunde"
 
 msgid "Select Customer"
-msgstr "Velg kunde"
+msgstr "Velg kundeprofil"
+
+msgid "Select Customer Profile"
+msgstr "Velg kundeprofil"
 
 msgid "Select a Customer"
 msgstr "Velg en kunde"
