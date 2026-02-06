@@ -26,6 +26,6 @@ urlpatterns = [
     path("debug/", include("web.urls")),
 ]
 
-# Serve media files in development
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# Serve media files (in development, or as fallback in production if nginx is not configured)
+# In production, nginx should serve /media/ directly for better performance
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
