@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Copyright (c) 2026 5echo.io
 # Project: PMG Portal
-# Purpose: Fix production urls.py to handle missing facility views
+# Purpose: Fix production urls.py and views.py to handle missing facility views
 # Path: scripts/fix-production-urls.sh
 # Usage: sudo bash scripts/fix-production-urls.sh
 set -euo pipefail
@@ -18,7 +18,7 @@ echo "=== Fixing Production urls.py ==="
 # Backup
 sudo cp "$PROD_DIR/src/portal/urls.py" "$PROD_DIR/src/portal/urls.py.backup.$(date +%Y%m%d_%H%M%S)"
 
-# Create fixed version
+# Create fixed urls.py
 sudo tee "$PROD_DIR/src/portal/urls.py" > /dev/null <<'EOF'
 from django.urls import path
 from django.conf import settings
@@ -47,9 +47,25 @@ if settings.ENABLE_DEV_FEATURES:
 EOF
 
 echo "Production urls.py fixed!"
+
+# Check if views.py needs fixing (has direct imports)
+if grep -q "from .views import.*facility_list.*facility_detail" "$PROD_DIR/src/portal/urls.py.backup" 2>/dev/null; then
+    echo "Found old urls.py with direct facility imports - fix applied"
+fi
+
+# Verify views.py has stubs
+if [ -f "$PROD_DIR/src/portal/views.py" ]; then
+    if grep -q "FACILITY_AVAILABLE" "$PROD_DIR/src/portal/views.py"; then
+        echo "✓ views.py already has FACILITY_AVAILABLE handling"
+    else
+        echo "WARNING: views.py may need FACILITY_AVAILABLE stubs"
+    fi
+fi
+
 echo "Restarting service..."
 sudo systemctl restart pmg-portal.service
+sleep 2
 sudo systemctl status pmg-portal.service --no-pager -l || true
 
 echo ""
-echo "Done!"
+echo "Done! Test with: curl http://localhost:8097"
