@@ -5,7 +5,7 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm as BaseUserCreationForm
 from django.contrib.auth.models import Group
-from portal.models import Customer, CustomerMembership, PortalLink, Facility, Rack, RackSeal, NetworkDevice
+from portal.models import Customer, CustomerMembership, PortalLink, Facility, Rack, RackSeal, NetworkDevice, IPAddress, FacilityDocument
 
 User = get_user_model()
 
@@ -197,4 +197,51 @@ class NetworkDeviceForm(forms.ModelForm):
             if "rack_position" in self.fields:
                 self.fields["rack_position"].initial = self.rack_position
 
+
+class FacilityCustomerAddForm(forms.Form):
+    """Form to add a customer to a facility's access list."""
+    customer = forms.ModelChoiceField(
+        queryset=Customer.objects.none(),
+        label="Customer",
+        required=True,
+        empty_label="-- Select customer --",
+    )
+
+    def __init__(self, *args, facility=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if facility is not None:
+            existing_ids = facility.customers.values_list("id", flat=True)
+            self.fields["customer"].queryset = Customer.objects.exclude(id__in=existing_ids).order_by("name")
+
+
+class IPAddressForm(forms.ModelForm):
+    class Meta:
+        model = IPAddress
+        fields = ("ip_address", "subnet", "reserved_for", "description", "device")
+        widgets = {
+            "description": forms.TextInput(attrs={"placeholder": "Optional"}),
+            "reserved_for": forms.TextInput(attrs={"placeholder": "What this IP is reserved for"}),
+        }
+
+    def __init__(self, *args, facility=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if facility:
+            self.instance.facility = facility
+            if "device" in self.fields:
+                self.fields["device"].queryset = NetworkDevice.objects.filter(facility=facility).order_by("name")
+                self.fields["device"].required = False
+
+
+class FacilityDocumentForm(forms.ModelForm):
+    class Meta:
+        model = FacilityDocument
+        fields = ("title", "description", "file", "category")
+        widgets = {
+            "description": forms.Textarea(attrs={"rows": 2}),
+        }
+
+    def __init__(self, *args, facility=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if facility:
+            self.instance.facility = facility
 

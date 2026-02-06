@@ -9,11 +9,11 @@
 <div class="admin-toolbar admin-toolbar--single-row">
   <form method="get" action="" class="admin-toolbar-form">
     <div class="admin-search-wrap">
-      <label class="admin-search-label" for="id_q_roles">SEARCH</label>
-      <div class="admin-search-row">
+      <div class="admin-search-group">
+        <label class="admin-search-label" for="id_q_roles">SEARCH</label>
         <input type="text" name="q" id="id_q_roles" value="{{ search }}" placeholder="Search roles…" class="form-input admin-search-input">
-        <button type="submit" class="form-btn form-btn-secondary admin-search-btn">Search</button>
       </div>
+      <button type="submit" class="form-btn form-btn-secondary admin-search-btn">Search</button>
     </div>
   </form>
   <a href="{% url 'admin_app:admin_role_add' %}" class="admin-toolbar-add-btn">Add role</a>

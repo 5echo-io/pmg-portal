@@ -47,6 +47,9 @@ Pre-release builds (alpha, beta, rc) are listed here. Only full releases (no bui
   - Remove device from rack (clears rack assignment while keeping device in facility)
   - Edit device with automatic redirect back to rack if assigned
   - Device links in facility and rack views showing rack name and U-position
+- **Facility Customer Access**: Add or remove customers from a facility's access list (facility_customer_add, facility_customer_remove)
+- **IP Address Management**: CRUD for IP addresses within a facility (add, edit, delete) with optional device assignment
+- **Facility Document Management**: Upload and delete documents for facilities (title, description, file, category)
 
 ### Changed
 - **Removed Dev Feature Protection**: Removed `ENABLE_DEV_FEATURES` and `DEV_ACCESS_USERS` feature flags - Facility features are now directly available
@@ -70,6 +73,10 @@ Pre-release builds (alpha, beta, rc) are listed here. Only full releases (no bui
 - **Smart Cancel**: Form Cancel buttons use context-based cancel_url (e.g. back to rack or facility)
 - **Country Flag Filter**: New admin_extras template tag `country_flag` for facility country display
 - **List and Table Styling**: Unified Add button styling and admin-table-actions column class
+- **Admin Toolbar Layout**: Search and filter use label-above-control layout (admin-search-group, admin-filter-group); Search button aligned at end
+- **Rack Detail Header**: Rack detail page uses card-style header matching facility/customer cards (icon, title block, badge, Edit/Add Seal, meta)
+- **Breadcrumb Back Button**: Styled as pill button with border and hover state
+- **Table Action Buttons**: View/non-danger buttons use minimal outline style; danger button uses red tint and clear hover
 
 ### Fixed
 - **Context Processor**: Added missing Facility model import to fix 500 error when accessing Facility features

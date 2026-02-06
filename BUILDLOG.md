@@ -2,6 +2,19 @@
 
 - 2026-02-06 (Europe/Oslo)
   - Branch: dev
+  - Version: 4.5.0-alpha.1
+  - Summary:
+    - Facility customer access: FacilityCustomerAddForm; facility_customer_add and facility_customer_remove views to add/remove customers from facility
+    - IP address management: IPAddressForm (ip_address, subnet, reserved_for, description, device); ip_address_add, ip_address_edit, ip_address_delete views
+    - Facility document management: FacilityDocumentForm (title, description, file, category); facility_document_upload and facility_document_delete views
+    - Network device: network_device_delete view
+    - Rack detail: header redesigned to card style (rack-card-header, customer-card-header); icon, title block with U/location/serial, Active/Inactive badge, Edit icon button, Add Seal button, meta and description; tabs use customer-card-tabs
+    - List pages: toolbar search/filter layout changed to admin-search-group and admin-filter-group (label above input); Search button separate at end
+    - CSS: breadcrumb-back-btn as pill (padding, border, border-radius, focus outline); admin-search-wrap align flex-end, admin-search-group column layout; admin-btn-sm height 32px, View buttons transparent/outline, danger red tint; rack-detail-container full width, rack-card-header icon wrap
+    - Version bump: MINOR increment from 4.4.0-alpha.1 to 4.5.0-alpha.1 (IP/document/customer access management, UI)
+
+- 2026-02-06 (Europe/Oslo)
+  - Branch: dev
   - Version: 4.4.0-alpha.1
   - Summary:
     - Breadcrumb: added breadcrumb-row and contextual back button (← Admin, ← Customers, etc.) on all admin pages

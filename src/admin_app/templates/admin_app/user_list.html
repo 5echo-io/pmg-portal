@@ -9,27 +9,27 @@
 <div class="admin-toolbar admin-toolbar--single-row">
   <form method="get" action="" class="admin-toolbar-form">
     <div class="admin-search-wrap">
-      <label class="admin-search-label" for="id_q_users">SEARCH</label>
-      <div class="admin-search-row">
+      <div class="admin-search-group">
+        <label class="admin-search-label" for="id_q_users">SEARCH</label>
         <input type="text" name="q" id="id_q_users" value="{{ search }}" placeholder="Search users…" class="form-input admin-search-input" aria-label="Search users">
-    <div class="admin-filter-group">
-      <label class="admin-filter-label" for="id_filter_staff">Staff</label>
-      <select name="staff" id="id_filter_staff" class="form-input">
-        <option value="">All</option>
-        <option value="1" {% if request.GET.staff == "1" %}selected{% endif %}>Staff only</option>
-        <option value="0" {% if request.GET.staff == "0" %}selected{% endif %}>Not staff</option>
-      </select>
-    </div>
-    <div class="admin-filter-group">
-      <label class="admin-filter-label" for="id_filter_active">Active</label>
-      <select name="active" id="id_filter_active" class="form-input">
-        <option value="">All</option>
-        <option value="1" {% if request.GET.active == "1" %}selected{% endif %}>Active</option>
-        <option value="0" {% if request.GET.active == "0" %}selected{% endif %}>Inactive</option>
-      </select>
-    </div>
-        <button type="submit" class="form-btn form-btn-secondary admin-search-btn">Search</button>
       </div>
+      <div class="admin-filter-group">
+        <label class="admin-filter-label" for="id_filter_staff">Staff</label>
+        <select name="staff" id="id_filter_staff" class="form-input">
+          <option value="">All</option>
+          <option value="1" {% if request.GET.staff == "1" %}selected{% endif %}>Staff only</option>
+          <option value="0" {% if request.GET.staff == "0" %}selected{% endif %}>Not staff</option>
+        </select>
+      </div>
+      <div class="admin-filter-group">
+        <label class="admin-filter-label" for="id_filter_active">Active</label>
+        <select name="active" id="id_filter_active" class="form-input">
+          <option value="">All</option>
+          <option value="1" {% if request.GET.active == "1" %}selected{% endif %}>Active</option>
+          <option value="0" {% if request.GET.active == "0" %}selected{% endif %}>Inactive</option>
+        </select>
+      </div>
+      <button type="submit" class="form-btn form-btn-secondary admin-search-btn">Search</button>
     </div>
   </form>
   <a href="{% url 'admin_app:admin_user_add' %}" class="admin-toolbar-add-btn">Add user</a>

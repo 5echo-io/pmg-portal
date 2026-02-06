@@ -752,6 +752,45 @@ def facility_delete(request, slug):
     return redirect("admin_app:admin_facility_list")
 
 
+@staff_required
+def facility_customer_add(request, facility_slug):
+    """Add a customer to the facility's access list."""
+    from .forms import FacilityCustomerAddForm
+    facility = get_object_or_404(Facility, slug=facility_slug)
+    
+    if request.method == "POST":
+        form = FacilityCustomerAddForm(request.POST, facility=facility)
+        if form.is_valid():
+            customer = form.cleaned_data["customer"]
+            facility.customers.add(customer)
+            messages.success(request, f"'{customer.name}' now has access to this facility.")
+            return redirect("admin_app:admin_facility_detail", slug=facility.slug)
+    else:
+        form = FacilityCustomerAddForm(facility=facility)
+    
+    cancel_url = _get_cancel_url(request, reverse("admin_app:admin_facility_detail", kwargs={"slug": facility.slug}))
+    return render(request, "admin_app/facility_customer_add.html", {
+        "form": form,
+        "facility": facility,
+        "cancel_url": cancel_url,
+    })
+
+
+@staff_required
+@require_POST
+def facility_customer_remove(request, facility_slug, customer_id):
+    """Remove a customer from the facility's access list."""
+    facility = get_object_or_404(Facility, slug=facility_slug)
+    customer = get_object_or_404(Customer, pk=customer_id)
+    if not facility.customers.filter(pk=customer_id).exists():
+        messages.error(request, "That customer does not have access to this facility.")
+        return redirect("admin_app:admin_facility_detail", slug=facility.slug)
+    
+    facility.customers.remove(customer)
+    messages.success(request, f"'{customer.name}' no longer has access to this facility.")
+    return redirect("admin_app:admin_facility_detail", slug=facility.slug)
+
+
 # ----- Racks -----
 @staff_required
 def rack_add(request, facility_slug):
@@ -994,3 +1033,121 @@ def network_device_remove_from_rack(request, facility_slug, rack_id, device_id):
     
     messages.success(request, f"Device '{device.name}' removed from rack.")
     return redirect("admin_app:admin_rack_detail", facility_slug=facility.slug, rack_id=rack.pk)
+
+
+@staff_required
+@require_POST
+def network_device_delete(request, facility_slug, device_id):
+    """Delete a network device."""
+    facility = get_object_or_404(Facility, slug=facility_slug)
+    device = get_object_or_404(NetworkDevice, pk=device_id, facility=facility)
+    device_name = device.name
+    device.delete()
+    messages.success(request, f"Device '{device_name}' has been deleted.")
+    return redirect("admin_app:admin_facility_detail", slug=facility.slug)
+
+
+# ----- IP Addresses -----
+from portal.models import IPAddress, FacilityDocument
+
+
+@staff_required
+def ip_address_add(request, facility_slug):
+    """Add an IP address to a facility."""
+    from .forms import IPAddressForm
+    facility = get_object_or_404(Facility, slug=facility_slug)
+    
+    if request.method == "POST":
+        form = IPAddressForm(request.POST, facility=facility)
+        if form.is_valid():
+            obj = form.save(commit=False)
+            obj.facility = facility
+            obj.save()
+            messages.success(request, f"IP address {obj.ip_address} added.")
+            return redirect("admin_app:admin_facility_detail", slug=facility.slug)
+    else:
+        form = IPAddressForm(facility=facility)
+    
+    cancel_url = _get_cancel_url(request, reverse("admin_app:admin_facility_detail", kwargs={"slug": facility.slug}))
+    return render(request, "admin_app/ip_address_form.html", {
+        "form": form,
+        "facility": facility,
+        "ip_address": None,
+        "cancel_url": cancel_url,
+    })
+
+
+@staff_required
+def ip_address_edit(request, facility_slug, ip_id):
+    """Edit an IP address."""
+    from .forms import IPAddressForm
+    facility = get_object_or_404(Facility, slug=facility_slug)
+    ip_address = get_object_or_404(IPAddress, pk=ip_id, facility=facility)
+    
+    if request.method == "POST":
+        form = IPAddressForm(request.POST, instance=ip_address, facility=facility)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "IP address updated.")
+            return redirect("admin_app:admin_facility_detail", slug=facility.slug)
+    else:
+        form = IPAddressForm(instance=ip_address, facility=facility)
+    
+    cancel_url = _get_cancel_url(request, reverse("admin_app:admin_facility_detail", kwargs={"slug": facility.slug}))
+    return render(request, "admin_app/ip_address_form.html", {
+        "form": form,
+        "facility": facility,
+        "ip_address": ip_address,
+        "cancel_url": cancel_url,
+    })
+
+
+@staff_required
+@require_POST
+def ip_address_delete(request, facility_slug, ip_id):
+    """Delete an IP address."""
+    facility = get_object_or_404(Facility, slug=facility_slug)
+    ip_address = get_object_or_404(IPAddress, pk=ip_id, facility=facility)
+    addr = str(ip_address.ip_address)
+    ip_address.delete()
+    messages.success(request, f"IP address {addr} has been deleted.")
+    return redirect("admin_app:admin_facility_detail", slug=facility.slug)
+
+
+# ----- Facility Documents -----
+@staff_required
+def facility_document_upload(request, facility_slug):
+    """Upload a document to a facility."""
+    from .forms import FacilityDocumentForm
+    facility = get_object_or_404(Facility, slug=facility_slug)
+    
+    if request.method == "POST":
+        form = FacilityDocumentForm(request.POST, request.FILES, facility=facility)
+        if form.is_valid():
+            doc = form.save(commit=False)
+            doc.facility = facility
+            doc.uploaded_by = request.user
+            doc.save()
+            messages.success(request, f"Document '{doc.title}' uploaded.")
+            return redirect("admin_app:admin_facility_detail", slug=facility.slug)
+    else:
+        form = FacilityDocumentForm(facility=facility)
+    
+    cancel_url = _get_cancel_url(request, reverse("admin_app:admin_facility_detail", kwargs={"slug": facility.slug}))
+    return render(request, "admin_app/facility_document_form.html", {
+        "form": form,
+        "facility": facility,
+        "cancel_url": cancel_url,
+    })
+
+
+@staff_required
+@require_POST
+def facility_document_delete(request, facility_slug, doc_id):
+    """Delete a facility document."""
+    facility = get_object_or_404(Facility, slug=facility_slug)
+    doc = get_object_or_404(FacilityDocument, pk=doc_id, facility=facility)
+    title = doc.title
+    doc.delete()
+    messages.success(request, f"Document '{title}' has been deleted.")
+    return redirect("admin_app:admin_facility_detail", slug=facility.slug)

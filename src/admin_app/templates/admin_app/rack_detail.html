@@ -10,29 +10,53 @@
 {% endblock %}
 
 {% block admin_content %}
+{% csrf_token %}
 <div class="rack-detail-container">
-  <!-- Header -->
-  <div class="rack-detail-header">
-    <div>
-      <h1 class="rack-detail-name">{{ rack.name }}</h1>
-      <p class="muted">
-        {% if rack.location %}{{ rack.location }}{% endif %}
-        {% if rack.serial_number %} | Serial: {{ rack.serial_number }}{% endif %}
-        | {{ rack.height_units }}U
-      </p>
+  <!-- Rack info card (top box) -->
+  <div class="rack-card-header customer-card-header">
+    <div class="customer-card-logo-section">
+      <div class="customer-logo-upload-area rack-card-icon-wrap" style="cursor: default;">
+        <div class="customer-logo-placeholder">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="2" width="20" height="20" rx="2" ry="2"></rect>
+            <line x1="8" y1="2" x2="8" y2="22"></line>
+            <line x1="16" y1="2" x2="16" y2="22"></line>
+            <line x1="2" y1="8" x2="22" y2="8"></line>
+            <line x1="2" y1="16" x2="22" y2="16"></line>
+          </svg>
+          <span>Rack</span>
+        </div>
+      </div>
     </div>
-    <div class="rack-detail-actions">
-      <a href="{% url 'admin_app:admin_rack_edit' facility.slug rack.pk %}" class="form-btn form-btn-secondary">Edit Rack</a>
-      <a href="{% url 'admin_app:admin_rack_seal_add' facility.slug rack.pk %}" class="form-btn form-btn-primary">Add Seal</a>
+    <div class="customer-card-info">
+      <div class="customer-card-name-wrapper">
+        <div class="customer-card-title-block">
+          <h1 class="customer-card-name">{{ rack.name }}</h1>
+          <span class="customer-card-slug">{{ rack.height_units }}U{% if rack.location %} · {{ rack.location }}{% endif %}{% if rack.serial_number %} · {{ rack.serial_number }}{% endif %}</span>
+        </div>
+        <div class="customer-card-header-actions">
+          <span class="customer-card-badge customer-card-badge--{% if rack.is_active %}active{% else %}inactive{% endif %}">{% if rack.is_active %}Active{% else %}Inactive{% endif %}</span>
+          <a href="{% url 'admin_app:admin_rack_edit' facility.slug rack.pk %}" class="customer-card-icon-btn customer-card-icon-btn--edit" title="Edit Rack">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+            </svg>
+          </a>
+          <a href="{% url 'admin_app:admin_rack_seal_add' facility.slug rack.pk %}" class="form-btn form-btn-primary form-btn--narrow">Add Seal</a>
+        </div>
+      </div>
+      <p class="customer-card-meta">Created {{ rack.created_at|date:"M j, Y" }} · Updated {{ rack.updated_at|date:"M j, Y" }}</p>
+      {% if rack.description %}
+      <p class="customer-card-org" style="white-space: pre-wrap;">{{ rack.description }}</p>
+      {% endif %}
     </div>
   </div>
 
   <!-- Tabs -->
-  <div class="rack-detail-tabs">
-    <button class="rack-tab active" data-tab="visual">Visual Rack</button>
-    <button class="rack-tab" data-tab="devices">Devices ({{ devices|length }})</button>
-    <button class="rack-tab" data-tab="seals">Seals ({{ active_seals|length }})</button>
-    <button class="rack-tab" data-tab="info">Information</button>
+  <div class="rack-detail-tabs customer-card-tabs">
+    <button class="rack-tab customer-tab active" data-tab="visual">Visual Rack</button>
+    <button class="rack-tab customer-tab" data-tab="devices">Devices ({{ devices|length }})</button>
+    <button class="rack-tab customer-tab" data-tab="seals">Seals ({{ active_seals|length }})</button>
   </div>
 
   <!-- Tab Content -->
@@ -193,47 +217,6 @@
       {% endif %}
     </div>
 
-    <!-- Information Tab -->
-    <div class="rack-tab-panel" id="tab-info">
-      <div class="customer-info-grid">
-        <div class="customer-info-item">
-          <label>Name</label>
-          <p>{{ rack.name }}</p>
-        </div>
-        <div class="customer-info-item">
-          <label>Location</label>
-          <p>{{ rack.location|default:"—" }}</p>
-        </div>
-        {% if rack.serial_number %}
-        <div class="customer-info-item">
-          <label>Serial Number</label>
-          <p>{{ rack.serial_number }}</p>
-        </div>
-        {% endif %}
-        <div class="customer-info-item">
-          <label>Height (U)</label>
-          <p>{{ rack.height_units }}U</p>
-        </div>
-        <div class="customer-info-item">
-          <label>Active Status</label>
-          <p>{% if rack.is_active %}Yes{% else %}No{% endif %}</p>
-        </div>
-        {% if rack.description %}
-        <div class="customer-info-item customer-info-item--full">
-          <label>Description</label>
-          <p style="white-space: pre-wrap;">{{ rack.description }}</p>
-        </div>
-        {% endif %}
-        <div class="customer-info-item">
-          <label>Created</label>
-          <p>{{ rack.created_at|date:"Y-m-d H:i" }}</p>
-        </div>
-        <div class="customer-info-item">
-          <label>Last Updated</label>
-          <p>{{ rack.updated_at|date:"Y-m-d H:i" }}</p>
-        </div>
-      </div>
-    </div>
   </div>
 </div>
 
@@ -242,7 +225,7 @@
   // Tab switching
   const tabs = document.querySelectorAll('.rack-tab');
   const panels = document.querySelectorAll('.rack-tab-panel');
-  const tabIds = ['visual', 'devices', 'seals', 'info'];
+  const tabIds = ['visual', 'devices', 'seals'];
 
   function activateTab(targetTab) {
     if (!tabIds.includes(targetTab)) return;
@@ -298,60 +281,6 @@
 </script>
 
 <style>
-.rack-detail-container {
-  max-width: 1280px;
-  margin: 0 auto;
-}
-
-.rack-detail-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 24px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid var(--line);
-}
-
-.rack-detail-name {
-  margin: 0 0 8px 0;
-  font-size: 24px;
-  font-weight: 600;
-}
-
-.rack-detail-actions {
-  display: flex;
-  gap: 12px;
-}
-
-.rack-detail-tabs {
-  display: flex;
-  gap: 8px;
-  border-bottom: 1px solid var(--line);
-  margin-bottom: 24px;
-}
-
-.rack-tab {
-  padding: 12px 20px;
-  background: transparent;
-  border: none;
-  border-bottom: 2px solid transparent;
-  color: var(--muted);
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-  margin-bottom: -1px;
-}
-
-.rack-tab:hover {
-  color: var(--text);
-}
-
-.rack-tab.active {
-  color: var(--text);
-  border-bottom-color: #3b82f6;
-}
-
 .rack-tab-panel {
   display: none;
 }
