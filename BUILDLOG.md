@@ -2,6 +2,14 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev
+  - Version: 1.17.45-beta.20
+  - Summary:
+    - Footer "View Changelog": added document icon to match "About this portal" styling
+    - Footer buttons: unified styling for "About this portal" and "View Changelog" (merged CSS classes, consistent hover and layout)
+    - Login page footer: further reduced margin-top from 16px to 8px to bring version and language selector much closer to login box
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev
   - Version: 1.17.44-beta.19
   - Summary:
     - Customer dropdown menu: rebuilt positioning (removed align-self center from wrapper, changed menu positioning to top: 100% with margin-top: 4px, improved transform animation from -8px to 0)

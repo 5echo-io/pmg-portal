@@ -190,7 +190,7 @@ button:hover { background: var(--btnHover); }
   align-items: center;
   width: 100%;
   max-width: 420px;
-  margin-top: 16px;
+  margin-top: 8px;
   padding: 0 4px;
   font-size: 12px;
   color: var(--muted);
@@ -1397,7 +1397,8 @@ a.link:hover { color: var(--text); }
   text-align: right;
 }
 
-.footer-about-btn {
+.footer-about-btn,
+.footer-link-btn {
   background: transparent;
   border: none;
   color: var(--muted);
@@ -1412,26 +1413,16 @@ a.link:hover { color: var(--text); }
   line-height: 1.5;
 }
 
-.footer-about-btn:hover {
+.footer-about-btn:hover,
+.footer-link-btn:hover {
   color: var(--text);
 }
 
-.footer-about-btn svg {
+.footer-about-btn svg,
+.footer-link-btn svg {
   flex-shrink: 0;
   width: 14px;
   height: 14px;
-}
-
-.footer-link-btn {
-  display: inline-block;
-  padding: 0;
-  margin-top: 0;
-  transition: color 0.2s ease;
-  line-height: 1.5;
-}
-
-.footer-link-btn:hover {
-  color: var(--text);
 }
 
 .footer-changelog {

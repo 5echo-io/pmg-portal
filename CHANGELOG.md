@@ -39,7 +39,9 @@ Changed:
 - Tooltip position: moved below buttons (Facility and Service desk) instead of above
 - Customer dropdown menu: rebuilt positioning system (removed align-self center, changed to top: 100% with margin-top, improved transform animation)
 - Footer buttons: removed padding/margin to match left side text spacing; hover now only changes color
-- Login page footer: reduced margin-top from 24px to 16px to bring version and language selector closer to login box
+- Footer "View Changelog": added document icon to match "About this portal" styling
+- Footer buttons: unified styling for "About this portal" and "View Changelog" (consistent hover and layout)
+- Login page footer: further reduced margin-top from 16px to 8px to bring version and language selector much closer to login box
 - Edit (table) button: higher contrast hover (blue background)
 - Changelog: pre-release builds (alpha, beta, rc) always show Unreleased; full release shows all sections for that major
 - Changelog modal: no scroll on modal container; only content boxes scroll; fade animation when toggling View Full / Hide Full; button pulse animation on toggle
