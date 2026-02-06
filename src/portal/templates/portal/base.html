@@ -19,16 +19,6 @@
           {% trans "Projects" %}
           <span class="tooltip">{% trans "This feature is under development" %}</span>
         </span>
-        {% if active_customer_id %}
-        <a href="{% url 'facility_list' %}" class="topbar-btn {% if request.resolver_match.url_name == 'facility_list' or request.resolver_match.url_name == 'facility_detail' %}topbar-btn--active{% endif %}">
-          {% trans "Facility" %}
-        </a>
-        {% else %}
-        <span class="topbar-btn topbar-btn--disabled topbar-btn--with-tooltip">
-          {% trans "Facility" %}
-          <span class="tooltip">{% trans "Select a customer profile to access facilities" %}</span>
-        </span>
-        {% endif %}
         <span class="topbar-btn topbar-btn--disabled topbar-btn--with-tooltip">
           {% trans "Files" %}
           <span class="tooltip">{% trans "This feature is under development" %}</span>
