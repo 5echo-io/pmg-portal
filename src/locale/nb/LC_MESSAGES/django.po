@@ -55,6 +55,12 @@ msgstr "Søk etter kunder…"
 msgid "Search customers"
 msgstr "Søk etter kunder"
 
+msgid "Search customer profiles…"
+msgstr "Søk etter kundeprofiler…"
+
+msgid "Search customer profiles"
+msgstr "Søk etter kundeprofiler"
+
 msgid "Close"
 msgstr "Lukk"
 
