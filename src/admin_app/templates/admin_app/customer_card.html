@@ -70,7 +70,7 @@
     <div class="customer-tab-panel active" id="tab-members">
       <div class="customer-section-header">
         <h2>Customer Members</h2>
-        <a href="{% url 'admin_app:admin_customer_access_add' %}" class="form-btn form-btn-primary form-btn--narrow">Add Member</a>
+        <a href="{% url 'admin_app:admin_customer_access_add' %}?customer={{ customer.pk }}&redirect_to=admin_app:admin_customer_detail" class="form-btn form-btn-primary form-btn--narrow">Add Member</a>
       </div>
       {% if memberships %}
       <div class="admin-table-wrap">
@@ -94,7 +94,7 @@
                 </span>
               </td>
               <td>
-                <a href="{% url 'admin_app:admin_customer_access_edit' membership.pk %}?customer={{ customer.pk }}" class="admin-btn-sm">Edit</a>
+                <a href="{% url 'admin_app:admin_customer_access_edit' membership.pk %}?customer={{ customer.pk }}&redirect_to=admin_app:admin_customer_detail" class="admin-btn-sm">Edit</a>
               </td>
             </tr>
             {% endfor %}
@@ -110,7 +110,7 @@
     <div class="customer-tab-panel" id="tab-links">
       <div class="customer-section-header">
         <h2>Portal Links</h2>
-        <a href="{% url 'admin_app:admin_portal_link_add' %}?customer={{ customer.pk }}" class="form-btn form-btn-primary form-btn--narrow">Add Link</a>
+        <a href="{% url 'admin_app:admin_portal_link_add' %}?customer={{ customer.pk }}&redirect_to=admin_app:admin_customer_detail" class="form-btn form-btn-primary form-btn--narrow">Add Link</a>
       </div>
       {% if portal_links %}
       <div class="admin-table-wrap">
@@ -130,7 +130,7 @@
               <td><a href="{{ link.url }}" target="_blank" rel="noopener">{{ link.url|truncatechars:40 }}</a></td>
               <td>{{ link.description|default:"—" }}</td>
               <td>
-                <a href="{% url 'admin_app:admin_portal_link_edit' link.pk %}" class="admin-btn-sm">Edit</a>
+                <a href="{% url 'admin_app:admin_portal_link_edit' link.pk %}?customer={{ customer.pk }}&redirect_to=admin_app:admin_customer_detail" class="admin-btn-sm">Edit</a>
               </td>
             </tr>
             {% endfor %}
@@ -235,10 +235,67 @@
       })
       .then(response => response.json())
       .then(data => {
-        if (data.success) {
-          if (logoPreview && data.logo_url) {
-            logoPreview.src = data.logo_url;
+        if (data.success && data.logo_url) {
+          // Hide placeholder if exists
+          if (logoPlaceholder) logoPlaceholder.style.display = 'none';
+          
+          // Create or update preview
+          let previewWrapper = document.querySelector('.customer-logo-preview-wrapper');
+          if (!previewWrapper) {
+            previewWrapper = document.createElement('div');
+            previewWrapper.className = 'customer-logo-preview-wrapper';
+            uploadArea.appendChild(previewWrapper);
           }
+          
+          // Create or update image
+          let img = previewWrapper.querySelector('.customer-logo-preview');
+          if (!img) {
+            img = document.createElement('img');
+            img.className = 'customer-logo-preview';
+            img.id = 'logo-preview';
+            previewWrapper.appendChild(img);
+            
+            // Create delete button
+            const deleteBtn = document.createElement('button');
+            deleteBtn.type = 'button';
+            deleteBtn.className = 'logo-delete-btn';
+            deleteBtn.id = 'logo-delete-btn';
+            deleteBtn.title = 'Delete logo';
+            deleteBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>';
+            previewWrapper.appendChild(deleteBtn);
+            
+            // Re-attach delete button handler
+            deleteBtn.addEventListener('click', function(e) {
+              e.stopPropagation();
+              if (!confirm('Are you sure you want to delete this logo?')) return;
+              
+              const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || '';
+              fetch('/admin/customers/' + customerId + '/logo/delete/', {
+                method: 'POST',
+                headers: {
+                  'X-CSRFToken': csrfToken,
+                  'Content-Type': 'application/json'
+                }
+              })
+              .then(response => response.json())
+              .then(data => {
+                if (data.success) {
+                  previewWrapper.remove();
+                  if (logoPlaceholder) logoPlaceholder.style.display = 'flex';
+                  if (fileInput) fileInput.value = '';
+                } else {
+                  alert('Error deleting logo: ' + (data.error || 'Unknown error'));
+                }
+              })
+              .catch(error => {
+                console.error('Error:', error);
+                alert('Error deleting logo. Please try again.');
+              });
+            });
+          }
+          
+          // Update image source with cache busting
+          img.src = data.logo_url + '?t=' + new Date().getTime();
         } else {
           alert('Error uploading logo: ' + (data.error || 'Unknown error'));
         }

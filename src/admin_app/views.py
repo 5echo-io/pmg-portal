@@ -216,7 +216,16 @@ def customer_logo_upload(request, pk):
     customer.logo = logo_file
     customer.save()
     
+    # Refresh from database to get updated logo
+    customer.refresh_from_db()
+    
     logo_url = customer.logo_url()
+    if not logo_url:
+        # Fallback: try to construct URL manually
+        if customer.logo and customer.logo.name:
+            from django.conf import settings
+            logo_url = settings.MEDIA_URL + customer.logo.name
+    
     return JsonResponse({"success": True, "logo_url": logo_url})
 
 
@@ -294,14 +303,27 @@ def customer_access_list(request):
 @staff_required
 def customer_access_add(request):
     from .forms import CustomerMembershipForm
+    customer_id = request.GET.get("customer")
+    redirect_to = request.GET.get("redirect_to", "admin_app:admin_customer_access_list")
+    
     if request.method == "POST":
         form = CustomerMembershipForm(request.POST)
         if form.is_valid():
-            form.save()
+            membership = form.save()
             messages.success(request, "Access added.")
-            return redirect("admin_app:admin_customer_access_list")
+            # If customer_id was provided, redirect to customer card
+            if customer_id:
+                return redirect("admin_app:admin_customer_detail", pk=customer_id)
+            return redirect(redirect_to)
     else:
         form = CustomerMembershipForm()
+        # Pre-select customer if provided
+        if customer_id:
+            try:
+                customer = Customer.objects.get(pk=customer_id)
+                form.fields["customer"].initial = customer
+            except Customer.DoesNotExist:
+                pass
     return render(request, "admin_app/customer_access_form.html", {"form": form, "membership": None})
 
 
@@ -309,12 +331,18 @@ def customer_access_add(request):
 def customer_access_edit(request, pk):
     from .forms import CustomerMembershipForm
     membership = get_object_or_404(CustomerMembership, pk=pk)
+    customer_id = request.GET.get("customer")
+    redirect_to = request.GET.get("redirect_to", "admin_app:admin_customer_access_list")
+    
     if request.method == "POST":
         form = CustomerMembershipForm(request.POST, instance=membership)
         if form.is_valid():
             form.save()
             messages.success(request, "Access updated.")
-            return redirect("admin_app:admin_customer_access_list")
+            # If customer_id was provided, redirect to customer card
+            if customer_id:
+                return redirect("admin_app:admin_customer_detail", pk=customer_id)
+            return redirect(redirect_to)
     else:
         form = CustomerMembershipForm(instance=membership)
     return render(request, "admin_app/customer_access_form.html", {"form": form, "membership": membership})
@@ -351,14 +379,27 @@ def portal_link_list(request):
 @staff_required
 def portal_link_add(request):
     from .forms import PortalLinkForm
+    customer_id = request.GET.get("customer")
+    redirect_to = request.GET.get("redirect_to", "admin_app:admin_portal_link_list")
+    
     if request.method == "POST":
         form = PortalLinkForm(request.POST)
         if form.is_valid():
-            form.save()
+            link = form.save()
             messages.success(request, "Portal link created.")
-            return redirect("admin_app:admin_portal_link_list")
+            # If customer_id was provided, redirect to customer card
+            if customer_id:
+                return redirect("admin_app:admin_customer_detail", pk=customer_id)
+            return redirect(redirect_to)
     else:
         form = PortalLinkForm()
+        # Pre-select customer if provided
+        if customer_id:
+            try:
+                customer = Customer.objects.get(pk=customer_id)
+                form.fields["customer"].initial = customer
+            except Customer.DoesNotExist:
+                pass
     return render(request, "admin_app/portal_link_form.html", {"form": form, "link": None})
 
 
@@ -366,12 +407,18 @@ def portal_link_add(request):
 def portal_link_edit(request, pk):
     from .forms import PortalLinkForm
     link = get_object_or_404(PortalLink, pk=pk)
+    customer_id = request.GET.get("customer")
+    redirect_to = request.GET.get("redirect_to", "admin_app:admin_portal_link_list")
+    
     if request.method == "POST":
         form = PortalLinkForm(request.POST, instance=link)
         if form.is_valid():
             form.save()
             messages.success(request, "Portal link updated.")
-            return redirect("admin_app:admin_portal_link_list")
+            # If customer_id was provided, redirect to customer card
+            if customer_id:
+                return redirect("admin_app:admin_customer_detail", pk=customer_id)
+            return redirect(redirect_to)
     else:
         form = PortalLinkForm(instance=link)
     return render(request, "admin_app/portal_link_form.html", {"form": form, "link": link})
