@@ -46,7 +46,7 @@ def portal_home(request):
                     r["HX-Trigger"] = '{"setTitle": {"title": "No customer access | PMG Portal"}}'
                     return r
                 return render(request, "portal/no_customer.html")
-            # Resolve active from session (don't auto-select first)
+            # Resolve active from session
             active_customer_id = request.session.get("active_customer_id")
             active_customer = None
             if active_customer_id:
@@ -54,6 +54,11 @@ def portal_home(request):
                     if c.id == active_customer_id:
                         active_customer = c
                         break
+            
+            # Auto-select if only one customer available
+            if not active_customer and len(customers) == 1:
+                active_customer = customers[0]
+                request.session["active_customer_id"] = active_customer.id
             
             # If no active customer, show selection page
             if not active_customer:
@@ -92,6 +97,11 @@ def portal_home(request):
                     if m.customer_id == active_customer_id:
                         active = m
                         break
+            
+            # Auto-select if only one customer available
+            if not active and len(memberships_list) == 1:
+                active = memberships_list[0]
+                request.session["active_customer_id"] = active.customer_id
             
             # If no active customer, show selection page
             if not active:
