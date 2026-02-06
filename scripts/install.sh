@@ -20,12 +20,21 @@ NC='\033[0m' # No Color
 
 # Check if already installed (use sudo to check since we'll need sudo anyway)
 PROD_EXISTS=false
-if sudo [ -d "$APP_DIR" ] && sudo [ -f "$APP_DIR/.env" ]; then
+if sudo test -d "$APP_DIR" && sudo test -f "$APP_DIR/.env"; then
     PROD_EXISTS=true
 fi
 
 echo -e "${GREEN}=== PMG Portal Installation Wizard ===${NC}"
 echo ""
+
+# Debug output (can be removed later)
+if [ "${DEBUG:-false}" = "true" ]; then
+    echo "Debug: APP_DIR=$APP_DIR"
+    echo "Debug: PROD_EXISTS=$PROD_EXISTS"
+    echo "Debug: Directory exists: $(sudo test -d "$APP_DIR" && echo 'yes' || echo 'no')"
+    echo "Debug: .env exists: $(sudo test -f "$APP_DIR/.env" && echo 'yes' || echo 'no')"
+    echo ""
+fi
 
 # Determine mode based on what exists
 if [ "$PROD_EXISTS" = "true" ]; then
