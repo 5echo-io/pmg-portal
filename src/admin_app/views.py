@@ -1239,7 +1239,7 @@ def ip_address_add(request, facility_slug):
     # #region agent log
     _debug_log("H2", "views.py:ip_address_add:after_facility", "facility resolved", {"facility_pk": facility.pk, "facility_name": getattr(facility, "name", None)})
     # #endregion
-    in_modal = request.GET.get("modal") == "1"
+    in_modal = request.GET.get("modal") == "1" or request.POST.get("modal") == "1"
     detail_url = reverse("admin_app:admin_facility_detail", kwargs={"slug": facility.slug})
     
     if request.method == "POST":
@@ -1259,6 +1259,7 @@ def ip_address_add(request, facility_slug):
     delete_button_html = mark_safe("")  # Add form has no IP to delete
     page_title = _("Add IP Address")
     form_errors_html = _ip_form_errors_html(form)
+    modal_hidden_field = mark_safe('<input type="hidden" name="modal" value="1">') if in_modal else mark_safe("")
     # #region agent log
     _debug_log("H3", "views.py:ip_address_add:before_render", "about to render template", {"template": "admin_app/ip_address_form.html", "in_modal": in_modal, "form_errors": form.errors if hasattr(form, "errors") else None})
     # #endregion
@@ -1272,6 +1273,7 @@ def ip_address_add(request, facility_slug):
             "delete_button_html": delete_button_html,
             "page_title": page_title,
             "form_errors_html": form_errors_html,
+            "modal_hidden_field": modal_hidden_field,
         })
         # #region agent log
         _debug_log("H3", "views.py:ip_address_add:after_render", "render succeeded", {"status": response.status_code})
@@ -1308,6 +1310,7 @@ def ip_address_edit(request, facility_slug, ip_id):
     delete_button_html = mark_safe(f'<button type="button" class="form-btn form-btn-danger" data-delete-url="{delete_url}" data-delete-message="{delete_msg}">{delete_label}</button>')
     page_title = _("Edit IP Address")
     form_errors_html = _ip_form_errors_html(form)
+    modal_hidden_field = mark_safe("")  # Edit form not used in facility modal
     return render(request, "admin_app/ip_address_form.html", {
         "form": form,
         "facility": facility,
@@ -1316,6 +1319,7 @@ def ip_address_edit(request, facility_slug, ip_id):
         "delete_button_html": delete_button_html,
         "page_title": page_title,
         "form_errors_html": form_errors_html,
+        "modal_hidden_field": modal_hidden_field,
     })
 
 

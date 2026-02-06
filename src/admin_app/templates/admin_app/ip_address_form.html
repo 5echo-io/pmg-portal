@@ -14,6 +14,7 @@
 
 <form method="post" action="" class="admin-form admin-form--wide">
   {% csrf_token %}
+  {{ modal_hidden_field }}
   <div class="admin-form-row">
     <div class="admin-form-field">
       <label for="{{ form.ip_address.id_for_label }}">{{ form.ip_address.label }}</label>
