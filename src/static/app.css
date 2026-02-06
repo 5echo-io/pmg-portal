@@ -1113,6 +1113,7 @@ a.link:hover { color: var(--text); }
   flex-direction: column;
   min-height: 0;
   flex: 1;
+  overflow: hidden;
 }
 
 .panel {

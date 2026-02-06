@@ -7,6 +7,12 @@ This project follows Semantic Versioning (SemVer).
 
 Pre-release builds (alpha, beta, rc) are listed here. Only full releases (no build suffix) get a dedicated version section below.
 
+### [1.17.51-beta.1] - 2026-02-06
+
+Fixed:
+- Customer selection page scroll: fixed scroll behavior to prevent entire page from scrolling - only customer list scrolls when content exceeds container height
+- CSS layout: improved flexbox layout for customer selection container and main content area to properly constrain scrolling
+
 ### [1.17.50-beta.27] - 2026-02-06
 
 Fixed:

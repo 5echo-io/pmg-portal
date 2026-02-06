@@ -2,6 +2,14 @@
 
 - 2026-02-06 (Europe/Oslo)
   - Branch: dev
+  - Version: 1.17.51-beta.1
+  - Summary:
+    - Customer selection scroll fix: improved CSS flexbox layout to prevent entire page from scrolling
+    - CSS: added overflow: hidden to #main-content and improved customer-selection-container height constraints
+    - Version bump: incremented patch version from 1.17.50 to 1.17.51 due to multiple fixes and improvements
+
+- 2026-02-06 (Europe/Oslo)
+  - Branch: dev
   - Version: 1.17.50-beta.27
   - Summary:
     - Customer selection flow: implemented explicit customer profile selection on login (no auto-select for multiple customers)
