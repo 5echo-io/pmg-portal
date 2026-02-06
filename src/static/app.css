@@ -936,6 +936,10 @@ a.link:hover { color: var(--text); }
   color: var(--text);
 }
 
+.user-menu-item--customer-switch {
+  font-weight: 500;
+}
+
 .user-menu-item-wrapper {
   position: relative;
 }
