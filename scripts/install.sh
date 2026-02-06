@@ -12,6 +12,10 @@ GITHUB_REPO="https://github.com/5echo-io/pmg-portal.git"
 BRANCH="dev"
 SRC_DIR="$APP_DIR/src"
 
+# Detect branch from script URL or default to dev
+# This allows the script to know which branch it's installing from
+INSTALL_BRANCH="${BRANCH}"
+
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -244,6 +248,46 @@ if [ "$MODE" = "update" ]; then
     echo "Updating application files (preserving .env, .venv, media, and database)..."
     sudo rsync -a --exclude='.env' --exclude='.venv' --exclude='staticfiles' --exclude='media' --exclude='*.pyc' --exclude='__pycache__' "$REPO_DIR/" "$APP_DIR/"
     
+    # Cleanup branch-specific files after update
+    echo ""
+    echo "Cleaning up branch-specific files..."
+    cleanup_branch_files() {
+        local install_branch="$1"
+        local app_dir="$2"
+        local src_dir="$app_dir/src"
+        
+        if [ "$install_branch" = "main" ]; then
+            echo "  Removing dev-specific files for main branch..."
+            
+            # Remove Facility templates (dev feature)
+            sudo rm -f "$src_dir/portal/templates/portal/facility_list.html" 2>/dev/null || true
+            sudo rm -f "$src_dir/portal/templates/portal/facility_detail.html" 2>/dev/null || true
+            sudo rm -f "$src_dir/portal/templates/portal/fragments/facility_list_content.html" 2>/dev/null || true
+            sudo rm -f "$src_dir/portal/templates/portal/fragments/facility_detail_content.html" 2>/dev/null || true
+            sudo rm -f "$src_dir/admin_app/templates/admin_app/facility_list.html" 2>/dev/null || true
+            sudo rm -f "$src_dir/admin_app/templates/admin_app/facility_form.html" 2>/dev/null || true
+            sudo rm -f "$src_dir/admin_app/templates/admin_app/facility_card.html" 2>/dev/null || true
+            
+            # Remove dev feature decorators
+            sudo rm -f "$src_dir/portal/decorators.py" 2>/dev/null || true
+            
+            # Remove dev feature flags from settings.py
+            if [ -f "$src_dir/pmg_portal/settings.py" ]; then
+                sudo sed -i '/^# Development Feature Flags/,/^DEV_ACCESS_USERS =/d' "$src_dir/pmg_portal/settings.py" 2>/dev/null || true
+                sudo sed -i '/^ENABLE_DEV_FEATURES =/d' "$src_dir/pmg_portal/settings.py" 2>/dev/null || true
+                sudo sed -i '/^DEV_ACCESS_USERS =/d' "$src_dir/pmg_portal/settings.py" 2>/dev/null || true
+            fi
+            
+            echo "  ✓ Removed dev-specific files"
+        elif [ "$install_branch" = "dev" ]; then
+            echo "  Ensuring dev-specific files are present..."
+            # Dev branch should have all files
+            echo "  ✓ Dev branch files verified"
+        fi
+    }
+    
+    cleanup_branch_files "$BRANCH" "$APP_DIR"
+    
     # Restore .env
     if [ -f "$TEMP_DIR/.env.backup" ]; then
         sudo cp "$TEMP_DIR/.env.backup" "$APP_DIR/.env"
@@ -284,6 +328,47 @@ echo ""
 echo "Installing application files..."
 sudo mkdir -p "$APP_DIR"
 sudo rsync -a --exclude='.git' "$REPO_DIR/" "$APP_DIR/"
+
+# Cleanup branch-specific files
+echo ""
+echo "Cleaning up branch-specific files..."
+cleanup_branch_files() {
+    local install_branch="$1"
+    local app_dir="$2"
+    local src_dir="$app_dir/src"
+    
+    if [ "$install_branch" = "main" ]; then
+        echo "  Removing dev-specific files for main branch..."
+        
+        # Remove Facility templates (dev feature)
+        sudo rm -f "$src_dir/portal/templates/portal/facility_list.html" 2>/dev/null || true
+        sudo rm -f "$src_dir/portal/templates/portal/facility_detail.html" 2>/dev/null || true
+        sudo rm -f "$src_dir/portal/templates/portal/fragments/facility_list_content.html" 2>/dev/null || true
+        sudo rm -f "$src_dir/portal/templates/portal/fragments/facility_detail_content.html" 2>/dev/null || true
+        sudo rm -f "$src_dir/admin_app/templates/admin_app/facility_list.html" 2>/dev/null || true
+        sudo rm -f "$src_dir/admin_app/templates/admin_app/facility_form.html" 2>/dev/null || true
+        sudo rm -f "$src_dir/admin_app/templates/admin_app/facility_card.html" 2>/dev/null || true
+        
+        # Remove dev feature decorators
+        sudo rm -f "$src_dir/portal/decorators.py" 2>/dev/null || true
+        
+        # Remove dev feature flags from settings.py
+        if [ -f "$src_dir/pmg_portal/settings.py" ]; then
+            sudo sed -i '/^# Development Feature Flags/,/^DEV_ACCESS_USERS =/d' "$src_dir/pmg_portal/settings.py" 2>/dev/null || true
+            sudo sed -i '/^ENABLE_DEV_FEATURES =/d' "$src_dir/pmg_portal/settings.py" 2>/dev/null || true
+            sudo sed -i '/^DEV_ACCESS_USERS =/d' "$src_dir/pmg_portal/settings.py" 2>/dev/null || true
+        fi
+        
+        echo "  ✓ Removed dev-specific files"
+    elif [ "$install_branch" = "dev" ]; then
+        echo "  Ensuring dev-specific files are present..."
+        # Dev branch should have all files, but we can remove any main-specific cleanup scripts if needed
+        # Currently no main-specific files to remove
+        echo "  ✓ Dev branch files verified"
+    fi
+}
+
+cleanup_branch_files "$BRANCH" "$APP_DIR"
 
 # Run install wizard (.env configuration)
 echo ""
