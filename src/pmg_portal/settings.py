@@ -49,8 +49,11 @@ MIDDLEWARE = [
     "portal.middleware.LanguagePreferenceMiddleware",  # Custom language preference (after AuthenticationMiddleware)
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "pmg_portal.logging_middleware.DebugLoggingMiddleware",  # Debug logging (last)
 ]
+
+# Only enable debug logging middleware in DEBUG mode (performance optimization)
+if DEBUG:
+    MIDDLEWARE.append("pmg_portal.logging_middleware.DebugLoggingMiddleware")
 
 ROOT_URLCONF = "pmg_portal.urls"
 
@@ -124,6 +127,21 @@ MEDIA_ROOT = BASE_DIR.parent / "media"
 
 # WhiteNoise configuration for serving static files in production
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+# Caching configuration
+# Use local memory cache (fast, per-process) for development and small deployments
+# For larger deployments, consider Redis: django.core.cache.backends.redis.RedisCache
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "pmg-portal-cache",
+        "OPTIONS": {
+            "MAX_ENTRIES": 1000,
+            "CULL_FREQUENCY": 3,  # Remove 1/3 of entries when MAX_ENTRIES is reached
+        },
+        "TIMEOUT": 300,  # Default cache timeout: 5 minutes
+    }
+}
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 

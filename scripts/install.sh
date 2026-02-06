@@ -475,6 +475,19 @@ sudo systemctl daemon-reload
 sudo systemctl enable --now pmg-portal.service
 
 echo ""
+echo "Updating nginx configuration (if nginx is installed)..."
+if command -v nginx >/dev/null 2>&1; then
+    if [ -f "$APP_DIR/deploy/nginx/pmg-portal.conf" ]; then
+        echo "  Found nginx configuration template."
+        echo "  To apply performance optimizations, copy it manually:"
+        echo "    sudo cp $APP_DIR/deploy/nginx/pmg-portal.conf /etc/nginx/sites-available/pmg-portal"
+        echo "    sudo nginx -t && sudo systemctl reload nginx"
+    fi
+else
+    echo "  Nginx not installed (optional - for production deployments)"
+fi
+
+echo ""
 echo -e "${GREEN}=== Installation Complete! ===${NC}"
 echo ""
 echo "Application URL: http://$APP_BIND"

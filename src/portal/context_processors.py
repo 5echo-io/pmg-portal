@@ -41,18 +41,28 @@ def user_customers(request):
             "active_customer_id": None,
         }
 
-    # Superusers see and can switch to all customers (no membership required)
-    if request.user.is_superuser:
-        customers = Customer.objects.order_by("name")
-        # Wrap in objects with .customer so templates can use item.customer.id / item.customer.name
-        user_customers_list = [SimpleNamespace(customer=c) for c in customers]
+    # Cache key based on user ID and authentication status
+    cache_key = f"user_customers_{request.user.id}"
+    cached_result = cache.get(cache_key)
+    
+    if cached_result is not None:
+        user_customers_list = cached_result
     else:
-        memberships = (
-            CustomerMembership.objects.filter(user=request.user)
-            .select_related("customer")
-            .order_by("customer__name")
-        )
-        user_customers_list = list(memberships)
+        # Superusers see and can switch to all customers (no membership required)
+        if request.user.is_superuser:
+            customers = Customer.objects.order_by("name")
+            # Wrap in objects with .customer so templates can use item.customer.id / item.customer.name
+            user_customers_list = [SimpleNamespace(customer=c) for c in customers]
+        else:
+            memberships = (
+                CustomerMembership.objects.filter(user=request.user)
+                .select_related("customer")
+                .order_by("customer__name")
+            )
+            user_customers_list = list(memberships)
+        
+        # Cache for 5 minutes (300 seconds) - invalidate on customer/membership changes
+        cache.set(cache_key, user_customers_list, 300)
 
     # Resolve active_customer_id from session
     active_customer_id = request.session.get("active_customer_id")
@@ -97,6 +107,13 @@ def footer_info(request):
     # Return defaults if no request
     if not request or not hasattr(request, 'path'):
         return defaults
+    
+    # Cache footer info for 1 hour (3600 seconds) - version/changelog rarely changes
+    cache_key = "footer_info"
+    cached_result = cache.get(cache_key)
+    
+    if cached_result is not None:
+        return cached_result
     
     version = "Unknown"
     changelog_section = ""  # Will contain unreleased or current major version section
@@ -183,13 +200,18 @@ def footer_info(request):
             logger.exception("Error in footer_info context processor")
         return defaults
     
-    return {
+    result = {
         "app_version": version,
         "changelog_section": changelog_section,
         "changelog_full": changelog_full,
         "show_changelog_button": show_changelog_button,
         "copyright_year": "2026",
     }
+    
+    # Cache for 1 hour
+    cache.set(cache_key, result, 3600)
+    
+    return result
 
 
 def about_info(request):
