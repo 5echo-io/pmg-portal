@@ -20,7 +20,7 @@
           <span class="tooltip">{% trans "This feature is under development" %}</span>
         </span>
         {% if active_customer_id %}
-        <a href="{% url 'facility_list' %}" class="topbar-btn {% if request.resolver_match.url_name == 'facility_list' or request.resolver_match.url_name == 'facility_detail' %}topbar-btn--active{% endif %}" hx-get="{% url 'facility_list' %}" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="true">
+        <a href="{% url 'facility_list' %}" class="topbar-btn {% if request.resolver_match.url_name == 'facility_list' or request.resolver_match.url_name == 'facility_detail' %}active{% endif %}" hx-get="{% url 'facility_list' %}" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="true">
           {% trans "Facility" %}
         </a>
         {% else %}

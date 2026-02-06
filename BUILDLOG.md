@@ -2,6 +2,15 @@
 
 - 2026-02-06 (Europe/Oslo)
   - Branch: dev
+  - Version: 4.7.0-beta.4
+  - Summary:
+    - rack_detail.html: template refactor and layout updates
+    - ip_address_form.html, site_footer.html, portal base.html: small tweaks
+    - app.css: styling updates
+    - Version bump: 4.7.0-beta.3 → 4.7.0-beta.4
+
+- 2026-02-06 (Europe/Oslo)
+  - Branch: dev
   - Version: 4.7.0-beta.3
   - Summary:
     - backup_restore.py + backup_restore.html: backup/restore logic and UI improvements

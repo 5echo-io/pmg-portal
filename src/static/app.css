@@ -901,14 +901,14 @@ a.link:hover { color: var(--text); }
 .user-menu-divider {
   height: 1px;
   background: var(--line);
-  margin: 8px 0;
+  margin: 10px 0;
 }
 
 .user-menu-item {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 16px;
+  padding: 12px 16px;
   color: var(--text);
   text-decoration: none;
   font-size: 13px;
@@ -921,12 +921,8 @@ a.link:hover { color: var(--text); }
   box-sizing: border-box;
 }
 
-.user-menu-item:has(+ .user-menu-item) {
-  padding-bottom: 0;
-}
-
 .user-menu-item + .user-menu-item {
-  padding-top: 0;
+  margin-top: 2px;
 }
 
 .user-menu-item:hover {
@@ -1520,7 +1516,7 @@ a.link:hover { color: var(--text); }
 .footer-section-right {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
   align-items: flex-start;
   text-align: left;
 }
@@ -1545,9 +1541,8 @@ a.link:hover { color: var(--text); }
   color: var(--text);
 }
 
-.footer-about-btn:hover,
 .footer-lang-trigger:hover {
-  color: var(--muted);
+  color: var(--text);
 }
 
 .footer-about-btn svg,

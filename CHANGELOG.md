@@ -14,6 +14,7 @@ Pre-release builds (alpha, beta, rc) are listed here. Only full releases (no bui
 - **Backup & Restore**: UI and logic improvements; admin base layout and footer tweaks
 - **Facility card & Rack detail**: Layout and template refinements; portal facility list and base template updates
 - **Styling**: app.css and site_footer adjustments
+- **Rack detail**: Template refactor and layout updates; IP address form, site footer, portal base and app.css tweaks
 
 ### Added
 
