@@ -172,19 +172,32 @@ def customer_edit(request, pk):
     from .forms import CustomerForm
     customer = get_object_or_404(Customer, pk=pk)
     if request.method == "POST":
-        # Store old logo path before form processing
-        old_logo = customer.logo.path if customer.logo else None
+        # Store old logo info before form processing
+        old_logo_name = customer.logo.name if customer.logo else None
+        old_logo_path = None
+        if old_logo_name:
+            try:
+                old_logo_path = customer.logo.path
+            except Exception:
+                pass
+        
         form = CustomerForm(request.POST, request.FILES, instance=customer)
         if form.is_valid():
-            # If a new logo is uploaded, delete the old one
-            if old_logo and form.cleaned_data.get('logo') and old_logo != customer.logo.path:
+            # Check if a new logo file was actually uploaded
+            new_logo_uploaded = 'logo' in request.FILES and request.FILES['logo']
+            
+            # Save the form (this will save the new logo if uploaded)
+            saved_customer = form.save()
+            
+            # If a new logo was uploaded and we had an old one, delete the old file
+            if new_logo_uploaded and old_logo_path:
                 try:
                     import os
-                    if os.path.exists(old_logo):
-                        os.remove(old_logo)
+                    if os.path.exists(old_logo_path):
+                        os.remove(old_logo_path)
                 except Exception:
                     pass  # Silently fail if file deletion fails
-            form.save()
+            
             messages.success(request, "Customer updated.")
             return redirect("admin_app:admin_customer_list")
     else:

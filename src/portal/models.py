@@ -24,13 +24,20 @@ class Customer(models.Model):
     
     def logo_url(self):
         """Return logo URL if logo exists and file is present."""
-        if self.logo and self.logo.name:
-            try:
-                # Check if file exists
-                if self.logo.storage.exists(self.logo.name):
+        if not self.logo or not self.logo.name:
+            return None
+        try:
+            # Check if file exists in storage
+            if hasattr(self.logo, 'storage') and self.logo.storage.exists(self.logo.name):
+                return self.logo.url
+            # Fallback: try to check if path exists (for default file storage)
+            if hasattr(self.logo, 'path'):
+                import os
+                if os.path.exists(self.logo.path):
                     return self.logo.url
-            except Exception:
-                pass
+        except Exception:
+            # If any error occurs, return None
+            pass
         return None
     
     def delete(self, *args, **kwargs):

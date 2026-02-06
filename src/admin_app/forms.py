@@ -42,6 +42,9 @@ class CustomerForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if "primary_contact" in self.fields:
             self.fields["primary_contact"].queryset = User.objects.all().order_by("username")
+        # Make logo field not required (allow clearing it)
+        if "logo" in self.fields:
+            self.fields["logo"].required = False
 
 
 class CustomerMembershipForm(forms.ModelForm):
