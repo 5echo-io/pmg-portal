@@ -2435,7 +2435,8 @@ a.link:hover { color: var(--text); }
 
 /* Customer Card Styles */
 .customer-card-container {
-  max-width: 1280px;
+  max-width: 100%;
+  width: 100%;
   margin: 0 auto;
 }
 
@@ -2676,7 +2677,7 @@ a.link:hover { color: var(--text); }
 
 /* Customer Selection Page */
 .customer-selection-container {
-  max-width: 800px;
+  max-width: 1000px;
   margin: 0 auto;
   padding: 32px 20px;
   display: flex;
