@@ -376,8 +376,8 @@ escape_psql_identifier() {
   printf "%s" "$1" | sed 's/"/""/g'
 }
 
-# Database setup (only if not keeping existing database)
-if [ "$KEEP_DB" != "true" ] || [ -z "${KEEP_DB:-}" ]; then
+# Database setup (only if not keeping existing database or fresh install)
+if [ "${KEEP_DB:-false}" != "true" ]; then
     if [ "$POSTGRES_HOST" = "127.0.0.1" ] || [ "$POSTGRES_HOST" = "localhost" ]; then
         echo ""
         echo "Configuring local Postgres..."
