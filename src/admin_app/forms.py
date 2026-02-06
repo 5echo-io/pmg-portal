@@ -5,7 +5,7 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm as BaseUserCreationForm
 from django.contrib.auth.models import Group
-from portal.models import Customer, CustomerMembership, PortalLink, Facility, Rack, RackSeal, NetworkDevice, IPAddress, FacilityDocument
+from portal.models import Customer, CustomerMembership, PortalLink, Facility, Rack, RackSeal, DeviceType, NetworkDevice, IPAddress, FacilityDocument
 
 User = get_user_model()
 
@@ -160,6 +160,16 @@ class RackSealRemovalForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if self.user:
             self.instance.removed_by = self.user
+
+
+class DeviceTypeForm(forms.ModelForm):
+    """Form for creating/editing a device type (product)."""
+    class Meta:
+        model = DeviceType
+        fields = ("name", "slug", "category", "subcategory", "manufacturer", "model", "description", "is_active")
+        widgets = {
+            "description": forms.Textarea(attrs={"rows": 4}),
+        }
 
 
 class NetworkDeviceForm(forms.ModelForm):

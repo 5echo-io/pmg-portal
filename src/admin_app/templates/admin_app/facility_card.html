@@ -456,10 +456,25 @@
   const deviceModalTitle = document.getElementById('facility-device-modal-title');
   document.querySelector('.facility-device-add-modal-btn')?.addEventListener('click', function() {
     var body = deviceModal?.querySelector('.rack-modal-body');
-    openModalWithFragment(deviceModal, body, "{% url 'admin_app:admin_network_device_add' facility.slug %}?modal=1&return_to=facility", function() {
-      if (deviceModalTitle) deviceModalTitle.textContent = "{% trans 'Legg til enhet' %}";
+    openModalWithFragment(deviceModal, body, "{% url 'admin_app:admin_facility_device_choose_type' facility.slug %}?fragment=1", function() {
+      if (deviceModalTitle) deviceModalTitle.textContent = "{% trans 'Velg enhetstype' %}";
     });
-    if (deviceModalTitle) deviceModalTitle.textContent = "{% trans 'Legg til enhet' %}";
+    if (deviceModalTitle) deviceModalTitle.textContent = "{% trans 'Velg enhetstype' %}";
+  });
+  document.body.addEventListener('click', function(e) {
+    var btn = e.target.closest('.js-facility-device-choose-type-btn');
+    if (!btn || !deviceModal) return;
+    var formUrl = btn.getAttribute('data-form-url');
+    var typeName = btn.getAttribute('data-type-name');
+    if (!formUrl) return;
+    var body = deviceModal.querySelector('.rack-modal-body');
+    if (!body) return;
+    body.innerHTML = '<p class="muted">{% trans "Laster..." %}</p>';
+    if (deviceModalTitle) deviceModalTitle.textContent = (typeName ? typeName + ' – ' : '') + "{% trans 'Legg til enhet' %}";
+    fetch(formUrl, { credentials: 'same-origin', headers: { 'Accept': 'text/html' } })
+      .then(function(r) { return r.text(); })
+      .then(function(html) { body.innerHTML = html; })
+      .catch(function() { body.innerHTML = '<p class="form-error">{% trans "Kunne ikke laste skjema." %}</p>'; });
   });
   document.querySelectorAll('.facility-device-edit-modal-btn').forEach(function(btn) {
     btn.addEventListener('click', function() {

@@ -2,6 +2,16 @@
 
 - 2026-02-06 (Europe/Oslo)
   - Branch: dev
+  - Version: 4.8.0-beta.1
+  - Summary:
+    - Device types: admin list, detail, form (device_type_list, device_type_detail, device_type_form); urls, views, forms
+    - Device instances (rack devices): add choose facility, form, form fragment; facility card device choose type fragment; views, urls, forms
+    - Portal models: DeviceType and device instance type/product FK; migration 0006_device_type_and_product_fk
+    - facility_card.html, home.html; locale nb +12; docs/UI_UX_IMPROVEMENT_IDEAS.md
+    - Version bump: 4.7.0-beta.15 → 4.8.0-beta.1 (MINOR: device types & instances)
+
+- 2026-02-06 (Europe/Oslo)
+  - Branch: dev
   - Version: 4.7.0-beta.15
   - Summary:
     - Admin: network device add – choose facility (network_device_add_choose.html, view, URL); home.html, network_device_list.html, urls.py, views.py updates

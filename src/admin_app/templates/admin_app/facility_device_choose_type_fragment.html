@@ -1,0 +1,28 @@
+{% load i18n %}
+<p class="muted">{% trans "Choose a device type, then fill in the instance details." %}</p>
+<div class="admin-table-wrap">
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th>{% trans "Device type" %}</th>
+        <th>{% trans "Category" %}</th>
+        <th class="admin-table-actions"></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for dt in device_types %}
+      <tr>
+        <td><strong>{{ dt.name }}</strong>{% if dt.manufacturer or dt.model %} <span class="muted">({{ dt.manufacturer|default:"" }}{% if dt.manufacturer and dt.model %} {{ dt.model }}{% elif dt.model %}{{ dt.model }}{% endif %})</span>{% endif %}</td>
+        <td>{{ dt.get_category_display }}{% if dt.subcategory %} / {{ dt.subcategory }}{% endif %}</td>
+        <td class="admin-table-actions">
+          <button type="button" class="admin-btn-sm admin-toolbar-add-btn js-facility-device-choose-type-btn" data-form-url="{% url 'admin_app:admin_device_instance_add' dt.pk %}?facility={{ facility.slug|urlencode }}&fragment=1" data-type-name="{{ dt.name }}">{% trans "Add instance" %}</button>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="3">{% trans "No device types. Create device types under Devices first." %}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>

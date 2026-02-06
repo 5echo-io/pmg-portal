@@ -1,0 +1,63 @@
+{% extends "admin_app/base.html" %}
+{% load i18n %}
+
+{% block admin_title %}{{ device_type.name }}{% endblock %}
+{% block breadcrumb_extra %}
+<span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_device_list' %}">{% trans "Devices" %}</a>
+<span class="breadcrumb-sep">→</span> <span>{{ device_type.name }}</span>
+{% endblock %}
+
+{% block admin_content %}
+<h1 class="admin-page-title">{{ device_type.name }}</h1>
+
+<div class="admin-toolbar admin-toolbar--single-row">
+  <p class="muted" style="margin: 0;">
+    {{ device_type.get_category_display }}{% if device_type.subcategory %} / {{ device_type.subcategory }}{% endif %}
+    {% if device_type.manufacturer or device_type.model %} · {{ device_type.manufacturer|default:"" }}{% if device_type.manufacturer and device_type.model %} {{ device_type.model }}{% elif device_type.model %}{{ device_type.model }}{% endif %}{% endif %}
+  </p>
+  <a href="{% url 'admin_app:admin_device_instance_add' device_type.pk %}" class="admin-toolbar-add-btn">{% trans "Add instance" %}</a>
+</div>
+
+{% if device_type.description %}
+<p class="muted">{{ device_type.description }}</p>
+{% endif %}
+
+<h2 class="admin-page-subtitle">{% trans "Instances" %} ({{ instances|length }})</h2>
+
+<div class="admin-table-wrap">
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th>{% trans "Name" %}</th>
+        <th>{% trans "Serial number" %}</th>
+        <th>{% trans "IP address" %}</th>
+        <th>{% trans "Facility" %}</th>
+        <th>{% trans "Rack" %}</th>
+        <th class="admin-table-actions"></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for inst in instances %}
+      <tr>
+        <td><strong>{{ inst.name }}</strong></td>
+        <td>{{ inst.serial_number|default:"—" }}</td>
+        <td><code>{{ inst.ip_address|default:"—" }}</code></td>
+        <td><a href="{% url 'admin_app:admin_facility_detail' inst.facility.slug %}">{{ inst.facility.name }}</a></td>
+        <td>{% if inst.rack %}<a href="{% url 'admin_app:admin_rack_detail' inst.facility.slug inst.rack.pk %}">{{ inst.rack.name }}</a>{% if inst.rack_position %} (U{{ inst.rack_position }}){% endif %}{% else %}—{% endif %}</td>
+        <td class="admin-table-actions">
+          <a href="{% url 'admin_app:admin_device_instance_edit' device_type.pk inst.pk %}" class="admin-btn-sm">{% trans "Edit" %}</a>
+          <form method="post" action="{% url 'admin_app:admin_device_instance_delete' device_type.pk inst.pk %}" style="display:inline;" onsubmit="return confirm('{% trans "Remove this instance?" %}');">
+            {% csrf_token %}
+            <button type="submit" class="admin-btn-sm admin-btn-danger">{% trans "Remove" %}</button>
+          </form>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="6">{% trans "No instances yet. Add an instance to register physical units of this type." %}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

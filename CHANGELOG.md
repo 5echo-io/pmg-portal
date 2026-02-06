@@ -21,8 +21,13 @@ Pre-release builds (alpha, beta, rc) are listed here. Only full releases (no bui
 - **Settings**: settings.py update (+3 lines)
 - **Facility card**: Refactored to use fragment templates for modals (customers edit, document form, IP form, network device form, rack form); views updated to serve fragments
 - **Network device list**: Add flow with facility chooser (network_device_add_choose.html); portal facility list and app.css updates; Norwegian strings
+- **Device types & device instances**: Portal models (DeviceType, device instance FK); admin device type list/detail/form, device instance add (choose facility) and form (full + fragment); facility card device-type chooser fragment; forms, views, URLs; locale +12
 
 ### Added
+- **Admin – Device types**: device_type_list.html, device_type_detail.html, device_type_form.html; list, detail, add/edit
+- **Admin – Device instances (rack devices)**: device_instance_add_choose_facility.html, device_instance_form.html, device_instance_form_fragment.html; facility_device_choose_type_fragment.html for facility card modal
+- **Portal models**: DeviceType and device instance product/type FK (migration 0006_device_type_and_product_fk)
+- **Docs**: UI_UX_IMPROVEMENT_IDEAS.md
 - **Admin – Network device add (choose facility)**: network_device_add_choose.html template, view, URL; home and network_device_list links
 - **Admin – Facility card fragments**: facility_customers_edit_fragment.html, facility_document_form_fragment.html, ip_address_form_fragment.html, network_device_form_fragment.html, rack_form_fragment.html for modal/fragment rendering
 - **Admin – Network device list**: Dedicated network device list page (template + view + URL); admin home link

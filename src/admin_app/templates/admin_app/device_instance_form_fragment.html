@@ -1,0 +1,57 @@
+{% load i18n %}
+<p class="muted">{{ device_type.name }} · {{ facility.name }}</p>
+<form method="post" action="{{ form_action }}" class="admin-form admin-form--wide js-facility-modal-form">
+  {% csrf_token %}
+  <input type="hidden" name="facility" value="{{ facility.slug }}">
+  <input type="hidden" name="in_modal" value="1">
+  <div class="admin-form-row">
+    <div class="admin-form-field">
+      <label for="{{ form.name.id_for_label }}">{{ form.name.label }}</label>
+      {{ form.name }}
+      {% if form.name.errors %}<p class="form-error">{{ form.name.errors.0 }}</p>{% endif %}
+    </div>
+    <div class="admin-form-field">
+      <label for="{{ form.device_type.id_for_label }}">{{ form.device_type.label }}</label>
+      {{ form.device_type }}
+      {% if form.device_type.errors %}<p class="form-error">{{ form.device_type.errors.0 }}</p>{% endif %}
+    </div>
+  </div>
+  <div class="admin-form-row">
+    <div class="admin-form-field">
+      <label for="{{ form.serial_number.id_for_label }}">{{ form.serial_number.label }}</label>
+      {{ form.serial_number }}
+      {% if form.serial_number.errors %}<p class="form-error">{{ form.serial_number.errors.0 }}</p>{% endif %}
+    </div>
+    <div class="admin-form-field">
+      <label for="{{ form.ip_address.id_for_label }}">{{ form.ip_address.label }}</label>
+      {{ form.ip_address }}
+      {% if form.ip_address.errors %}<p class="form-error">{{ form.ip_address.errors.0 }}</p>{% endif %}
+    </div>
+  </div>
+  <div class="admin-form-field">
+    <label for="{{ form.mac_address.id_for_label }}">{{ form.mac_address.label }}</label>
+    {{ form.mac_address }}
+    {% if form.mac_address.errors %}<p class="form-error">{{ form.mac_address.errors.0 }}</p>{% endif %}
+  </div>
+  <div class="admin-form-row">
+    <div class="admin-form-field">
+      <label for="{{ form.rack.id_for_label }}">{{ form.rack.label }}</label>
+      {{ form.rack }}
+      {% if form.rack.errors %}<p class="form-error">{{ form.rack.errors.0 }}</p>{% endif %}
+    </div>
+    <div class="admin-form-field">
+      <label for="{{ form.rack_position.id_for_label }}">{{ form.rack_position.label }}</label>
+      {{ form.rack_position }}
+      {% if form.rack_position.errors %}<p class="form-error">{{ form.rack_position.errors.0 }}</p>{% endif %}
+    </div>
+  </div>
+  <div class="admin-form-field">
+    <label for="{{ form.description.id_for_label }}">{{ form.description.label }}</label>
+    {{ form.description }}
+    {% if form.description.errors %}<p class="form-error">{{ form.description.errors.0 }}</p>{% endif %}
+  </div>
+  <div class="admin-form-actions">
+    <button type="submit" class="form-btn form-btn-primary">{% trans "Save" %}</button>
+    <button type="button" class="form-btn form-btn-secondary js-facility-modal-cancel">{% trans "Cancel" %}</button>
+  </div>
+</form>

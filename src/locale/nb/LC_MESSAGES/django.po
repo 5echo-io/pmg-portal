@@ -52,6 +52,18 @@ msgstr "Enheter"
 msgid "Add device"
 msgstr "Legg til enhet"
 
+msgid "Velg enhetstype"
+msgstr "Velg enhetstype"
+
+msgid "Choose a device type, then fill in the instance details."
+msgstr "Velg enhetstype, deretter fyll ut detaljene for instansen."
+
+msgid "No device types. Create device types under Devices first."
+msgstr "Ingen enhetstyper. Opprett enhetstyper under Enheter først."
+
+msgid "Add instance"
+msgstr "Legg til instans"
+
 msgid "IP Addresses"
 msgstr "IP-adresser"
 

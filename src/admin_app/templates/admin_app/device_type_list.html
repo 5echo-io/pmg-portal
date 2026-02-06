@@ -1,0 +1,74 @@
+{% extends "admin_app/base.html" %}
+{% load i18n %}
+
+{% block admin_title %}{% trans "Devices" %}{% endblock %}
+{% block breadcrumb_extra %}<span class="breadcrumb-sep">→</span> <span>{% trans "Devices" %}</span>{% endblock %}
+
+{% block admin_content %}
+<h1 class="admin-page-title">{% trans "Devices" %}</h1>
+
+<div class="admin-toolbar admin-toolbar--single-row">
+  <form method="get" action="" class="admin-toolbar-form">
+    <div class="admin-search-wrap">
+      <div class="admin-search-group">
+        <label class="admin-search-label" for="id_q">{% trans "Search" %}</label>
+        <input type="text" name="q" id="id_q" value="{{ search }}" placeholder="{% trans 'Name, manufacturer, model…' %}" class="form-input admin-search-input">
+      </div>
+      <div class="admin-filter-group">
+        <label class="admin-filter-label" for="id_category">{% trans "Category" %}</label>
+        <select name="category" id="id_category" class="form-input">
+          <option value="">{% trans "All" %}</option>
+          {% for value, label in category_choices %}
+          <option value="{{ value }}" {% if category == value %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <button type="submit" class="form-btn form-btn-secondary admin-search-btn">{% trans "Search" %}</button>
+    </div>
+  </form>
+  <a href="{% url 'admin_app:admin_device_type_add' %}" class="admin-toolbar-add-btn">{% trans "Add device" %}</a>
+</div>
+
+<p class="muted">{{ total_count }} {% trans "device type" %}{{ total_count|pluralize:"s" }}</p>
+
+<div class="admin-table-wrap">
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th>{% trans "Name" %}</th>
+        <th>{% trans "Category" %}</th>
+        <th>{% trans "Instances" %}</th>
+        <th class="admin-table-actions"></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for dt in page_obj %}
+      <tr>
+        <td><strong>{{ dt.name }}</strong>{% if dt.manufacturer or dt.model %} <span class="muted">({{ dt.manufacturer|default:"" }}{% if dt.manufacturer and dt.model %} {{ dt.model }}{% elif dt.model %}{{ dt.model }}{% endif %})</span>{% endif %}</td>
+        <td>{{ dt.get_category_display }}{% if dt.subcategory %} / {{ dt.subcategory }}{% endif %}</td>
+        <td>{{ dt.instance_count }}</td>
+        <td class="admin-table-actions">
+          <a href="{% url 'admin_app:admin_device_type_detail' dt.pk %}" class="admin-btn-sm">{% trans "View" %}</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="4">{% trans "No device types. Add a device type to get started." %}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% if page_obj.has_other_pages %}
+<nav class="admin-pagination">
+  {% if page_obj.has_previous %}
+  <a href="?page={{ page_obj.previous_page_number }}{% if search %}&q={{ search|urlencode }}{% endif %}{% if category %}&category={{ category|urlencode }}{% endif %}">{% trans "Previous" %}</a>
+  {% endif %}
+  <span class="current">{% trans "Page" %} {{ page_obj.number }} {% trans "of" %} {{ page_obj.paginator.num_pages }}</span>
+  {% if page_obj.has_next %}
+  <a href="?page={{ page_obj.next_page_number }}{% if search %}&q={{ search|urlencode }}{% endif %}{% if category %}&category={{ category|urlencode }}{% endif %}">{% trans "Next" %}</a>
+  {% endif %}
+</nav>
+{% endif %}
+{% endblock %}

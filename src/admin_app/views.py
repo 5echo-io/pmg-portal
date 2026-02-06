@@ -26,6 +26,7 @@ from portal.models import (
     Facility,
     Rack,
     RackSeal,
+    DeviceType,
     NetworkDevice,
     IPAddress,
     FacilityDocument,
@@ -1077,42 +1078,163 @@ def rack_seal_remove(request, facility_slug, rack_id, seal_id):
     })
 
 
-# ----- Network Devices (global list) -----
+# ----- Devices (product types + instances) -----
 @staff_required
-def network_device_add_choose_facility(request):
-    """Choose a facility before adding a device (used from the global devices list)."""
-    facilities = Facility.objects.filter(is_active=True).order_by("name")
-    return render(request, "admin_app/network_device_add_choose.html", {
-        "facilities": facilities,
-    })
+def redirect_to_devices(request):
+    """Redirect old /admin/network-devices/ to /admin/devices/."""
+    return redirect("admin_app:admin_device_list")
 
 
 @staff_required
-def network_device_list(request):
-    """List all network devices across facilities with search and filter."""
-    qs = NetworkDevice.objects.select_related("facility", "rack").filter(is_active=True).order_by("facility__name", "name")
+def device_type_list(request):
+    """List device types (products). Table: Name, Category, View. Add device (type) button on right."""
+    qs = DeviceType.objects.filter(is_active=True).order_by("category", "name")
     search = (request.GET.get("q") or "").strip()
-    facility_slug = request.GET.get("facility") or ""
+    category = request.GET.get("category") or ""
     if search:
         qs = qs.filter(
             Q(name__icontains=search)
-            | Q(serial_number__icontains=search)
             | Q(manufacturer__icontains=search)
             | Q(model__icontains=search)
+            | Q(subcategory__icontains=search)
         )
-    if facility_slug:
-        qs = qs.filter(facility__slug=facility_slug)
-    facilities = Facility.objects.filter(is_active=True).order_by("name")
+    if category:
+        qs = qs.filter(category=category)
     total_count = qs.count()
     paginator = Paginator(qs, 25)
     page_number = request.GET.get("page", 1)
     page_obj = paginator.get_page(page_number)
-    return render(request, "admin_app/network_device_list.html", {
+    return render(request, "admin_app/device_type_list.html", {
         "page_obj": page_obj,
         "total_count": total_count,
         "search": search,
-        "facility_slug": facility_slug,
-        "facilities": facilities,
+        "category": category,
+        "category_choices": DeviceType.CATEGORY_CHOICES,
+    })
+
+
+@staff_required
+def device_type_add(request):
+    """Create a new device type (product)."""
+    from .forms import DeviceTypeForm
+    if request.method == "POST":
+        form = DeviceTypeForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, _("Device type '%(name)s' created.") % {"name": form.instance.name})
+            return redirect("admin_app:admin_device_type_detail", pk=form.instance.pk)
+    else:
+        form = DeviceTypeForm()
+    return render(request, "admin_app/device_type_form.html", {
+        "form": form,
+        "device_type": None,
+    })
+
+
+@staff_required
+def device_type_detail(request, pk):
+    """View device type (product) and list its instances. Add instance button."""
+    device_type = get_object_or_404(DeviceType, pk=pk)
+    instances = device_type.instances.filter(is_active=True).select_related("facility", "rack").order_by("facility__name", "name")
+    return render(request, "admin_app/device_type_detail.html", {
+        "device_type": device_type,
+        "instances": instances,
+    })
+
+
+@staff_required
+def device_instance_add(request, type_pk):
+    """Add an instance (NetworkDevice) of this device type. Requires facility."""
+    from .forms import NetworkDeviceForm
+    device_type = get_object_or_404(DeviceType, pk=type_pk)
+    facilities = Facility.objects.filter(is_active=True).order_by("name")
+    facility_slug = request.GET.get("facility") or (request.POST.get("facility") if request.method == "POST" else None)
+    facility = get_object_or_404(Facility, slug=facility_slug) if facility_slug else None
+
+    if request.method == "POST" and facility:
+        form = NetworkDeviceForm(request.POST, facility=facility)
+        form.instance.product = device_type
+        if form.is_valid():
+            form.save()
+            messages.success(request, _("Device instance added."))
+            in_modal = request.POST.get("in_modal") == "1"
+            if in_modal:
+                return redirect("admin_app:admin_facility_modal_close", facility_slug=facility.slug)
+            return redirect("admin_app:admin_device_type_detail", pk=device_type.pk)
+    elif request.method == "POST" and not facility:
+        form = NetworkDeviceForm(request.POST, facility=None)
+        form.instance.product = device_type
+        messages.error(request, _("Please select a facility."))
+    else:
+        form = NetworkDeviceForm(facility=facility) if facility else None
+        if form:
+            form.instance.product = device_type
+
+    if not facility:
+        return render(request, "admin_app/device_instance_add_choose_facility.html", {
+            "device_type": device_type,
+            "facilities": facilities,
+        })
+    if request.GET.get("fragment") == "1":
+        return render(request, "admin_app/device_instance_form_fragment.html", {
+            "form": form,
+            "device_type": device_type,
+            "facility": facility,
+            "form_action": request.build_absolute_uri(request.path),
+        })
+    return render(request, "admin_app/device_instance_form.html", {
+        "form": form,
+        "device_type": device_type,
+        "facility": facility,
+    })
+
+
+@staff_required
+def device_instance_edit(request, type_pk, instance_pk):
+    """Edit a device instance."""
+    from .forms import NetworkDeviceForm
+    device_type = get_object_or_404(DeviceType, pk=type_pk)
+    instance = get_object_or_404(NetworkDevice, pk=instance_pk, product=device_type)
+    facility = instance.facility
+    if request.method == "POST":
+        form = NetworkDeviceForm(request.POST, instance=instance, facility=facility)
+        if form.is_valid():
+            form.save()
+            messages.success(request, _("Device instance updated."))
+            return redirect("admin_app:admin_device_type_detail", pk=device_type.pk)
+    else:
+        form = NetworkDeviceForm(instance=instance, facility=facility)
+    return render(request, "admin_app/device_instance_form.html", {
+        "form": form,
+        "device_type": device_type,
+        "instance": instance,
+        "facility": facility,
+    })
+
+
+@staff_required
+@require_POST
+def device_instance_delete(request, type_pk, instance_pk):
+    """Delete (deactivate) a device instance."""
+    device_type = get_object_or_404(DeviceType, pk=type_pk)
+    instance = get_object_or_404(NetworkDevice, pk=instance_pk, product=device_type)
+    name = instance.name
+    instance.is_active = False
+    instance.save()
+    messages.success(request, _("Device instance '%(name)s' removed.") % {"name": name})
+    return redirect("admin_app:admin_device_type_detail", pk=device_type.pk)
+
+
+@staff_required
+def facility_device_choose_type(request, facility_slug):
+    """From facility card: choose a device type, then add instance to this facility. Returns fragment when fragment=1."""
+    facility = get_object_or_404(Facility, slug=facility_slug)
+    device_types = DeviceType.objects.filter(is_active=True).order_by("category", "name")
+    if request.GET.get("fragment") != "1":
+        return redirect("admin_app:admin_facility_detail", slug=facility.slug)
+    return render(request, "admin_app/facility_device_choose_type_fragment.html", {
+        "facility": facility,
+        "device_types": device_types,
     })
 
 

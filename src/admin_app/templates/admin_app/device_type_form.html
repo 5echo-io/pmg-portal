@@ -1,0 +1,66 @@
+{% extends "admin_app/base.html" %}
+{% load i18n %}
+
+{% block admin_title %}{% trans "Add device" %}{% endblock %}
+{% block breadcrumb_extra %}
+<span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_device_list' %}">{% trans "Devices" %}</a>
+<span class="breadcrumb-sep">→</span> <span>{% trans "Add device" %}</span>
+{% endblock %}
+
+{% block admin_content %}
+<h1 class="admin-page-title">{% trans "Add device type" %}</h1>
+<p class="muted">{% trans "Create a product/template. You can then add instances (physical units) under it." %}</p>
+
+<form method="post" action="" class="admin-form admin-form--wide">
+  {% csrf_token %}
+  <div class="admin-form-row">
+    <div class="admin-form-field">
+      <label for="{{ form.name.id_for_label }}">{{ form.name.label }}</label>
+      {{ form.name }}
+      {% if form.name.errors %}<p class="form-error">{{ form.name.errors.0 }}</p>{% endif %}
+    </div>
+    <div class="admin-form-field">
+      <label for="{{ form.slug.id_for_label }}">{{ form.slug.label }}</label>
+      {{ form.slug }}
+      {% if form.slug.errors %}<p class="form-error">{{ form.slug.errors.0 }}</p>{% endif %}
+    </div>
+  </div>
+  <div class="admin-form-row">
+    <div class="admin-form-field">
+      <label for="{{ form.category.id_for_label }}">{{ form.category.label }}</label>
+      {{ form.category }}
+      {% if form.category.errors %}<p class="form-error">{{ form.category.errors.0 }}</p>{% endif %}
+    </div>
+    <div class="admin-form-field">
+      <label for="{{ form.subcategory.id_for_label }}">{{ form.subcategory.label }}</label>
+      {{ form.subcategory }}
+      {% if form.subcategory.errors %}<p class="form-error">{{ form.subcategory.errors.0 }}</p>{% endif %}
+    </div>
+  </div>
+  <div class="admin-form-row">
+    <div class="admin-form-field">
+      <label for="{{ form.manufacturer.id_for_label }}">{{ form.manufacturer.label }}</label>
+      {{ form.manufacturer }}
+      {% if form.manufacturer.errors %}<p class="form-error">{{ form.manufacturer.errors.0 }}</p>{% endif %}
+    </div>
+    <div class="admin-form-field">
+      <label for="{{ form.model.id_for_label }}">{{ form.model.label }}</label>
+      {{ form.model }}
+      {% if form.model.errors %}<p class="form-error">{{ form.model.errors.0 }}</p>{% endif %}
+    </div>
+  </div>
+  <div class="admin-form-field">
+    <label for="{{ form.description.id_for_label }}">{{ form.description.label }}</label>
+    {{ form.description }}
+    {% if form.description.errors %}<p class="form-error">{{ form.description.errors.0 }}</p>{% endif %}
+  </div>
+  <div class="admin-form-field">
+    <label for="{{ form.is_active.id_for_label }}">{{ form.is_active.label }}</label>
+    {{ form.is_active }}
+  </div>
+  <div class="admin-form-actions">
+    <button type="submit" class="form-btn form-btn-primary">{% trans "Create" %}</button>
+    <a href="{% url 'admin_app:admin_device_list' %}" class="form-btn form-btn-secondary">{% trans "Cancel" %}</a>
+  </div>
+</form>
+{% endblock %}

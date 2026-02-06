@@ -1,0 +1,41 @@
+{% extends "admin_app/base.html" %}
+{% load i18n %}
+
+{% block admin_title %}{% trans "Add instance" %} – {{ device_type.name }}{% endblock %}
+{% block breadcrumb_extra %}
+<span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_device_list' %}">{% trans "Devices" %}</a>
+<span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_device_type_detail' device_type.pk %}">{{ device_type.name }}</a>
+<span class="breadcrumb-sep">→</span> <span>{% trans "Add instance" %}</span>
+{% endblock %}
+
+{% block admin_content %}
+<h1 class="admin-page-title">{% trans "Add instance" %}</h1>
+<p class="muted">{% trans "Choose a facility for this device instance." %}</p>
+
+{% if facilities %}
+<div class="admin-table-wrap">
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th>{% trans "Facility" %}</th>
+        <th class="admin-table-actions"></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for f in facilities %}
+      <tr>
+        <td><a href="{% url 'admin_app:admin_facility_detail' f.slug %}">{{ f.name }}</a></td>
+        <td class="admin-table-actions">
+          <a href="{% url 'admin_app:admin_device_instance_add' device_type.pk %}?facility={{ f.slug }}" class="admin-btn-sm admin-toolbar-add-btn">{% trans "Add instance" %}</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<p class="muted">{% trans "No facilities available. Create a facility first." %}</p>
+{% endif %}
+
+<p><a href="{% url 'admin_app:admin_device_type_detail' device_type.pk %}" class="form-btn form-btn-secondary">{% trans "Back" %}</a></p>
+{% endblock %}

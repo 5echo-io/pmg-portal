@@ -211,10 +211,53 @@ class Rack(models.Model):
         return self.devices.filter(is_active=True).order_by("rack_position")
 
 
+class DeviceType(models.Model):
+    """
+    Device product/template (e.g. a PC model, a gateway model). Defines the "product";
+    actual physical units are NetworkDevice instances linked via product FK.
+    """
+    CATEGORY_NETWORK = "network"
+    CATEGORY_SERVER_PC = "server_pc"
+    CATEGORY_OTHER = "other"
+    CATEGORY_CHOICES = [
+        (CATEGORY_NETWORK, "Network"),
+        (CATEGORY_SERVER_PC, "Server / PC"),
+        (CATEGORY_OTHER, "Other"),
+    ]
+    name = models.CharField(max_length=200)
+    slug = models.SlugField(max_length=120, unique=True)
+    category = models.CharField(max_length=30, choices=CATEGORY_CHOICES, default=CATEGORY_OTHER)
+    subcategory = models.CharField(max_length=100, blank=True, default="")
+    manufacturer = models.CharField(max_length=100, blank=True, default="")
+    model = models.CharField(max_length=100, blank=True, default="")
+    description = models.TextField(blank=True, default="")
+    spec = models.JSONField(default=dict, blank=True, help_text="Type-specific specs: ports, PoE, components, etc.")
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["category", "name"]
+
+    def __str__(self) -> str:
+        return self.name
+
+    def instance_count(self):
+        return self.instances.filter(is_active=True).count()
+
+
 class NetworkDevice(models.Model):
     """
-    Network devices (switches, routers, firewalls, etc.) in a facility.
+    A physical device instance (serial number, placement). Can be linked to a DeviceType (product).
     """
+    product = models.ForeignKey(
+        DeviceType,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="instances",
+        help_text="Device type/product this instance is of (optional).",
+    )
     facility = models.ForeignKey(Facility, on_delete=models.CASCADE, related_name="network_devices")
     rack = models.ForeignKey(Rack, on_delete=models.SET_NULL, null=True, blank=True, related_name="devices")
     name = models.CharField(max_length=200)
