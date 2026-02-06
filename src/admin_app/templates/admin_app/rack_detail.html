@@ -12,39 +12,54 @@
 {% block admin_content %}
 {% csrf_token %}
 <div class="rack-detail-container">
-  <div class="rack-detail-layout">
-    <!-- Left: visualization + info card (same height) + side menu -->
-    <aside class="rack-detail-left">
-      <div class="rack-detail-left-top">
-        <!-- Rack visualization (no box, on the page) -->
-        <div class="rack-detail-visual" style="min-height: {% widthratio rack.height_units 1 42 %}px;">
-          <div class="rack-visual">
-            {% for u in u_positions %}
-            <div class="rack-unit" data-u="{{ u }}">
-              <div class="rack-unit-number">{{ u }}</div>
-              <div class="rack-unit-content">
-                {% for device in devices %}
-                  {% if device.rack_position == u %}
-                  <div class="rack-device" data-device-id="{{ device.pk }}" data-device-name="{{ device.name }}">
-                    <div class="rack-device-name">{{ device.name }}</div>
-                    <div class="rack-device-type">{{ device.get_device_type_display }}</div>
-                    <button type="button" class="rack-device-remove" onclick="removeDeviceFromRack({{ device.pk }})" title="Remove device">×</button>
-                  </div>
-                  {% endif %}
-                {% endfor %}
-                {% if u not in devices_by_position %}
-                  <div class="rack-unit-empty" onclick="addDeviceAtPosition({{ u }})" title="Click to add device at U{{ u }}">
-                    <span class="rack-unit-empty-text">Empty</span>
-                  </div>
+  <div class="rack-detail-grid">
+    <!-- Row 1 left: Rack visualization with front/rear tab -->
+    <div class="rack-detail-visual-wrap" style="min-height: {% widthratio rack.height_units 1 42 %}px;">
+      <div class="rack-view-tabs">
+        <button type="button" class="rack-view-tab active" data-view="front">Front</button>
+        <button type="button" class="rack-view-tab" data-view="rear">Rear</button>
+      </div>
+      <div class="rack-detail-visual rack-view-content" data-view="front">
+        <div class="rack-visual">
+          {% for u in u_positions %}
+          <div class="rack-unit" data-u="{{ u }}">
+            <div class="rack-unit-number">{{ u }}</div>
+            <div class="rack-unit-content">
+              {% for device in devices %}
+                {% if device.rack_position == u %}
+                <div class="rack-device" data-device-id="{{ device.pk }}" data-device-name="{{ device.name }}" data-rack-position="{{ u }}" onclick="openDeviceModal({{ device.pk }})">
+                  <div class="rack-device-name">{{ device.name }}</div>
+                  <div class="rack-device-type">{{ device.get_device_type_display }}</div>
+                  <button type="button" class="rack-device-remove" onclick="event.stopPropagation(); removeDeviceFromRack({{ device.pk }})" title="Remove device">×</button>
+                </div>
                 {% endif %}
-              </div>
+              {% endfor %}
+              {% if u not in devices_by_position %}
+                <div class="rack-unit-empty" data-rack-position="{{ u }}" onclick="openDeviceModal(null, {{ u }})" title="Click to add device at U{{ u }}">
+                  <span class="rack-unit-empty-text">Empty</span>
+                </div>
+              {% endif %}
             </div>
-            {% endfor %}
           </div>
+          {% endfor %}
         </div>
+      </div>
+      <div class="rack-detail-visual rack-view-content" data-view="rear" style="display: none;">
+        <div class="rack-visual rack-view-rear">
+          {% for u in u_positions %}
+          <div class="rack-unit" data-u="{{ u }}">
+            <div class="rack-unit-number">{{ u }}</div>
+            <div class="rack-unit-content">
+              <span class="rack-unit-empty-text">Rear</span>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
 
-        <!-- Rack info card (same height as visual) -->
-        <div class="rack-detail-card customer-card-header">
+    <!-- Row 1 right: Rack info card (same height as visual) -->
+    <div class="rack-detail-card customer-card-header">
           <div class="customer-card-logo-section">
             <div class="customer-logo-upload-area rack-card-icon-wrap" style="cursor: default;">
               <div class="customer-logo-placeholder">
@@ -101,22 +116,20 @@
             {% endif %}
           </div>
         </div>
-      </div>
+    </div>
 
-      <!-- Minimal side menu -->
-      <nav class="rack-detail-sidemenu" aria-label="Rack sections">
-        <button type="button" class="rack-sidemenu-item active" data-tab="visual">Visual Rack</button>
-        <button type="button" class="rack-sidemenu-item" data-tab="devices">Devices ({{ devices|length }})</button>
-        <button type="button" class="rack-sidemenu-item" data-tab="seals">Seals ({{ active_seals|length }})</button>
-      </nav>
-    </aside>
+    <!-- Row 2 left: Side menu -->
+    <nav class="rack-detail-sidemenu" aria-label="Rack sections">
+      <button type="button" class="rack-sidemenu-item active" data-tab="visual">Visual Rack</button>
+      <button type="button" class="rack-sidemenu-item" data-tab="devices">Devices ({{ devices|length }})</button>
+      <button type="button" class="rack-sidemenu-item" data-tab="seals">Seals ({{ active_seals|length }})</button>
+    </nav>
 
-    <!-- Right: tab content -->
+    <!-- Row 2 right: Tab content -->
     <main class="rack-detail-main">
       <div class="rack-tab-panel active" id="tab-visual">
         <div class="rack-section-header">
           <h2>Rack Front View - {{ rack.height_units }}U</h2>
-          <button type="button" class="form-btn form-btn-primary form-btn--narrow" onclick="addDeviceToRack()">Add Device</button>
         </div>
         <div class="rack-visual-container rack-visual-container--inline">
           <div class="rack-visual">
@@ -126,15 +139,15 @@
               <div class="rack-unit-content">
                 {% for device in devices %}
                   {% if device.rack_position == u %}
-                  <div class="rack-device" data-device-id="{{ device.pk }}" data-device-name="{{ device.name }}">
+                  <div class="rack-device" data-device-id="{{ device.pk }}" data-device-name="{{ device.name }}" onclick="openDeviceModal({{ device.pk }})">
                     <div class="rack-device-name">{{ device.name }}</div>
                     <div class="rack-device-type">{{ device.get_device_type_display }}</div>
-                    <button type="button" class="rack-device-remove" onclick="removeDeviceFromRack({{ device.pk }})" title="Remove device">×</button>
+                    <button type="button" class="rack-device-remove" onclick="event.stopPropagation(); removeDeviceFromRack({{ device.pk }})" title="Remove device">×</button>
                   </div>
                   {% endif %}
                 {% endfor %}
                 {% if u not in devices_by_position %}
-                  <div class="rack-unit-empty" onclick="addDeviceAtPosition({{ u }})" title="Click to add device at U{{ u }}">
+                  <div class="rack-unit-empty" onclick="openDeviceModal(null, {{ u }})" title="Click to add device at U{{ u }}">
                     <span class="rack-unit-empty-text">Empty</span>
                   </div>
                 {% endif %}
@@ -148,7 +161,6 @@
       <div class="rack-tab-panel" id="tab-devices">
         <div class="rack-section-header">
           <h2>Devices in Rack</h2>
-          <button type="button" class="form-btn form-btn-primary form-btn--narrow" onclick="addDeviceToRack()">Add Device</button>
         </div>
         {% if devices %}
         <div class="admin-table-wrap">
@@ -279,6 +291,18 @@
   </div>
 </div>
 
+<!-- Device add/edit modal -->
+<div id="rack-device-modal" class="rack-modal" aria-hidden="true">
+  <div class="rack-modal-backdrop"></div>
+  <div class="rack-modal-dialog">
+    <div class="rack-modal-header">
+      <h2 class="rack-modal-title" id="rack-device-modal-title">Device</h2>
+      <button type="button" class="rack-device-modal-close rack-modal-close" aria-label="Close">&times;</button>
+    </div>
+    <iframe id="rack-device-iframe" class="rack-modal-iframe" title="Device"></iframe>
+  </div>
+</div>
+
 <script>
 (function() {
   const tabIds = ['visual', 'devices', 'seals'];
@@ -304,48 +328,83 @@
   const hash = (window.location.hash || '').replace(/^#/, '');
   if (hash) activateTab(hash);
 
-  // Edit modal
-  const modal = document.getElementById('rack-edit-modal');
-  const iframe = document.getElementById('rack-edit-iframe');
-  const editBtn = document.querySelector('.rack-edit-modal-btn');
-  const closeBtn = modal && modal.querySelector('.rack-modal-close');
-  const backdrop = modal && modal.querySelector('.rack-modal-backdrop');
+  // Front / Rear view tabs
+  document.querySelectorAll('.rack-view-tab').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.rack-view-tab').forEach(function(b) { b.classList.remove('active'); });
+      this.classList.add('active');
+      const view = this.dataset.view;
+      document.querySelectorAll('.rack-view-content').forEach(function(el) {
+        el.style.display = el.dataset.view === view ? '' : 'none';
+      });
+    });
+  });
 
-  if (editBtn && modal && iframe) {
+  // Edit rack modal
+  const editModal = document.getElementById('rack-edit-modal');
+  const editIframe = document.getElementById('rack-edit-iframe');
+  const editBtn = document.querySelector('.rack-edit-modal-btn');
+  if (editBtn && editModal && editIframe) {
     editBtn.addEventListener('click', function(e) {
       e.preventDefault();
-      iframe.src = this.getAttribute('href');
-      modal.setAttribute('aria-hidden', 'false');
-      modal.classList.add('rack-modal-open');
+      editIframe.src = this.getAttribute('href');
+      editModal.setAttribute('aria-hidden', 'false');
+      editModal.classList.add('rack-modal-open');
     });
   }
-  function closeModal() {
-    if (!modal) return;
-    modal.setAttribute('aria-hidden', 'true');
-    modal.classList.remove('rack-modal-open');
-    iframe.src = 'about:blank';
+  function closeEditModal() {
+    if (editModal) {
+      editModal.setAttribute('aria-hidden', 'true');
+      editModal.classList.remove('rack-modal-open');
+      if (editIframe) editIframe.src = 'about:blank';
+    }
   }
-  if (closeBtn) closeBtn.addEventListener('click', closeModal);
-  if (backdrop) backdrop.addEventListener('click', closeModal);
+  editModal && editModal.querySelector('.rack-modal-close')?.addEventListener('click', closeEditModal);
+  editModal && editModal.querySelector('.rack-modal-backdrop')?.addEventListener('click', closeEditModal);
+
+  // Device modal
+  const deviceModal = document.getElementById('rack-device-modal');
+  const deviceIframe = document.getElementById('rack-device-iframe');
+  const deviceModalTitle = document.getElementById('rack-device-modal-title');
+  const addUrl = "{% url 'admin_app:admin_network_device_add_to_rack' facility.slug rack.pk %}";
+  const addAtPositionUrl = "{% url 'admin_app:admin_network_device_add_to_position' facility.slug rack.pk 0 %}";
+  const editUrl = "{% url 'admin_app:admin_network_device_edit' facility.slug 0 %}";
+
+  window.openDeviceModal = function(deviceId, rackPosition) {
+    var url;
+    if (deviceId) {
+      url = editUrl.replace('/0/', '/' + deviceId + '/') + '?modal=1';
+      deviceModalTitle.textContent = 'Edit Device';
+    } else {
+      url = rackPosition ? addAtPositionUrl.replace('/0/', '/' + rackPosition + '/') + '?modal=1' : addUrl + '?modal=1';
+      deviceModalTitle.textContent = 'Add Device';
+    }
+    deviceIframe.src = url;
+    deviceModal.setAttribute('aria-hidden', 'false');
+    deviceModal.classList.add('rack-modal-open');
+  };
+  function closeDeviceModal() {
+    if (deviceModal) {
+      deviceModal.setAttribute('aria-hidden', 'true');
+      deviceModal.classList.remove('rack-modal-open');
+      if (deviceIframe) deviceIframe.src = 'about:blank';
+    }
+  }
+  deviceModal && deviceModal.querySelector('.rack-device-modal-close')?.addEventListener('click', closeDeviceModal);
+  deviceModal && deviceModal.querySelector('.rack-modal-backdrop')?.addEventListener('click', closeDeviceModal);
 
   window.addEventListener('message', function(e) {
     if (e.data && e.data.type === 'pmg-rack-edit-saved') {
-      closeModal();
+      closeEditModal();
+      closeDeviceModal();
       window.location.reload();
     }
   });
 
-  // When iframe loads rack detail with modal_close=1, tell parent to close and refresh
   if (window.self !== window.top && new URLSearchParams(window.location.search).get('modal_close')) {
     try { window.parent.postMessage({ type: 'pmg-rack-edit-saved' }, '*'); } catch (err) {}
   }
 
-  window.addDeviceToRack = function() {
-    window.location.href = "{% url 'admin_app:admin_network_device_add_to_rack' facility.slug rack.pk %}";
-  };
-  window.addDeviceAtPosition = function(uPosition) {
-    window.location.href = "{% url 'admin_app:admin_network_device_add_to_position' facility.slug rack.pk 0 %}".replace('/0/', '/' + uPosition + '/');
-  };
   window.removeDeviceFromRack = function(deviceId) {
     if (confirm('Remove this device from the rack? The device will remain in the facility but will no longer be assigned to this rack.')) {
       const form = document.createElement('form');
@@ -364,46 +423,63 @@
     }
   };
   window.editDevice = function(deviceId) {
-    window.location.href = "{% url 'admin_app:admin_network_device_edit' facility.slug 0 %}".replace('/0/', '/' + deviceId + '/');
+    openDeviceModal(deviceId);
   };
 })();
 </script>
 
 <style>
-.rack-detail-layout {
+.rack-detail-grid {
   display: grid;
-  grid-template-columns: 320px 1fr;
-  gap: 32px;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 24px 32px;
   align-items: start;
 }
 @media (max-width: 900px) {
-  .rack-detail-layout {
+  .rack-detail-grid {
     grid-template-columns: 1fr;
   }
 }
 
-.rack-detail-left {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-
-.rack-detail-left-top {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  min-height: 280px;
-}
-.rack-detail-visual {
-  flex: 1;
-  min-height: 120px;
+.rack-detail-visual-wrap {
   border: 1px solid var(--line);
   border-radius: 12px;
   background: var(--bg);
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 120px;
+}
+.rack-view-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--line);
+  padding: 0 8px;
+}
+.rack-view-tab {
+  padding: 8px 16px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  margin-bottom: -1px;
+  font-family: inherit;
+}
+.rack-view-tab:hover { color: var(--text); }
+.rack-view-tab.active {
+  color: #3b82f6;
+  border-bottom-color: #3b82f6;
+}
+.rack-detail-visual {
+  flex: 1;
+  padding: 8px;
+  min-height: 80px;
 }
 .rack-detail-card {
-  flex: 1;
   min-height: 180px;
   margin-bottom: 0;
 }
@@ -481,7 +557,7 @@
 .rack-detail-sidemenu {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0;
 }
 .rack-sidemenu-item {
   display: block;
@@ -493,7 +569,7 @@
   color: var(--muted);
   background: transparent;
   border: none;
-  border-radius: 8px;
+  border-radius: 0;
   cursor: pointer;
   transition: all 0.15s;
   font-family: inherit;
@@ -567,6 +643,7 @@
 .rack-unit-empty {
   width: 100%;
   height: 100%;
+  min-height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -590,7 +667,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  cursor: pointer;
 }
+.rack-device:hover { background: rgba(59, 130, 246, 0.18); }
 .rack-device-name { font-weight: 600; font-size: 14px; }
 .rack-device-type { font-size: 12px; color: var(--muted); margin-left: 12px; }
 .rack-device-remove {

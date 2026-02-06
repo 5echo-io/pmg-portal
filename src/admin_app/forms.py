@@ -214,6 +214,24 @@ class FacilityCustomerAddForm(forms.Form):
             self.fields["customer"].queryset = Customer.objects.exclude(id__in=existing_ids).order_by("name")
 
 
+class FacilityCustomersEditForm(forms.Form):
+    """Form to set which customers have access to a facility (checkboxes)."""
+    customers = forms.ModelMultipleChoiceField(
+        queryset=Customer.objects.none(),
+        widget=forms.CheckboxSelectMultiple(),
+        required=False,
+    )
+
+    def __init__(self, *args, facility=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if facility is not None:
+            self.fields["customers"].queryset = Customer.objects.all().order_by("name")
+            self.fields["customers"].initial = facility.customers.values_list("id", flat=True)
+
+    def save(self, facility):
+        facility.customers.set(self.cleaned_data["customers"])
+
+
 class IPAddressForm(forms.ModelForm):
     class Meta:
         model = IPAddress

@@ -2,6 +2,22 @@
 
 - 2026-02-06 (Europe/Oslo)
   - Branch: dev
+  - Version: 4.7.0-alpha.1
+  - Summary:
+    - Backup & Restore: backup_restore.py (pg_dump + media tar), backup_restore view and template, URL server/backup-restore/, admin home "Server management" panel for superusers
+    - Facility customers edit: FacilityCustomersEditForm (checkboxes), facility_customers_edit view and template (search filter), URL facilities/<slug>/customers/; replaces add-one flow with batch edit
+    - Facility card: Edit facility and "Manage access" open in modals (iframe); postMessage pmg-facility-modal-close to close and reload; Remove per customer; Delete rack in Racks tab; i18n ({% trans %}) on tabs and labels
+    - facility_edit: in_modal support, redirect with ?modal_close=1
+    - Rack detail: rack-detail-grid layout; Front/Rear view tabs (rack-view-tabs); device units and empty units call openDeviceModal(deviceId, position); rear view placeholder
+    - network_device_add/edit: in_modal and cancel_url/redirect with modal_close=1 for rack detail
+    - Views: gettext (_) for facility and facility_customer messages
+    - Portal base: removed 38 lines (cleanup)
+    - Norwegian translations: django.po +33 strings
+    - CSS: admin-backup-form, rack-detail-grid, rack-view-tabs, etc.
+    - Version bump: MINOR increment from 4.6.0-alpha.1 to 4.7.0-alpha.1 (backup/restore, facility modals, rack grid/front-rear)
+
+- 2026-02-06 (Europe/Oslo)
+  - Branch: dev
   - Version: 4.6.0-alpha.1
   - Summary:
     - Rack detail: two-column layout (rack-detail-layout) – left: rack-detail-left (visual + rack-detail-card + rack-detail-sidemenu), right: rack-detail-main with tab panels

@@ -1,0 +1,47 @@
+{% extends "admin_app/base.html" %}
+{% load static %}
+
+{% block admin_title %}Backup & Restore{% endblock %}
+{% block breadcrumb_extra %}<span class="breadcrumb-sep">→</span> <span>Server management</span><span class="breadcrumb-sep">→</span> <span>Backup & Restore</span>{% endblock %}
+
+{% block admin_content %}
+<h1 class="admin-page-title">Backup & Restore</h1>
+
+<p class="admin-backup-intro">Create a full backup of the database and all uploaded files (logos, documents), or restore from a previous backup. Use this when migrating to a new server or recovering from failure.</p>
+
+<div class="admin-backup-grid">
+  <div class="panel admin-backup-panel">
+    <div class="admin-backup-panel-heading">
+      <span class="admin-backup-panel-icon" aria-hidden="true">↓</span>
+      Create backup
+    </div>
+    <p class="admin-backup-panel-desc">Download a complete snapshot: PostgreSQL database plus all media files. The file can be restored on this server or a new installation.</p>
+    <form method="post" action="{% url 'admin_app:admin_backup_restore' %}" class="admin-backup-form">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="backup">
+      <button type="submit" class="form-btn form-btn-primary admin-backup-btn">Download backup</button>
+    </form>
+  </div>
+
+  <div class="panel admin-backup-panel">
+    <div class="admin-backup-panel-heading">
+      <span class="admin-backup-panel-icon" aria-hidden="true">↑</span>
+      Restore from backup
+    </div>
+    <p class="admin-backup-panel-desc">Upload a .tar.gz backup file to replace the current database and media with the backup contents. <strong>This overwrites all existing data.</strong></p>
+    <form method="post" action="{% url 'admin_app:admin_backup_restore' %}" enctype="multipart/form-data" class="admin-backup-form">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="restore">
+      <div class="admin-backup-file-wrap">
+        <label for="id_backup_file" class="admin-backup-file-label">Backup file (.tar.gz)</label>
+        <input type="file" name="backup_file" id="id_backup_file" accept=".tar.gz,application/gzip" required class="form-input admin-backup-file-input">
+      </div>
+      <button type="submit" class="form-btn form-btn-danger admin-backup-btn">Restore from backup</button>
+    </form>
+  </div>
+</div>
+
+<div class="admin-backup-note">
+  <strong>Note:</strong> Backup and restore require PostgreSQL client tools (<code>pg_dump</code>, <code>psql</code>) to be installed on the server and available on PATH.
+</div>
+{% endblock %}

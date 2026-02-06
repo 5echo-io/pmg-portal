@@ -1,5 +1,6 @@
 {% extends "admin_app/base.html" %}
 {% load static %}
+{% load i18n %}
 {% load admin_extras %}
 
 {% block admin_title %}{{ facility.name }}{% endblock %}
@@ -35,9 +36,9 @@
           <h1 class="customer-card-name">{{ facility.name }}</h1>
           <span class="customer-card-slug">{{ facility.slug }}</span>
         </div>
-        <div class="customer-card-header-actions">
+        <div class="customer-card-header-actions customer-card-header-actions--align">
           <span class="customer-card-badge customer-card-badge--{% if facility.is_active %}active{% else %}inactive{% endif %}" title="Active status">{% if facility.is_active %}Active{% else %}Inactive{% endif %}</span>
-          <a href="{% url 'admin_app:admin_facility_edit' facility.slug %}" class="customer-card-icon-btn customer-card-icon-btn--edit" title="Edit Details">
+          <a href="{% url 'admin_app:admin_facility_edit' facility.slug %}?modal=1" class="customer-card-icon-btn customer-card-icon-btn--edit facility-edit-modal-btn" title="Edit Details">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
               <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
@@ -64,11 +65,11 @@
 
   <!-- Tabs Section -->
   <div class="customer-card-tabs">
-    <button class="customer-tab active" data-tab="customers">Customers ({{ customers|length }})</button>
-    <button class="customer-tab" data-tab="racks">Racks ({{ racks|length }})</button>
-    <button class="customer-tab" data-tab="network">Network Devices ({{ network_devices|length }})</button>
-    <button class="customer-tab" data-tab="ip">IP Addresses ({{ ip_addresses|length }})</button>
-    <button class="customer-tab" data-tab="documents">Documents ({{ documents|length }})</button>
+    <button class="customer-tab active" data-tab="customers">{% trans "Customers" %} ({{ customers|length }})</button>
+    <button class="customer-tab" data-tab="racks">{% trans "Racks" %} ({{ racks|length }})</button>
+    <button class="customer-tab" data-tab="network">{% trans "Network Devices" %} ({{ network_devices|length }})</button>
+    <button class="customer-tab" data-tab="ip">{% trans "IP Addresses" %} ({{ ip_addresses|length }})</button>
+    <button class="customer-tab" data-tab="documents">{% trans "Documents" %} ({{ documents|length }})</button>
   </div>
 
   <!-- Tab Content -->
@@ -76,16 +77,17 @@
     <!-- Customers Tab -->
     <div class="customer-tab-panel active" id="tab-customers">
       <div class="customer-section-header">
-        <h2>Customers with Access</h2>
+        <h2>{% trans "Customers with Access" %}</h2>
+        <button type="button" class="form-btn form-btn-primary form-btn--narrow facility-customers-modal-btn">{% trans "Manage access" %}</button>
       </div>
       {% if customers %}
       <div class="admin-table-wrap">
         <table class="admin-table">
           <thead>
             <tr>
-              <th>Customer</th>
-              <th>Org. no.</th>
-              <th></th>
+              <th>{% trans "Customer" %}</th>
+              <th>{% trans "Org. no." %}</th>
+              <th class="admin-table-actions"></th>
             </tr>
           </thead>
           <tbody>
@@ -93,8 +95,12 @@
             <tr>
               <td><a href="{% url 'admin_app:admin_customer_detail' customer.pk %}">{{ customer.name }}</a></td>
               <td>{{ customer.org_number|default:"—" }}</td>
-              <td>
+              <td class="admin-table-actions">
                 <a href="{% url 'admin_app:admin_customer_detail' customer.pk %}" class="admin-btn-sm">View</a>
+                <form method="post" action="{% url 'admin_app:admin_facility_customer_remove' facility.slug customer.pk %}" style="display: inline;" onsubmit="return confirm('Remove {{ customer.name }} from facility access?');">
+                  {% csrf_token %}
+                  <button type="submit" class="admin-btn-sm admin-btn-danger">Remove</button>
+                </form>
               </td>
             </tr>
             {% endfor %}
@@ -102,25 +108,25 @@
         </table>
       </div>
       {% else %}
-      <p class="muted">No customers have access to this facility.</p>
+      <p class="muted">{% trans "No customers have access to this facility." %}</p>
       {% endif %}
     </div>
 
     <!-- Racks Tab -->
     <div class="customer-tab-panel" id="tab-racks">
       <div class="customer-section-header">
-        <h2>Racks</h2>
-        <a href="{% url 'admin_app:admin_rack_add' facility.slug %}" class="form-btn form-btn-primary form-btn--narrow">Add Rack</a>
+        <h2>{% trans "Racks" %}</h2>
+        <a href="{% url 'admin_app:admin_rack_add' facility.slug %}" class="form-btn form-btn-primary form-btn--narrow">{% trans "Add Rack" %}</a>
       </div>
       {% if racks %}
       <div class="admin-table-wrap">
         <table class="admin-table">
           <thead>
             <tr>
-              <th>Name</th>
-              <th>Location</th>
-              <th>Height (U)</th>
-              <th></th>
+              <th>{% trans "Name" %}</th>
+              <th>{% trans "Location" %}</th>
+              <th>{% trans "Height" %} (U)</th>
+              <th class="admin-table-actions"></th>
             </tr>
           </thead>
           <tbody>
@@ -129,9 +135,10 @@
               <td><a href="{% url 'admin_app:admin_rack_detail' facility.slug rack.pk %}">{{ rack.name }}</a></td>
               <td>{{ rack.location|default:"—" }}</td>
               <td>{{ rack.height_units }}U</td>
-              <td>
+              <td class="admin-table-actions">
                 <a href="{% url 'admin_app:admin_rack_detail' facility.slug rack.pk %}" class="admin-btn-sm">View</a>
                 <a href="{% url 'admin_app:admin_rack_edit' facility.slug rack.pk %}" class="admin-btn-sm">Edit</a>
+                <button type="button" class="admin-btn-sm admin-btn-danger" data-delete-url="{% url 'admin_app:admin_rack_delete' facility.slug rack.pk %}" data-delete-message="Are you sure you want to delete the rack '{{ rack.name }}'? This will also delete all seals and devices associated with this rack.">Delete</button>
               </td>
             </tr>
             {% endfor %}
@@ -139,7 +146,7 @@
         </table>
       </div>
       {% else %}
-      <p class="muted">No racks configured for this facility.</p>
+      <p class="muted">{% trans "No racks configured for this facility." %}</p>
       {% endif %}
     </div>
 
@@ -266,23 +273,101 @@
   </div>
 </div>
 
+<!-- Edit Facility modal -->
+<div id="facility-edit-modal" class="rack-modal" aria-hidden="true">
+  <div class="rack-modal-backdrop"></div>
+  <div class="rack-modal-dialog">
+    <div class="rack-modal-header">
+      <h2 class="rack-modal-title">Edit Facility</h2>
+      <button type="button" class="rack-modal-close facility-modal-close" aria-label="Close">&times;</button>
+    </div>
+    <iframe id="facility-edit-iframe" class="rack-modal-iframe" title="Edit Facility"></iframe>
+  </div>
+</div>
+
+<!-- Customer access modal -->
+<div id="facility-customers-modal" class="rack-modal" aria-hidden="true">
+  <div class="rack-modal-backdrop"></div>
+  <div class="rack-modal-dialog">
+    <div class="rack-modal-header">
+      <h2 class="rack-modal-title">Customer access</h2>
+      <button type="button" class="rack-modal-close facility-modal-close" aria-label="Close">&times;</button>
+    </div>
+    <iframe id="facility-customers-iframe" class="rack-modal-iframe" title="Customer access"></iframe>
+  </div>
+</div>
+
+<style>
+.customer-card-header-actions--align { align-items: center; }
+.rack-modal { position: fixed; inset: 0; z-index: 10000; display: flex; align-items: center; justify-content: center; padding: 24px; opacity: 0; visibility: hidden; transition: opacity 0.2s, visibility 0.2s; }
+.rack-modal-open { opacity: 1; visibility: visible; }
+.rack-modal-backdrop { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.6); }
+.rack-modal-dialog { position: relative; width: 100%; max-width: 560px; max-height: 90vh; background: var(--card); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3); }
+.rack-modal-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--line); flex-shrink: 0; }
+.rack-modal-title { margin: 0; font-size: 16px; font-weight: 600; }
+.rack-modal-close { background: none; border: none; font-size: 24px; line-height: 1; color: var(--muted); cursor: pointer; padding: 4px; }
+.rack-modal-close:hover { color: var(--text); }
+.rack-modal-iframe { flex: 1; min-height: 400px; border: none; width: 100%; }
+</style>
+
 <script>
 (function() {
-  // Tab switching
   const tabs = document.querySelectorAll('.customer-tab');
   const panels = document.querySelectorAll('.customer-tab-panel');
-  
   tabs.forEach(tab => {
     tab.addEventListener('click', function() {
       const targetTab = this.dataset.tab;
-      
       tabs.forEach(t => t.classList.remove('active'));
       panels.forEach(p => p.classList.remove('active'));
-      
       this.classList.add('active');
       document.getElementById('tab-' + targetTab)?.classList.add('active');
     });
   });
+
+  const editModal = document.getElementById('facility-edit-modal');
+  const editIframe = document.getElementById('facility-edit-iframe');
+  const customersModal = document.getElementById('facility-customers-modal');
+  const customersIframe = document.getElementById('facility-customers-iframe');
+
+  document.querySelector('.facility-edit-modal-btn')?.addEventListener('click', function(e) {
+    e.preventDefault();
+    editIframe.src = this.getAttribute('href');
+    editModal.setAttribute('aria-hidden', 'false');
+    editModal.classList.add('rack-modal-open');
+  });
+
+  document.querySelector('.facility-customers-modal-btn')?.addEventListener('click', function() {
+    customersIframe.src = "{% url 'admin_app:admin_facility_customers_edit' facility.slug %}?modal=1";
+    customersModal.setAttribute('aria-hidden', 'false');
+    customersModal.classList.add('rack-modal-open');
+  });
+
+  function closeAllFacilityModals() {
+    [editModal, customersModal].forEach(function(m) {
+      if (!m) return;
+      m.setAttribute('aria-hidden', 'true');
+      m.classList.remove('rack-modal-open');
+    });
+    if (editIframe) editIframe.src = 'about:blank';
+    if (customersIframe) customersIframe.src = 'about:blank';
+  }
+  document.querySelectorAll('.facility-modal-close').forEach(function(btn) {
+    btn.addEventListener('click', closeAllFacilityModals);
+  });
+  document.querySelectorAll('#facility-edit-modal .rack-modal-backdrop, #facility-customers-modal .rack-modal-backdrop').forEach(function(el) {
+    el.addEventListener('click', closeAllFacilityModals);
+  });
+
+  window.addEventListener('message', function(e) {
+    if (e.data && e.data.type === 'pmg-facility-modal-close') {
+      closeAllFacilityModals();
+      window.location.reload();
+    }
+  });
+
+  if (window.self !== window.top && new URLSearchParams(window.location.search).get('modal_close')) {
+    try { window.parent.postMessage({ type: 'pmg-facility-modal-close' }, '*'); } catch (err) {}
+  }
 })();
 </script>
 {% endblock %}

@@ -1,0 +1,52 @@
+{% extends "admin_app/base.html" %}
+{% load i18n %}
+
+{% block admin_title %}{% trans "Customer access" %} – {{ facility.name }}{% endblock %}
+{% block breadcrumb_extra %}
+<span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_facility_list' %}">{% trans "Facilities" %}</a>
+<span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_facility_detail' facility.slug %}">{{ facility.name }}</a>
+<span class="breadcrumb-sep">→</span> <span>{% trans "Customer access" %}</span>
+{% endblock %}
+
+{% block admin_content %}
+<h1 class="admin-page-title">{% trans "Customer access" %}</h1>
+<p class="muted">{% trans "Select which customers have access to this facility." %}</p>
+
+<form method="post" action="" class="admin-form admin-form--wide">
+  {% csrf_token %}
+  <div class="admin-form-field">
+    <label>{% trans "Search" %}</label>
+    <input type="text" id="customer-search" class="form-input" placeholder="{% trans 'Filter by name...' %}" autocomplete="off">
+  </div>
+  <div class="admin-form-field admin-form-checkboxes facility-customers-checkboxes">
+    {{ form.customers }}
+  </div>
+  {% if form.customers.errors %}<p class="form-error">{{ form.customers.errors.0 }}</p>{% endif %}
+  <div class="admin-form-actions">
+    <button type="submit" class="form-btn form-btn-primary form-btn--narrow">{% trans "Save" %}</button>
+    <a href="{{ cancel_url }}" class="form-btn form-btn-secondary">{% trans "Cancel" %}</a>
+  </div>
+</form>
+
+<script>
+(function() {
+  const search = document.getElementById('customer-search');
+  const container = document.querySelector('.facility-customers-checkboxes');
+  if (search && container) {
+    const items = container.querySelectorAll('li');
+    search.addEventListener('input', function() {
+      const q = this.value.trim().toLowerCase();
+      items.forEach(function(li) {
+        const text = (li.textContent || '').toLowerCase();
+        li.classList.toggle('hidden', q && text.indexOf(q) === -1);
+      });
+    });
+  }
+})();
+</script>
+<style>
+.facility-customers-checkboxes li.hidden { display: none; }
+.facility-customers-checkboxes ul { list-style: none; padding: 0; margin: 0; }
+.facility-customers-checkboxes { max-height: 360px; overflow-y: auto; }
+</style>
+{% endblock %}

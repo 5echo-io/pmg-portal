@@ -47,9 +47,10 @@ Pre-release builds (alpha, beta, rc) are listed here. Only full releases (no bui
   - Remove device from rack (clears rack assignment while keeping device in facility)
   - Edit device with automatic redirect back to rack if assigned
   - Device links in facility and rack views showing rack name and U-position
-- **Facility Customer Access**: Add or remove customers from a facility's access list (facility_customer_add, facility_customer_remove)
+- **Facility Customer Access**: Add or remove customers from a facility's access list; batch edit via "Manage access" (facility_customers_edit with checkboxes) or remove per customer
 - **IP Address Management**: CRUD for IP addresses within a facility (add, edit, delete) with optional device assignment
 - **Facility Document Management**: Upload and delete documents for facilities (title, description, file, category)
+- **Backup & Restore**: Full backup (PostgreSQL + media) and restore from single .tar.gz; superuser-only; linked from admin home under "Server management"
 
 ### Changed
 - **Removed Dev Feature Protection**: Removed `ENABLE_DEV_FEATURES` and `DEV_ACCESS_USERS` feature flags - Facility features are now directly available
@@ -81,6 +82,10 @@ Pre-release builds (alpha, beta, rc) are listed here. Only full releases (no bui
 - **Rack Edit Modal**: rack_edit view supports ?modal=1 and redirects with ?modal_close=1 for parent to close modal and refresh
 - **Danger Button Hover**: Softer hover styles (rgba) for form-btn-danger, admin-btn-danger, and admin-btn-sm.admin-btn-danger
 - **Rack Detail Width**: Container constrained to max-width 1280px (aligned with dashboard)
+- **Facility Edit and Customer Access Modals**: Edit facility and "Manage access" open in iframe modals; postMessage to close and refresh on save
+- **Facility Card**: Delete rack button in Racks tab; Remove customer button per row; Norwegian (i18n) for tab and table labels
+- **Rack Detail**: Grid layout with Front/Rear view tabs; device cells and empty units open device add/edit modal (openDeviceModal)
+- **Modal Support**: facility_edit, facility_customers_edit, network_device_add, network_device_edit support ?modal=1 and redirect with ?modal_close=1 for parent close/refresh
 
 ### Fixed
 - **Context Processor**: Added missing Facility model import to fix 500 error when accessing Facility features

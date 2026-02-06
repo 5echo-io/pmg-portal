@@ -9,13 +9,17 @@ from django.urls import reverse
 from django.db.models import Q
 from django.core.paginator import Paginator
 from django.contrib import messages
-from django.views.decorators.http import require_POST
-from django.http import JsonResponse
+from django.views.decorators.http import require_POST, require_http_methods
+from django.http import JsonResponse, HttpResponse
 from django.conf import settings
+from django.utils import timezone
 import os
+import tempfile
+from pathlib import Path
 
 from portal.models import Customer, CustomerMembership, PortalLink, Facility, Rack, RackSeal, NetworkDevice
 from django.utils import timezone
+from django.utils.translation import gettext as _
 
 
 def _get_cancel_url(request, default):
@@ -690,7 +694,7 @@ def facility_add(request):
         form = FacilityForm(request.POST)
         if form.is_valid():
             facility = form.save()
-            messages.success(request, "Facility created.")
+            messages.success(request, _("Facility created."))
             return redirect("admin_app:admin_facility_detail", slug=facility.slug)
     else:
         form = FacilityForm()
@@ -726,15 +730,19 @@ def facility_detail(request, slug):
 def facility_edit(request, slug):
     from .forms import FacilityForm
     facility = get_object_or_404(Facility, slug=slug)
+    in_modal = request.GET.get("modal") == "1"
+    detail_url = reverse("admin_app:admin_facility_detail", kwargs={"slug": facility.slug})
     if request.method == "POST":
         form = FacilityForm(request.POST, instance=facility)
         if form.is_valid():
             form.save()
-            messages.success(request, "Facility updated.")
+            messages.success(request, _("Facility updated."))
+            if in_modal:
+                return redirect(detail_url + "?modal_close=1")
             return redirect("admin_app:admin_facility_detail", slug=facility.slug)
     else:
         form = FacilityForm(instance=facility)
-    cancel_url = _get_cancel_url(request, reverse("admin_app:admin_facility_detail", kwargs={"slug": facility.slug}))
+    cancel_url = detail_url + "?modal_close=1" if in_modal else _get_cancel_url(request, detail_url)
     return render(request, "admin_app/facility_form.html", {"form": form, "facility": facility, "cancel_url": cancel_url})
 
 
@@ -748,28 +756,29 @@ def facility_delete(request, slug):
     # Delete facility (this will cascade delete related models)
     facility.delete()
     
-    messages.success(request, f"Facility '{facility_name}' has been deleted.")
+    messages.success(request, _("Facility '%(name)s' has been deleted.") % {"name": facility_name})
     return redirect("admin_app:admin_facility_list")
 
 
 @staff_required
-def facility_customer_add(request, facility_slug):
-    """Add a customer to the facility's access list."""
-    from .forms import FacilityCustomerAddForm
+def facility_customers_edit(request, facility_slug):
+    """Edit facility customer access (checkboxes); used in modal from facility detail."""
+    from .forms import FacilityCustomersEditForm
     facility = get_object_or_404(Facility, slug=facility_slug)
-    
+    in_modal = request.GET.get("modal") == "1"
+    detail_url = reverse("admin_app:admin_facility_detail", kwargs={"slug": facility.slug})
     if request.method == "POST":
-        form = FacilityCustomerAddForm(request.POST, facility=facility)
+        form = FacilityCustomersEditForm(request.POST, facility=facility)
         if form.is_valid():
-            customer = form.cleaned_data["customer"]
-            facility.customers.add(customer)
-            messages.success(request, f"'{customer.name}' now has access to this facility.")
-            return redirect("admin_app:admin_facility_detail", slug=facility.slug)
+            form.save(facility)
+            messages.success(request, _("Customer access updated."))
+            if in_modal:
+                return redirect(detail_url + "?modal_close=1")
+            return redirect(detail_url)
     else:
-        form = FacilityCustomerAddForm(facility=facility)
-    
-    cancel_url = _get_cancel_url(request, reverse("admin_app:admin_facility_detail", kwargs={"slug": facility.slug}))
-    return render(request, "admin_app/facility_customer_add.html", {
+        form = FacilityCustomersEditForm(facility=facility)
+    cancel_url = detail_url + "?modal_close=1" if in_modal else detail_url
+    return render(request, "admin_app/facility_customers_edit.html", {
         "form": form,
         "facility": facility,
         "cancel_url": cancel_url,
@@ -783,11 +792,11 @@ def facility_customer_remove(request, facility_slug, customer_id):
     facility = get_object_or_404(Facility, slug=facility_slug)
     customer = get_object_or_404(Customer, pk=customer_id)
     if not facility.customers.filter(pk=customer_id).exists():
-        messages.error(request, "That customer does not have access to this facility.")
+        messages.error(request, _("That customer does not have access to this facility."))
         return redirect("admin_app:admin_facility_detail", slug=facility.slug)
     
     facility.customers.remove(customer)
-    messages.success(request, f"'{customer.name}' no longer has access to this facility.")
+    messages.success(request, _("'%(name)s' no longer has access to this facility.") % {"name": customer.name})
     return redirect("admin_app:admin_facility_detail", slug=facility.slug)
 
 
@@ -961,6 +970,8 @@ def network_device_add(request, facility_slug, rack_id=None, rack_position=None)
     if rack_id:
         rack = get_object_or_404(Rack, pk=rack_id, facility=facility)
     
+    in_modal = request.GET.get("modal") == "1"
+    rack_detail_url = reverse("admin_app:admin_rack_detail", kwargs={"facility_slug": facility.slug, "rack_id": rack.pk}) if rack else None
     if request.method == "POST":
         form = NetworkDeviceForm(request.POST, facility=facility, rack=rack, rack_position=rack_position)
         if form.is_valid():
@@ -973,14 +984,15 @@ def network_device_add(request, facility_slug, rack_id=None, rack_position=None)
             device.save()
             messages.success(request, "Network device created.")
             if rack:
-                return redirect("admin_app:admin_rack_detail", facility_slug=facility.slug, rack_id=rack.pk)
+                url = (rack_detail_url + "?modal_close=1") if in_modal else rack_detail_url
+                return redirect(url)
             else:
                 return redirect("admin_app:admin_facility_detail", slug=facility.slug)
     else:
         form = NetworkDeviceForm(facility=facility, rack=rack, rack_position=rack_position)
     
     if rack:
-        cancel_url = reverse("admin_app:admin_rack_detail", kwargs={"facility_slug": facility.slug, "rack_id": rack.pk}) + "#devices"
+        cancel_url = (rack_detail_url + "?modal_close=1") if in_modal else (rack_detail_url + "#devices")
     else:
         cancel_url = _get_cancel_url(request, reverse("admin_app:admin_facility_detail", kwargs={"slug": facility.slug}))
     return render(request, "admin_app/network_device_form.html", {
@@ -998,21 +1010,23 @@ def network_device_edit(request, facility_slug, device_id):
     from .forms import NetworkDeviceForm
     facility = get_object_or_404(Facility, slug=facility_slug)
     device = get_object_or_404(NetworkDevice, pk=device_id, facility=facility)
-    
+    in_modal = request.GET.get("modal") == "1"
+    rack_detail_url = reverse("admin_app:admin_rack_detail", kwargs={"facility_slug": facility.slug, "rack_id": device.rack.pk}) if device.rack else None
     if request.method == "POST":
         form = NetworkDeviceForm(request.POST, instance=device, facility=facility)
         if form.is_valid():
             form.save()
             messages.success(request, "Network device updated.")
             if device.rack:
-                return redirect("admin_app:admin_rack_detail", facility_slug=facility.slug, rack_id=device.rack.pk)
+                url = (rack_detail_url + "?modal_close=1") if in_modal else rack_detail_url
+                return redirect(url)
             else:
                 return redirect("admin_app:admin_facility_detail", slug=facility.slug)
     else:
         form = NetworkDeviceForm(instance=device, facility=facility)
     
     if device.rack:
-        cancel_url = reverse("admin_app:admin_rack_detail", kwargs={"facility_slug": facility.slug, "rack_id": device.rack.pk}) + "#devices"
+        cancel_url = (rack_detail_url + "?modal_close=1") if in_modal else (rack_detail_url + "#devices")
     else:
         cancel_url = _get_cancel_url(request, reverse("admin_app:admin_facility_detail", kwargs={"slug": facility.slug}))
     return render(request, "admin_app/network_device_form.html", {
@@ -1156,3 +1170,52 @@ def facility_document_delete(request, facility_slug, doc_id):
     doc.delete()
     messages.success(request, f"Document '{title}' has been deleted.")
     return redirect("admin_app:admin_facility_detail", slug=facility.slug)
+
+
+# ----- Backup & Restore (superuser only) -----
+@superuser_required
+@require_http_methods(["GET", "POST"])
+def backup_restore(request):
+    """Server management: create full backup (download) or restore from uploaded backup file."""
+    from . import backup_restore as br
+
+    if request.method == "POST":
+        action = request.POST.get("action")
+        if action == "backup":
+            try:
+                data = br.create_backup_archive()
+                filename = f"pmg-portal-backup-{timezone.now().strftime('%Y%m%d-%H%M%S')}.tar.gz"
+                response = HttpResponse(data, content_type="application/gzip")
+                response["Content-Disposition"] = f'attachment; filename="{filename}"'
+                response["Content-Length"] = len(data)
+                return response
+            except Exception as e:
+                messages.error(request, str(e))
+                return redirect("admin_app:admin_backup_restore")
+
+        if action == "restore":
+            backup_file = request.FILES.get("backup_file")
+            if not backup_file:
+                messages.error(request, "Please select a backup file to restore.")
+                return redirect("admin_app:admin_backup_restore")
+            if not backup_file.name.endswith(".tar.gz"):
+                messages.error(request, "Backup file must be a .tar.gz file.")
+                return redirect("admin_app:admin_backup_restore")
+            try:
+                with tempfile.NamedTemporaryFile(suffix=".tar.gz", delete=False) as tmp:
+                    for chunk in backup_file.chunks():
+                        tmp.write(chunk)
+                    tmp_path = tmp.name
+                try:
+                    br.restore_from_archive(Path(tmp_path))
+                    messages.success(request, "Restore completed successfully. Database and media have been restored.")
+                finally:
+                    try:
+                        os.unlink(tmp_path)
+                    except OSError:
+                        pass
+            except Exception as e:
+                messages.error(request, f"Restore failed: {e}")
+            return redirect("admin_app:admin_backup_restore")
+
+    return render(request, "admin_app/backup_restore.html")

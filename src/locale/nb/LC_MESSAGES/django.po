@@ -423,3 +423,36 @@ msgstr "Alle rettigheter reservert."
 
 msgid "Customer logo displayed on dashboard"
 msgstr "Kundelogo vist på dashboard"
+
+msgid "Customer access"
+msgstr "Kundetilgang"
+
+msgid "Manage access"
+msgstr "Administrer tilgang"
+
+msgid "Customers with Access"
+msgstr "Kunder med tilgang"
+
+msgid "No customers have access to this facility."
+msgstr "Ingen kunder har tilgang til dette anlegget."
+
+msgid "Add Rack"
+msgstr "Legg til rack"
+
+msgid "Facility updated."
+msgstr "Anlegg oppdatert."
+
+msgid "Facility created."
+msgstr "Anlegg opprettet."
+
+msgid "Facility '%(name)s' has been deleted."
+msgstr "Anlegget '%(name)s' er slettet."
+
+msgid "Customer access updated."
+msgstr "Kundetilgang oppdatert."
+
+msgid "That customer does not have access to this facility."
+msgstr "Den kunden har ikke tilgang til dette anlegget."
+
+msgid "'%(name)s' no longer has access to this facility."
+msgstr "'%(name)s' har ikke lenger tilgang til dette anlegget."

@@ -2070,6 +2070,104 @@ a.link:hover { color: var(--text); }
   color: #3b82f6;
 }
 
+/* Backup & Restore page */
+.admin-backup-intro {
+  color: var(--muted);
+  margin: 0 0 24px 0;
+  max-width: 640px;
+}
+
+.admin-backup-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  margin-top: 24px;
+}
+
+@media (max-width: 768px) {
+  .admin-backup-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.admin-backup-panel {
+  padding: 24px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md, 12px);
+}
+
+.admin-backup-panel-heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 12px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.admin-backup-panel-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: rgba(59, 130, 246, 0.15);
+  border-radius: 8px;
+  font-size: 18px;
+}
+
+.admin-backup-panel-desc {
+  color: var(--muted);
+  font-size: 13px;
+  margin: 0 0 20px 0;
+  line-height: 1.5;
+}
+
+.admin-backup-form {
+  margin-top: 8px;
+}
+
+.admin-backup-file-wrap {
+  margin-bottom: 16px;
+}
+
+.admin-backup-file-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.admin-backup-file-input {
+  width: 100%;
+  max-width: 100%;
+  padding: 10px 12px;
+}
+
+.admin-backup-btn {
+  min-width: 160px;
+}
+
+.admin-backup-note {
+  margin-top: 32px;
+  padding: 14px 18px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.admin-backup-note code {
+  font-size: 12px;
+  padding: 2px 6px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
 .admin-messages {
   list-style: none;
   padding: 0;

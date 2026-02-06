@@ -31,5 +31,13 @@
       <li><a href="{% url 'admin_app:admin_portal_link_list' %}" class="admin-home-link">Portal links</a></li>
     </ul>
   </div>
+  {% if request.user.is_superuser %}
+  <div class="panel admin-home-panel">
+    <div class="admin-home-panel-heading">Server management</div>
+    <ul class="admin-home-links">
+      <li><a href="{% url 'admin_app:admin_backup_restore' %}" class="admin-home-link">Backup & Restore</a></li>
+    </ul>
+  </div>
+  {% endif %}
 </div>
 {% endblock %}
