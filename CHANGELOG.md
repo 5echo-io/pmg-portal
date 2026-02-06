@@ -39,12 +39,16 @@ Pre-release builds (alpha, beta, rc) are listed here. Only full releases (no bui
 - **Install Script**: Updated rsync to use `--delete` flag to ensure all template files are properly synced
 - **Facility Templates**: Facility templates are now production-ready and kept in main branch (no longer removed during main branch cleanup)
 - **HTMX Navigation**: Added HTMX support to Facility list and detail views for seamless navigation without full page reloads
+- **URL Structure**: Changed Facility URLs from primary key (`pk`) to slug-based (`slug`) for better SEO and user-friendly URLs (BREAKING CHANGE)
+- **Facility Detail UI**: Added breadcrumb navigation and back button for better user experience
+- **Network Tab**: Combined Network Devices and IP Addresses into a single Network tab with combined statistics
 
 ### Fixed
 - **Context Processor**: Added missing Facility model import to fix 500 error when accessing Facility features
 - **Template Sync**: Fixed install.sh to ensure Facility template files are properly copied to server
 - **Migration Handling**: Improved migration error handling in update.sh with better migration name detection using multiple patterns and fallback to Django showmigrations command
 - **Migration Fake Command**: Fixed Django migrate --fake command syntax to use separate app label and migration name arguments instead of combined format
+- **Norwegian Translations**: Added comprehensive Norwegian translations for Facility management features (159 new translation strings)
 
 ## [3.0.0-alpha.1] - 2026-02-06
 

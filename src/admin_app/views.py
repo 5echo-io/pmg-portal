@@ -670,16 +670,16 @@ def facility_add(request):
         if form.is_valid():
             facility = form.save()
             messages.success(request, "Facility created.")
-            return redirect("admin_app:admin_facility_detail", pk=facility.pk)
+            return redirect("admin_app:admin_facility_detail", slug=facility.slug)
     else:
         form = FacilityForm()
     return render(request, "admin_app/facility_form.html", {"form": form, "facility": None})
 
 
 @staff_required
-def facility_detail(request, pk):
+def facility_detail(request, slug):
     """Modern facility card view showing all facility information."""
-    facility = get_object_or_404(Facility, pk=pk)
+    facility = get_object_or_404(Facility, slug=slug)
     customers = facility.customers.all().order_by("name")
     racks = facility.racks.filter(is_active=True).order_by("name")
     network_devices = facility.network_devices.filter(is_active=True).order_by("rack", "rack_position", "name")
@@ -701,15 +701,15 @@ def facility_detail(request, pk):
 
 
 @staff_required
-def facility_edit(request, pk):
+def facility_edit(request, slug):
     from .forms import FacilityForm
-    facility = get_object_or_404(Facility, pk=pk)
+    facility = get_object_or_404(Facility, slug=slug)
     if request.method == "POST":
         form = FacilityForm(request.POST, instance=facility)
         if form.is_valid():
             form.save()
             messages.success(request, "Facility updated.")
-            return redirect("admin_app:admin_facility_detail", pk=facility.pk)
+            return redirect("admin_app:admin_facility_detail", slug=facility.slug)
     else:
         form = FacilityForm(instance=facility)
     return render(request, "admin_app/facility_form.html", {"form": form, "facility": facility})
@@ -717,9 +717,9 @@ def facility_edit(request, pk):
 
 @staff_required
 @require_POST
-def facility_delete(request, pk):
+def facility_delete(request, slug):
     """Delete a facility and all related data."""
-    facility = get_object_or_404(Facility, pk=pk)
+    facility = get_object_or_404(Facility, slug=slug)
     facility_name = facility.name
     
     # Delete facility (this will cascade delete related models)

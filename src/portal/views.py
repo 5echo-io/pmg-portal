@@ -279,9 +279,9 @@ def facility_list(request):
 
 
 @login_required
-def facility_detail(request, pk):
+def facility_detail(request, slug):
     """Show detailed information about a facility."""
-    facility = get_object_or_404(Facility, pk=pk, is_active=True)
+    facility = get_object_or_404(Facility, slug=slug, is_active=True)
     active_customer_id = request.session.get("active_customer_id")
     
     # Check if user's active customer has access to this facility

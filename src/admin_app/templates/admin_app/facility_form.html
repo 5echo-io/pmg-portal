@@ -101,7 +101,7 @@
     <button type="submit" class="form-btn form-btn-primary form-btn--narrow">Save</button>
     <a href="{% url 'admin_app:admin_facility_list' %}" class="form-btn form-btn-secondary">Cancel</a>
     {% if facility %}
-    <button type="button" class="form-btn form-btn-danger" data-delete-url="{% url 'admin_app:admin_facility_delete' facility.pk %}" data-delete-message="Are you sure you want to delete the facility '{{ facility.name }}'? This will also delete all racks, network devices, IP addresses, and documents associated with this facility.">Delete Facility</button>
+    <button type="button" class="form-btn form-btn-danger" data-delete-url="{% url 'admin_app:admin_facility_delete' facility.slug %}" data-delete-message="Are you sure you want to delete the facility '{{ facility.name }}'? This will also delete all racks, network devices, IP addresses, and documents associated with this facility.">Delete Facility</button>
     {% endif %}
   </div>
 </form>

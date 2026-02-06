@@ -79,5 +79,16 @@ class FacilityForm(forms.ModelForm):
         if "customers" in self.fields:
             self.fields["customers"].queryset = Customer.objects.all().order_by("name")
             self.fields["customers"].required = False
+    
+    def clean_slug(self):
+        slug = self.cleaned_data.get("slug")
+        if slug:
+            # Check if slug is already in use by another facility
+            queryset = Facility.objects.filter(slug=slug)
+            if self.instance.pk:
+                queryset = queryset.exclude(pk=self.instance.pk)
+            if queryset.exists():
+                raise forms.ValidationError("This slug is already in use. Please choose a different one.")
+        return slug
 
 

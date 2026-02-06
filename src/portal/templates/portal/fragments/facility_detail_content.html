@@ -1,5 +1,22 @@
 {% load i18n static %}
 <div class="facility-detail-container">
+  <!-- Breadcrumb -->
+  <nav class="breadcrumb facility-breadcrumb" aria-label="Breadcrumb">
+    <a href="{% url 'facility_list' %}" hx-get="{% url 'facility_list' %}" hx-target="#main-content" hx-push-url="true">{% trans "Facilities" %}</a>
+    <span class="breadcrumb-sep">→</span>
+    <span>{{ facility.name }}</span>
+  </nav>
+
+  <!-- Back Button -->
+  <div class="facility-back-button">
+    <a href="{% url 'facility_list' %}" class="facility-back-link" hx-get="{% url 'facility_list' %}" hx-target="#main-content" hx-push-url="true">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="15 18 9 12 15 6"></polyline>
+      </svg>
+      {% trans "Back to" %} {% trans "Facilities" %}
+    </a>
+  </div>
+
   <!-- Header Section -->
   <div class="facility-detail-header">
     <div class="facility-detail-icon">
@@ -19,12 +36,11 @@
     </div>
   </div>
 
-  <!-- Tabs Section -->
+  <!-- Category Tabs Section -->
   <div class="facility-detail-tabs">
     <button class="facility-tab active" data-tab="overview">{% trans "Overview" %}</button>
     <button class="facility-tab" data-tab="racks">{% trans "Racks" %} ({{ racks|length }})</button>
-    <button class="facility-tab" data-tab="network">{% trans "Network" %} ({{ network_devices|length }})</button>
-    <button class="facility-tab" data-tab="ip">{% trans "IP Addresses" %} ({{ ip_addresses|length }})</button>
+    <button class="facility-tab" data-tab="network">{% trans "Network" %} ({{ network_devices|length|add:ip_addresses|length }})</button>
     <button class="facility-tab" data-tab="documents">{% trans "Documents" %} ({{ documents|length }})</button>
     <button class="facility-tab" data-tab="info">{% trans "Information" %}</button>
   </div>
@@ -47,14 +63,9 @@
           <p class="muted">{% trans "Active racks" %}</p>
         </div>
         <div class="panel">
-          <h3>{% trans "Network Devices" %}</h3>
-          <p class="facility-stat-number">{{ network_devices|length }}</p>
-          <p class="muted">{% trans "Active devices" %}</p>
-        </div>
-        <div class="panel">
-          <h3>{% trans "IP Addresses" %}</h3>
-          <p class="facility-stat-number">{{ ip_addresses|length }}</p>
-          <p class="muted">{% trans "Reserved IPs" %}</p>
+          <h3>{% trans "Network" %}</h3>
+          <p class="facility-stat-number">{{ network_devices|length|add:ip_addresses|length }}</p>
+          <p class="muted">{% trans "Devices and IPs" %}</p>
         </div>
         <div class="panel">
           <h3>{% trans "Documents" %}</h3>
@@ -97,76 +108,79 @@
       {% endif %}
     </div>
 
-    <!-- Network Devices Tab -->
+    <!-- Network Tab (combines Network Devices and IP Addresses) -->
     <div class="facility-tab-panel" id="tab-network">
-      <div class="facility-section-header">
-        <h2>{% trans "Network Devices" %}</h2>
+      <!-- Network Devices Section -->
+      <div class="facility-network-section">
+        <div class="facility-section-header">
+          <h2>{% trans "Network Devices" %}</h2>
+        </div>
+        {% if network_devices %}
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>{% trans "Name" %}</th>
+                <th>{% trans "Type" %}</th>
+                <th>{% trans "Manufacturer" %}</th>
+                <th>{% trans "Model" %}</th>
+                <th>{% trans "IP Address" %}</th>
+                <th>{% trans "Rack" %}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for device in network_devices %}
+              <tr>
+                <td><strong>{{ device.name }}</strong></td>
+                <td>{{ device.get_device_type_display }}</td>
+                <td>{{ device.manufacturer|default:"—" }}</td>
+                <td>{{ device.model|default:"—" }}</td>
+                <td><code>{{ device.ip_address|default:"—" }}</code></td>
+                <td>{% if device.rack %}{{ device.rack.name }}{% else %}—{% endif %}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <p class="muted">{% trans "No network devices configured for this facility." %}</p>
+        {% endif %}
       </div>
-      {% if network_devices %}
-      <div class="admin-table-wrap">
-        <table class="admin-table">
-          <thead>
-            <tr>
-              <th>{% trans "Name" %}</th>
-              <th>{% trans "Type" %}</th>
-              <th>{% trans "Manufacturer" %}</th>
-              <th>{% trans "Model" %}</th>
-              <th>{% trans "IP Address" %}</th>
-              <th>{% trans "Rack" %}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for device in network_devices %}
-            <tr>
-              <td><strong>{{ device.name }}</strong></td>
-              <td>{{ device.get_device_type_display }}</td>
-              <td>{{ device.manufacturer|default:"—" }}</td>
-              <td>{{ device.model|default:"—" }}</td>
-              <td><code>{{ device.ip_address|default:"—" }}</code></td>
-              <td>{% if device.rack %}{{ device.rack.name }}{% else %}—{% endif %}</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-      {% else %}
-      <p class="muted">{% trans "No network devices configured for this facility." %}</p>
-      {% endif %}
-    </div>
 
-    <!-- IP Addresses Tab -->
-    <div class="facility-tab-panel" id="tab-ip">
-      <div class="facility-section-header">
-        <h2>{% trans "IP Addresses" %}</h2>
+      <!-- IP Addresses Section -->
+      <div class="facility-network-section" style="margin-top: 32px;">
+        <div class="facility-section-header">
+          <h2>{% trans "IP Addresses" %}</h2>
+        </div>
+        {% if ip_addresses %}
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>{% trans "IP Address" %}</th>
+                <th>{% trans "Subnet" %}</th>
+                <th>{% trans "Reserved For" %}</th>
+                <th>{% trans "Device" %}</th>
+                <th>{% trans "Status" %}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for ip in ip_addresses %}
+              <tr>
+                <td><code>{{ ip.ip_address }}</code></td>
+                <td>{{ ip.subnet|default:"—" }}</td>
+                <td>{{ ip.reserved_for|default:"—" }}</td>
+                <td>{% if ip.device %}{{ ip.device.name }}{% else %}—{% endif %}</td>
+                <td>{% if ip.is_in_use %}<span class="role-badge role-badge--admin">{% trans "In Use" %}</span>{% else %}<span class="muted">{% trans "Available" %}</span>{% endif %}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <p class="muted">{% trans "No IP addresses reserved for this facility." %}</p>
+        {% endif %}
       </div>
-      {% if ip_addresses %}
-      <div class="admin-table-wrap">
-        <table class="admin-table">
-          <thead>
-            <tr>
-              <th>{% trans "IP Address" %}</th>
-              <th>{% trans "Subnet" %}</th>
-              <th>{% trans "Reserved For" %}</th>
-              <th>{% trans "Device" %}</th>
-              <th>{% trans "Status" %}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for ip in ip_addresses %}
-            <tr>
-              <td><code>{{ ip.ip_address }}</code></td>
-              <td>{{ ip.subnet|default:"—" }}</td>
-              <td>{{ ip.reserved_for|default:"—" }}</td>
-              <td>{% if ip.device %}{{ ip.device.name }}{% else %}—{% endif %}</td>
-              <td>{% if ip.is_in_use %}<span class="role-badge role-badge--admin">{% trans "In Use" %}</span>{% else %}<span class="muted">{% trans "Available" %}</span>{% endif %}</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-      {% else %}
-      <p class="muted">{% trans "No IP addresses reserved for this facility." %}</p>
-      {% endif %}
     </div>
 
     <!-- Documents Tab -->
@@ -256,7 +270,7 @@
         {% if facility.contact_phone %}
         <div class="customer-info-item">
           <label>{% trans "Contact Phone" %}</label>
-          <p>{{ facility.contact_email }}</p>
+          <p>{{ facility.contact_phone }}</p>
         </div>
         {% endif %}
         <div class="customer-info-item">

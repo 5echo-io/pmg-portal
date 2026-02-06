@@ -28,6 +28,165 @@ msgstr "Denne funksjonen er under utvikling"
 msgid "Facility"
 msgstr "Anlegg"
 
+msgid "Facilities"
+msgstr "Anlegg"
+
+msgid "Back to"
+msgstr "Tilbake til"
+
+msgid "Overview"
+msgstr "Oversikt"
+
+msgid "Racks"
+msgstr "Racks"
+
+msgid "Network"
+msgstr "Nettverk"
+
+msgid "Network Devices"
+msgstr "Nettverksenheter"
+
+msgid "IP Addresses"
+msgstr "IP-adresser"
+
+msgid "Documents"
+msgstr "Dokumenter"
+
+msgid "Information"
+msgstr "Informasjon"
+
+msgid "Description"
+msgstr "Beskrivelse"
+
+msgid "Active racks"
+msgstr "Aktive racks"
+
+msgid "Devices and IPs"
+msgstr "Enheter og IP-adresser"
+
+msgid "Uploaded documents"
+msgstr "Opplastede dokumenter"
+
+msgid "Name"
+msgstr "Navn"
+
+msgid "Location"
+msgstr "Lokasjon"
+
+msgid "Height"
+msgstr "Høyde"
+
+msgid "Status"
+msgstr "Status"
+
+msgid "Active"
+msgstr "Aktiv"
+
+msgid "Inactive"
+msgstr "Inaktiv"
+
+msgid "No racks configured for this facility."
+msgstr "Ingen racks konfigurert for dette anlegget."
+
+msgid "Type"
+msgstr "Type"
+
+msgid "Manufacturer"
+msgstr "Produsent"
+
+msgid "Model"
+msgstr "Modell"
+
+msgid "IP Address"
+msgstr "IP-adresse"
+
+msgid "Rack"
+msgstr "Rack"
+
+msgid "No network devices configured for this facility."
+msgstr "Ingen nettverksenheter konfigurert for dette anlegget."
+
+msgid "Subnet"
+msgstr "Undernett"
+
+msgid "Reserved For"
+msgstr "Reservert for"
+
+msgid "Device"
+msgstr "Enhet"
+
+msgid "In Use"
+msgstr "I bruk"
+
+msgid "Available"
+msgstr "Tilgjengelig"
+
+msgid "No IP addresses reserved for this facility."
+msgstr "Ingen IP-adresser reservert for dette anlegget."
+
+msgid "Title"
+msgstr "Tittel"
+
+msgid "Category"
+msgstr "Kategori"
+
+msgid "Uploaded"
+msgstr "Opplastet"
+
+msgid "Uploaded By"
+msgstr "Opplastet av"
+
+msgid "Download"
+msgstr "Last ned"
+
+msgid "No documents uploaded for this facility."
+msgstr "Ingen dokumenter lastet opp for dette anlegget."
+
+msgid "Slug"
+msgstr "Slug"
+
+msgid "Address"
+msgstr "Adresse"
+
+msgid "City"
+msgstr "By"
+
+msgid "Postal Code"
+msgstr "Postnummer"
+
+msgid "Country"
+msgstr "Land"
+
+msgid "Contact Person"
+msgstr "Kontaktperson"
+
+msgid "Contact Email"
+msgstr "Kontakt e-post"
+
+msgid "Contact Phone"
+msgstr "Kontakttelefon"
+
+msgid "Active Status"
+msgstr "Aktiv status"
+
+msgid "Yes"
+msgstr "Ja"
+
+msgid "No"
+msgstr "Nei"
+
+msgid "Created"
+msgstr "Opprettet"
+
+msgid "Last Updated"
+msgstr "Sist oppdatert"
+
+msgid "Facilities available for"
+msgstr "Anlegg tilgjengelig for"
+
+msgid "No facilities available for this customer profile."
+msgstr "Ingen anlegg tilgjengelig for denne kundeprofilen."
+
 msgid "Select customer"
 msgstr "Velg kunde"
 

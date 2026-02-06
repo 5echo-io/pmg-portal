@@ -2,6 +2,24 @@
 
 - 2026-02-06 (Europe/Oslo)
   - Branch: dev
+  - Version: 4.0.0-alpha.1
+  - Summary:
+    - URL structure: changed Facility URLs from primary key (pk) to slug-based (slug) for better SEO and user-friendly URLs
+    - Breaking change: all Facility URLs now use slug instead of pk (admin and portal views updated)
+    - Slug validation: added unique slug validation in FacilityForm to prevent duplicate slugs
+    - Admin URLs: updated admin_app URLs to use slug pattern (<slug:slug> instead of <int:pk>)
+    - Portal URLs: updated portal URLs to use slug pattern (<slug:slug> instead of <int:pk>)
+    - Views updated: facility_detail, facility_edit, facility_delete now accept slug parameter instead of pk
+    - Templates updated: all Facility templates updated to use slug in URLs (admin and portal)
+    - UI improvements: added breadcrumb navigation and back button to Facility detail page
+    - Network tab: combined Network Devices and IP Addresses into single Network tab with combined statistics
+    - Norwegian translations: added 159 new Norwegian translation strings for Facility management features
+    - Placeholder functionality: added "coming soon" alerts for Add Rack, Add Device, Add IP Address, Upload Document buttons
+    - CSS updates: added styles for breadcrumb navigation and facility back button
+    - Version bump: MAJOR increment from 3.1.0-alpha.1 to 4.0.0-alpha.1 (breaking change: URL structure)
+
+- 2026-02-06 (Europe/Oslo)
+  - Branch: dev
   - Version: 3.1.0-alpha.1
   - Summary:
     - HTMX support: added HTMX navigation to Facility list and detail views for seamless page transitions
