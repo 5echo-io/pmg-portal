@@ -61,6 +61,9 @@ Pre-release builds (alpha, beta, rc) are listed here. Only full releases (no bui
 - **Network Tab**: Combined Network Devices and IP Addresses into a single Network tab with combined statistics
 - **Breadcrumb Styling**: Unified breadcrumb styling to use admin-breadcrumb class for consistent design across admin and portal
 - **Customer Switch**: Customer switch now redirects back to referring page instead of always redirecting to portal home
+- **Card Header Redesign**: Edit and Delete actions moved to card header as icon buttons for better space utilization and cleaner layout
+- **Admin Content Width**: Increased admin content width from 980px to 1280px for consistency with portal layout
+- **Tab Styling**: Improved tab styling with hover states, active state highlighting, and better spacing
 
 ### Fixed
 - **Context Processor**: Added missing Facility model import to fix 500 error when accessing Facility features

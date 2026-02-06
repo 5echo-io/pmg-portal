@@ -44,17 +44,30 @@
     </div>
     
     <div class="customer-card-info">
-      <h1 class="customer-card-name">{{ customer.name }}</h1>
+      <div class="customer-card-name-wrapper">
+        <h1 class="customer-card-name">{{ customer.name }}</h1>
+        <div class="customer-card-header-actions">
+          <a href="{% url 'admin_app:admin_customer_edit' customer.pk %}" class="customer-card-icon-btn customer-card-icon-btn--edit" title="Edit Details">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+            </svg>
+          </a>
+          <button type="button" class="customer-card-icon-btn customer-card-icon-btn--delete" data-delete-url="{% url 'admin_app:admin_customer_delete' customer.pk %}" data-delete-message="Are you sure you want to delete the customer '{{ customer.name }}'? This will also delete all memberships and portal links associated with this customer." title="Delete Customer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 6h18"></path>
+              <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+              <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
       {% if customer.org_number %}
       <p class="customer-card-org">Org. no.: {{ customer.org_number }}</p>
       {% endif %}
       {% if customer.primary_contact %}
       <p class="customer-card-contact">Primary contact: {{ customer.primary_contact.get_full_name|default:customer.primary_contact.email }}</p>
       {% endif %}
-      <div class="customer-card-actions">
-        <a href="{% url 'admin_app:admin_customer_edit' customer.pk %}" class="form-btn form-btn-secondary">Edit Details</a>
-        <button type="button" class="form-btn form-btn-danger" data-delete-url="{% url 'admin_app:admin_customer_delete' customer.pk %}" data-delete-message="Are you sure you want to delete the customer '{{ customer.name }}'? This will also delete all memberships and portal links associated with this customer.">Delete Customer</button>
-      </div>
     </div>
   </div>
 

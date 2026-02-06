@@ -2,6 +2,23 @@
 
 - 2026-02-06 (Europe/Oslo)
   - Branch: dev
+  - Version: 4.3.0-alpha.1
+  - Summary:
+    - Card header redesign: Edit and Delete actions moved to card header as icon buttons (customer, facility, user cards)
+    - Icon buttons: compact 36x36px icon buttons with hover states and color coding (blue for edit, red for delete)
+    - Header actions: customer-card-name-wrapper with flexbox layout for name and action buttons
+    - Admin content width: increased from 980px to 1280px for consistency with portal layout
+    - Rack detail width: increased max-width from 1200px to 1280px
+    - Customer selection width: increased max-width from 1000px to 1280px
+    - Tab styling: improved hover states (light blue background), active state (blue text, blue border, blue background tint, bold font)
+    - Tab spacing: reduced gap from 8px to 4px, added padding to container, reduced tab padding
+    - Tab border radius: added border-radius to tabs for rounded top corners
+    - CSS updates: customer-card-icon-btn styles with transitions, hover effects, and color variants
+    - User card: delete button only shows if user is not the current user (prevents self-deletion)
+    - Version bump: MINOR increment from 4.2.0-alpha.1 to 4.3.0-alpha.1 (UI/UX improvements)
+
+- 2026-02-06 (Europe/Oslo)
+  - Branch: dev
   - Version: 4.2.0-alpha.1
   - Summary:
     - Network Device Management: complete CRUD operations for network devices in admin panel

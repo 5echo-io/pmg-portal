@@ -62,9 +62,9 @@ html[class*="admin"] {
   max-width: 100% !important;
 }
 
-/* Content width matches portal (980px) – do not override #container/#main layout */
+/* Content width matches portal (1280px) – do not override #container/#main layout */
 body.admin-page #content {
-  max-width: 980px !important;
+  max-width: 1280px !important;
   margin-left: auto !important;
   margin-right: auto !important;
   padding: 32px 20px !important;
@@ -353,7 +353,7 @@ body.admin-page .topbar-right .user-avatar-btn {
 /* Only constrain #content width to match portal */
 body.admin-page #content.colMS,
 body.admin-page #content.colSM {
-  max-width: 980px !important;
+  max-width: 1280px !important;
   margin-left: auto !important;
   margin-right: auto !important;
   float: none !important;
@@ -433,7 +433,7 @@ footer.footer .footer-content,
 /* ===== BREADCRUMBS – boxed layout, left-aligned ===== */
 body.admin-page nav[aria-label="Breadcrumbs"],
 body.admin-page .breadcrumbs {
-  max-width: 980px !important;
+  max-width: 1280px !important;
   margin-left: auto !important;
   margin-right: auto !important;
   padding-left: 20px !important;
@@ -453,7 +453,7 @@ body.admin-page .breadcrumbs {
 /* ===== UNIFIED LAYOUT ===== */
 /* No flex/column overrides – Django admin keeps nav-sidebar on left, content on right */
 
-/* Footer content: same as portal (centered, max-width 980px) */
+/* Footer content: same as portal (centered, max-width 1280px) */
 
 .footer-content {
   max-width: 1280px !important;
@@ -1449,7 +1449,7 @@ body.admin-page #content .content-wrapper,
 body.admin-page.dashboard #content .content-wrapper,
 body.admin-page #content.colMS .content-wrapper,
 body.admin-page #content:has(.content-wrapper) .content-wrapper {
-  max-width: 980px !important;
+  max-width: 1280px !important;
   width: 100% !important;
   margin: 0 auto !important;
   padding: 0 !important;
@@ -1457,10 +1457,10 @@ body.admin-page #content:has(.content-wrapper) .content-wrapper {
   position: relative !important;
 }
 
-/* Dashboard and all admin content use same width as portal (980px) */
+/* Dashboard and all admin content use same width as portal (1280px) */
 body.admin-page.dashboard #content,
 body.admin-page #content:has(.content-wrapper) {
-  max-width: 980px !important;
+  max-width: 1280px !important;
   margin-left: auto !important;
   margin-right: auto !important;
 }
