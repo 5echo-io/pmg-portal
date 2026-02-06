@@ -10,6 +10,8 @@ from django.contrib import admin
 from django.urls import include, path
 from django.conf import settings
 from django.conf.urls.static import static
+from django.views.static import serve
+from django.contrib.staticfiles.views import serve as staticfiles_serve
 
 # Import admin config for whitelabel
 from . import admin_config  # noqa: F401
@@ -26,8 +28,18 @@ urlpatterns = [
     path("debug/", include("web.urls")),
 ]
 
-# Serve media files (in development, or as fallback in production if nginx is not configured)
+# Serve media files
 # In production, nginx should serve /media/ directly for better performance
-# Note: static() works in both DEBUG and non-DEBUG modes, but nginx is preferred for production
-# Always add media URL patterns - Django will serve them if nginx doesn't catch them first
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# But we provide Django fallback in case nginx is not configured or not working
+if settings.DEBUG:
+    # In DEBUG mode, use static() helper
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+else:
+    # In production, use serve view as fallback (nginx should handle this, but Django can serve if needed)
+    from django.views.decorators.cache import never_cache
+    urlpatterns += [
+        path(f"{settings.MEDIA_URL.strip('/')}/<path:path>", never_cache(serve), {
+            "document_root": str(settings.MEDIA_ROOT),
+            "show_indexes": False,
+        }),
+    ]
