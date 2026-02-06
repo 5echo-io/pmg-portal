@@ -7,6 +7,45 @@ This project follows Semantic Versioning (SemVer).
 
 Pre-release builds (alpha, beta, rc) are listed here. Only full releases (no build suffix) get a dedicated version section below.
 
+## [3.0.0-alpha.1] - 2026-02-05
+
+### Added
+
+#### Facility Management (Anlegg)
+- **Facility Model**: New Facility model with comprehensive fields (name, slug, description, address, city, postal code, country, contact information)
+- **Customer-Facility Relationship**: Many-to-many relationship allowing customers to have access to multiple facilities
+- **Admin Panel - Facilities**:
+  - Facility list page with search and filtering (active/inactive)
+  - Facility add/edit form with customer assignment
+  - Facility detail card page with tabs for customers, racks, network devices, IP addresses, documents, and information
+  - Facility delete functionality with confirmation modal
+  - Added to Portal management section in admin home
+- **Portal - Facilities**:
+  - Facility list page showing all facilities the active customer has access to
+  - Facility detail page with comprehensive information
+  - Overview tab with statistics (racks, network devices, IP addresses, documents)
+  - Tabs for Racks, Network Devices, IP Addresses, Documents, and Information
+  - Facility button in topbar (active when customer profile is selected)
+- **Related Models**:
+  - `FacilityDocument`: Document uploads for facilities (manuals, diagrams, certificates, reports)
+  - `Rack`: Rack management within facilities (name, location, height in U)
+  - `NetworkDevice`: Network equipment tracking (switches, routers, firewalls, servers, etc.)
+  - `IPAddress`: IP address reservation and tracking
+- **Context Processor**: Updated to include `user_facilities` based on active customer
+
+#### UI/UX
+- Facility card grid layout with modern design
+- Facility detail page with tabbed interface
+- Responsive facility list and detail views
+- Empty state handling for facilities
+- Facility iconography and visual hierarchy
+
+### Technical
+- Database migrations prepared for Facility, FacilityDocument, Rack, NetworkDevice, and IPAddress models
+- URL routing for facility list and detail pages
+- Template fragments for HTMX support
+- CSS styling for facility components
+
 ## [2.0.0] - 2026-02-06
 
 ### Added

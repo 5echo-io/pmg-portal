@@ -15,7 +15,7 @@ import re
 import urllib.request
 import urllib.error
 import json
-from .models import CustomerMembership, Customer
+from .models import CustomerMembership, Customer, Facility
 
 
 def language_menu(request):
@@ -72,9 +72,19 @@ def user_customers(request):
         # Save to session so it persists
         request.session["active_customer_id"] = active_customer_id
 
+    # Get user's facilities based on active customer
+    user_facilities = []
+    if active_customer_id:
+        try:
+            active_customer = Customer.objects.get(pk=active_customer_id)
+            user_facilities = active_customer.facilities.filter(is_active=True).order_by("name")
+        except Customer.DoesNotExist:
+            pass
+    
     return {
         "user_customers": user_customers_list,
         "active_customer_id": active_customer_id,
+        "user_facilities": user_facilities,
     }
 
 def footer_info(request):

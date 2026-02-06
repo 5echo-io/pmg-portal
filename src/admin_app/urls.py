@@ -28,4 +28,9 @@ urlpatterns = [
     path("portal-links/", views.portal_link_list, name="admin_portal_link_list"),
     path("portal-links/add/", views.portal_link_add, name="admin_portal_link_add"),
     path("portal-links/<int:pk>/edit/", views.portal_link_edit, name="admin_portal_link_edit"),
+    path("facilities/", views.facility_list, name="admin_facility_list"),
+    path("facilities/add/", views.facility_add, name="admin_facility_add"),
+    path("facilities/<int:pk>/", views.facility_detail, name="admin_facility_detail"),
+    path("facilities/<int:pk>/edit/", views.facility_edit, name="admin_facility_edit"),
+    path("facilities/<int:pk>/delete/", views.facility_delete, name="admin_facility_delete"),
 ]

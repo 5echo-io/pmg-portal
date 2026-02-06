@@ -1,0 +1,297 @@
+{% load i18n static %}
+<div class="facility-detail-container">
+  <!-- Header Section -->
+  <div class="facility-detail-header">
+    <div class="facility-detail-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+      </svg>
+    </div>
+    <div class="facility-detail-info">
+      <h1 class="facility-detail-name">{{ facility.name }}</h1>
+      {% if facility.city %}
+      <p class="facility-detail-location">{{ facility.city }}{% if facility.country %}, {{ facility.country }}{% endif %}</p>
+      {% endif %}
+      {% if facility.address %}
+      <p class="facility-detail-address">{{ facility.address }}</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Tabs Section -->
+  <div class="facility-detail-tabs">
+    <button class="facility-tab active" data-tab="overview">{% trans "Overview" %}</button>
+    <button class="facility-tab" data-tab="racks">{% trans "Racks" %} ({{ racks|length }})</button>
+    <button class="facility-tab" data-tab="network">{% trans "Network" %} ({{ network_devices|length }})</button>
+    <button class="facility-tab" data-tab="ip">{% trans "IP Addresses" %} ({{ ip_addresses|length }})</button>
+    <button class="facility-tab" data-tab="documents">{% trans "Documents" %} ({{ documents|length }})</button>
+    <button class="facility-tab" data-tab="info">{% trans "Information" %}</button>
+  </div>
+
+  <!-- Tab Content -->
+  <div class="facility-detail-content">
+    <!-- Overview Tab -->
+    <div class="facility-tab-panel active" id="tab-overview">
+      {% if facility.description %}
+      <div class="panel">
+        <h2>{% trans "Description" %}</h2>
+        <p style="white-space: pre-wrap;">{{ facility.description }}</p>
+      </div>
+      {% endif %}
+      
+      <div class="facility-overview-grid">
+        <div class="panel">
+          <h3>{% trans "Racks" %}</h3>
+          <p class="facility-stat-number">{{ racks|length }}</p>
+          <p class="muted">{% trans "Active racks" %}</p>
+        </div>
+        <div class="panel">
+          <h3>{% trans "Network Devices" %}</h3>
+          <p class="facility-stat-number">{{ network_devices|length }}</p>
+          <p class="muted">{% trans "Active devices" %}</p>
+        </div>
+        <div class="panel">
+          <h3>{% trans "IP Addresses" %}</h3>
+          <p class="facility-stat-number">{{ ip_addresses|length }}</p>
+          <p class="muted">{% trans "Reserved IPs" %}</p>
+        </div>
+        <div class="panel">
+          <h3>{% trans "Documents" %}</h3>
+          <p class="facility-stat-number">{{ documents|length }}</p>
+          <p class="muted">{% trans "Uploaded documents" %}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Racks Tab -->
+    <div class="facility-tab-panel" id="tab-racks">
+      <div class="facility-section-header">
+        <h2>{% trans "Racks" %}</h2>
+      </div>
+      {% if racks %}
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>{% trans "Name" %}</th>
+              <th>{% trans "Location" %}</th>
+              <th>{% trans "Height" %}</th>
+              <th>{% trans "Status" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for rack in racks %}
+            <tr>
+              <td><strong>{{ rack.name }}</strong></td>
+              <td>{{ rack.location|default:"—" }}</td>
+              <td>{{ rack.height_units }}U</td>
+              <td>{% if rack.is_active %}<span class="role-badge role-badge--member">{% trans "Active" %}</span>{% else %}<span class="muted">{% trans "Inactive" %}</span>{% endif %}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <p class="muted">{% trans "No racks configured for this facility." %}</p>
+      {% endif %}
+    </div>
+
+    <!-- Network Devices Tab -->
+    <div class="facility-tab-panel" id="tab-network">
+      <div class="facility-section-header">
+        <h2>{% trans "Network Devices" %}</h2>
+      </div>
+      {% if network_devices %}
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>{% trans "Name" %}</th>
+              <th>{% trans "Type" %}</th>
+              <th>{% trans "Manufacturer" %}</th>
+              <th>{% trans "Model" %}</th>
+              <th>{% trans "IP Address" %}</th>
+              <th>{% trans "Rack" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for device in network_devices %}
+            <tr>
+              <td><strong>{{ device.name }}</strong></td>
+              <td>{{ device.get_device_type_display }}</td>
+              <td>{{ device.manufacturer|default:"—" }}</td>
+              <td>{{ device.model|default:"—" }}</td>
+              <td><code>{{ device.ip_address|default:"—" }}</code></td>
+              <td>{% if device.rack %}{{ device.rack.name }}{% else %}—{% endif %}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <p class="muted">{% trans "No network devices configured for this facility." %}</p>
+      {% endif %}
+    </div>
+
+    <!-- IP Addresses Tab -->
+    <div class="facility-tab-panel" id="tab-ip">
+      <div class="facility-section-header">
+        <h2>{% trans "IP Addresses" %}</h2>
+      </div>
+      {% if ip_addresses %}
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>{% trans "IP Address" %}</th>
+              <th>{% trans "Subnet" %}</th>
+              <th>{% trans "Reserved For" %}</th>
+              <th>{% trans "Device" %}</th>
+              <th>{% trans "Status" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for ip in ip_addresses %}
+            <tr>
+              <td><code>{{ ip.ip_address }}</code></td>
+              <td>{{ ip.subnet|default:"—" }}</td>
+              <td>{{ ip.reserved_for|default:"—" }}</td>
+              <td>{% if ip.device %}{{ ip.device.name }}{% else %}—{% endif %}</td>
+              <td>{% if ip.is_in_use %}<span class="role-badge role-badge--admin">{% trans "In Use" %}</span>{% else %}<span class="muted">{% trans "Available" %}</span>{% endif %}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <p class="muted">{% trans "No IP addresses reserved for this facility." %}</p>
+      {% endif %}
+    </div>
+
+    <!-- Documents Tab -->
+    <div class="facility-tab-panel" id="tab-documents">
+      <div class="facility-section-header">
+        <h2>{% trans "Documents" %}</h2>
+      </div>
+      {% if documents %}
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>{% trans "Title" %}</th>
+              <th>{% trans "Category" %}</th>
+              <th>{% trans "Uploaded" %}</th>
+              <th>{% trans "Uploaded By" %}</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for doc in documents %}
+            <tr>
+              <td>{{ doc.title }}</td>
+              <td>{{ doc.get_category_display }}</td>
+              <td>{{ doc.uploaded_at|date:"Y-m-d H:i" }}</td>
+              <td>{% if doc.uploaded_by %}{{ doc.uploaded_by.get_full_name|default:doc.uploaded_by.username }}{% else %}—{% endif %}</td>
+              <td>
+                <a href="{{ doc.file.url }}" target="_blank" class="admin-btn-sm">{% trans "Download" %}</a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <p class="muted">{% trans "No documents uploaded for this facility." %}</p>
+      {% endif %}
+    </div>
+
+    <!-- Information Tab -->
+    <div class="facility-tab-panel" id="tab-info">
+      <div class="customer-info-grid">
+        <div class="customer-info-item">
+          <label>{% trans "Name" %}</label>
+          <p>{{ facility.name }}</p>
+        </div>
+        <div class="customer-info-item">
+          <label>{% trans "Slug" %}</label>
+          <p><code>{{ facility.slug }}</code></p>
+        </div>
+        {% if facility.address %}
+        <div class="customer-info-item customer-info-item--full">
+          <label>{% trans "Address" %}</label>
+          <p>{{ facility.address }}</p>
+        </div>
+        {% endif %}
+        {% if facility.city %}
+        <div class="customer-info-item">
+          <label>{% trans "City" %}</label>
+          <p>{{ facility.city }}</p>
+        </div>
+        {% endif %}
+        {% if facility.postal_code %}
+        <div class="customer-info-item">
+          <label>{% trans "Postal Code" %}</label>
+          <p>{{ facility.postal_code }}</p>
+        </div>
+        {% endif %}
+        {% if facility.country %}
+        <div class="customer-info-item">
+          <label>{% trans "Country" %}</label>
+          <p>{{ facility.country }}</p>
+        </div>
+        {% endif %}
+        {% if facility.contact_person %}
+        <div class="customer-info-item">
+          <label>{% trans "Contact Person" %}</label>
+          <p>{{ facility.contact_person }}</p>
+        </div>
+        {% endif %}
+        {% if facility.contact_email %}
+        <div class="customer-info-item">
+          <label>{% trans "Contact Email" %}</label>
+          <p><a href="mailto:{{ facility.contact_email }}">{{ facility.contact_email }}</a></p>
+        </div>
+        {% endif %}
+        {% if facility.contact_phone %}
+        <div class="customer-info-item">
+          <label>{% trans "Contact Phone" %}</label>
+          <p>{{ facility.contact_email }}</p>
+        </div>
+        {% endif %}
+        <div class="customer-info-item">
+          <label>{% trans "Active Status" %}</label>
+          <p>{% if facility.is_active %}{% trans "Yes" %}{% else %}{% trans "No" %}{% endif %}</p>
+        </div>
+        <div class="customer-info-item">
+          <label>{% trans "Created" %}</label>
+          <p>{{ facility.created_at|date:"Y-m-d H:i" }}</p>
+        </div>
+        <div class="customer-info-item">
+          <label>{% trans "Last Updated" %}</label>
+          <p>{{ facility.updated_at|date:"Y-m-d H:i" }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  // Tab switching
+  const tabs = document.querySelectorAll('.facility-tab');
+  const panels = document.querySelectorAll('.facility-tab-panel');
+  
+  tabs.forEach(tab => {
+    tab.addEventListener('click', function() {
+      const targetTab = this.dataset.tab;
+      
+      tabs.forEach(t => t.classList.remove('active'));
+      panels.forEach(p => p.classList.remove('active'));
+      
+      this.classList.add('active');
+      document.getElementById('tab-' + targetTab)?.classList.add('active');
+    });
+  });
+})();
+</script>
