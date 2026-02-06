@@ -24,10 +24,10 @@ def login_view(request):
         preferred_lang = request.session.get('user_preferred_language')
         if preferred_lang and preferred_lang in dict(settings.LANGUAGES):
             translation.activate(preferred_lang)
-            request.session[translation.LANGUAGE_SESSION_KEY] = preferred_lang
+            request.session['django_language'] = preferred_lang
         else:
             # If no preferred language, check if there's a language in session from login page
-            current_lang = request.session.get(translation.LANGUAGE_SESSION_KEY)
+            current_lang = request.session.get('django_language')
             if current_lang and current_lang in dict(settings.LANGUAGES):
                 # Save it as preferred for future logins
                 request.session['user_preferred_language'] = current_lang

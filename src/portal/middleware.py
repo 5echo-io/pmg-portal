@@ -23,7 +23,7 @@ class LanguagePreferenceMiddleware:
             preferred_lang = request.session.get('user_preferred_language')
             if preferred_lang and preferred_lang in dict(settings.LANGUAGES):
                 translation.activate(preferred_lang)
-                request.session[translation.LANGUAGE_SESSION_KEY] = preferred_lang
+                request.session['django_language'] = preferred_lang
         
         response = self.get_response(request)
         return response
