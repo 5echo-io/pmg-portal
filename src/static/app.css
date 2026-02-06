@@ -490,9 +490,9 @@ a.link:hover { color: var(--text); }
 /* Custom tooltip */
 .topbar-btn--with-tooltip .tooltip {
   position: absolute;
-  bottom: calc(100% + 8px);
+  top: calc(100% + 8px);
   left: 50%;
-  transform: translateX(-50%) translateY(-4px);
+  transform: translateX(-50%) translateY(4px);
   background: var(--card);
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -518,22 +518,22 @@ a.link:hover { color: var(--text); }
 .topbar-btn--with-tooltip .tooltip::after {
   content: "";
   position: absolute;
-  top: 100%;
+  bottom: 100%;
   left: 50%;
   transform: translateX(-50%);
   border: 6px solid transparent;
-  border-top-color: var(--card);
+  border-bottom-color: var(--card);
 }
 
 .topbar-btn--with-tooltip .tooltip::before {
   content: "";
   position: absolute;
-  top: 100%;
+  bottom: 100%;
   left: 50%;
   transform: translateX(-50%);
   border: 7px solid transparent;
-  border-top-color: var(--line);
-  margin-top: -1px;
+  border-bottom-color: var(--line);
+  margin-bottom: -1px;
 }
 
 /* Customer picker (dropdown like avatar) */
@@ -587,7 +587,7 @@ a.link:hover { color: var(--text); }
 
 .customer-menu {
   position: absolute;
-  top: calc(100% + 2px);
+  top: calc(100% + 4px);
   right: 0;
   background: var(--card);
   border: 1px solid var(--line);
@@ -600,7 +600,7 @@ a.link:hover { color: var(--text); }
   flex-direction: column;
   opacity: 0;
   visibility: hidden;
-  transform: translateY(-10px);
+  transform: translateY(-4px);
   transition: all 0.2s ease;
   z-index: 1000;
 }
@@ -1405,14 +1405,36 @@ a.link:hover { color: var(--text); }
   color: var(--muted);
   font-size: 12px;
   cursor: pointer;
-  padding: 4px 0;
+  padding: 8px 12px;
+  border-radius: 6px;
   display: inline-flex;
   align-items: center;
   gap: 6px;
   text-decoration: none;
+  transition: all 0.2s ease;
 }
 
 .footer-about-btn:hover {
+  color: var(--text);
+  background: var(--btn);
+}
+
+.footer-about-btn svg {
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+}
+
+.footer-link-btn {
+  display: inline-block;
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-top: 4px;
+  transition: all 0.2s ease;
+}
+
+.footer-link-btn:hover {
+  background: var(--btn);
   color: var(--text);
 }
 

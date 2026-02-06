@@ -2,6 +2,17 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev
+  - Version: 1.17.43-beta.18
+  - Summary:
+    - Tooltip position: moved below buttons (Facility and Service desk) instead of above
+    - Customer dropdown menu: improved vertical positioning (reduced top offset from 2px to 4px, transform from -10px to -4px)
+    - Footer "About this portal": added book icon back
+    - Footer buttons: improved styling with better padding (8px 12px) and hover background effect
+    - Footer layout: "View Changelog" moved under "About this portal" in right section
+    - Fixed JavaScript linter errors in customer menu onclick handler (using dataset instead of template variable)
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev
   - Version: 1.17.42-beta.17
   - Summary:
     - Service desk button: added to topbar-right (before avatar) with message icon; shows "under development" tooltip on hover

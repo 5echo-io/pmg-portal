@@ -36,6 +36,10 @@ Changed:
 - Footer: max-width 1280px, responsive padding
 - Customer dropdown: reduced vertical spacing (min-height 0, padding 4px 12px, line-height 1.25); wrapper align-self center
 - Topbar: customer picker height/alignment for consistent vertical center
+- Tooltip position: moved below buttons (Facility and Service desk) instead of above
+- Customer dropdown menu: improved vertical positioning (reduced top offset and transform)
+- Footer buttons: improved styling with better padding (8px 12px) and hover background effect
+- Footer layout: "View Changelog" moved under "About this portal" in right section
 - Edit (table) button: higher contrast hover (blue background)
 - Changelog: pre-release builds (alpha, beta, rc) always show Unreleased; full release shows all sections for that major
 - Changelog modal: no scroll on modal container; only content boxes scroll; fade animation when toggling View Full / Hide Full; button pulse animation on toggle
