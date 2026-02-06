@@ -7,6 +7,27 @@ This project follows Semantic Versioning (SemVer).
 
 Pre-release builds (alpha, beta, rc) are listed here. Only full releases (no build suffix) get a dedicated version section below.
 
+### [1.18.0-beta.1] - 2026-02-06
+
+Added:
+- Delete functionality: added ability to delete customers and users from admin panel with confirmation modal
+- User card page: created user detail page similar to customer card, showing user information, memberships, and details in tabs
+- Delete confirmation modal: warning modal with 3-second countdown before delete button is enabled to prevent accidental deletions
+- View button: added View button to user list for accessing user card page
+
+Changed:
+- Customer selection width: increased customer selection container width from 600px to 800px, then to 1000px for better visibility
+- Customer card width: changed customer card container to use full width (100%) instead of fixed 1280px max-width
+- Delete button styling: made delete buttons narrower (matching View button width) and darker red (#991b1b) for better danger indication
+- Delete modal design: updated delete confirmation modal to match profile settings modal design with centered positioning and danger zone styling
+- Button widths: standardized View and Edit button widths to match Delete button (8px 12px padding, auto width)
+
+Fixed:
+- Customer selection page scroll: fixed scroll behavior to prevent entire page from scrolling - only customer list scrolls when content exceeds container height
+- CSS layout: improved flexbox layout for customer selection container and main content area to properly constrain scrolling
+- Delete modal positioning: fixed delete modal to be centered on screen instead of appearing top-left
+- View button width: made View button consistent width with other action buttons
+
 ### [1.17.51-beta.1] - 2026-02-06
 
 Fixed:

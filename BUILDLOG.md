@@ -2,6 +2,17 @@
 
 - 2026-02-06 (Europe/Oslo)
   - Branch: dev
+  - Version: 1.18.0-beta.1
+  - Summary:
+    - Delete functionality: implemented delete functionality for customers and users with warning modal and 3-second countdown
+    - User card page: created user detail page similar to customer card showing user info, memberships, and details
+    - UI improvements: standardized button widths, made delete buttons darker red, updated delete modal design to match profile settings
+    - Width adjustments: increased customer selection width to 1000px, made customer card use full container width
+    - Modal fixes: fixed delete modal positioning to center on screen, updated design to match profile settings modal
+    - Version bump: incremented minor version from 1.17.51 to 1.18.0 due to new features (delete functionality, user card page)
+
+- 2026-02-06 (Europe/Oslo)
+  - Branch: dev
   - Version: 1.17.51-beta.1
   - Summary:
     - Customer selection scroll fix: improved CSS flexbox layout to prevent entire page from scrolling
