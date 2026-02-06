@@ -28,16 +28,9 @@ if [ ! -d "$APP_DIR" ]; then
   exit 1
 fi
 
-# Pull latest code from correct branch (if git repo exists)
-if [ -d "$APP_DIR/.git" ]; then
-    echo "Pulling latest code from $BRANCH branch..."
-    cd "$APP_DIR"
-    sudo git fetch origin
-    sudo git checkout "$BRANCH"
-    sudo git pull origin "$BRANCH"
-else
-    echo "WARNING: Not a git repository. Skipping git pull."
-fi
+# Note: Code is already updated by install.sh, so we skip git pull here
+# This script only handles: dependencies, migrations, collectstatic, restart
+echo "Note: Code update is handled by install.sh. This script updates dependencies and applies migrations."
 
 sudo systemctl stop "$SERVICE_NAME" || true
 
