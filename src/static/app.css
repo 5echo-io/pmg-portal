@@ -1918,14 +1918,17 @@ a.link:hover { color: var(--text); }
 }
 
 .admin-btn-danger {
-  background: #ef4444;
-  border-color: #ef4444;
+  background: #991b1b;
+  border-color: #991b1b;
   color: white;
+  padding: 8px 12px;
+  min-width: auto;
+  width: auto;
 }
 
 .admin-btn-danger:hover {
-  background: #dc2626;
-  border-color: #dc2626;
+  background: #7f1d1d;
+  border-color: #7f1d1d;
   color: white;
 }
 
@@ -2338,6 +2341,13 @@ a.link:hover { color: var(--text); }
   color: var(--text);
   transition: all 0.2s;
   box-sizing: border-box;
+  white-space: nowrap;
+}
+
+.admin-btn-sm.admin-btn-danger {
+  padding: 8px 12px;
+  min-width: auto;
+  width: auto;
 }
 
 .admin-btn-sm:hover {
