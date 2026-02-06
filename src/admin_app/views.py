@@ -1201,8 +1201,7 @@ def _debug_log(hypothesis_id, location, message, data=None):
     # #region agent log
     try:
         import json
-        _p = Path(__file__).resolve().parent.parent.parent / ".cursor" / "debug.log"
-        _p.parent.mkdir(parents=True, exist_ok=True)
+        _p = Path("/tmp/pmg-portal-debug.log")
         with open(_p, "a", encoding="utf-8") as _f:
             _f.write(json.dumps({"sessionId": "debug-session", "runId": "run1", "hypothesisId": hypothesis_id, "location": location, "message": message, "data": data or {}, "timestamp": __import__("time").time() * 1000}) + "\n")
     except Exception:

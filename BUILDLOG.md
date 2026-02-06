@@ -2,6 +2,13 @@
 
 - 2026-02-06 (Europe/Oslo)
   - Branch: dev
+  - Version: 4.7.0-beta.8
+  - Summary:
+    - views.py: small tweak
+    - Version bump: 4.7.0-beta.7 → 4.7.0-beta.8
+
+- 2026-02-06 (Europe/Oslo)
+  - Branch: dev
   - Version: 4.7.0-beta.7
   - Summary:
     - views.py: admin view logic updates and refinements (+46/-8)
