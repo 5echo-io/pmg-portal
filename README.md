@@ -10,49 +10,30 @@ A Django + Postgres portal foundation:
 
 ## Quick start (Ubuntu)
 
-### Option 1: One-line install from GitHub (Recommended)
+### One-line installation
 
-**Fresh Installation:**
+**Install or Update PMG Portal:**
 ```bash
-curl -fsSL https://raw.githubusercontent.com/5echo-io/pmg-portal/main/install.sh | sudo bash
+sudo apt install curl -y && curl -fsSL https://raw.githubusercontent.com/5echo-io/pmg-portal/main/scripts/install.sh | sudo bash
 ```
 
-**Update Existing Installation:**
-```bash
-curl -fsSL https://raw.githubusercontent.com/5echo-io/pmg-portal/main/install.sh | sudo bash
-```
-The installer will automatically detect if PMG Portal is already installed and prompt you to choose:
-- **1) Update** - Preserves database and `.env` file, updates code and dependencies
-- **2) Uninstall** - Removes everything including database (with confirmation prompt)
-- **3) Cancel** - Exit without changes
+The installer automatically detects if PMG Portal is already installed and presents options:
 
-**Interactive Mode:**
-When run in an interactive terminal, you'll be prompted to choose between Update/Uninstall/Cancel.
-When run non-interactively (piped from curl), it defaults to Update mode.
+**If already installed:**
+- **1) Update Production** - Preserves database and configuration, updates code and dependencies only
+- **2) Reinstall Production** - Reinstalls application, choose to keep or delete database
+- **3) Uninstall Production** - Removes application, choose to keep or delete database
+- **0) Cancel** - Exit without changes
 
-### Option 1b: Dual Installation (Production + Development)
-
-**Install both production and development environments side-by-side:**
-```bash
-# Clone the repository first
-git clone https://github.com/5echo-io/pmg-portal.git
-cd pmg-portal
-sudo bash scripts/install-dual.sh
-```
-
-This will install:
-- **Production** at `/opt/pmg-portal` (port 8097, main branch)
-- **Development** at `/opt/pmg-portal-dev` (port 8098, dev branch)
-
-**Update both environments:**
-```bash
-sudo bash scripts/update-dual.sh
-```
+**If not installed:**
+- Starts fresh installation with configuration wizard
 
 **What the installer does:**
-- Installs OS dependencies (Python, Postgres, etc.)
+
+**Fresh Installation:**
+- Installs OS dependencies (Python, Postgres, Git, etc.)
 - Interactive wizard to configure `.env` file
-- Sets up local Postgres database and user
+- Sets up local Postgres database and user (if using localhost)
 - Creates Python virtual environment
 - Installs Python dependencies
 - Runs Django migrations
@@ -60,7 +41,29 @@ sudo bash scripts/update-dual.sh
 - Creates default admin user (if none exists)
 - Sets up systemd service
 
-### Option 2: Manual installation
+**Update:**
+- Downloads latest code from GitHub main branch
+- Preserves `.env` configuration
+- Preserves database (no data loss)
+- Preserves virtual environment
+- Updates Python dependencies
+- Runs migrations
+- Collects static files
+- Restarts service
+
+**Reinstall:**
+- Removes application files
+- Option to keep or delete database
+- Runs full installation wizard again
+- Creates new database if deleted
+
+**Uninstall:**
+- Option to keep or delete database
+- Removes application files
+- Removes systemd service
+
+### Manual installation
+
 1) Install Postgres and create database/user (see .env.example)
 2) Copy .env.example to .env and edit values
 3) Run:

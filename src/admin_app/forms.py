@@ -5,7 +5,7 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm as BaseUserCreationForm
 from django.contrib.auth.models import Group
-from portal.models import Customer, CustomerMembership, PortalLink, Facility
+from portal.models import Customer, CustomerMembership, PortalLink
 
 User = get_user_model()
 
@@ -62,20 +62,3 @@ class PortalLinkForm(forms.ModelForm):
         }
 
 
-class FacilityForm(forms.ModelForm):
-    class Meta:
-        model = Facility
-        fields = (
-            "name", "slug", "description", "address", "city", "postal_code", "country",
-            "contact_person", "contact_email", "contact_phone", "is_active", "customers"
-        )
-        widgets = {
-            "description": forms.Textarea(attrs={"rows": 4}),
-            "customers": forms.CheckboxSelectMultiple(),
-        }
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        if "customers" in self.fields:
-            self.fields["customers"].queryset = Customer.objects.all().order_by("name")
-            self.fields["customers"].required = False

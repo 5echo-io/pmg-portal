@@ -22,12 +22,6 @@ import urllib.request
 import urllib.error
 import json
 from .models import CustomerMembership, Customer
-try:
-    from .models import Facility
-    from .decorators import dev_required
-    FACILITY_AVAILABLE = True
-except ImportError:
-    FACILITY_AVAILABLE = False
 
 def _portal_home_context(request, customer, links, active_role=None, memberships=None):
     """Build context for portal home (full page or fragment)."""
@@ -250,87 +244,3 @@ def set_language_custom(request):
             request.session['user_preferred_language'] = language
     
     return response
-
-
-# Facility views (only available if Facility model and dev_required exist)
-if FACILITY_AVAILABLE:
-    @login_required
-    @dev_required
-    def facility_list(request):
-        """List all facilities the user's active customer has access to."""
-        # Get active customer
-        active_customer_id = request.session.get("active_customer_id")
-        if not active_customer_id:
-            messages.info(request, "Please select a customer profile first.")
-            return redirect("portal_home")
-        
-        try:
-            active_customer = Customer.objects.get(pk=active_customer_id)
-        except Customer.DoesNotExist:
-            messages.error(request, "Selected customer not found.")
-            return redirect("portal_home")
-        
-        # Get facilities for this customer
-        facilities = active_customer.facilities.filter(is_active=True).order_by("name")
-        
-        is_htmx = request.headers.get("HX-Request") == "true"
-        context = {
-            "facilities": facilities,
-            "customer": active_customer,
-        }
-        
-        if is_htmx:
-            return render(request, "portal/fragments/facility_list_content.html", context)
-        return render(request, "portal/facility_list.html", context)
-
-
-    @login_required
-    @dev_required
-    def facility_detail(request, pk):
-        """Facility detail page showing all information, racks, network devices, etc."""
-        # Get active customer
-        active_customer_id = request.session.get("active_customer_id")
-        if not active_customer_id:
-            messages.info(request, "Please select a customer profile first.")
-            return redirect("portal_home")
-        
-        try:
-            active_customer = Customer.objects.get(pk=active_customer_id)
-        except Customer.DoesNotExist:
-            messages.error(request, "Selected customer not found.")
-            return redirect("portal_home")
-        
-        # Get facility and verify customer has access
-        facility = get_object_or_404(Facility, pk=pk, is_active=True)
-        if facility not in active_customer.facilities.all():
-            messages.error(request, "You do not have access to this facility.")
-            return redirect("facility_list")
-        
-        # Get related data
-        racks = facility.racks.filter(is_active=True).order_by("name")
-        network_devices = facility.network_devices.filter(is_active=True).order_by("rack", "rack_position", "name")
-        ip_addresses = facility.ip_addresses.all().order_by("ip_address")
-        documents = facility.documents.all().order_by("-uploaded_at")
-        
-        is_htmx = request.headers.get("HX-Request") == "true"
-        context = {
-            "facility": facility,
-            "customer": active_customer,
-            "racks": racks,
-            "network_devices": network_devices,
-            "ip_addresses": ip_addresses,
-            "documents": documents,
-        }
-        
-        if is_htmx:
-            return render(request, "portal/fragments/facility_detail_content.html", context)
-        return render(request, "portal/facility_detail.html", context)
-else:
-    # Stub functions for when Facility is not available (production/main branch)
-    def facility_list(request):
-        from django.http import HttpResponseNotFound
-        return HttpResponseNotFound("Facility management not available.")
-    
-    def facility_detail(request, pk):
-        from django.http import HttpResponseNotFound
-        return HttpResponseNotFound("Facility management not available.")

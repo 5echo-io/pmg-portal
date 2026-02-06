@@ -12,8 +12,7 @@ from django.views.decorators.http import require_POST
 from django.http import JsonResponse
 import os
 
-from portal.models import Customer, CustomerMembership, PortalLink, Facility
-from portal.decorators import dev_required
+from portal.models import Customer, CustomerMembership, PortalLink
 
 User = get_user_model()
 
@@ -639,97 +638,3 @@ def portal_link_edit(request, pk):
     return render(request, "admin_app/portal_link_form.html", {"form": form, "link": link})
 
 
-# ----- Facilities (dev features - superuser only) -----
-@superuser_required
-@dev_required
-def facility_list(request):
-    qs = Facility.objects.all().order_by("name")
-    search = request.GET.get("q", "").strip()
-    if search:
-        qs = qs.filter(
-            Q(name__icontains=search) | Q(slug__icontains=search) | Q(address__icontains=search) | Q(city__icontains=search)
-        )
-    is_active = request.GET.get("active", "")
-    if is_active == "1":
-        qs = qs.filter(is_active=True)
-    elif is_active == "0":
-        qs = qs.filter(is_active=False)
-    paginator = Paginator(qs, 20)
-    page = request.GET.get("page", 1)
-    page_obj = paginator.get_page(page)
-    return render(
-        request,
-        "admin_app/facility_list.html",
-        {"page_obj": page_obj, "total_count": paginator.count, "search": search},
-    )
-
-
-@superuser_required
-@dev_required
-def facility_add(request):
-    from .forms import FacilityForm
-    if request.method == "POST":
-        form = FacilityForm(request.POST)
-        if form.is_valid():
-            facility = form.save()
-            messages.success(request, "Facility created.")
-            return redirect("admin_app:admin_facility_detail", pk=facility.pk)
-    else:
-        form = FacilityForm()
-    return render(request, "admin_app/facility_form.html", {"form": form, "facility": None})
-
-
-@superuser_required
-@dev_required
-def facility_detail(request, pk):
-    """Modern facility card view showing all facility information."""
-    facility = get_object_or_404(Facility, pk=pk)
-    customers = facility.customers.all().order_by("name")
-    racks = facility.racks.filter(is_active=True).order_by("name")
-    network_devices = facility.network_devices.filter(is_active=True).order_by("rack", "rack_position", "name")
-    ip_addresses = facility.ip_addresses.all().order_by("ip_address")
-    documents = facility.documents.all().order_by("-uploaded_at")
-    
-    return render(
-        request,
-        "admin_app/facility_card.html",
-        {
-            "facility": facility,
-            "customers": customers,
-            "racks": racks,
-            "network_devices": network_devices,
-            "ip_addresses": ip_addresses,
-            "documents": documents,
-        },
-    )
-
-
-@superuser_required
-@dev_required
-def facility_edit(request, pk):
-    from .forms import FacilityForm
-    facility = get_object_or_404(Facility, pk=pk)
-    if request.method == "POST":
-        form = FacilityForm(request.POST, instance=facility)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Facility updated.")
-            return redirect("admin_app:admin_facility_detail", pk=facility.pk)
-    else:
-        form = FacilityForm(instance=facility)
-    return render(request, "admin_app/facility_form.html", {"form": form, "facility": facility})
-
-
-@superuser_required
-@dev_required
-@require_POST
-def facility_delete(request, pk):
-    """Delete a facility and all related data."""
-    facility = get_object_or_404(Facility, pk=pk)
-    facility_name = facility.name
-    
-    # Delete facility (this will cascade delete related models)
-    facility.delete()
-    
-    messages.success(request, f"Facility '{facility_name}' has been deleted.")
-    return redirect("admin_app:admin_facility_list")

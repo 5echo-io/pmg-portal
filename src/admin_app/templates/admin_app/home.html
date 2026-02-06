@@ -27,9 +27,6 @@
   <div class="panel admin-home-panel">
     <div class="admin-home-panel-heading">Portal management</div>
     <ul class="admin-home-links">
-      {% if dev_features_enabled and has_dev_access %}
-      <li><a href="{% url 'admin_app:admin_facility_list' %}" class="admin-home-link">Facilities <span style="font-size: 11px; opacity: 0.7;">(Dev)</span></a></li>
-      {% endif %}
       <li><a href="{% url 'admin_app:admin_portal_link_list' %}" class="admin-home-link">Portal links</a></li>
     </ul>
   </div>

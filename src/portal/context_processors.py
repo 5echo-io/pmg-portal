@@ -15,13 +15,7 @@ import re
 import urllib.request
 import urllib.error
 import json
-from django.conf import settings
 from .models import CustomerMembership, Customer
-try:
-    from .models import Facility
-    FACILITY_MODEL_AVAILABLE = True
-except ImportError:
-    FACILITY_MODEL_AVAILABLE = False
 
 
 def language_menu(request):
@@ -78,33 +72,15 @@ def user_customers(request):
         # Save to session so it persists
         request.session["active_customer_id"] = active_customer_id
 
-    # Get user's facilities based on active customer (only if Facility model exists)
-    user_facilities = []
-    if active_customer_id and FACILITY_MODEL_AVAILABLE:
-        try:
-            active_customer = Customer.objects.get(pk=active_customer_id)
-            user_facilities = active_customer.facilities.filter(is_active=True).order_by("name")
-        except (Customer.DoesNotExist, AttributeError):
-            pass
-    
-    # Check dev access (only for superusers/admins)
-    has_dev_access = False
-    if settings.ENABLE_DEV_FEATURES:
-        if request.user.is_superuser:
-            # If DEV_ACCESS_USERS is empty, all superusers have access
-            if not settings.DEV_ACCESS_USERS:
-                has_dev_access = True
-            else:
-                # Check if user's email or username is in DEV_ACCESS_USERS
-                user_identifier = request.user.email or request.user.username
-                has_dev_access = user_identifier in settings.DEV_ACCESS_USERS
+    # Facilities not available in v2.0.0 (main branch)
+    # This will be available in v3.0.0-alpha.1 (dev branch)
     
     return {
         "user_customers": user_customers_list,
         "active_customer_id": active_customer_id,
-        "user_facilities": user_facilities,
-        "has_dev_access": has_dev_access,
-        "dev_features_enabled": settings.ENABLE_DEV_FEATURES,
+        "user_facilities": [],  # Empty list for v2.0.0
+        "has_dev_access": False,  # Dev features not available in v2.0.0
+        "dev_features_enabled": False,  # Dev features not available in v2.0.0
     }
 
 def footer_info(request):
