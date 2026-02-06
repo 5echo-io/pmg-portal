@@ -85,6 +85,24 @@ prompt_default POSTGRES_DB "POSTGRES_DB" "$POSTGRES_DB_DEFAULT"
 prompt_default POSTGRES_USER "POSTGRES_USER" "$POSTGRES_USER_DEFAULT"
 prompt_default POSTGRES_PASSWORD "POSTGRES_PASSWORD" "$POSTGRES_PASSWORD_DEFAULT" true
 prompt_default APP_BIND "APP_BIND" "$APP_BIND_DEFAULT"
+
+# Ask if user wants development environment
+echo ""
+echo "=== Development Environment Setup ==="
+if [ -t 0 ] && [ -t 1 ]; then
+    read -rp "Do you want to set up a development environment alongside production? (y/N): " setup_dev
+else
+    setup_dev="N"
+fi
+
+if [[ "$setup_dev" =~ ^[Yy]$ ]]; then
+    SETUP_DEV_ENV="true"
+    echo "Development environment will be set up automatically."
+else
+    SETUP_DEV_ENV="false"
+    echo "Skipping development environment setup."
+fi
+
 prompt_default ENABLE_DEV_FEATURES "ENABLE_DEV_FEATURES (true/false - enable development features like Facility management, admin only)" "$ENABLE_DEV_FEATURES_DEFAULT"
 prompt_default DEV_ACCESS_USERS "DEV_ACCESS_USERS (comma-separated emails/usernames, leave empty for all superusers)" "$DEV_ACCESS_USERS_DEFAULT"
 
@@ -211,6 +229,181 @@ sudo cp "$APP_DIR/deploy/systemd/pmg-portal.service" /etc/systemd/system/pmg-por
 sudo systemctl daemon-reload
 sudo systemctl enable --now pmg-portal.service
 
+# Set up development environment if requested
+if [ "$SETUP_DEV_ENV" = "true" ]; then
+    echo ""
+    echo "=== Setting up Development Environment ==="
+    
+    DEV_DIR="/opt/pmg-portal-dev"
+    DEV_SRC_DIR="$DEV_DIR/src"
+    
+    # Extract domain from ALLOWED_HOSTS for dev subdomain
+    DEV_DOMAIN=""
+    if [ -n "$DJANGO_ALLOWED_HOSTS" ]; then
+        # Get first domain (not localhost/127.0.0.1)
+        FIRST_DOMAIN=$(echo "$DJANGO_ALLOWED_HOSTS" | cut -d',' -f1 | tr -d ' ')
+        if [ "$FIRST_DOMAIN" != "localhost" ] && [ "$FIRST_DOMAIN" != "127.0.0.1" ]; then
+            DEV_DOMAIN="dev.$FIRST_DOMAIN"
+        fi
+    fi
+    
+    # Build dev ALLOWED_HOSTS
+    DEV_ALLOWED_HOSTS="$DJANGO_ALLOWED_HOSTS"
+    if [ -n "$DEV_DOMAIN" ]; then
+        DEV_ALLOWED_HOSTS="$DEV_DOMAIN,$DEV_ALLOWED_HOSTS"
+    fi
+    
+    # Create development directory
+    echo "Creating development directory..."
+    sudo mkdir -p "$DEV_DIR"
+    sudo rsync -a --exclude='.env' --exclude='.venv' --exclude='staticfiles' --exclude='media' "$REPO_DIR/" "$DEV_DIR/"
+    
+    # Create development .env
+    echo "Creating development .env file..."
+    sudo tee "$DEV_DIR/.env" >/dev/null <<EOF
+# --- App ---
+DJANGO_SECRET_KEY=$DJANGO_SECRET_KEY
+DJANGO_DEBUG=$DJANGO_DEBUG
+DJANGO_ALLOWED_HOSTS=$DEV_ALLOWED_HOSTS
+
+# If true, registration page is enabled
+ENABLE_REGISTRATION=$ENABLE_REGISTRATION
+
+# Default admin bootstrap (created on install if missing). Login uses email; username is set from email.
+DEFAULT_ADMIN_USERNAME=$DEFAULT_ADMIN_USERNAME
+DEFAULT_ADMIN_EMAIL=$DEFAULT_ADMIN_EMAIL
+DEFAULT_ADMIN_PASSWORD=$DEFAULT_ADMIN_PASSWORD
+
+# --- Postgres ---
+POSTGRES_HOST=$POSTGRES_HOST
+POSTGRES_PORT=$POSTGRES_PORT
+POSTGRES_DB=${POSTGRES_DB}_dev
+POSTGRES_USER=${POSTGRES_USER}_dev
+POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+
+# --- Runtime ---
+APP_BIND=0.0.0.0:8098
+
+# --- Development Features ---
+# Enable development features (Facility management, etc.) - admin/superuser only
+ENABLE_DEV_FEATURES=true
+# Restrict dev access to specific superusers (leave empty for all superusers)
+DEV_ACCESS_USERS=
+EOF
+    
+    # Set up development database
+    if [ "$POSTGRES_HOST" = "127.0.0.1" ] || [ "$POSTGRES_HOST" = "localhost" ]; then
+        echo "Configuring development Postgres database..."
+        db_user_ident="$(echo "${POSTGRES_USER}_dev" | sed 's/"/""/g')"
+        db_name_ident="$(echo "${POSTGRES_DB}_dev" | sed 's/"/""/g')"
+        db_user_lit="$(echo "${POSTGRES_USER}_dev" | sed "s/'/''/g")"
+        db_pass_lit="$(echo "$POSTGRES_PASSWORD" | sed "s/'/''/g")"
+        db_name_lit="$(echo "${POSTGRES_DB}_dev" | sed "s/'/''/g")"
+        
+        role_exists="$(sudo -u postgres psql -tAc "SELECT 1 FROM pg_roles WHERE rolname = '${db_user_lit}'")"
+        if [ "$role_exists" != "1" ]; then
+            sudo -u postgres psql -v ON_ERROR_STOP=1 -c "CREATE USER \"${db_user_ident}\" WITH PASSWORD '${db_pass_lit}';"
+        else
+            sudo -u postgres psql -v ON_ERROR_STOP=1 -c "ALTER USER \"${db_user_ident}\" WITH PASSWORD '${db_pass_lit}';"
+        fi
+        
+        db_exists="$(sudo -u postgres psql -tAc "SELECT 1 FROM pg_database WHERE datname = '${db_name_lit}'")"
+        if [ "$db_exists" != "1" ]; then
+            sudo -u postgres psql -v ON_ERROR_STOP=1 -c "CREATE DATABASE \"${db_name_ident}\" OWNER \"${db_user_ident}\";"
+        fi
+    fi
+    
+    # Create development venv
+    echo "Creating development virtual environment..."
+    cd "$DEV_SRC_DIR"
+    sudo python3 -m venv "$DEV_SRC_DIR/.venv"
+    sudo "$DEV_SRC_DIR/.venv/bin/pip" install --upgrade pip
+    sudo "$DEV_SRC_DIR/.venv/bin/pip" install -r "$DEV_SRC_DIR/requirements.txt"
+    
+    # Create development media directory
+    echo "Creating development media directory..."
+    DEV_MEDIA_DIR="$DEV_DIR/media"
+    sudo mkdir -p "$DEV_MEDIA_DIR"
+    sudo chown -R root:root "$DEV_MEDIA_DIR"
+    sudo chmod -R 755 "$DEV_MEDIA_DIR"
+    
+    # Run development migrations
+    echo "Running development migrations + collectstatic + compilemessages..."
+    set -a
+    source "$DEV_DIR/.env"
+    set +a
+    
+    sudo -E "$DEV_SRC_DIR/.venv/bin/python" manage.py migrate --noinput
+    sudo -E "$DEV_SRC_DIR/.venv/bin/python" manage.py collectstatic --noinput
+    sudo -E "$DEV_SRC_DIR/.venv/bin/python" manage.py compilemessages --verbosity 0
+    
+    # Create development admin if missing
+    echo "Creating development admin (if missing)..."
+    sudo -E "$DEV_SRC_DIR/.venv/bin/python" - <<'PY'
+import os
+import django
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "pmg_portal.settings")
+django.setup()
+
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+email = (os.getenv("DEFAULT_ADMIN_EMAIL") or "admin@example.com").strip()
+username = email[:150]
+password = os.getenv("DEFAULT_ADMIN_PASSWORD", "admin")
+
+if not User.objects.filter(is_superuser=True).exists():
+    u = User.objects.create_superuser(username=username, email=email, password=password)
+    print(f"Created superuser: {email}")
+else:
+    print("Superuser already exists, skipping.")
+PY
+    
+    # Create development systemd service
+    echo "Installing development systemd service..."
+    sudo tee /etc/systemd/system/pmg-portal-dev.service > /dev/null <<EOF
+[Unit]
+Description=PMG Portal Development (Gunicorn)
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=$DEV_SRC_DIR
+EnvironmentFile=$DEV_DIR/.env
+ExecStart=$DEV_SRC_DIR/.venv/bin/gunicorn pmg_portal.wsgi:application --bind \${APP_BIND} --workers 2 --access-logfile -
+Restart=always
+RestartSec=3
+User=root
+
+[Install]
+WantedBy=multi-user.target
+EOF
+    
+    sudo systemctl daemon-reload
+    sudo systemctl enable --now pmg-portal-dev.service
+    
+    echo ""
+    echo -e "${GREEN}Development environment set up successfully!${NC}"
+    echo "  Path: $DEV_DIR"
+    echo "  Port: 8098"
+    if [ -n "$DEV_DOMAIN" ]; then
+        echo "  Domain: $DEV_DOMAIN"
+    fi
+    echo "  Database: ${POSTGRES_DB}_dev"
+    echo "  Service: pmg-portal-dev.service"
+fi
+
+echo ""
 echo "Done."
 echo "Open: http://$APP_BIND (or via your reverse proxy)"
+if [ "$SETUP_DEV_ENV" = "true" ]; then
+    echo "Development: http://0.0.0.0:8098"
+    if [ -n "$DEV_DOMAIN" ]; then
+        echo "Development Domain: http://$DEV_DOMAIN"
+    fi
+fi
 echo "Logs: sudo journalctl -u pmg-portal.service -f --no-pager"
+if [ "$SETUP_DEV_ENV" = "true" ]; then
+    echo "Dev Logs: sudo journalctl -u pmg-portal-dev.service -f --no-pager"
+fi
