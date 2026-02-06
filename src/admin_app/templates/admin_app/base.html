@@ -20,25 +20,34 @@
 {% block admin_content %}{% endblock %}
 
 <!-- Delete Confirmation Modal -->
-<div id="delete-confirm-modal" class="delete-confirm-modal" style="display: none;">
-  <div class="delete-confirm-modal-overlay"></div>
-  <div class="delete-confirm-modal-content">
-    <div class="delete-confirm-modal-header">
-      <h2 class="delete-confirm-modal-title">Confirm Deletion</h2>
-      <button type="button" class="delete-confirm-modal-close" aria-label="Close">&times;</button>
+<div id="delete-confirm-modal" class="modal" style="display: none;" onclick="closeDeleteConfirmModal(event)">
+  <div class="modal-content modal-content-danger" onclick="event.stopPropagation()">
+    <div class="modal-header modal-header-danger">
+      <h2>Confirm Deletion</h2>
+      <button class="modal-close" onclick="closeDeleteConfirmModal(event)">&times;</button>
     </div>
-    <div class="delete-confirm-modal-body">
-      <p class="delete-confirm-modal-message"></p>
-      <p class="delete-confirm-modal-warning">This action cannot be undone.</p>
-    </div>
-    <div class="delete-confirm-modal-footer">
-      <form method="post" action="" class="delete-confirm-form">
-        {% csrf_token %}
-        <button type="button" class="form-btn form-btn-secondary delete-confirm-cancel">Cancel</button>
-        <button type="submit" class="form-btn form-btn-danger delete-confirm-submit" disabled>
-          <span class="delete-confirm-countdown"></span>
-        </button>
-      </form>
+    <div class="modal-body">
+      <div class="danger-zone">
+        <div class="danger-zone-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 6h18"></path>
+            <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+            <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+          </svg>
+        </div>
+        <h3>Warning: This action cannot be undone</h3>
+        <p class="delete-confirm-modal-message"></p>
+        <p><strong>This action is irreversible.</strong></p>
+        <form method="post" action="" class="delete-confirm-form" style="margin-top: 24px;">
+          {% csrf_token %}
+          <div style="display: flex; gap: 12px; margin-top: 20px; justify-content: flex-end;">
+            <button type="button" class="form-btn form-btn-secondary delete-confirm-cancel">Cancel</button>
+            <button type="submit" class="form-btn form-btn-danger delete-confirm-submit" disabled>
+              <span class="delete-confirm-countdown"></span>
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 </div>
@@ -46,8 +55,7 @@
 <script>
 (function() {
   const modal = document.getElementById('delete-confirm-modal');
-  const overlay = modal.querySelector('.delete-confirm-modal-overlay');
-  const closeBtn = modal.querySelector('.delete-confirm-modal-close');
+  const closeBtn = modal.querySelector('.modal-close');
   const cancelBtn = modal.querySelector('.delete-confirm-cancel');
   const submitBtn = modal.querySelector('.delete-confirm-submit');
   const form = modal.querySelector('.delete-confirm-form');
@@ -60,7 +68,7 @@
   function openDeleteModal(url, message) {
     messageEl.textContent = message;
     form.action = url;
-    modal.style.display = 'block';
+    modal.style.display = 'flex';
     document.body.style.overflow = 'hidden';
     
     // Reset countdown
@@ -87,7 +95,11 @@
     }
   }
   
-  function closeDeleteModal() {
+  function closeDeleteConfirmModal(e) {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     modal.style.display = 'none';
     document.body.style.overflow = '';
     if (countdownInterval) {
@@ -100,9 +112,8 @@
   }
   
   // Close handlers
-  if (overlay) overlay.addEventListener('click', closeDeleteModal);
-  if (closeBtn) closeBtn.addEventListener('click', closeDeleteModal);
-  if (cancelBtn) cancelBtn.addEventListener('click', closeDeleteModal);
+  if (closeBtn) closeBtn.addEventListener('click', closeDeleteConfirmModal);
+  if (cancelBtn) cancelBtn.addEventListener('click', closeDeleteConfirmModal);
   
   // Handle delete button clicks
   document.addEventListener('click', function(e) {
@@ -114,6 +125,9 @@
       openDeleteModal(url, message);
     }
   });
+  
+  // Make function globally available
+  window.closeDeleteConfirmModal = closeDeleteConfirmModal;
 })();
 </script>
 {% endblock %}

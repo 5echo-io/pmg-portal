@@ -52,7 +52,7 @@
     <tbody>
       {% for u in page_obj %}
       <tr>
-        <td><a href="{% url 'admin_app:admin_user_edit' u.pk %}">{{ u.username }}</a></td>
+        <td><a href="{% url 'admin_app:admin_user_detail' u.pk %}">{{ u.username }}</a></td>
         <td>{{ u.email|default:"—" }}</td>
         <td>{{ u.get_full_name|default:"—" }}</td>
         <td>{% if u.is_staff %}Yes{% else %}No{% endif %}</td>

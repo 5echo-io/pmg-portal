@@ -80,6 +80,22 @@ def user_add(request):
 
 
 @superuser_required
+def user_detail(request, pk):
+    """Modern user card view showing all user information."""
+    user_obj = get_object_or_404(User, pk=pk)
+    memberships = CustomerMembership.objects.filter(user=user_obj).select_related("customer").order_by("customer__name")
+    
+    return render(
+        request,
+        "admin_app/user_card.html",
+        {
+            "user_obj": user_obj,
+            "memberships": memberships,
+        },
+    )
+
+
+@superuser_required
 def user_edit(request, pk):
     from .forms import UserEditForm
     user_obj = get_object_or_404(User, pk=pk)
@@ -88,7 +104,7 @@ def user_edit(request, pk):
         if form.is_valid():
             form.save()
             messages.success(request, "User updated.")
-            return redirect("admin_app:admin_user_list")
+            return redirect("admin_app:admin_user_detail", pk=user_obj.pk)
     else:
         form = UserEditForm(instance=user_obj)
     return render(request, "admin_app/user_form.html", {"form": form, "user_obj": user_obj})
