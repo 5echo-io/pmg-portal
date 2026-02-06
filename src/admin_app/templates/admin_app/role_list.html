@@ -16,7 +16,7 @@
       </div>
     </div>
   </form>
-  <a href="{% url 'admin_app:admin_role_add' %}" class="admin-btn-sm admin-btn-primary admin-toolbar-add-btn">Add role</a>
+  <a href="{% url 'admin_app:admin_role_add' %}" class="admin-toolbar-add-btn">Add role</a>
 </div>
 
 <p class="muted">{{ roles|length }} role{{ roles|length|pluralize }}</p>
@@ -27,7 +27,7 @@
       <tr>
         <th>Role name</th>
         <th>Users</th>
-        <th></th>
+        <th class="admin-table-actions"></th>
       </tr>
     </thead>
     <tbody>
@@ -35,7 +35,7 @@
       <tr>
         <td><a href="{% url 'admin_app:admin_role_edit' r.group.pk %}">{{ r.group.name }}</a></td>
         <td>{{ r.user_count }}</td>
-        <td><a href="{% url 'admin_app:admin_role_edit' r.group.pk %}" class="admin-btn-sm">Edit</a></td>
+        <td class="admin-table-actions"><a href="{% url 'admin_app:admin_role_edit' r.group.pk %}" class="admin-btn-sm">Edit</a></td>
       </tr>
       {% empty %}
       <tr>

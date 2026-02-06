@@ -32,7 +32,7 @@
       </div>
     </div>
   </form>
-  <a href="{% url 'admin_app:admin_user_add' %}" class="admin-btn-sm admin-btn-primary admin-toolbar-add-btn">Add user</a>
+  <a href="{% url 'admin_app:admin_user_add' %}" class="admin-toolbar-add-btn">Add user</a>
 </div>
 
 <p class="muted admin-count">{{ total_count }} user{{ total_count|pluralize }}</p>
@@ -46,7 +46,7 @@
         <th>Name</th>
         <th>Staff</th>
         <th>Active</th>
-        <th></th>
+        <th class="admin-table-actions"></th>
       </tr>
     </thead>
     <tbody>
@@ -57,7 +57,7 @@
         <td>{{ u.get_full_name|default:"—" }}</td>
         <td>{% if u.is_staff %}Yes{% else %}No{% endif %}</td>
         <td>{% if u.is_active %}Yes{% else %}No{% endif %}</td>
-        <td style="white-space: nowrap;">
+        <td class="admin-table-actions">
           <a href="{% url 'admin_app:admin_user_edit' u.pk %}" class="admin-btn-sm">Edit</a>
           {% if u.pk != request.user.pk %}
           <button type="button" class="admin-btn-sm admin-btn-danger" data-delete-url="{% url 'admin_app:admin_user_delete' u.pk %}" data-delete-message="Are you sure you want to delete the user '{{ u.username }}'? This will also remove all customer memberships for this user.">Delete</button>

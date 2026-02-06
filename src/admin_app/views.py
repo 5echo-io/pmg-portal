@@ -5,15 +5,35 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import Group
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.db.models import Q
 from django.core.paginator import Paginator
 from django.contrib import messages
 from django.views.decorators.http import require_POST
 from django.http import JsonResponse
+from django.conf import settings
 import os
 
 from portal.models import Customer, CustomerMembership, PortalLink, Facility, Rack, RackSeal, NetworkDevice
 from django.utils import timezone
+
+
+def _get_cancel_url(request, default):
+    """Return URL for Cancel button: request.GET next, or same-origin referer, or default."""
+    next_url = request.GET.get("next")
+    if next_url:
+        return next_url
+    referer = request.META.get("HTTP_REFERER") or ""
+    if referer and getattr(settings, "ALLOWED_HOSTS", None):
+        try:
+            from urllib.parse import urlparse
+            ref_host = urlparse(referer).netloc
+            req_host = request.get_host()
+            if ref_host == req_host and referer.startswith((request.scheme + "://", "//")):
+                return referer
+        except Exception:
+            pass
+    return default
 
 User = get_user_model()
 
@@ -674,7 +694,8 @@ def facility_add(request):
             return redirect("admin_app:admin_facility_detail", slug=facility.slug)
     else:
         form = FacilityForm()
-    return render(request, "admin_app/facility_form.html", {"form": form, "facility": None})
+    cancel_url = _get_cancel_url(request, reverse("admin_app:admin_facility_list"))
+    return render(request, "admin_app/facility_form.html", {"form": form, "facility": None, "cancel_url": cancel_url})
 
 
 @staff_required
@@ -713,7 +734,8 @@ def facility_edit(request, slug):
             return redirect("admin_app:admin_facility_detail", slug=facility.slug)
     else:
         form = FacilityForm(instance=facility)
-    return render(request, "admin_app/facility_form.html", {"form": form, "facility": facility})
+    cancel_url = _get_cancel_url(request, reverse("admin_app:admin_facility_detail", kwargs={"slug": facility.slug}))
+    return render(request, "admin_app/facility_form.html", {"form": form, "facility": facility, "cancel_url": cancel_url})
 
 
 @staff_required
@@ -748,10 +770,12 @@ def rack_add(request, facility_slug):
     else:
         form = RackForm(facility=facility)
     
+    cancel_url = _get_cancel_url(request, reverse("admin_app:admin_facility_detail", kwargs={"slug": facility.slug}))
     return render(request, "admin_app/rack_form.html", {
         "form": form,
         "facility": facility,
         "rack": None,
+        "cancel_url": cancel_url,
     })
 
 
@@ -796,10 +820,12 @@ def rack_edit(request, facility_slug, rack_id):
     else:
         form = RackForm(instance=rack, facility=facility)
     
+    cancel_url = _get_cancel_url(request, reverse("admin_app:admin_rack_detail", kwargs={"facility_slug": facility.slug, "rack_id": rack.pk}))
     return render(request, "admin_app/rack_form.html", {
         "form": form,
         "facility": facility,
         "rack": rack,
+        "cancel_url": cancel_url,
     })
 
 
@@ -837,10 +863,13 @@ def rack_seal_add(request, facility_slug, rack_id):
     else:
         form = RackSealForm(rack=rack, user=request.user)
     
+    # Cancel goes back to rack detail with Seals tab active
+    cancel_url = reverse("admin_app:admin_rack_detail", kwargs={"facility_slug": facility.slug, "rack_id": rack.pk}) + "#seals"
     return render(request, "admin_app/rack_seal_form.html", {
         "form": form,
         "facility": facility,
         "rack": rack,
+        "cancel_url": cancel_url,
     })
 
 
@@ -868,11 +897,13 @@ def rack_seal_remove(request, facility_slug, rack_id, seal_id):
     else:
         form = RackSealRemovalForm(instance=seal, user=request.user)
     
+    cancel_url = reverse("admin_app:admin_rack_detail", kwargs={"facility_slug": facility.slug, "rack_id": rack.pk}) + "#seals"
     return render(request, "admin_app/rack_seal_remove_form.html", {
         "form": form,
         "facility": facility,
         "rack": rack,
         "seal": seal,
+        "cancel_url": cancel_url,
     })
 
 
@@ -904,11 +935,16 @@ def network_device_add(request, facility_slug, rack_id=None, rack_position=None)
     else:
         form = NetworkDeviceForm(facility=facility, rack=rack, rack_position=rack_position)
     
+    if rack:
+        cancel_url = reverse("admin_app:admin_rack_detail", kwargs={"facility_slug": facility.slug, "rack_id": rack.pk}) + "#devices"
+    else:
+        cancel_url = _get_cancel_url(request, reverse("admin_app:admin_facility_detail", kwargs={"slug": facility.slug}))
     return render(request, "admin_app/network_device_form.html", {
         "form": form,
         "facility": facility,
         "rack": rack,
         "device": None,
+        "cancel_url": cancel_url,
     })
 
 
@@ -931,11 +967,16 @@ def network_device_edit(request, facility_slug, device_id):
     else:
         form = NetworkDeviceForm(instance=device, facility=facility)
     
+    if device.rack:
+        cancel_url = reverse("admin_app:admin_rack_detail", kwargs={"facility_slug": facility.slug, "rack_id": device.rack.pk}) + "#devices"
+    else:
+        cancel_url = _get_cancel_url(request, reverse("admin_app:admin_facility_detail", kwargs={"slug": facility.slug}))
     return render(request, "admin_app/network_device_form.html", {
         "form": form,
         "facility": facility,
         "rack": device.rack,
         "device": device,
+        "cancel_url": cancel_url,
     })
 
 

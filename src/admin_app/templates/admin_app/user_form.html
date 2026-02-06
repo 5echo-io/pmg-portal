@@ -1,6 +1,7 @@
 {% extends "admin_app/base.html" %}
 
 {% block admin_title %}{% if user_obj %}Edit user{% else %}Add user{% endif %}{% endblock %}
+{% block breadcrumb_back %}<a href="{% url 'admin_app:admin_user_list' %}" class="breadcrumb-back-btn" aria-label="Back to Users">← Users</a>{% endblock %}
 {% block breadcrumb_extra %}
 <span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_user_list' %}">Users</a>
 <span class="breadcrumb-sep">→</span> <span>{% if user_obj %}Edit{% else %}Add{% endif %}</span>

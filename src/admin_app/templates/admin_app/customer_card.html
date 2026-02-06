@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block admin_title %}{{ customer.name }}{% endblock %}
+{% block breadcrumb_back %}<a href="{% url 'admin_app:admin_customer_list' %}" class="breadcrumb-back-btn" aria-label="Back to Customers">← Customers</a>{% endblock %}
 {% block breadcrumb_extra %}
 <span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_customer_list' %}">Customers</a>
 <span class="breadcrumb-sep">→</span> <span>{{ customer.name }}</span>
@@ -45,7 +46,10 @@
     
     <div class="customer-card-info">
       <div class="customer-card-name-wrapper">
-        <h1 class="customer-card-name">{{ customer.name }}</h1>
+        <div class="customer-card-title-block">
+          <h1 class="customer-card-name">{{ customer.name }}</h1>
+          <span class="customer-card-slug">{{ customer.slug }}</span>
+        </div>
         <div class="customer-card-header-actions">
           <a href="{% url 'admin_app:admin_customer_edit' customer.pk %}" class="customer-card-icon-btn customer-card-icon-btn--edit" title="Edit Details">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -75,7 +79,6 @@
   <div class="customer-card-tabs">
     <button class="customer-tab active" data-tab="members">Members ({{ memberships|length }})</button>
     <button class="customer-tab" data-tab="links">Portal Links ({{ portal_links|length }})</button>
-    <button class="customer-tab" data-tab="info">Information</button>
   </div>
 
   <!-- Tab Content -->
@@ -156,37 +159,6 @@
       {% endif %}
     </div>
 
-    <!-- Information Tab -->
-    <div class="customer-tab-panel" id="tab-info">
-      <div class="customer-info-grid">
-        <div class="customer-info-item">
-          <label>Name</label>
-          <p>{{ customer.name }}</p>
-        </div>
-        <div class="customer-info-item">
-          <label>Slug</label>
-          <p><code>{{ customer.slug }}</code></p>
-        </div>
-        {% if customer.org_number %}
-        <div class="customer-info-item">
-          <label>Organization Number</label>
-          <p>{{ customer.org_number }}</p>
-        </div>
-        {% endif %}
-        {% if customer.primary_contact %}
-        <div class="customer-info-item">
-          <label>Primary Contact</label>
-          <p>{{ customer.primary_contact.get_full_name|default:customer.primary_contact.username }} ({{ customer.primary_contact.email }})</p>
-        </div>
-        {% endif %}
-        {% if customer.contact_info %}
-        <div class="customer-info-item customer-info-item--full">
-          <label>Contact Information</label>
-          <p style="white-space: pre-wrap;">{{ customer.contact_info }}</p>
-        </div>
-        {% endif %}
-      </div>
-    </div>
   </div>
 </div>
 

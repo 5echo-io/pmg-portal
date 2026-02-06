@@ -1,6 +1,7 @@
 {% extends "admin_app/base.html" %}
 
 {% block admin_title %}{% if role %}Edit role{% else %}Add role{% endif %}{% endblock %}
+{% block breadcrumb_back %}<a href="{% url 'admin_app:admin_role_list' %}" class="breadcrumb-back-btn" aria-label="Back to Roles">← Roles</a>{% endblock %}
 {% block breadcrumb_extra %}
 <span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_role_list' %}">Roles</a>
 <span class="breadcrumb-sep">→</span> <span>{% if role %}Edit{% else %}Add{% endif %}</span>

@@ -64,6 +64,12 @@ Pre-release builds (alpha, beta, rc) are listed here. Only full releases (no bui
 - **Card Header Redesign**: Edit and Delete actions moved to card header as icon buttons for better space utilization and cleaner layout
 - **Admin Content Width**: Increased admin content width from 980px to 1280px for consistency with portal layout
 - **Tab Styling**: Improved tab styling with hover states, active state highlighting, and better spacing
+- **Breadcrumb Navigation**: Added contextual back button (←) on all admin pages for quicker navigation to list or parent
+- **Card Title Block**: Customer and facility cards show slug below name; facility card shows country flag, active/inactive badge, and created/updated dates in header
+- **Information Tab Removed**: Customer and facility card information moved to header/summary; Information tab removed
+- **Smart Cancel**: Form Cancel buttons use context-based cancel_url (e.g. back to rack or facility)
+- **Country Flag Filter**: New admin_extras template tag `country_flag` for facility country display
+- **List and Table Styling**: Unified Add button styling and admin-table-actions column class
 
 ### Fixed
 - **Context Processor**: Added missing Facility model import to fix 500 error when accessing Facility features

@@ -2,6 +2,24 @@
 
 - 2026-02-06 (Europe/Oslo)
   - Branch: dev
+  - Version: 4.4.0-alpha.1
+  - Summary:
+    - Breadcrumb: added breadcrumb-row and contextual back button (← Admin, ← Customers, etc.) on all admin pages
+    - Each template overrides breadcrumb_back for list or parent (e.g. facility form → Facilities, network device form → rack or facility)
+    - Card title block: customer/facility/user cards show slug under name in customer-card-title-block
+    - Facility card: country flag (admin_extras country_flag filter), active/inactive badge, created/updated meta in header
+    - Information tab removed from customer card and facility card; key info moved to header
+    - Smart cancel: facility_form and network_device_form use cancel_url from view context for Cancel button
+    - Views: facility_edit and network_device_add/edit pass cancel_url for contextual cancel
+    - New templatetags: admin_app/templatetags/admin_extras.py with country_flag filter (country name/code → flag emoji)
+    - List pages: Add buttons use admin-toolbar-add-btn only; table action columns use admin-table-actions class
+    - Rack detail: tab switching refactor with activateTab; tab IDs for visual, devices, seals, info
+    - Portal facility detail: breadcrumb/layout alignment with admin
+    - CSS: breadcrumb-back-btn, breadcrumb-row, customer-card-title-block, customer-card-slug, customer-card-badge, customer-card-flag, customer-card-meta
+    - Version bump: MINOR increment from 4.3.0-alpha.1 to 4.4.0-alpha.1 (UI/UX and navigation)
+
+- 2026-02-06 (Europe/Oslo)
+  - Branch: dev
   - Version: 4.3.0-alpha.1
   - Summary:
     - Card header redesign: Edit and Delete actions moved to card header as icon buttons (customer, facility, user cards)

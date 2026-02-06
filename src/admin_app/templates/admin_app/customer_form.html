@@ -1,6 +1,7 @@
 {% extends "admin_app/base.html" %}
 
 {% block admin_title %}{% if customer %}Edit customer{% else %}Add customer{% endif %}{% endblock %}
+{% block breadcrumb_back %}<a href="{% url 'admin_app:admin_customer_list' %}" class="breadcrumb-back-btn" aria-label="Back to Customers">← Customers</a>{% endblock %}
 {% block breadcrumb_extra %}
 <span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_customer_list' %}">Customers</a>
 <span class="breadcrumb-sep">→</span> <span>{% if customer %}Edit{% else %}Add{% endif %}</span>

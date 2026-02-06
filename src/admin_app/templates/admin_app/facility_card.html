@@ -1,7 +1,9 @@
 {% extends "admin_app/base.html" %}
 {% load static %}
+{% load admin_extras %}
 
 {% block admin_title %}{{ facility.name }}{% endblock %}
+{% block breadcrumb_back %}<a href="{% url 'admin_app:admin_facility_list' %}" class="breadcrumb-back-btn" aria-label="Back to Facilities">← Facilities</a>{% endblock %}
 {% block breadcrumb_extra %}
 <span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_facility_list' %}">Facilities</a>
 <span class="breadcrumb-sep">→</span> <span>{{ facility.name }}</span>
@@ -12,6 +14,9 @@
 <div class="customer-card-container">
   <!-- Header Section -->
   <div class="customer-card-header">
+    {% if facility.country %}
+    <span class="customer-card-flag" title="{{ facility.country }}">{{ facility.country|country_flag }}</span>
+    {% endif %}
     <div class="customer-card-logo-section">
       <div class="customer-logo-upload-area" style="cursor: default;">
         <div class="customer-logo-placeholder">
@@ -26,8 +31,12 @@
     
     <div class="customer-card-info">
       <div class="customer-card-name-wrapper">
-        <h1 class="customer-card-name">{{ facility.name }}</h1>
+        <div class="customer-card-title-block">
+          <h1 class="customer-card-name">{{ facility.name }}</h1>
+          <span class="customer-card-slug">{{ facility.slug }}</span>
+        </div>
         <div class="customer-card-header-actions">
+          <span class="customer-card-badge customer-card-badge--{% if facility.is_active %}active{% else %}inactive{% endif %}" title="Active status">{% if facility.is_active %}Active{% else %}Inactive{% endif %}</span>
           <a href="{% url 'admin_app:admin_facility_edit' facility.slug %}" class="customer-card-icon-btn customer-card-icon-btn--edit" title="Edit Details">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
@@ -43,6 +52,7 @@
           </button>
         </div>
       </div>
+      <p class="customer-card-meta">Created {{ facility.created_at|date:"M j, Y" }} · Updated {{ facility.updated_at|date:"M j, Y" }}</p>
       {% if facility.city %}
       <p class="customer-card-org">{{ facility.city }}{% if facility.country %}, {{ facility.country }}{% endif %}</p>
       {% endif %}
@@ -59,7 +69,6 @@
     <button class="customer-tab" data-tab="network">Network Devices ({{ network_devices|length }})</button>
     <button class="customer-tab" data-tab="ip">IP Addresses ({{ ip_addresses|length }})</button>
     <button class="customer-tab" data-tab="documents">Documents ({{ documents|length }})</button>
-    <button class="customer-tab" data-tab="info">Information</button>
   </div>
 
   <!-- Tab Content -->
@@ -254,79 +263,6 @@
       {% endif %}
     </div>
 
-    <!-- Information Tab -->
-    <div class="customer-tab-panel" id="tab-info">
-      <div class="customer-info-grid">
-        <div class="customer-info-item">
-          <label>Name</label>
-          <p>{{ facility.name }}</p>
-        </div>
-        <div class="customer-info-item">
-          <label>Slug</label>
-          <p><code>{{ facility.slug }}</code></p>
-        </div>
-        {% if facility.description %}
-        <div class="customer-info-item customer-info-item--full">
-          <label>Description</label>
-          <p style="white-space: pre-wrap;">{{ facility.description }}</p>
-        </div>
-        {% endif %}
-        {% if facility.address %}
-        <div class="customer-info-item customer-info-item--full">
-          <label>Address</label>
-          <p>{{ facility.address }}</p>
-        </div>
-        {% endif %}
-        {% if facility.city %}
-        <div class="customer-info-item">
-          <label>City</label>
-          <p>{{ facility.city }}</p>
-        </div>
-        {% endif %}
-        {% if facility.postal_code %}
-        <div class="customer-info-item">
-          <label>Postal Code</label>
-          <p>{{ facility.postal_code }}</p>
-        </div>
-        {% endif %}
-        {% if facility.country %}
-        <div class="customer-info-item">
-          <label>Country</label>
-          <p>{{ facility.country }}</p>
-        </div>
-        {% endif %}
-        {% if facility.contact_person %}
-        <div class="customer-info-item">
-          <label>Contact Person</label>
-          <p>{{ facility.contact_person }}</p>
-        </div>
-        {% endif %}
-        {% if facility.contact_email %}
-        <div class="customer-info-item">
-          <label>Contact Email</label>
-          <p><a href="mailto:{{ facility.contact_email }}">{{ facility.contact_email }}</a></p>
-        </div>
-        {% endif %}
-        {% if facility.contact_phone %}
-        <div class="customer-info-item">
-          <label>Contact Phone</label>
-          <p>{{ facility.contact_phone }}</p>
-        </div>
-        {% endif %}
-        <div class="customer-info-item">
-          <label>Active Status</label>
-          <p>{% if facility.is_active %}Yes{% else %}No{% endif %}</p>
-        </div>
-        <div class="customer-info-item">
-          <label>Created</label>
-          <p>{{ facility.created_at|date:"Y-m-d H:i" }}</p>
-        </div>
-        <div class="customer-info-item">
-          <label>Last Updated</label>
-          <p>{{ facility.updated_at|date:"Y-m-d H:i" }}</p>
-        </div>
-      </div>
-    </div>
   </div>
 </div>
 

@@ -1,20 +1,13 @@
 {% load i18n static %}
 <div class="facility-detail-container">
-  <!-- Breadcrumb (universal design – same as admin) -->
-  <nav class="breadcrumb admin-breadcrumb" aria-label="Breadcrumb">
-    <a href="{% url 'facility_list' %}" hx-get="{% url 'facility_list' %}" hx-target="#main-content" hx-push-url="true">{% trans "Facilities" %}</a>
-    <span class="breadcrumb-sep">→</span>
-    <span>{{ facility.name }}</span>
-  </nav>
-
-  <!-- Back Button -->
-  <div class="facility-back-button">
-    <a href="{% url 'facility_list' %}" class="facility-back-link" hx-get="{% url 'facility_list' %}" hx-target="#main-content" hx-push-url="true">
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="15 18 9 12 15 6"></polyline>
-      </svg>
-      {% trans "Back to" %} {% trans "Facilities" %}
-    </a>
+  <!-- Breadcrumb with back button (universal design – same as admin) -->
+  <div class="breadcrumb-row">
+    <a href="{% url 'facility_list' %}" class="breadcrumb-back-btn" aria-label="{% trans 'Back to Facilities' %}" hx-get="{% url 'facility_list' %}" hx-target="#main-content" hx-push-url="true">← {% trans "Facilities" %}</a>
+    <nav class="breadcrumb admin-breadcrumb" aria-label="Breadcrumb">
+      <a href="{% url 'facility_list' %}" hx-get="{% url 'facility_list' %}" hx-target="#main-content" hx-push-url="true">{% trans "Facilities" %}</a>
+      <span class="breadcrumb-sep">→</span>
+      <span>{{ facility.name }}</span>
+    </nav>
   </div>
 
   <!-- Header Section -->

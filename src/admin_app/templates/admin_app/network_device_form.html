@@ -1,6 +1,7 @@
 {% extends "admin_app/base.html" %}
 
 {% block admin_title %}{% if device %}Edit device{% else %}Add device{% endif %}{% endblock %}
+{% block breadcrumb_back %}{% if rack %}<a href="{% url 'admin_app:admin_rack_detail' facility.slug rack.pk %}" class="breadcrumb-back-btn" aria-label="Back to {{ rack.name }}">← {{ rack.name }}</a>{% else %}<a href="{% url 'admin_app:admin_facility_detail' facility.slug %}" class="breadcrumb-back-btn" aria-label="Back to {{ facility.name }}">← {{ facility.name }}</a>{% endif %}{% endblock %}
 {% block breadcrumb_extra %}
 <span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_facility_list' %}">Facilities</a>
 <span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_facility_detail' facility.slug %}">{{ facility.name }}</a>
@@ -93,11 +94,7 @@
   </div>
   <div class="admin-form-actions">
     <button type="submit" class="form-btn form-btn-primary form-btn--narrow">Save</button>
-    {% if rack %}
-    <a href="{% url 'admin_app:admin_rack_detail' facility.slug rack.pk %}" class="form-btn form-btn-secondary">Cancel</a>
-    {% else %}
-    <a href="{% url 'admin_app:admin_facility_detail' facility.slug %}" class="form-btn form-btn-secondary">Cancel</a>
-    {% endif %}
+    <a href="{{ cancel_url }}" class="form-btn form-btn-secondary">Cancel</a>
   </div>
 </form>
 {% endblock %}

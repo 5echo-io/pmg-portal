@@ -1,6 +1,7 @@
 {% extends "admin_app/base.html" %}
 
 {% block admin_title %}{% if facility %}Edit facility{% else %}Add facility{% endif %}{% endblock %}
+{% block breadcrumb_back %}<a href="{% url 'admin_app:admin_facility_list' %}" class="breadcrumb-back-btn" aria-label="Back to Facilities">← Facilities</a>{% endblock %}
 {% block breadcrumb_extra %}
 <span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_facility_list' %}">Facilities</a>
 <span class="breadcrumb-sep">→</span> <span>{% if facility %}Edit{% else %}Add{% endif %}</span>
@@ -99,7 +100,7 @@
   </div>
   <div class="admin-form-actions">
     <button type="submit" class="form-btn form-btn-primary form-btn--narrow">Save</button>
-    <a href="{% url 'admin_app:admin_facility_list' %}" class="form-btn form-btn-secondary">Cancel</a>
+    <a href="{{ cancel_url }}" class="form-btn form-btn-secondary">Cancel</a>
     {% if facility %}
     <button type="button" class="form-btn form-btn-danger" data-delete-url="{% url 'admin_app:admin_facility_delete' facility.slug %}" data-delete-message="Are you sure you want to delete the facility '{{ facility.name }}'? This will also delete all racks, network devices, IP addresses, and documents associated with this facility.">Delete Facility</button>
     {% endif %}

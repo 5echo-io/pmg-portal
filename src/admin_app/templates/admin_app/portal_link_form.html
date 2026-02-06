@@ -1,6 +1,7 @@
 {% extends "admin_app/base.html" %}
 
 {% block admin_title %}{% if link %}Edit portal link{% else %}Add portal link{% endif %}{% endblock %}
+{% block breadcrumb_back %}<a href="{% url 'admin_app:admin_portal_link_list' %}" class="breadcrumb-back-btn" aria-label="Back to Portal links">← Portal links</a>{% endblock %}
 {% block breadcrumb_extra %}
 <span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_portal_link_list' %}">Portal links</a>
 <span class="breadcrumb-sep">→</span> <span>{% if link %}Edit{% else %}Add{% endif %}</span>

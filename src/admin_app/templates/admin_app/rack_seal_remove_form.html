@@ -1,6 +1,7 @@
 {% extends "admin_app/base.html" %}
 
 {% block admin_title %}Remove Seal{% endblock %}
+{% block breadcrumb_back %}<a href="{% url 'admin_app:admin_rack_detail' facility.slug rack.pk %}" class="breadcrumb-back-btn" aria-label="Back to {{ rack.name }}">← {{ rack.name }}</a>{% endblock %}
 {% block breadcrumb_extra %}
 <span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_facility_list' %}">Facilities</a>
 <span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_facility_detail' facility.slug %}">{{ facility.name }}</a>
@@ -29,7 +30,7 @@
   </div>
   <div class="admin-form-actions">
     <button type="submit" class="form-btn form-btn-danger form-btn--narrow">Remove Seal</button>
-    <a href="{% url 'admin_app:admin_rack_detail' facility.slug rack.pk %}" class="form-btn form-btn-secondary">Cancel</a>
+    <a href="{{ cancel_url }}" class="form-btn form-btn-secondary">Cancel</a>
   </div>
 </form>
 {% endblock %}

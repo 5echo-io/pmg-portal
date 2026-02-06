@@ -1,6 +1,7 @@
 {% extends "admin_app/base.html" %}
 
 {% block admin_title %}Add Seal{% endblock %}
+{% block breadcrumb_back %}<a href="{% url 'admin_app:admin_rack_detail' facility.slug rack.pk %}" class="breadcrumb-back-btn" aria-label="Back to {{ rack.name }}">← {{ rack.name }}</a>{% endblock %}
 {% block breadcrumb_extra %}
 <span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_facility_list' %}">Facilities</a>
 <span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_facility_detail' facility.slug %}">{{ facility.name }}</a>
@@ -28,7 +29,7 @@
   <p class="muted">The seal will be logged as installed by you ({{ request.user.get_full_name|default:request.user.username }}) at the current time.</p>
   <div class="admin-form-actions">
     <button type="submit" class="form-btn form-btn-primary form-btn--narrow">Install Seal</button>
-    <a href="{% url 'admin_app:admin_rack_detail' facility.slug rack.pk %}" class="form-btn form-btn-secondary">Cancel</a>
+    <a href="{{ cancel_url }}" class="form-btn form-btn-secondary">Cancel</a>
   </div>
 </form>
 {% endblock %}

@@ -16,7 +16,7 @@
       </div>
     </div>
   </form>
-  <a href="{% url 'admin_app:admin_customer_add' %}" class="admin-btn-sm admin-btn-primary admin-toolbar-add-btn">Add customer</a>
+  <a href="{% url 'admin_app:admin_customer_add' %}" class="admin-toolbar-add-btn">Add customer</a>
 </div>
 
 <p class="muted">{{ total_count }} customer{{ total_count|pluralize }}</p>
@@ -29,7 +29,7 @@
         <th>Slug</th>
         <th>Org. no.</th>
         <th>Primary contact</th>
-        <th></th>
+        <th class="admin-table-actions"></th>
       </tr>
     </thead>
     <tbody>
@@ -39,7 +39,7 @@
         <td>{{ c.slug }}</td>
         <td>{{ c.org_number|default:"—" }}</td>
         <td>{% if c.primary_contact %}{{ c.primary_contact.get_full_name|default:c.primary_contact.username }}{% else %}—{% endif %}</td>
-        <td style="white-space: nowrap;">
+        <td class="admin-table-actions">
           <a href="{% url 'admin_app:admin_customer_detail' c.pk %}" class="admin-btn-sm">View</a>
           <button type="button" class="admin-btn-sm admin-btn-danger" data-delete-url="{% url 'admin_app:admin_customer_delete' c.pk %}" data-delete-message="Are you sure you want to delete the customer '{{ c.name }}'? This will also delete all memberships and portal links associated with this customer.">Delete</button>
         </td>

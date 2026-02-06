@@ -5,10 +5,15 @@
 
 {% block content %}
 {% block admin_breadcrumb %}
-<nav class="breadcrumb admin-breadcrumb" aria-label="Breadcrumb">
-  <a href="{% url 'admin_app:admin_home' %}">Admin</a>
-  {% block breadcrumb_extra %}{% endblock %}
-</nav>
+<div class="breadcrumb-row">
+  {% block breadcrumb_back %}
+  <a href="{% url 'admin_app:admin_home' %}" class="breadcrumb-back-btn" aria-label="Back to Admin">← Admin</a>
+  {% endblock %}
+  <nav class="breadcrumb admin-breadcrumb" aria-label="Breadcrumb">
+    <a href="{% url 'admin_app:admin_home' %}">Admin</a>
+    {% block breadcrumb_extra %}{% endblock %}
+  </nav>
+</div>
 {% endblock %}
 {% if messages %}
 <ul class="admin-messages">

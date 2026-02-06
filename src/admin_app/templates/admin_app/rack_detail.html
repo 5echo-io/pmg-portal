@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block admin_title %}{{ rack.name }}{% endblock %}
+{% block breadcrumb_back %}<a href="{% url 'admin_app:admin_facility_detail' facility.slug %}" class="breadcrumb-back-btn" aria-label="Back to {{ facility.name }}">← {{ facility.name }}</a>{% endblock %}
 {% block breadcrumb_extra %}
 <span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_facility_list' %}">Facilities</a>
 <span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_facility_detail' facility.slug %}">{{ facility.name }}</a>
@@ -241,18 +242,27 @@
   // Tab switching
   const tabs = document.querySelectorAll('.rack-tab');
   const panels = document.querySelectorAll('.rack-tab-panel');
-  
+  const tabIds = ['visual', 'devices', 'seals', 'info'];
+
+  function activateTab(targetTab) {
+    if (!tabIds.includes(targetTab)) return;
+    tabs.forEach(t => t.classList.remove('active'));
+    panels.forEach(p => p.classList.remove('active'));
+    const tabEl = document.querySelector('.rack-tab[data-tab="' + targetTab + '"]');
+    const panelEl = document.getElementById('tab-' + targetTab);
+    if (tabEl) tabEl.classList.add('active');
+    if (panelEl) panelEl.classList.add('active');
+  }
+
   tabs.forEach(tab => {
     tab.addEventListener('click', function() {
-      const targetTab = this.dataset.tab;
-      
-      tabs.forEach(t => t.classList.remove('active'));
-      panels.forEach(p => p.classList.remove('active'));
-      
-      this.classList.add('active');
-      document.getElementById('tab-' + targetTab)?.classList.add('active');
+      activateTab(this.dataset.tab);
     });
   });
+
+  // On load: if URL has #seals or #devices etc., open that tab
+  const hash = (window.location.hash || '').replace(/^#/, '');
+  if (hash) activateTab(hash);
 
   // Add device to rack
   window.addDeviceToRack = function() {

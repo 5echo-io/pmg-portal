@@ -24,7 +24,7 @@
       </div>
     </div>
   </form>
-  <a href="{% url 'admin_app:admin_facility_add' %}" class="admin-btn-sm admin-btn-primary admin-toolbar-add-btn">Add facility</a>
+  <a href="{% url 'admin_app:admin_facility_add' %}" class="admin-toolbar-add-btn">Add facility</a>
 </div>
 
 <p class="muted">{{ total_count }} facilit{{ total_count|pluralize:"y,ies" }}</p>
@@ -37,7 +37,7 @@
         <th>Location</th>
         <th>Customers</th>
         <th>Active</th>
-        <th></th>
+        <th class="admin-table-actions"></th>
       </tr>
     </thead>
     <tbody>
@@ -47,7 +47,7 @@
         <td>{% if f.city %}{{ f.city }}{% if f.country %}, {{ f.country }}{% endif %}{% else %}—{% endif %}</td>
         <td>{{ f.get_customer_count }}</td>
         <td>{% if f.is_active %}Yes{% else %}No{% endif %}</td>
-        <td style="white-space: nowrap;">
+        <td class="admin-table-actions">
           <a href="{% url 'admin_app:admin_facility_detail' f.slug %}" class="admin-btn-sm">View</a>
           <button type="button" class="admin-btn-sm admin-btn-danger" data-delete-url="{% url 'admin_app:admin_facility_delete' f.slug %}" data-delete-message="Are you sure you want to delete the facility '{{ f.name }}'? This will also delete all racks, network devices, IP addresses, and documents associated with this facility.">Delete</button>
         </td>

@@ -1,6 +1,7 @@
 {% extends "admin_app/base.html" %}
 
 {% block admin_title %}{% if rack %}Edit rack{% else %}Add rack{% endif %}{% endblock %}
+{% block breadcrumb_back %}<a href="{% url 'admin_app:admin_facility_detail' facility.slug %}" class="breadcrumb-back-btn" aria-label="Back to {{ facility.name }}">← {{ facility.name }}</a>{% endblock %}
 {% block breadcrumb_extra %}
 <span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_facility_list' %}">Facilities</a>
 <span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_facility_detail' facility.slug %}">{{ facility.name }}</a>
@@ -54,7 +55,7 @@
   </div>
   <div class="admin-form-actions">
     <button type="submit" class="form-btn form-btn-primary form-btn--narrow">Save</button>
-    <a href="{% url 'admin_app:admin_facility_detail' facility.slug %}" class="form-btn form-btn-secondary">Cancel</a>
+    <a href="{{ cancel_url }}" class="form-btn form-btn-secondary">Cancel</a>
     {% if rack %}
     <button type="button" class="form-btn form-btn-danger" data-delete-url="{% url 'admin_app:admin_rack_delete' facility.slug rack.pk %}" data-delete-message="Are you sure you want to delete the rack '{{ rack.name }}'? This will also delete all seals and devices associated with this rack.">Delete Rack</button>
     {% endif %}
