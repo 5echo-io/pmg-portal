@@ -84,12 +84,16 @@ class CustomerMembership(models.Model):
         (ROLE_ADMIN, "Customer Admin"),
     ]
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default=ROLE_MEMBER)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, db_index=True)
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, db_index=True)
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default=ROLE_MEMBER, db_index=True)
 
     class Meta:
         unique_together = ("user", "customer")
+        indexes = [
+            models.Index(fields=["user", "customer"]),  # Composite index for common query pattern
+            models.Index(fields=["customer", "role"]),  # For filtering by customer and role
+        ]
 
     def __str__(self) -> str:
         return f"{self.user} -> {self.customer} ({self.role})"
@@ -100,14 +104,17 @@ class PortalLink(models.Model):
     Simple links shown inside a customer's portal.
     Later you can extend this to sections/widgets/FDV status blocks, etc.
     """
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name="links")
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name="links", db_index=True)
     title = models.CharField(max_length=200)
     url = models.URLField()
     description = models.CharField(max_length=300, blank=True, default="")
-    sort_order = models.PositiveIntegerField(default=100)
+    sort_order = models.PositiveIntegerField(default=100, db_index=True)
 
     class Meta:
         ordering = ["sort_order", "title"]
+        indexes = [
+            models.Index(fields=["customer", "sort_order"]),  # Composite index for customer links ordering
+        ]
 
     def __str__(self) -> str:
         return f"{self.customer}: {self.title}"

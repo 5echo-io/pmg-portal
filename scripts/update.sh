@@ -82,4 +82,16 @@ sudo -E "$SRC_DIR/.venv/bin/python" manage.py compilemessages --verbosity 0
 sudo systemctl start "$SERVICE_NAME"
 sudo systemctl status "$SERVICE_NAME" --no-pager -l || true
 
+echo ""
+echo "Checking nginx configuration (if nginx is installed)..."
+if command -v nginx >/dev/null 2>&1; then
+    if [ -f "$APP_DIR/deploy/nginx/pmg-portal.conf" ]; then
+        echo "  Updated nginx configuration template available at:"
+        echo "    $APP_DIR/deploy/nginx/pmg-portal.conf"
+        echo "  To apply performance optimizations, update your nginx config:"
+        echo "    sudo cp $APP_DIR/deploy/nginx/pmg-portal.conf /etc/nginx/sites-available/pmg-portal"
+        echo "    sudo nginx -t && sudo systemctl reload nginx"
+    fi
+fi
+
 echo "Done."
