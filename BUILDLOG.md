@@ -30,6 +30,8 @@
     - Facility link added to admin home in Portal management section
     - Removed dev feature protection (ENABLE_DEV_FEATURES, DEV_ACCESS_USERS) - Facility features now directly available
     - All Facility views use standard @staff_required decorator (admin) and @login_required (portal)
+    - Fixed: Added Facility import to context_processors.py
+    - Fixed: Updated install.sh rsync to use --delete flag to ensure all templates are synced
     - Foundation for future facility features: installations, management, operations, maintenance, documentation, network management
 
 - 2026-02-06 (Europe/Oslo)

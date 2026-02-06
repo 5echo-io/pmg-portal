@@ -38,6 +38,11 @@ Pre-release builds (alpha, beta, rc) are listed here. Only full releases (no bui
 - **Simplified Access Control**: Facility views use standard `@staff_required` decorator (admin) and `@login_required` (portal) instead of `@dev_required`
 - **Context Processor**: Simplified to directly return `user_facilities` without dev feature checks
 - **Templates**: Removed conditional dev feature checks - Facility button shows when customer profile is selected
+- **Install Script**: Updated rsync to use `--delete` flag to ensure all template files are properly synced
+
+### Fixed
+- **Context Processor**: Added missing Facility model import to fix 500 error when accessing Facility features
+- **Template Sync**: Fixed install.sh to ensure Facility template files are properly copied to server
 
 #### UI/UX
 - Facility card grid layout with modern design

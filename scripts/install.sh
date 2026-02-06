@@ -246,7 +246,8 @@ if [ "$MODE" = "update" ]; then
     
     # Update files (preserve .env, .venv, media, and database)
     echo "Updating application files (preserving .env, .venv, media, and database)..."
-    sudo rsync -a --exclude='.env' --exclude='.venv' --exclude='staticfiles' --exclude='media' --exclude='*.pyc' --exclude='__pycache__' "$REPO_DIR/" "$APP_DIR/"
+    # Use rsync with --delete to ensure all files are synced, including templates
+    sudo rsync -a --delete --exclude='.env' --exclude='.venv' --exclude='staticfiles' --exclude='media' --exclude='*.pyc' --exclude='__pycache__' "$REPO_DIR/" "$APP_DIR/"
     
     # Cleanup branch-specific files after update
     echo ""
