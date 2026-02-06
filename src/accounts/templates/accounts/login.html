@@ -7,7 +7,7 @@
   <title>{% trans "Login" %} | {% trans "PMG Portal" %}</title>
   <link rel="stylesheet" href="{% static 'app.css' %}">
 </head>
-<body class="page">
+  <body class="page">
   <div class="card">
     <h1>{% trans "PMG Portal" %}</h1>
     <p class="muted">{% trans "Sign in to continue." %}</p>
@@ -115,19 +115,18 @@
     })();
     (function() {
       var registerLink = document.getElementById('register-link');
-      var card = document.getElementById('login-card');
+      var card = document.querySelector('.card');
       if (registerLink && card) {
         registerLink.addEventListener('click', function(e) {
           e.preventDefault();
           card.classList.add('fade-out');
           setTimeout(function() {
             window.location.href = registerLink.href;
-          }, 300);
+          }, 250);
         });
       }
-      // Set initial height
       if (card) {
-        card.style.minHeight = '400px';
+        card.classList.add('fade-in');
       }
     })();
   </script>

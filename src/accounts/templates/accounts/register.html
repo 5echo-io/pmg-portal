@@ -7,7 +7,7 @@
   <title>{% trans "Register" %} | {% trans "PMG Portal" %}</title>
   <link rel="stylesheet" href="{% static 'app.css' %}">
 </head>
-<body class="page">
+  <body class="page">
   <div class="card" id="register-card">
     <h1>{% trans "Create account" %}</h1>
 
@@ -96,27 +96,18 @@
     })();
     (function() {
       var backLink = document.getElementById('back-to-login-link');
-      var card = document.getElementById('register-card');
+      var card = document.querySelector('.card');
       if (backLink && card) {
         backLink.addEventListener('click', function(e) {
           e.preventDefault();
           card.classList.add('fade-out');
           setTimeout(function() {
             window.location.href = backLink.href;
-          }, 300);
+          }, 250);
         });
       }
-      // Fade in and expand on load
       if (card) {
-        card.style.opacity = '0';
-        card.style.minHeight = '400px';
-        setTimeout(function() {
-          card.classList.add('fade-in');
-          card.style.opacity = '1';
-          setTimeout(function() {
-            card.style.minHeight = '500px';
-          }, 50);
-        }, 50);
+        card.classList.add('fade-in');
       }
     })();
   </script>
