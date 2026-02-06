@@ -273,6 +273,18 @@
         closeCustomerSwitchModal();
       }
     });
+
+    // Handle customer switch card clicks
+    document.addEventListener('click', function(e) {
+      const card = e.target.closest('[data-customer-switch="true"]');
+      if (card) {
+        const customerId = card.getAttribute('data-customer-id');
+        if (customerId) {
+          selectCustomer(customerId);
+          closeCustomerSwitchModal();
+        }
+      }
+    });
   </script>
 
   <!-- Customer Switch Modal -->
@@ -295,7 +307,7 @@
       {% endif %}
       <div class="customer-switch-modal-list">
         {% for membership in user_customers %}
-        <div class="customer-switch-card {% if membership.customer.id == active_customer_id %}customer-switch-card--active{% endif %}" data-customer-id="{{ membership.customer.id }}" data-customer-name="{{ membership.customer.name|escape }}" onclick="{% if membership.customer.id != active_customer_id %}selectCustomer({{ membership.customer.id }}); closeCustomerSwitchModal();{% endif %}">
+        <div class="customer-switch-card {% if membership.customer.id == active_customer_id %}customer-switch-card--active{% endif %}" data-customer-id="{{ membership.customer.id }}" data-customer-name="{{ membership.customer.name|escape }}" {% if membership.customer.id != active_customer_id %}data-customer-switch="true"{% endif %}>
           {% if membership.customer.logo_url %}
           <div class="customer-switch-card-logo">
             <img src="{{ membership.customer.logo_url }}" alt="{{ membership.customer.name }} logo" onerror="this.style.display='none';" />
