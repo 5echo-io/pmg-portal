@@ -2,6 +2,14 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev
+  - Version: 1.17.44-beta.19
+  - Summary:
+    - Customer dropdown menu: rebuilt positioning (removed align-self center from wrapper, changed menu positioning to top: 100% with margin-top: 4px, improved transform animation from -8px to 0)
+    - Footer buttons: removed padding (8px 12px → 0) and margin-top to match left side text spacing; hover now only changes color instead of background
+    - Login page footer: reduced margin-top from 24px to 16px to bring version and language selector closer to login box
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev
   - Version: 1.17.43-beta.18
   - Summary:
     - Tooltip position: moved below buttons (Facility and Service desk) instead of above
