@@ -36,7 +36,7 @@
           {% endif %}
           <div class="customer-menu-list">
             {% for membership in user_customers %}
-            <button type="button" class="customer-menu-item {% if membership.customer.id == active_customer_id %}customer-menu-item--active{% endif %}" data-customer-id="{{ membership.customer.id }}" data-customer-name="{{ membership.customer.name }}" onclick="selectCustomer({{ membership.customer.id }})">
+            <button type="button" class="customer-menu-item {% if membership.customer.id == active_customer_id %}customer-menu-item--active{% endif %}" data-customer-id="{{ membership.customer.id }}" data-customer-name="{{ membership.customer.name|escape }}" onclick="selectCustomer(this.dataset.customerId)">
               <span class="customer-menu-item-text">{{ membership.customer.name }}</span>
               {% if membership.customer.id == active_customer_id %}
               <svg class="customer-menu-item-check" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
@@ -145,8 +145,9 @@
   <script>
     function selectCustomer(customerId) {
       const form = document.getElementById('customer-switcher-form');
-      if (form && customerId) {
-        form.action = '/switch/' + customerId + '/';
+      const id = typeof customerId === 'string' ? customerId : String(customerId);
+      if (form && id) {
+        form.action = '/switch/' + id + '/';
         form.submit();
       }
     }
