@@ -46,6 +46,9 @@ msgstr "Velg en kunde for å få tilgang til deres portal"
 msgid "Switch Customer"
 msgstr "Bytt kunde"
 
+msgid "Switch Customer Profile"
+msgstr "Bytt kundeprofil"
+
 msgid "Search customers…"
 msgstr "Søk etter kunder…"
 

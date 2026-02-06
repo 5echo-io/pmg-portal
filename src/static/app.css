@@ -2666,10 +2666,15 @@ a.link:hover { color: var(--text); }
   max-width: 600px;
   margin: 0 auto;
   padding: 32px 20px;
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 200px);
+  min-height: 400px;
 }
 
 .customer-selection-header {
   margin-bottom: 24px;
+  flex-shrink: 0;
 }
 
 .customer-selection-header h1 {
@@ -2683,6 +2688,9 @@ a.link:hover { color: var(--text); }
   display: flex;
   flex-direction: column;
   gap: 8px;
+  overflow-y: auto;
+  flex: 1;
+  padding-right: 4px;
 }
 
 .customer-selection-item {
@@ -2695,6 +2703,7 @@ a.link:hover { color: var(--text); }
   display: flex;
   align-items: center;
   gap: 12px;
+  flex-shrink: 0;
 }
 
 .customer-selection-item:hover {
