@@ -357,12 +357,12 @@ PY
     prompt_default DJANGO_DEBUG "DJANGO_DEBUG (true/false)" "$DJANGO_DEBUG_DEFAULT"
     prompt_default DJANGO_ALLOWED_HOSTS "DJANGO_ALLOWED_HOSTS (comma-separated, e.g. portal.parkmediagroup.no,localhost,127.0.0.1)" "$DJANGO_ALLOWED_HOSTS_DEFAULT"
     
-    # Auto-generate dev subdomain if domain is provided
-    DEV_ALLOWED_HOSTS="$DJANGO_ALLOWED_HOSTS"
+    # Auto-generate dev subdomain ONLY for development environment
+    FINAL_ALLOWED_HOSTS="$DJANGO_ALLOWED_HOSTS"
     if [ "$IS_DEV" = "true" ]; then
         FIRST_DOMAIN=$(echo "$DJANGO_ALLOWED_HOSTS" | cut -d',' -f1 | tr -d ' ')
         if [ "$FIRST_DOMAIN" != "localhost" ] && [ "$FIRST_DOMAIN" != "127.0.0.1" ] && [[ ! "$FIRST_DOMAIN" =~ ^dev\. ]]; then
-            DEV_ALLOWED_HOSTS="dev.$FIRST_DOMAIN,$DJANGO_ALLOWED_HOSTS"
+            FINAL_ALLOWED_HOSTS="dev.$FIRST_DOMAIN,$DJANGO_ALLOWED_HOSTS"
             echo "Auto-generated dev subdomain: dev.$FIRST_DOMAIN"
         fi
     fi
@@ -393,7 +393,7 @@ PY
 # --- App ---
 DJANGO_SECRET_KEY=$DJANGO_SECRET_KEY
 DJANGO_DEBUG=$DJANGO_DEBUG
-DJANGO_ALLOWED_HOSTS=$DEV_ALLOWED_HOSTS
+DJANGO_ALLOWED_HOSTS=$FINAL_ALLOWED_HOSTS
 
 # If true, registration page is enabled
 ENABLE_REGISTRATION=$ENABLE_REGISTRATION
