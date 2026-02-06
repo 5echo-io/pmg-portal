@@ -15,7 +15,7 @@ import re
 import urllib.request
 import urllib.error
 import json
-from .models import CustomerMembership, Customer, Facility
+from .models import CustomerMembership, Customer
 
 
 def language_menu(request):
@@ -72,19 +72,15 @@ def user_customers(request):
         # Save to session so it persists
         request.session["active_customer_id"] = active_customer_id
 
-    # Get user's facilities based on active customer
-    user_facilities = []
-    if active_customer_id:
-        try:
-            active_customer = Customer.objects.get(pk=active_customer_id)
-            user_facilities = active_customer.facilities.filter(is_active=True).order_by("name")
-        except Customer.DoesNotExist:
-            pass
+    # Facilities not available in v2.0.0 (main branch)
+    # This will be available in v3.0.0-alpha.1 (dev branch)
     
     return {
         "user_customers": user_customers_list,
         "active_customer_id": active_customer_id,
-        "user_facilities": user_facilities,
+        "user_facilities": [],  # Empty list for v2.0.0
+        "has_dev_access": False,  # Dev features not available in v2.0.0
+        "dev_features_enabled": False,  # Dev features not available in v2.0.0
     }
 
 def footer_info(request):
