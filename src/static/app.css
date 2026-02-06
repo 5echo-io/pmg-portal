@@ -2684,6 +2684,27 @@ a.link:hover { color: var(--text); }
   color: var(--text);
 }
 
+.customer-selection-search {
+  margin-bottom: 16px;
+  flex-shrink: 0;
+}
+
+.customer-selection-search-input {
+  width: 100%;
+  padding: 10px 14px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font-size: 14px;
+  color: var(--text);
+  transition: border-color 0.15s;
+}
+
+.customer-selection-search-input:focus {
+  outline: none;
+  border-color: var(--btnHover);
+}
+
 .customer-selection-list {
   display: flex;
   flex-direction: column;

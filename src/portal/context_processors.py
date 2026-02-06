@@ -54,7 +54,7 @@ def user_customers(request):
         )
         user_customers_list = list(memberships)
 
-    # Resolve active_customer_id from session
+    # Resolve active_customer_id from session (don't auto-select first customer)
     active_customer_id = request.session.get("active_customer_id")
     if active_customer_id is not None:
         if request.user.is_superuser:
@@ -64,9 +64,8 @@ def user_customers(request):
             if not any(m.customer_id == active_customer_id for m in user_customers_list):
                 active_customer_id = None
 
-    if active_customer_id is None and user_customers_list:
-        first = user_customers_list[0]
-        active_customer_id = getattr(first, "customer_id", None) or first.customer.id
+    # Don't auto-select first customer - user must explicitly choose
+    # This allows showing the customer selection page when no customer is selected
 
     return {
         "user_customers": user_customers_list,
