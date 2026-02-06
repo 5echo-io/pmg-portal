@@ -203,12 +203,13 @@ def customer_logo_upload(request, pk):
     if not logo_file.content_type.startswith("image/"):
         return JsonResponse({"error": "File must be an image"}, status=400)
     
-    # Delete old logo if exists
+    # Store old logo info before saving new one
+    old_logo_name = None
+    old_logo_path = None
     if customer.logo:
         try:
-            old_path = customer.logo.path
-            if os.path.exists(old_path):
-                os.remove(old_path)
+            old_logo_name = customer.logo.name
+            old_logo_path = customer.logo.path
         except Exception:
             pass
     
@@ -216,9 +217,30 @@ def customer_logo_upload(request, pk):
     customer.logo = logo_file
     customer.save()
     
-    # Refresh from database to get updated logo
+    # Refresh from database to get updated logo info
     customer.refresh_from_db()
     
+    # Delete old logo file if it exists and is different from new one
+    if old_logo_path and old_logo_name:
+        try:
+            # Check if old file is different from new file
+            if customer.logo and customer.logo.name != old_logo_name:
+                if os.path.exists(old_logo_path):
+                    os.remove(old_logo_path)
+                    # Also try to remove directory if empty
+                    try:
+                        old_dir = os.path.dirname(old_logo_path)
+                        if os.path.exists(old_dir) and not os.listdir(old_dir):
+                            os.rmdir(old_dir)
+                    except Exception:
+                        pass
+        except Exception as e:
+            # Log error but don't fail the upload
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.warning(f"Failed to delete old logo: {e}")
+    
+    # Get logo URL
     logo_url = customer.logo_url()
     if not logo_url:
         # Fallback: try to construct URL manually
@@ -239,14 +261,36 @@ def customer_logo_delete(request, pk):
         return JsonResponse({"error": "No logo to delete"}, status=400)
     
     try:
-        logo_path = customer.logo.path
-        customer.logo.delete()  # This deletes the file and clears the field
-        customer.save()
+        logo_path = None
+        logo_name = customer.logo.name
         
-        # Also try to remove file if still exists
-        if os.path.exists(logo_path):
-            os.remove(logo_path)
+        # Get path before deletion
+        try:
+            logo_path = customer.logo.path
+        except Exception:
+            pass
+        
+        # Delete the logo field (this should delete the file via Django's storage)
+        customer.logo.delete(save=False)  # Don't save yet
+        customer.save()  # Save the model
+        
+        # Also try to remove file manually if still exists
+        if logo_path and os.path.exists(logo_path):
+            try:
+                os.remove(logo_path)
+                # Try to remove empty directory
+                try:
+                    logo_dir = os.path.dirname(logo_path)
+                    if os.path.exists(logo_dir) and not os.listdir(logo_dir):
+                        os.rmdir(logo_dir)
+                except Exception:
+                    pass
+            except Exception:
+                pass
     except Exception as e:
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.error(f"Error deleting logo: {e}")
         return JsonResponse({"error": str(e)}, status=500)
     
     return JsonResponse({"success": True})
@@ -257,9 +301,43 @@ def customer_edit(request, pk):
     from .forms import CustomerForm
     customer = get_object_or_404(Customer, pk=pk)
     if request.method == "POST":
+        # Store old logo info before form processing
+        old_logo_name = None
+        old_logo_path = None
+        if customer.logo:
+            try:
+                old_logo_name = customer.logo.name
+                old_logo_path = customer.logo.path
+            except Exception:
+                pass
+        
         form = CustomerForm(request.POST, request.FILES, instance=customer)
         if form.is_valid():
-            form.save()
+            # Check if a new logo file was actually uploaded
+            new_logo_uploaded = 'logo' in request.FILES and request.FILES['logo']
+            
+            # Save the form (this will save the new logo if uploaded)
+            saved_customer = form.save()
+            
+            # If a new logo was uploaded and we had an old one, delete the old file
+            if new_logo_uploaded and old_logo_path and old_logo_name:
+                try:
+                    # Refresh to get new logo name
+                    saved_customer.refresh_from_db()
+                    # Only delete if the new logo is different from the old one
+                    if not saved_customer.logo or saved_customer.logo.name != old_logo_name:
+                        if os.path.exists(old_logo_path):
+                            os.remove(old_logo_path)
+                            # Try to remove empty directory
+                            try:
+                                old_dir = os.path.dirname(old_logo_path)
+                                if os.path.exists(old_dir) and not os.listdir(old_dir):
+                                    os.rmdir(old_dir)
+                            except Exception:
+                                pass
+                except Exception:
+                    pass  # Silently fail if file deletion fails
+            
             messages.success(request, "Customer updated.")
             return redirect("admin_app:admin_customer_detail", pk=customer.pk)
     else:
