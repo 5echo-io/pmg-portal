@@ -26,7 +26,7 @@ msgid "This feature is under development"
 msgstr "Denne funksjonen er under utvikling"
 
 msgid "Facility"
-msgstr "Fasilitet"
+msgstr "Anlegg"
 
 msgid "Select customer"
 msgstr "Velg kunde"
@@ -189,3 +189,33 @@ msgstr "Du har ikke tillatelse til å se eller redigere noe."
 
 msgid "Select language"
 msgstr "Velg språk"
+
+msgid "About"
+msgstr "Om"
+
+msgid "Developed by"
+msgstr "Utviklet av"
+
+msgid "PMG Portal is developed and maintained by 5echo.io"
+msgstr "PMG Portal er utviklet og vedlikeholdt av 5echo.io"
+
+msgid "Updates"
+msgstr "Oppdateringer"
+
+msgid "Check for updates"
+msgstr "Sjekk etter oppdateringer"
+
+msgid "Update available"
+msgstr "Oppdatering tilgjengelig"
+
+msgid "Checking..."
+msgstr "Sjekker..."
+
+msgid "Checking for updates..."
+msgstr "Sjekker etter oppdateringer..."
+
+msgid "You are running the latest version."
+msgstr "Du kjører den nyeste versjonen."
+
+msgid "Could not check for updates. Please try again later."
+msgstr "Kunne ikke sjekke etter oppdateringer. Prøv igjen senere."

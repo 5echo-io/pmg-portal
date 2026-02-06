@@ -851,6 +851,83 @@ a.link:hover { color: var(--text); }
   background: var(--hover);
 }
 
+.about-update-badge {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  margin-left: auto;
+  flex-shrink: 0;
+  animation: about-pulse 2s ease-in-out infinite;
+}
+
+@keyframes about-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.about-section {
+  margin-bottom: 24px;
+}
+
+.about-section:last-child {
+  margin-bottom: 0;
+}
+
+.about-section h3 {
+  margin: 0 0 12px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.about-version {
+  margin: 0;
+  font-size: 15px;
+  color: var(--text);
+}
+
+.about-update-indicator {
+  display: inline-block;
+  margin-left: 12px;
+  color: #22c55e;
+  font-weight: 500;
+}
+
+.about-muted {
+  margin: 8px 0 0 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.about-link {
+  color: var(--link);
+  text-decoration: none;
+}
+
+.about-link:hover {
+  text-decoration: underline;
+}
+
+.about-admin-section {
+  border-top: 1px solid var(--line);
+  padding-top: 20px;
+  margin-top: 20px;
+}
+
+.update-status {
+  margin-top: 16px;
+  padding: 12px;
+  border-radius: 8px;
+  background: var(--btn);
+}
+
+.update-status p {
+  margin: 0;
+  font-size: 14px;
+}
+
 .main-content {
   flex: 1;
   display: flex;

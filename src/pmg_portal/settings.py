@@ -68,6 +68,7 @@ TEMPLATES = [
                 "portal.context_processors.user_customers",
                 "portal.context_processors.footer_info",
                 "portal.context_processors.language_menu",
+                "portal.context_processors.about_info",
             ],
         },
     },

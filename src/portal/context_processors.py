@@ -10,6 +10,11 @@ from pathlib import Path
 from types import SimpleNamespace
 from django.conf import settings
 from django.utils import translation
+from django.core.cache import cache
+import re
+import urllib.request
+import urllib.error
+import json
 from .models import CustomerMembership, Customer
 
 
@@ -174,4 +179,79 @@ def footer_info(request):
         "changelog_full": changelog_full,
         "show_changelog_button": show_changelog_button,
         "copyright_year": "2026",
+    }
+
+
+def about_info(request):
+    """Add About modal info: version check for admins, general info for all."""
+    has_update = False
+    latest_version = None
+    
+    # Only check for updates if user is superuser/admin
+    if request and request.user and request.user.is_authenticated and request.user.is_superuser:
+        # Cache the check for 1 hour to avoid hitting GitHub API too often
+        cache_key = "pmg_portal_latest_version"
+        cached = cache.get(cache_key)
+        
+        if cached is not None:
+            latest_version, has_update = cached
+        else:
+            try:
+                # Get current version
+                current_version = "Unknown"
+                version_paths = [
+                    Path(settings.BASE_DIR.parent) / "VERSION",
+                    Path(settings.BASE_DIR) / ".." / "VERSION",
+                    Path("/opt/pmg-portal/VERSION"),
+                ]
+                for vp in version_paths:
+                    try:
+                        if vp.exists() and vp.is_file():
+                            current_version = vp.read_text(encoding='utf-8').strip()
+                            break
+                    except (OSError, IOError, UnicodeDecodeError, PermissionError):
+                        continue
+                
+                # Fetch latest version from GitHub main branch
+                # GitHub API: GET /repos/{owner}/{repo}/contents/{path}?ref={branch}
+                github_repo = "5echo-io/pmg-portal"
+                github_branch = "main"
+                github_path = "VERSION"
+                api_url = f"https://api.github.com/repos/{github_repo}/contents/{github_path}?ref={github_branch}"
+                
+                req = urllib.request.Request(api_url, headers={"Accept": "application/vnd.github.v3+json"})
+                with urllib.request.urlopen(req, timeout=5) as response:
+                    data = json.loads(response.read().decode())
+                    if "content" in data:
+                        import base64
+                        latest_version = base64.b64decode(data["content"]).decode('utf-8').strip()
+                        
+                        # Compare versions (simple string comparison for now)
+                        # Extract version numbers (e.g., "1.17.39-beta.14" -> compare "1.17.39")
+                        def normalize_version(v):
+                            # Remove build suffix and extract MAJOR.MINOR.PATCH
+                            v_clean = re.sub(r'-[a-z]+\.\d+$', '', v.strip())
+                            parts = v_clean.split('.')
+                            if len(parts) >= 3:
+                                return tuple(int(p) for p in parts[:3])
+                            return (0, 0, 0)
+                        
+                        current_norm = normalize_version(current_version)
+                        latest_norm = normalize_version(latest_version)
+                        has_update = latest_norm > current_norm
+                
+                # Cache for 1 hour (3600 seconds)
+                cache.set(cache_key, (latest_version, has_update), 3600)
+            except (urllib.error.URLError, urllib.error.HTTPError, json.JSONDecodeError, Exception) as e:
+                # Silently fail - no update info available
+                import logging
+                logger = logging.getLogger(__name__)
+                if settings.DEBUG:
+                    logger.debug(f"Could not check for updates: {e}")
+                latest_version = None
+                has_update = False
+    
+    return {
+        "has_update_available": has_update,
+        "latest_version": latest_version,
     }

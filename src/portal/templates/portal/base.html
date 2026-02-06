@@ -117,6 +117,17 @@
           {% trans "Debug" %}
         </a>
         {% endif %}
+        <button type="button" class="user-menu-item" onclick="openAboutModal()" id="about-menu-item">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="16" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+          </svg>
+          {% trans "About" %}
+          {% if has_update_available %}
+          <span class="about-update-badge" title="{% trans 'Update available' %}">●</span>
+          {% endif %}
+        </button>
         <div class="user-menu-divider"></div>
         <a href="/account/logout/" class="user-menu-item">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -303,6 +314,54 @@
   </div>
   {% endif %}
 
+  <!-- About Modal -->
+  <div id="aboutModal" class="modal" onclick="closeAboutModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h2>{% trans "About" %} - {% trans "PMG Portal" %}</h2>
+        <button class="modal-close" onclick="closeAboutModal(event)">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="about-section">
+          <h3>{% trans "PMG Portal" %}</h3>
+          <p class="about-version">
+            <strong>{% trans "Version" %}:</strong> {{ app_version|default:"Unknown" }}
+            {% if has_update_available %}
+            <span class="about-update-indicator" title="{% trans 'Update available' %}">● {% trans "Update available" %}</span>
+            {% endif %}
+          </p>
+        </div>
+        
+        <div class="about-section">
+          <h3>{% trans "Developed by" %}</h3>
+          <p>
+            <a href="https://5echo.io" target="_blank" rel="noopener" class="about-link">5echo.io</a>
+          </p>
+          <p class="about-muted">
+            {% trans "PMG Portal is developed and maintained by 5echo.io" %}
+          </p>
+        </div>
+
+        {% if request.user.is_superuser %}
+        <div class="about-section about-admin-section">
+          <h3>{% trans "Updates" %}</h3>
+          {% csrf_token %}
+          <button type="button" class="form-btn form-btn-primary" id="check-updates-btn" onclick="checkForUpdates()" data-text-check="{% trans 'Check for updates' %}" data-text-checking="{% trans 'Checking...' %}">
+            {% trans "Check for updates" %}
+          </button>
+          <div id="update-status" class="update-status" style="display: none;" data-text-checking="{% trans 'Checking for updates...' %}" data-text-latest="{% trans 'You are running the latest version.' %}" data-text-error="{% trans 'Could not check for updates. Please try again later.' %}" data-text-update="{% trans 'Update available' %}"></div>
+        </div>
+        {% endif %}
+
+        <div class="about-section">
+          <p class="about-muted">
+            &copy; {{ copyright_year|default:"2026" }} <a href="https://5echo.io" target="_blank" rel="noopener" class="about-link">5echo.io</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
     function openChangelogModal() {
       document.getElementById('changelogModal').style.display = 'flex';
@@ -363,12 +422,70 @@
       }
     }
     
+    function openAboutModal() {
+      document.getElementById('aboutModal').style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+    
+    function closeAboutModal(event) {
+      if (!event || event.target.classList.contains('modal') || event.target.classList.contains('modal-close')) {
+        const modal = document.getElementById('aboutModal');
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+      }
+    }
+    
+    function checkForUpdates() {
+      const btn = document.getElementById('check-updates-btn');
+      const status = document.getElementById('update-status');
+      if (!btn || !status) return;
+      
+      const textCheck = btn.getAttribute('data-text-check') || 'Check for updates';
+      const textChecking = btn.getAttribute('data-text-checking') || 'Checking...';
+      const textCheckingStatus = status.getAttribute('data-text-checking') || 'Checking for updates...';
+      const textLatest = status.getAttribute('data-text-latest') || 'You are running the latest version.';
+      const textError = status.getAttribute('data-text-error') || 'Could not check for updates. Please try again later.';
+      const textUpdate = status.getAttribute('data-text-update') || 'Update available';
+      
+      btn.disabled = true;
+      btn.textContent = textChecking;
+      status.style.display = 'block';
+      status.innerHTML = '<p class="muted">' + textCheckingStatus + '</p>';
+      
+      fetch('/about/check-updates/', {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value || '',
+          'Content-Type': 'application/json',
+        },
+      })
+      .then(response => response.json())
+      .then(data => {
+        btn.disabled = false;
+        btn.textContent = textCheck;
+        if (data.has_update) {
+          status.innerHTML = '<p style="color: #22c55e;"><strong>' + textUpdate + ':</strong> ' + (data.latest_version || 'Unknown') + '</p>';
+        } else {
+          status.innerHTML = '<p style="color: var(--muted);">' + textLatest + '</p>';
+        }
+      })
+      .catch(error => {
+        btn.disabled = false;
+        btn.textContent = textCheck;
+        status.innerHTML = '<p style="color: var(--error);">' + textError + '</p>';
+      });
+    }
+    
     // Close on ESC key
     document.addEventListener('keydown', function(event) {
       if (event.key === 'Escape') {
-        const modal = document.getElementById('changelogModal');
-        if (modal && modal.style.display === 'flex') {
+        const changelogModal = document.getElementById('changelogModal');
+        const aboutModal = document.getElementById('aboutModal');
+        if (changelogModal && changelogModal.style.display === 'flex') {
           closeChangelogModal(event);
+        }
+        if (aboutModal && aboutModal.style.display === 'flex') {
+          closeAboutModal(event);
         }
         document.querySelectorAll('.user-menu').forEach(m => m.classList.remove('open'));
       }

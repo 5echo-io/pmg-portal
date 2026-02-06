@@ -2,6 +2,16 @@
 
 - 2026-02-05 (Europe/Oslo)
   - Branch: dev
+  - Version: 1.17.40-beta.15
+  - Summary:
+    - About modal: accessible from avatar menu (all users); shows version, 5echo.io info, developer credits
+    - About modal: update check for admins (GitHub main branch comparison); update badge in avatar menu when available
+    - Facility: Norwegian translation "Fasilitet" → "Anlegg"
+    - portal/views.py: check_updates endpoint for AJAX version check
+    - portal/context_processors.py: about_info processor checks GitHub for updates (cached 1h, admin only)
+
+- 2026-02-05 (Europe/Oslo)
+  - Branch: dev
   - Version: 1.17.39-beta.14
   - Summary:
     - Norwegian flag: correct SVG (red field, white-outlined blue cross, 22:16)

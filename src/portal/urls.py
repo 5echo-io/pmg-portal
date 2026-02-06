@@ -1,7 +1,8 @@
 from django.urls import path
-from .views import portal_home, switch_customer
+from .views import portal_home, switch_customer, check_updates
 
 urlpatterns = [
     path("", portal_home, name="portal_home"),
     path("switch/<int:customer_id>/", switch_customer, name="switch_customer"),
+    path("about/check-updates/", check_updates, name="check_updates"),
 ]
