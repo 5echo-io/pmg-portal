@@ -1,0 +1,52 @@
+{% extends "admin_app/base.html" %}
+{% load i18n %}
+
+{% block admin_title %}{% if ip_address %}{% trans "Edit IP Address" %}{% else %}{% trans "Add IP Address" %}{% endif %} – {{ facility.name }}{% endblock %}
+{% block breadcrumb_back %}<a href="{% url 'admin_app:admin_facility_detail' facility.slug %}" class="breadcrumb-back-btn" aria-label="Back to {{ facility.name }}">← {{ facility.name }}</a>{% endblock %}
+{% block breadcrumb_extra %}
+<span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_facility_list' %}">{% trans "Facilities" %}</a>
+<span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_facility_detail' facility.slug %}">{{ facility.name }}</a>
+<span class="breadcrumb-sep">→</span> <span>{% if ip_address %}{% trans "Edit IP" %}{% else %}{% trans "Add IP" %}{% endif %}</span>
+{% endblock %}
+
+{% block admin_content %}
+<h1 class="admin-page-title">{% if ip_address %}{% trans "Edit IP Address" %}{% else %}{% trans "Add IP Address" %}</h1>
+
+<form method="post" action="" class="admin-form admin-form--wide">
+  {% csrf_token %}
+  <div class="admin-form-row">
+    <div class="admin-form-field">
+      <label for="{{ form.ip_address.id_for_label }}">{{ form.ip_address.label }}</label>
+      {{ form.ip_address }}
+      {% if form.ip_address.errors %}<p class="form-error">{{ form.ip_address.errors.0 }}</p>{% endif %}
+    </div>
+    <div class="admin-form-field">
+      <label for="{{ form.subnet.id_for_label }}">{{ form.subnet.label }}</label>
+      {{ form.subnet }}
+      {% if form.subnet.errors %}<p class="form-error">{{ form.subnet.errors.0 }}</p>{% endif %}
+    </div>
+  </div>
+  <div class="admin-form-field">
+    <label for="{{ form.reserved_for.id_for_label }}">{{ form.reserved_for.label }}</label>
+    {{ form.reserved_for }}
+    {% if form.reserved_for.errors %}<p class="form-error">{{ form.reserved_for.errors.0 }}</p>{% endif %}
+  </div>
+  <div class="admin-form-field">
+    <label for="{{ form.description.id_for_label }}">{{ form.description.label }}</label>
+    {{ form.description }}
+    {% if form.description.errors %}<p class="form-error">{{ form.description.errors.0 }}</p>{% endif %}
+  </div>
+  <div class="admin-form-field">
+    <label for="{{ form.device.id_for_label }}">{{ form.device.label }}</label>
+    {{ form.device }}
+    {% if form.device.errors %}<p class="form-error">{{ form.device.errors.0 }}</p>{% endif %}
+  </div>
+  <div class="admin-form-actions">
+    <button type="submit" class="form-btn form-btn-primary form-btn--narrow">{% trans "Save" %}</button>
+    <a href="{{ cancel_url }}" class="form-btn form-btn-secondary">{% trans "Cancel" %}</a>
+    {% if ip_address %}
+    <button type="button" class="form-btn form-btn-danger" data-delete-url="{% url 'admin_app:admin_ip_address_delete' facility.slug ip_address.pk %}" data-delete-message="{% blocktrans with ip=ip_address.ip_address %}Are you sure you want to delete the IP address {{ ip }}?{% endblocktrans %}">{% trans "Delete" %}</button>
+    {% endif %}
+  </div>
+</form>
+{% endblock %}

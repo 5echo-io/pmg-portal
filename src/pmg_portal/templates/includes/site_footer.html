@@ -32,5 +32,55 @@ Uses footer_info context processor (app_version, copyright_year, show_changelog_
       {% trans "View Changelog" %}
     </a>
     {% endif %}
+    <div class="footer-lang-dropdown" id="footer-lang-dropdown">
+      <button type="button" class="footer-link footer-link-btn footer-lang-trigger" id="footer-lang-trigger" aria-haspopup="listbox" aria-expanded="false" aria-label="{% trans 'Select language' %}">
+        <span class="user-menu-lang-flag" aria-hidden="true">
+          {% if current_language_code == 'nb' %}
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 22 16"><rect width="22" height="16" fill="#ba0c2f"/><rect x="6" y="0" width="4" height="16" fill="#fff"/><rect x="0" y="6" width="22" height="4" fill="#fff"/><rect x="7" y="0" width="2" height="16" fill="#00205b"/><rect x="0" y="7" width="22" height="2" fill="#00205b"/></svg>
+          {% else %}
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 60 30" fill="none"><rect width="60" height="30" fill="#012169"/><path d="M0 0l60 30M60 0L0 30" stroke="#fff" stroke-width="6"/><path d="M0 0l60 30M60 0L0 30" stroke="#C8102E" stroke-width="4"/><path d="M30 0v30M0 15h60" stroke="#fff" stroke-width="10"/><path d="M30 0v30M0 15h60" stroke="#C8102E" stroke-width="6"/></svg>
+          {% endif %}
+        </span>
+        <span class="footer-lang-label">{{ current_language_name }}</span>
+        <svg class="footer-lang-chevron" xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="footer-lang-menu" id="footer-lang-menu" role="listbox" aria-hidden="true">
+        {% for lang in other_languages %}
+        <form method="post" action="{% url 'set_language_custom' %}" class="footer-lang-option-form">
+          {% csrf_token %}
+          <input type="hidden" name="language" value="{{ lang.code }}">
+          <input type="hidden" name="next" value="{{ request.get_full_path }}">
+          <button type="submit" class="footer-lang-option" role="option">
+            {% if lang.code == 'nb' %}
+            <span class="user-menu-lang-flag" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 22 16"><rect width="22" height="16" fill="#ba0c2f"/><rect x="6" y="0" width="4" height="16" fill="#fff"/><rect x="0" y="6" width="22" height="4" fill="#fff"/><rect x="7" y="0" width="2" height="16" fill="#00205b"/><rect x="0" y="7" width="22" height="2" fill="#00205b"/></svg></span>
+            {% else %}
+            <span class="user-menu-lang-flag" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 60 30" fill="none"><rect width="60" height="30" fill="#012169"/><path d="M0 0l60 30M60 0L0 30" stroke="#fff" stroke-width="6"/><path d="M0 0l60 30M60 0L0 30" stroke="#C8102E" stroke-width="4"/><path d="M30 0v30M0 15h60" stroke="#fff" stroke-width="10"/><path d="M30 0v30M0 15h60" stroke="#C8102E" stroke-width="6"/></svg></span>
+            {% endif %}
+            <span>{{ lang.name }}</span>
+          </button>
+        </form>
+        {% endfor %}
+      </div>
+    </div>
   </div>
 </div>
+<script>
+(function() {
+  var wrap = document.getElementById('footer-lang-dropdown');
+  var trigger = document.getElementById('footer-lang-trigger');
+  var menu = document.getElementById('footer-lang-menu');
+  if (!wrap || !trigger || !menu) return;
+  trigger.addEventListener('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    wrap.classList.toggle('open');
+    trigger.setAttribute('aria-expanded', wrap.classList.contains('open'));
+  });
+  document.addEventListener('click', function(e) {
+    if (!wrap.contains(e.target)) {
+      wrap.classList.remove('open');
+      trigger.setAttribute('aria-expanded', 'false');
+    }
+  });
+})();
+</script>

@@ -127,7 +127,7 @@ if [ "$MODE" = "update" ] && [ -f "$APP_DIR/.env" ]; then
     sudo cp "$APP_DIR/.env" "$TEMP_DIR/.env.backup"
 fi
 
-# Install OS dependencies
+# Install OS dependencies (postgresql-client provides pg_dump/psql for Admin → Backup & Restore)
 echo "Installing OS dependencies..."
 sudo apt-get update -y
 sudo apt-get install -y python3 python3-venv python3-pip postgresql postgresql-client rsync curl

@@ -18,8 +18,11 @@
     <label>{% trans "Search" %}</label>
     <input type="text" id="customer-search" class="form-input" placeholder="{% trans 'Filter by name...' %}" autocomplete="off">
   </div>
-  <div class="admin-form-field admin-form-checkboxes facility-customers-checkboxes">
-    {{ form.customers }}
+  <div class="admin-form-field facility-customers-checkboxes">
+    <label>{% trans "Customers" %}</label>
+    <div class="facility-customers-checkboxes-inner">
+      {{ form.customers }}
+    </div>
   </div>
   {% if form.customers.errors %}<p class="form-error">{{ form.customers.errors.0 }}</p>{% endif %}
   <div class="admin-form-actions">
@@ -31,7 +34,7 @@
 <script>
 (function() {
   const search = document.getElementById('customer-search');
-  const container = document.querySelector('.facility-customers-checkboxes');
+  const container = document.querySelector('.facility-customers-checkboxes-inner') || document.querySelector('.facility-customers-checkboxes');
   if (search && container) {
     const items = container.querySelectorAll('li');
     search.addEventListener('input', function() {
@@ -45,8 +48,10 @@
 })();
 </script>
 <style>
+.facility-customers-checkboxes .facility-customers-checkboxes-inner { max-height: 360px; overflow-y: auto; display: block; }
+.facility-customers-checkboxes ul { list-style: none; padding: 0; margin: 0 0 16px 0; display: block; }
+.facility-customers-checkboxes li { display: block; margin-bottom: 8px; }
+.facility-customers-checkboxes li label { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 400; }
 .facility-customers-checkboxes li.hidden { display: none; }
-.facility-customers-checkboxes ul { list-style: none; padding: 0; margin: 0; }
-.facility-customers-checkboxes { max-height: 360px; overflow-y: auto; }
 </style>
 {% endblock %}

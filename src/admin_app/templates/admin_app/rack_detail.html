@@ -1,5 +1,6 @@
 {% extends "admin_app/base.html" %}
 {% load static %}
+{% load i18n %}
 
 {% block admin_title %}{{ rack.name }}{% endblock %}
 {% block breadcrumb_back %}<a href="{% url 'admin_app:admin_facility_detail' facility.slug %}" class="breadcrumb-back-btn" aria-label="Back to {{ facility.name }}">← {{ facility.name }}</a>{% endblock %}
@@ -12,14 +13,14 @@
 {% block admin_content %}
 {% csrf_token %}
 <div class="rack-detail-container">
-  <div class="rack-detail-grid">
-    <!-- Row 1 left: Rack visualization with front/rear tab -->
-    <div class="rack-detail-visual-wrap" style="min-height: {% widthratio rack.height_units 1 42 %}px;">
+  <div class="rack-detail-top">
+    <!-- Row 1 left (1/3): Rack visualization with front/rear tab -->
+    <div class="rack-detail-visual-wrap" style="--rack-height-px: {% widthratio rack.height_units 1 42 %}px;">
       <div class="rack-view-tabs">
-        <button type="button" class="rack-view-tab active" data-view="front">Front</button>
-        <button type="button" class="rack-view-tab" data-view="rear">Rear</button>
+        <button type="button" class="rack-view-tab active" data-view="front">{% trans "Front" %}</button>
+        <button type="button" class="rack-view-tab" data-view="rear">{% trans "Rear" %}</button>
       </div>
-      <div class="rack-detail-visual rack-view-content" data-view="front">
+      <div class="rack-detail-visual rack-view-content" data-view="front" style="min-height: var(--rack-height-px, 120px);">
         <div class="rack-visual">
           {% for u in u_positions %}
           <div class="rack-unit" data-u="{{ u }}">
@@ -30,13 +31,13 @@
                 <div class="rack-device" data-device-id="{{ device.pk }}" data-device-name="{{ device.name }}" data-rack-position="{{ u }}" onclick="openDeviceModal({{ device.pk }})">
                   <div class="rack-device-name">{{ device.name }}</div>
                   <div class="rack-device-type">{{ device.get_device_type_display }}</div>
-                  <button type="button" class="rack-device-remove" onclick="event.stopPropagation(); removeDeviceFromRack({{ device.pk }})" title="Remove device">×</button>
+                  <button type="button" class="rack-device-remove" onclick="event.stopPropagation(); removeDeviceFromRack({{ device.pk }})" title="{% trans 'Remove device' %}">×</button>
                 </div>
                 {% endif %}
               {% endfor %}
               {% if u not in devices_by_position %}
-                <div class="rack-unit-empty" data-rack-position="{{ u }}" onclick="openDeviceModal(null, {{ u }})" title="Click to add device at U{{ u }}">
-                  <span class="rack-unit-empty-text">Empty</span>
+                <div class="rack-unit-empty" data-rack-position="{{ u }}" onclick="openDeviceModal(null, {{ u }})" title="{% blocktrans with u=u %}Click to add device at U{{ u }}{% endblocktrans %}">
+                  <span class="rack-unit-empty-text">{% trans "Empty" %}</span>
                 </div>
               {% endif %}
             </div>
@@ -44,13 +45,13 @@
           {% endfor %}
         </div>
       </div>
-      <div class="rack-detail-visual rack-view-content" data-view="rear" style="display: none;">
+      <div class="rack-detail-visual rack-view-content" data-view="rear" style="display: none; min-height: var(--rack-height-px, 120px);">
         <div class="rack-visual rack-view-rear">
           {% for u in u_positions %}
           <div class="rack-unit" data-u="{{ u }}">
             <div class="rack-unit-number">{{ u }}</div>
             <div class="rack-unit-content">
-              <span class="rack-unit-empty-text">Rear</span>
+              <span class="rack-unit-empty-text">{% trans "Rear" %}</span>
             </div>
           </div>
           {% endfor %}
@@ -58,7 +59,7 @@
       </div>
     </div>
 
-    <!-- Row 1 right: Rack info card (same height as visual) -->
+    <!-- Row 1 right (2/3): Rack info card -->
     <div class="rack-detail-card customer-card-header">
           <div class="customer-card-logo-section">
             <div class="customer-logo-upload-area rack-card-icon-wrap" style="cursor: default;">
@@ -117,62 +118,40 @@
           </div>
         </div>
     </div>
+  </div>
 
-    <!-- Row 2 left: Side menu -->
-    <nav class="rack-detail-sidemenu" aria-label="Rack sections">
-      <button type="button" class="rack-sidemenu-item active" data-tab="visual">Visual Rack</button>
-      <button type="button" class="rack-sidemenu-item" data-tab="devices">Devices ({{ devices|length }})</button>
-      <button type="button" class="rack-sidemenu-item" data-tab="seals">Seals ({{ active_seals|length }})</button>
+  <div class="rack-detail-bottom">
+    <!-- Row 2 left (2/8): Side menu -->
+    <nav class="rack-detail-sidemenu" aria-label="{% trans 'Rack sections' %}">
+      <button type="button" class="rack-sidemenu-item active" data-tab="visual">{% trans "Visual Rack" %}</button>
+      <button type="button" class="rack-sidemenu-item" data-tab="devices">{% trans "Devices" %} ({{ devices|length }})</button>
+      <button type="button" class="rack-sidemenu-item" data-tab="seals">{% trans "Seals" %} ({{ active_seals|length }})</button>
     </nav>
 
-    <!-- Row 2 right: Tab content -->
+    <!-- Row 2 right (6/8): Tab content -->
     <main class="rack-detail-main">
       <div class="rack-tab-panel active" id="tab-visual">
         <div class="rack-section-header">
-          <h2>Rack Front View - {{ rack.height_units }}U</h2>
+          <h2>{% trans "Rack view" %}</h2>
         </div>
-        <div class="rack-visual-container rack-visual-container--inline">
-          <div class="rack-visual">
-            {% for u in u_positions %}
-            <div class="rack-unit" data-u="{{ u }}">
-              <div class="rack-unit-number">{{ u }}</div>
-              <div class="rack-unit-content">
-                {% for device in devices %}
-                  {% if device.rack_position == u %}
-                  <div class="rack-device" data-device-id="{{ device.pk }}" data-device-name="{{ device.name }}" onclick="openDeviceModal({{ device.pk }})">
-                    <div class="rack-device-name">{{ device.name }}</div>
-                    <div class="rack-device-type">{{ device.get_device_type_display }}</div>
-                    <button type="button" class="rack-device-remove" onclick="event.stopPropagation(); removeDeviceFromRack({{ device.pk }})" title="Remove device">×</button>
-                  </div>
-                  {% endif %}
-                {% endfor %}
-                {% if u not in devices_by_position %}
-                  <div class="rack-unit-empty" onclick="openDeviceModal(null, {{ u }})" title="Click to add device at U{{ u }}">
-                    <span class="rack-unit-empty-text">Empty</span>
-                  </div>
-                {% endif %}
-              </div>
-            </div>
-            {% endfor %}
-          </div>
-        </div>
+        <p class="muted">{% trans "The rack is shown above. Click a unit to add or edit a device." %}</p>
       </div>
 
       <div class="rack-tab-panel" id="tab-devices">
         <div class="rack-section-header">
-          <h2>Devices in Rack</h2>
+          <h2>{% trans "Devices in Rack" %}</h2>
         </div>
         {% if devices %}
         <div class="admin-table-wrap">
           <table class="admin-table">
             <thead>
               <tr>
-                <th>Position (U)</th>
-                <th>Name</th>
-                <th>Type</th>
-                <th>Manufacturer</th>
-                <th>Model</th>
-                <th>IP Address</th>
+                <th>{% trans "Position (U)" %}</th>
+                <th>{% trans "Name" %}</th>
+                <th>{% trans "Type" %}</th>
+                <th>{% trans "Manufacturer" %}</th>
+                <th>{% trans "Model" %}</th>
+                <th>{% trans "IP Address" %}</th>
                 <th class="admin-table-actions"></th>
               </tr>
             </thead>
@@ -186,8 +165,8 @@
                 <td>{{ device.model|default:"—" }}</td>
                 <td><code>{{ device.ip_address|default:"—" }}</code></td>
                 <td class="admin-table-actions">
-                  <button type="button" class="admin-btn-sm" onclick="editDevice({{ device.pk }})">Edit</button>
-                  <button type="button" class="admin-btn-sm admin-btn-danger" onclick="removeDeviceFromRack({{ device.pk }})">Remove</button>
+                  <button type="button" class="admin-btn-sm" onclick="editDevice({{ device.pk }})">{% trans "Edit" %}</button>
+                  <button type="button" class="admin-btn-sm admin-btn-danger" onclick="removeDeviceFromRack({{ device.pk }})">{% trans "Remove" %}</button>
                 </td>
               </tr>
               {% endfor %}
@@ -195,27 +174,27 @@
           </table>
         </div>
         {% else %}
-        <p class="muted">No devices in this rack.</p>
+        <p class="muted">{% trans "No devices in this rack." %}</p>
         {% endif %}
       </div>
 
       <div class="rack-tab-panel" id="tab-seals">
         <div class="rack-section-header">
-          <h2>Seals</h2>
-          <a href="{% url 'admin_app:admin_rack_seal_add' facility.slug rack.pk %}" class="form-btn form-btn-primary form-btn--narrow">Add Seal</a>
+          <h2>{% trans "Seals" %}</h2>
+          <a href="{% url 'admin_app:admin_rack_seal_add' facility.slug rack.pk %}" class="admin-toolbar-add-btn">{% trans "Add Seal" %}</a>
         </div>
 
         {% if active_seals %}
         <div class="rack-seals-section">
-          <h3>Active Seals</h3>
+          <h3>{% trans "Active Seals" %}</h3>
           <div class="admin-table-wrap">
             <table class="admin-table">
               <thead>
                 <tr>
-                  <th>Seal ID</th>
-                  <th>Location</th>
-                  <th>Installed By</th>
-                  <th>Installed At</th>
+                  <th>{% trans "Seal ID" %}</th>
+                  <th>{% trans "Location" %}</th>
+                  <th>{% trans "Installed By" %}</th>
+                  <th>{% trans "Installed At" %}</th>
                   <th class="admin-table-actions"></th>
                 </tr>
               </thead>
@@ -227,7 +206,7 @@
                   <td>{% if seal.installed_by %}{{ seal.installed_by.get_full_name|default:seal.installed_by.username }}{% else %}—{% endif %}</td>
                   <td>{{ seal.installed_at|date:"Y-m-d H:i" }}</td>
                   <td class="admin-table-actions">
-                    <a href="{% url 'admin_app:admin_rack_seal_remove' facility.slug rack.pk seal.pk %}" class="admin-btn-sm admin-btn-danger">Remove</a>
+                    <a href="{% url 'admin_app:admin_rack_seal_remove' facility.slug rack.pk seal.pk %}" class="admin-btn-sm admin-btn-danger">{% trans "Remove" %}</a>
                   </td>
                 </tr>
                 {% endfor %}
@@ -239,18 +218,18 @@
 
         {% if all_seals %}
         <div class="rack-seals-section" style="margin-top: 32px;">
-          <h3>Seal History</h3>
+          <h3>{% trans "Seal History" %}</h3>
           <div class="admin-table-wrap">
             <table class="admin-table">
               <thead>
                 <tr>
-                  <th>Seal ID</th>
-                  <th>Location</th>
-                  <th>Installed By</th>
-                  <th>Installed At</th>
-                  <th>Removed By</th>
-                  <th>Removed At</th>
-                  <th>Reason</th>
+                  <th>{% trans "Seal ID" %}</th>
+                  <th>{% trans "Location" %}</th>
+                  <th>{% trans "Installed By" %}</th>
+                  <th>{% trans "Installed At" %}</th>
+                  <th>{% trans "Removed By" %}</th>
+                  <th>{% trans "Removed At" %}</th>
+                  <th>{% trans "Reason" %}</th>
                 </tr>
               </thead>
               <tbody>
@@ -272,7 +251,7 @@
         {% endif %}
 
         {% if not active_seals and not all_seals %}
-        <p class="muted">No seals configured for this rack.</p>
+        <p class="muted">{% trans "No seals configured for this rack." %}</p>
         {% endif %}
       </div>
     </main>
@@ -284,8 +263,8 @@
   <div class="rack-modal-backdrop"></div>
   <div class="rack-modal-dialog">
     <div class="rack-modal-header">
-      <h2 class="rack-modal-title">Edit Rack</h2>
-      <button type="button" class="rack-modal-close" aria-label="Close">&times;</button>
+      <h2 class="rack-modal-title">{% trans "Edit Rack" %}</h2>
+      <button type="button" class="rack-modal-close" aria-label="{% trans 'Close' %}">&times;</button>
     </div>
     <iframe id="rack-edit-iframe" class="rack-modal-iframe" title="Edit Rack"></iframe>
   </div>
@@ -296,8 +275,8 @@
   <div class="rack-modal-backdrop"></div>
   <div class="rack-modal-dialog">
     <div class="rack-modal-header">
-      <h2 class="rack-modal-title" id="rack-device-modal-title">Device</h2>
-      <button type="button" class="rack-device-modal-close rack-modal-close" aria-label="Close">&times;</button>
+      <h2 class="rack-modal-title" id="rack-device-modal-title">{% trans "Device" %}</h2>
+      <button type="button" class="rack-device-modal-close rack-modal-close" aria-label="{% trans 'Close' %}">&times;</button>
     </div>
     <iframe id="rack-device-iframe" class="rack-modal-iframe" title="Device"></iframe>
   </div>
@@ -429,15 +408,24 @@
 </script>
 
 <style>
-.rack-detail-grid {
+.rack-detail-top {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: auto auto;
+  grid-template-columns: 1fr 2fr;
   gap: 24px 32px;
+  align-items: start;
+  margin-bottom: 24px;
+}
+.rack-detail-bottom {
+  display: grid;
+  grid-template-columns: 2fr 6fr;
+  gap: 0 32px;
   align-items: start;
 }
 @media (max-width: 900px) {
-  .rack-detail-grid {
+  .rack-detail-top {
+    grid-template-columns: 1fr;
+  }
+  .rack-detail-bottom {
     grid-template-columns: 1fr;
   }
 }
@@ -453,31 +441,32 @@
 }
 .rack-view-tabs {
   display: flex;
-  gap: 0;
+  gap: 4px;
+  padding: 6px 8px;
   border-bottom: 1px solid var(--line);
-  padding: 0 8px;
 }
 .rack-view-tab {
-  padding: 8px 16px;
-  font-size: 12px;
+  padding: 4px 10px;
+  font-size: 11px;
   font-weight: 500;
   color: var(--muted);
   background: none;
-  border: none;
-  border-bottom: 2px solid transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
   cursor: pointer;
-  margin-bottom: -1px;
   font-family: inherit;
 }
 .rack-view-tab:hover { color: var(--text); }
 .rack-view-tab.active {
   color: #3b82f6;
-  border-bottom-color: #3b82f6;
+  background: rgba(59, 130, 246, 0.08);
+  border-color: rgba(59, 130, 246, 0.25);
 }
 .rack-detail-visual {
   flex: 1;
   padding: 8px;
-  min-height: 80px;
+  display: flex;
+  flex-direction: column;
 }
 .rack-detail-card {
   min-height: 180px;

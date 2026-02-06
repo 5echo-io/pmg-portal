@@ -1,0 +1,29 @@
+{% extends "admin_app/base.html" %}
+{% load i18n %}
+
+{% block admin_title %}{% trans "Add customer" %} – {{ facility.name }}{% endblock %}
+{% block breadcrumb_back %}<a href="{% url 'admin_app:admin_facility_detail' facility.slug %}" class="breadcrumb-back-btn" aria-label="Back to {{ facility.name }}">← {{ facility.name }}</a>{% endblock %}
+{% block breadcrumb_extra %}
+<span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_facility_list' %}">{% trans "Facilities" %}</a>
+<span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_facility_detail' facility.slug %}">{{ facility.name }}</a>
+<span class="breadcrumb-sep">→</span> <span>{% trans "Add customer" %}</span>
+{% endblock %}
+
+{% block admin_content %}
+<h1 class="admin-page-title">{% trans "Add customer" %}</h1>
+<p class="muted">{% trans "Grant a customer access to this facility." %}</p>
+
+<form method="post" action="" class="admin-form admin-form--wide">
+  {% csrf_token %}
+  <div class="admin-form-field">
+    <label for="{{ form.customer.id_for_label }}">{{ form.customer.label }}</label>
+    {{ form.customer }}
+    {% if form.customer.help_text %}<p class="admin-form-help">{{ form.customer.help_text }}</p>{% endif %}
+    {% if form.customer.errors %}<p class="form-error">{{ form.customer.errors.0 }}</p>{% endif %}
+  </div>
+  <div class="admin-form-actions">
+    <button type="submit" class="form-btn form-btn-primary form-btn--narrow">{% trans "Add" %}</button>
+    <a href="{{ cancel_url }}" class="form-btn form-btn-secondary">{% trans "Cancel" %}</a>
+  </div>
+</form>
+{% endblock %}

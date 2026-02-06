@@ -1,0 +1,42 @@
+{% extends "admin_app/base.html" %}
+{% load i18n %}
+
+{% block admin_title %}{% trans "Upload Document" %} – {{ facility.name }}{% endblock %}
+{% block breadcrumb_back %}<a href="{% url 'admin_app:admin_facility_detail' facility.slug %}" class="breadcrumb-back-btn" aria-label="Back to {{ facility.name }}">← {{ facility.name }}</a>{% endblock %}
+{% block breadcrumb_extra %}
+<span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_facility_list' %}">{% trans "Facilities" %}</a>
+<span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_facility_detail' facility.slug %}">{{ facility.name }}</a>
+<span class="breadcrumb-sep">→</span> <span>{% trans "Upload Document" %}</span>
+{% endblock %}
+
+{% block admin_content %}
+<h1 class="admin-page-title">{% trans "Upload Document" %}</h1>
+
+<form method="post" action="" enctype="multipart/form-data" class="admin-form admin-form--wide">
+  {% csrf_token %}
+  <div class="admin-form-field">
+    <label for="{{ form.title.id_for_label }}">{{ form.title.label }}</label>
+    {{ form.title }}
+    {% if form.title.errors %}<p class="form-error">{{ form.title.errors.0 }}</p>{% endif %}
+  </div>
+  <div class="admin-form-field">
+    <label for="{{ form.category.id_for_label }}">{{ form.category.label }}</label>
+    {{ form.category }}
+    {% if form.category.errors %}<p class="form-error">{{ form.category.errors.0 }}</p>{% endif %}
+  </div>
+  <div class="admin-form-field">
+    <label for="{{ form.description.id_for_label }}">{{ form.description.label }}</label>
+    {{ form.description }}
+    {% if form.description.errors %}<p class="form-error">{{ form.description.errors.0 }}</p>{% endif %}
+  </div>
+  <div class="admin-form-field">
+    <label for="{{ form.file.id_for_label }}">{{ form.file.label }}</label>
+    {{ form.file }}
+    {% if form.file.errors %}<p class="form-error">{{ form.file.errors.0 }}</p>{% endif %}
+  </div>
+  <div class="admin-form-actions">
+    <button type="submit" class="form-btn form-btn-primary form-btn--narrow">{% trans "Upload" %}</button>
+    <a href="{{ cancel_url }}" class="form-btn form-btn-secondary">{% trans "Cancel" %}</a>
+  </div>
+</form>
+{% endblock %}

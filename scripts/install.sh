@@ -326,6 +326,7 @@ REPO_DIR="$TEMP_DIR/pmg-portal"
 
 # Install OS dependencies
 echo ""
+# Install OS dependencies (postgresql-client provides pg_dump/psql for Admin → Backup & Restore)
 echo "Installing OS dependencies..."
 sudo apt-get update -y
 sudo apt-get install -y python3 python3-venv python3-pip postgresql postgresql-client rsync gettext libjpeg-dev libpng-dev zlib1g-dev git

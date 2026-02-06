@@ -34,6 +34,7 @@ urlpatterns = [
     path("facilities/<slug:slug>/edit/", views.facility_edit, name="admin_facility_edit"),
     path("facilities/<slug:slug>/delete/", views.facility_delete, name="admin_facility_delete"),
     path("facilities/<slug:facility_slug>/customers/", views.facility_customers_edit, name="admin_facility_customers_edit"),
+    path("facilities/<slug:facility_slug>/customers/add/", views.facility_customer_add, name="admin_facility_customer_add"),
     path("facilities/<slug:facility_slug>/customers/<int:customer_id>/remove/", views.facility_customer_remove, name="admin_facility_customer_remove"),
     # Racks
     path("facilities/<slug:facility_slug>/racks/add/", views.rack_add, name="admin_rack_add"),
@@ -49,6 +50,14 @@ urlpatterns = [
     path("facilities/<slug:facility_slug>/racks/<int:rack_id>/devices/add/<int:rack_position>/", views.network_device_add, name="admin_network_device_add_to_position"),
     path("facilities/<slug:facility_slug>/devices/<int:device_id>/edit/", views.network_device_edit, name="admin_network_device_edit"),
     path("facilities/<slug:facility_slug>/racks/<int:rack_id>/devices/<int:device_id>/remove/", views.network_device_remove_from_rack, name="admin_network_device_remove_from_rack"),
+    path("facilities/<slug:facility_slug>/devices/<int:device_id>/delete/", views.network_device_delete, name="admin_network_device_delete"),
+    # IP Addresses
+    path("facilities/<slug:facility_slug>/ip/add/", views.ip_address_add, name="admin_ip_address_add"),
+    path("facilities/<slug:facility_slug>/ip/<int:ip_id>/edit/", views.ip_address_edit, name="admin_ip_address_edit"),
+    path("facilities/<slug:facility_slug>/ip/<int:ip_id>/delete/", views.ip_address_delete, name="admin_ip_address_delete"),
+    # Facility Documents
+    path("facilities/<slug:facility_slug>/documents/upload/", views.facility_document_upload, name="admin_facility_document_upload"),
+    path("facilities/<slug:facility_slug>/documents/<int:doc_id>/delete/", views.facility_document_delete, name="admin_facility_document_delete"),
     # Server management (superuser only)
     path("server/backup-restore/", views.backup_restore, name="admin_backup_restore"),
 ]

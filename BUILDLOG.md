@@ -2,6 +2,20 @@
 
 - 2026-02-06 (Europe/Oslo)
   - Branch: dev
+  - Version: 4.7.0-beta.1
+  - Summary:
+    - Stage: alpha → beta (features complete, ready for testing)
+    - URLs: facility_customer_add, ip_address add/edit/delete, facility_document upload/delete, network_device delete
+    - Templates: ip_address_form.html, facility_document_form.html, facility_customer_add.html (add-one customer to facility)
+    - Shared footer: site_footer.html include (version, About, View Changelog, language dropdown with flags); portal base and admin use it
+    - Install scripts: comment that postgresql-client provides pg_dump/psql for Backup & Restore
+    - Facility card, facility_customers_edit, rack_detail, rack_form, network_device_form: refinements and breadcrumb/modal
+    - Norwegian: +168 translation strings in django.po
+    - CSS: footer and layout adjustments
+    - Version bump: 4.7.0-alpha.1 → 4.7.0-beta.1 (beta release)
+
+- 2026-02-06 (Europe/Oslo)
+  - Branch: dev
   - Version: 4.7.0-alpha.1
   - Summary:
     - Backup & Restore: backup_restore.py (pg_dump + media tar), backup_restore view and template, URL server/backup-restore/, admin home "Server management" panel for superusers

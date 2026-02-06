@@ -17,7 +17,17 @@ import os
 import tempfile
 from pathlib import Path
 
-from portal.models import Customer, CustomerMembership, PortalLink, Facility, Rack, RackSeal, NetworkDevice
+from portal.models import (
+    Customer,
+    CustomerMembership,
+    PortalLink,
+    Facility,
+    Rack,
+    RackSeal,
+    NetworkDevice,
+    IPAddress,
+    FacilityDocument,
+)
 from django.utils import timezone
 from django.utils.translation import gettext as _
 
@@ -800,6 +810,32 @@ def facility_customer_remove(request, facility_slug, customer_id):
     return redirect("admin_app:admin_facility_detail", slug=facility.slug)
 
 
+@staff_required
+def facility_customer_add(request, facility_slug):
+    """Add a customer to the facility's access list."""
+    from .forms import FacilityCustomerAddForm
+    facility = get_object_or_404(Facility, slug=facility_slug)
+    detail_url = reverse("admin_app:admin_facility_detail", kwargs={"slug": facility.slug})
+    in_modal = request.GET.get("modal") == "1"
+    if request.method == "POST":
+        form = FacilityCustomerAddForm(request.POST, facility=facility)
+        if form.is_valid():
+            customer = form.cleaned_data["customer"]
+            facility.customers.add(customer)
+            messages.success(request, _("'%(name)s' now has access to this facility.") % {"name": customer.name})
+            if in_modal:
+                return redirect(detail_url + "?modal_close=1")
+            return redirect(detail_url)
+    else:
+        form = FacilityCustomerAddForm(facility=facility)
+    cancel_url = (detail_url + "?modal_close=1") if in_modal else detail_url
+    return render(request, "admin_app/facility_customer_add.html", {
+        "form": form,
+        "facility": facility,
+        "cancel_url": cancel_url,
+    })
+
+
 # ----- Racks -----
 @staff_required
 def rack_add(request, facility_slug):
@@ -807,6 +843,8 @@ def rack_add(request, facility_slug):
     from .forms import RackForm
     facility = get_object_or_404(Facility, slug=facility_slug)
     
+    in_modal = request.GET.get("modal") == "1"
+    return_to_facility = request.GET.get("return_to") == "facility"
     if request.method == "POST":
         form = RackForm(request.POST, facility=facility)
         if form.is_valid():
@@ -814,16 +852,21 @@ def rack_add(request, facility_slug):
             rack.facility = facility
             rack.save()
             messages.success(request, "Rack created.")
+            if in_modal and request.POST.get("return_to") == "facility":
+                return redirect(reverse("admin_app:admin_facility_detail", kwargs={"slug": facility.slug}) + "?modal_close=1")
             return redirect("admin_app:admin_rack_detail", facility_slug=facility.slug, rack_id=rack.pk)
     else:
         form = RackForm(facility=facility)
     
-    cancel_url = _get_cancel_url(request, reverse("admin_app:admin_facility_detail", kwargs={"slug": facility.slug}))
+    facility_url = reverse("admin_app:admin_facility_detail", kwargs={"slug": facility.slug})
+    cancel_url = (facility_url + "?modal_close=1") if (in_modal and return_to_facility) else _get_cancel_url(request, facility_url)
     return render(request, "admin_app/rack_form.html", {
         "form": form,
         "facility": facility,
         "rack": None,
         "cancel_url": cancel_url,
+        "return_to_facility": return_to_facility,
+        "in_modal": in_modal,
     })
 
 
@@ -860,25 +903,29 @@ def rack_edit(request, facility_slug, rack_id):
     rack = get_object_or_404(Rack, pk=rack_id, facility=facility)
     
     in_modal = request.GET.get("modal") == "1"
+    return_to_facility = request.GET.get("return_to") == "facility"
     if request.method == "POST":
         form = RackForm(request.POST, instance=rack, facility=facility)
         if form.is_valid():
             form.save()
             messages.success(request, "Rack updated.")
+            if in_modal and request.POST.get("return_to") == "facility":
+                return redirect(reverse("admin_app:admin_facility_detail", kwargs={"slug": facility.slug}) + "?modal_close=1")
             detail_url = reverse("admin_app:admin_rack_detail", kwargs={"facility_slug": facility.slug, "rack_id": rack.pk})
-            if in_modal:
-                detail_url += "?modal_close=1"
-            return redirect(detail_url)
+            return redirect(detail_url + ("?modal_close=1" if in_modal else ""))
     else:
         form = RackForm(instance=rack, facility=facility)
     
     detail_url = reverse("admin_app:admin_rack_detail", kwargs={"facility_slug": facility.slug, "rack_id": rack.pk})
-    cancel_url = detail_url + "?modal_close=1" if in_modal else _get_cancel_url(request, detail_url)
+    facility_url = reverse("admin_app:admin_facility_detail", kwargs={"slug": facility.slug})
+    cancel_url = (facility_url + "?modal_close=1") if (in_modal and return_to_facility) else (detail_url + "?modal_close=1" if in_modal else _get_cancel_url(request, detail_url))
     return render(request, "admin_app/rack_form.html", {
         "form": form,
         "facility": facility,
         "rack": rack,
         "cancel_url": cancel_url,
+        "return_to_facility": return_to_facility,
+        "in_modal": in_modal,
     })
 
 
@@ -987,20 +1034,26 @@ def network_device_add(request, facility_slug, rack_id=None, rack_position=None)
                 url = (rack_detail_url + "?modal_close=1") if in_modal else rack_detail_url
                 return redirect(url)
             else:
-                return redirect("admin_app:admin_facility_detail", slug=facility.slug)
+                facility_url = reverse("admin_app:admin_facility_detail", kwargs={"slug": facility.slug})
+                if in_modal or request.POST.get("return_to") == "facility":
+                    return redirect(facility_url + "?modal_close=1")
+                return redirect(facility_url)
     else:
         form = NetworkDeviceForm(facility=facility, rack=rack, rack_position=rack_position)
     
+    return_to_facility = request.GET.get("return_to") == "facility" and not rack
     if rack:
         cancel_url = (rack_detail_url + "?modal_close=1") if in_modal else (rack_detail_url + "#devices")
     else:
-        cancel_url = _get_cancel_url(request, reverse("admin_app:admin_facility_detail", kwargs={"slug": facility.slug}))
+        facility_url = reverse("admin_app:admin_facility_detail", kwargs={"slug": facility.slug})
+        cancel_url = (facility_url + "?modal_close=1") if (in_modal and return_to_facility) else _get_cancel_url(request, facility_url)
     return render(request, "admin_app/network_device_form.html", {
         "form": form,
         "facility": facility,
         "rack": rack,
         "device": None,
         "cancel_url": cancel_url,
+        "return_to_facility": return_to_facility,
     })
 
 
@@ -1011,7 +1064,9 @@ def network_device_edit(request, facility_slug, device_id):
     facility = get_object_or_404(Facility, slug=facility_slug)
     device = get_object_or_404(NetworkDevice, pk=device_id, facility=facility)
     in_modal = request.GET.get("modal") == "1"
+    return_to_facility = request.GET.get("return_to") == "facility"
     rack_detail_url = reverse("admin_app:admin_rack_detail", kwargs={"facility_slug": facility.slug, "rack_id": device.rack.pk}) if device.rack else None
+    facility_url = reverse("admin_app:admin_facility_detail", kwargs={"slug": facility.slug})
     if request.method == "POST":
         form = NetworkDeviceForm(request.POST, instance=device, facility=facility)
         if form.is_valid():
@@ -1021,20 +1076,23 @@ def network_device_edit(request, facility_slug, device_id):
                 url = (rack_detail_url + "?modal_close=1") if in_modal else rack_detail_url
                 return redirect(url)
             else:
-                return redirect("admin_app:admin_facility_detail", slug=facility.slug)
+                if in_modal or request.POST.get("return_to") == "facility":
+                    return redirect(facility_url + "?modal_close=1")
+                return redirect(facility_url)
     else:
         form = NetworkDeviceForm(instance=device, facility=facility)
     
     if device.rack:
         cancel_url = (rack_detail_url + "?modal_close=1") if in_modal else (rack_detail_url + "#devices")
     else:
-        cancel_url = _get_cancel_url(request, reverse("admin_app:admin_facility_detail", kwargs={"slug": facility.slug}))
+        cancel_url = (facility_url + "?modal_close=1") if (in_modal and return_to_facility) else _get_cancel_url(request, facility_url)
     return render(request, "admin_app/network_device_form.html", {
         "form": form,
         "facility": facility,
         "rack": device.rack,
         "device": device,
         "cancel_url": cancel_url,
+        "return_to_facility": return_to_facility,
     })
 
 
@@ -1067,9 +1125,6 @@ def network_device_delete(request, facility_slug, device_id):
 
 
 # ----- IP Addresses -----
-from portal.models import IPAddress, FacilityDocument
-
-
 @staff_required
 def ip_address_add(request, facility_slug):
     """Add an IP address to a facility."""

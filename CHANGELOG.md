@@ -86,6 +86,9 @@ Pre-release builds (alpha, beta, rc) are listed here. Only full releases (no bui
 - **Facility Card**: Delete rack button in Racks tab; Remove customer button per row; Norwegian (i18n) for tab and table labels
 - **Rack Detail**: Grid layout with Front/Rear view tabs; device cells and empty units open device add/edit modal (openDeviceModal)
 - **Modal Support**: facility_edit, facility_customers_edit, network_device_add, network_device_edit support ?modal=1 and redirect with ?modal_close=1 for parent close/refresh
+- **IP Address and Document Forms**: Templates and URLs for ip_address add/edit/delete and facility_document upload; facility_customer_add template and URL restored for optional add-one flow
+- **Shared Footer**: New site_footer.html include with version, About, Changelog, and language dropdown; used across portal and admin
+- **Install Scripts**: Comment that postgresql-client provides pg_dump/psql for Admin Backup & Restore
 
 ### Fixed
 - **Context Processor**: Added missing Facility model import to fix 500 error when accessing Facility features

@@ -872,6 +872,7 @@ a.link:hover { color: var(--text); }
   transition: all 0.2s ease;
   z-index: 1000;
   margin-top: 0;
+  overflow: hidden;
 }
 
 .user-menu.open {
@@ -1508,6 +1509,9 @@ a.link:hover { color: var(--text); }
 }
 
 .footer-section-right {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   align-items: flex-end;
   text-align: right;
 }
@@ -1547,6 +1551,52 @@ a.link:hover { color: var(--text); }
   max-height: 150px;
   overflow-y: auto;
 }
+
+/* Footer language dropdown (under Changelog) */
+.footer-lang-dropdown {
+  position: relative;
+}
+.footer-lang-trigger {
+  font-family: inherit;
+}
+.footer-lang-trigger .user-menu-lang-flag { display: inline-flex; }
+.footer-lang-trigger .user-menu-lang-flag svg { width: 14px; height: 14px; }
+.footer-lang-label { margin-right: 2px; }
+.footer-lang-chevron { flex-shrink: 0; opacity: 0.7; transition: transform 0.2s; }
+.footer-lang-dropdown.open .footer-lang-chevron { transform: rotate(180deg); }
+.footer-lang-menu {
+  position: absolute;
+  bottom: 100%;
+  right: 0;
+  margin-bottom: 6px;
+  min-width: 140px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 4px 0;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  display: none;
+  z-index: 100;
+}
+.footer-lang-dropdown.open .footer-lang-menu { display: block; }
+.footer-lang-option-form { display: block; margin: 0; }
+.footer-lang-option {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: none;
+  background: none;
+  color: var(--text);
+  font-size: 13px;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+.footer-lang-option:hover { background: var(--btn); }
+.footer-lang-option .user-menu-lang-flag svg { width: 16px; height: 16px; }
 
 
 /* Modal Styles */
@@ -2320,6 +2370,20 @@ a.link:hover { color: var(--text); }
   color: #3b82f6;
 }
 
+/* Global modal close button – fixed size, never stretch */
+.rack-modal-close,
+.facility-modal-close {
+  width: 32px;
+  min-width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+}
+
 @media (max-width: 900px) {
   .admin-toolbar--single-row {
     flex-wrap: wrap;
@@ -2857,8 +2921,13 @@ button.admin-btn-sm {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  padding: 4px 10px;
+  padding: 0 10px;
+  height: 36px;
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
   border-radius: 6px;
+  box-sizing: border-box;
 }
 
 .customer-card-badge--active {
@@ -2900,9 +2969,12 @@ button.admin-btn-sm {
   justify-content: center;
   transition: all 0.2s;
   padding: 0;
+  margin: 0;
   text-decoration: none;
   flex-shrink: 0;
   box-sizing: border-box;
+  font: inherit;
+  line-height: 1;
 }
 
 .customer-card-icon-btn svg {

@@ -456,3 +456,171 @@ msgstr "Den kunden har ikke tilgang til dette anlegget."
 
 msgid "'%(name)s' no longer has access to this facility."
 msgstr "'%(name)s' har ikke lenger tilgang til dette anlegget."
+
+msgid "Front"
+msgstr "Front"
+
+msgid "Rear"
+msgstr "Bak"
+
+msgid "Visual Rack"
+msgstr "Visuell rack"
+
+msgid "Rack view"
+msgstr "Rackvisning"
+
+msgid "The rack is shown above. Click a unit to add or edit a device."
+msgstr "Racket vises ovenfor. Klikk på en enhet for å legge til eller redigere enhet."
+
+msgid "Empty"
+msgstr "Tom"
+
+msgid "Remove device"
+msgstr "Fjern enhet"
+
+msgid "Devices in Rack"
+msgstr "Enheter i rack"
+
+msgid "Position (U)"
+msgstr "Posisjon (U)"
+
+msgid "Type"
+msgstr "Type"
+
+msgid "Manufacturer"
+msgstr "Produsent"
+
+msgid "Model"
+msgstr "Modell"
+
+msgid "IP Address"
+msgstr "IP-adresse"
+
+msgid "Edit"
+msgstr "Rediger"
+
+msgid "Remove"
+msgstr "Fjern"
+
+msgid "No devices in this rack."
+msgstr "Ingen enheter i dette racket."
+
+msgid "Seals"
+msgstr "Segl"
+
+msgid "Add Seal"
+msgstr "Legg til segl"
+
+msgid "Active Seals"
+msgstr "Aktive segl"
+
+msgid "Seal ID"
+msgstr "Segl-ID"
+
+msgid "Installed By"
+msgstr "Installert av"
+
+msgid "Installed At"
+msgstr "Installert"
+
+msgid "Seal History"
+msgstr "Seglhistorikk"
+
+msgid "Removed By"
+msgstr "Fjernet av"
+
+msgid "Removed At"
+msgstr "Fjernet"
+
+msgid "Reason"
+msgstr "Årsak"
+
+msgid "No seals configured for this rack."
+msgstr "Ingen segl konfigurert for dette racket."
+
+msgid "Edit Rack"
+msgstr "Rediger rack"
+
+msgid "Device"
+msgstr "Enhet"
+
+msgid "Add Device"
+msgstr "Legg til enhet"
+
+msgid "Close"
+msgstr "Lukk"
+
+msgid "Rack sections"
+msgstr "Rackseksjoner"
+
+msgid "Customers"
+msgstr "Kunder"
+
+msgid "Edit Facility"
+msgstr "Rediger anlegg"
+
+msgid "Add IP Address"
+msgstr "Legg til IP-adresse"
+
+msgid "Upload Document"
+msgstr "Last opp dokument"
+
+msgid "Add IP Address functionality coming soon"
+msgstr "Funksjon for å legge til IP-adresse kommer snart"
+
+msgid "Upload Document functionality coming soon"
+msgstr "Funksjon for opplasting av dokument kommer snart"
+
+msgid "View"
+msgstr "Vis"
+
+msgid "Delete"
+msgstr "Slett"
+
+msgid "No network devices configured for this facility."
+msgstr "Ingen nettverksenheter konfigurert for dette anlegget."
+
+msgid "Subnet"
+msgstr "Undernett"
+
+msgid "Reserved For"
+msgstr "Reservert for"
+
+msgid "Device"
+msgstr "Enhet"
+
+msgid "In Use"
+msgstr "I bruk"
+
+msgid "Yes"
+msgstr "Ja"
+
+msgid "No"
+msgstr "Nei"
+
+msgid "No IP addresses reserved for this facility."
+msgstr "Ingen IP-adresser reservert for dette anlegget."
+
+msgid "Title"
+msgstr "Tittel"
+
+msgid "Category"
+msgstr "Kategori"
+
+msgid "Uploaded"
+msgstr "Lastet opp"
+
+msgid "Uploaded By"
+msgstr "Lastet opp av"
+
+msgid "Download"
+msgstr "Last ned"
+
+msgid "No documents uploaded for this facility."
+msgstr "Ingen dokumenter lastet opp for dette anlegget."
+
+msgid "Rack"
+msgstr "Rack"
+
+msgid "Edit Device"
+msgstr "Rediger enhet"
