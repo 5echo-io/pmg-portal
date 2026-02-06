@@ -23,22 +23,34 @@ class Customer(models.Model):
         return self.name
     
     def logo_url(self):
-        """Return logo URL if logo exists and file is present."""
+        """Return logo URL if logo exists. Always returns URL if logo.name exists, even if file check fails."""
         if not self.logo or not self.logo.name:
             return None
         try:
-            # Check if file exists in storage
-            if hasattr(self.logo, 'storage') and self.logo.storage.exists(self.logo.name):
-                return self.logo.url
-            # Fallback: try to check if path exists (for default file storage)
-            if hasattr(self.logo, 'path'):
-                import os
-                if os.path.exists(self.logo.path):
-                    return self.logo.url
+            # Try to get URL from Django's storage system
+            url = self.logo.url
+            # Verify file exists if possible
+            try:
+                if hasattr(self.logo, 'storage') and hasattr(self.logo.storage, 'exists'):
+                    if self.logo.storage.exists(self.logo.name):
+                        return url
+                # Fallback: check path directly
+                if hasattr(self.logo, 'path'):
+                    import os
+                    if os.path.exists(self.logo.path):
+                        return url
+            except Exception:
+                # If file check fails, still return URL (file might exist but check failed)
+                pass
+            # Return URL even if file existence check failed
+            return url
         except Exception:
-            # If any error occurs, return None
-            pass
-        return None
+            # If URL generation fails, try manual construction
+            try:
+                from django.conf import settings
+                return settings.MEDIA_URL + self.logo.name
+            except Exception:
+                return None
     
     def delete(self, *args, **kwargs):
         """Override delete to remove logo file and all related files when customer is deleted."""
