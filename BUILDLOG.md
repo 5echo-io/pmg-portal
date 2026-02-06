@@ -2,6 +2,13 @@
 
 - 2026-02-06 (Europe/Oslo)
   - Branch: dev
+  - Version: 4.7.0-beta.9
+  - Summary:
+    - IP address: delete button partial _ip_address_delete_btn.html; ip_address_form.html update
+    - Version bump: 4.7.0-beta.8 → 4.7.0-beta.9
+
+- 2026-02-06 (Europe/Oslo)
+  - Branch: dev
   - Version: 4.7.0-beta.8
   - Summary:
     - views.py: small tweak
