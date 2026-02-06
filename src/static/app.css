@@ -2676,7 +2676,7 @@ a.link:hover { color: var(--text); }
 
 /* Customer Selection Page */
 .customer-selection-container {
-  max-width: 600px;
+  max-width: 800px;
   margin: 0 auto;
   padding: 32px 20px;
   display: flex;
