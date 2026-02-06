@@ -14,6 +14,8 @@ Added:
 - Files button in topbar navigation (after Facility); shows "under development" tooltip on hover
 - Language preference synchronization: user's language choice persists across login page and main site; preferred language stored in session and applied automatically on login
 - Animated transitions between login and register pages (fade out/in, card height expansion)
+- Loading spinner indicator on Sign in button when form is submitted
+- Copyright notice in login page footer (left side)
 - About modal: accessible from avatar menu (all users); shows app version, 5echo.io info, developer credits (Head developer: Kevin Jung Park)
 - About modal: update check for admins (compares current version with GitHub main branch); update notification badge in avatar menu when update available
 - Norwegian (Norsk) as second language: full i18n with Django LOCALE_PATHS, locale/nb, and set_language switcher
@@ -53,6 +55,9 @@ Changed:
 - Login/register card: fixed size (min-height 400px for login, 500px for register) to prevent resizing when filling forms
 - Register page: added footer with version and language selector (matches login page)
 - Login/register transitions: fade out animation (300ms) when navigating between pages; register page expands height and fades in on load
+- Login card: centered content horizontally and vertically; dynamic height based on content (removed fixed min-height)
+- Sign in button: replaced rotating spinner with subtle pulsing border animation
+- Login page footer: added copyright notice on left side ("Copyright © [year] 5echo.io. All rights reserved.")
 - Edit (table) button: higher contrast hover (blue background)
 - Changelog: pre-release builds (alpha, beta, rc) always show Unreleased; full release shows all sections for that major
 - Changelog modal: no scroll on modal container; only content boxes scroll; fade animation when toggling View Full / Hide Full; button pulse animation on toggle

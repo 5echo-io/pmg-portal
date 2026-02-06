@@ -2,6 +2,16 @@
 
 - 2026-02-06 (Europe/Oslo)
   - Branch: dev
+  - Version: 1.17.48-beta.23
+  - Summary:
+    - Login card: centered content horizontally and vertically using flexbox; removed fixed min-height for dynamic sizing
+    - Sign in button: replaced rotating conic-gradient spinner with subtle pulsing border animation (box-shadow pulse)
+    - Login page footer: added copyright notice on left side ("Copyright © [year] 5echo.io. All rights reserved.")
+    - Sign in button: added loading spinner indicator (rotating border) when form is submitted
+    - django.po: added "All rights reserved." / "Alle rettigheter reservert." translation
+
+- 2026-02-06 (Europe/Oslo)
+  - Branch: dev
   - Version: 1.17.47-beta.22
   - Summary:
     - Files button: added to topbar navigation after Facility with "under development" tooltip

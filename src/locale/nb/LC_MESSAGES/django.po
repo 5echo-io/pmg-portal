@@ -231,3 +231,6 @@ msgstr "Prosjekter"
 
 msgid "Files"
 msgstr "Filer"
+
+msgid "All rights reserved."
+msgstr "Alle rettigheter reservert."

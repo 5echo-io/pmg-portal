@@ -36,6 +36,9 @@
     </div>
   </div>
   <div class="login-page-footer">
+    <div class="login-footer-left">
+      Copyright &copy; {{ copyright_year|default:"2026" }} <a href="https://5echo.io" target="_blank" rel="noopener" style="color: var(--muted); text-decoration: none;">5echo.io</a>. {% trans "All rights reserved." %}
+    </div>
     <div class="login-footer-right">
       <span class="login-footer-version">{{ app_version|default:"Unknown" }}</span>
       <div class="login-lang-dropdown" id="login-lang-dropdown">
