@@ -81,39 +81,17 @@ body {
   padding: 22px;
   transition: opacity 0.3s ease;
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
 }
 
 .card.fade-out {
   opacity: 0;
 }
 
-.card.fade-in {
-  opacity: 1;
-}
-
-h1 { margin: 0 0 6px 0; font-size: 22px; text-align: center; }
+h1 { margin: 0 0 6px 0; font-size: 22px; }
 h2 { margin: 0 0 10px 0; font-size: 16px; }
-.muted { color: var(--muted); text-align: center; }
+.muted { color: var(--muted); }
 
-.card form {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-}
-
-.card .row {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-}
-
-label { display:block; margin: 14px 0 6px; font-size: 13px; color: var(--muted); text-align: left; width: 100%; }
+label { display:block; margin: 14px 0 6px; font-size: 13px; color: var(--muted); }
 input {
   width: 100%;
   padding: 10px 12px;
