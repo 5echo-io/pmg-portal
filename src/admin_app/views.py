@@ -748,11 +748,11 @@ def facility_edit(request, slug):
             form.save()
             messages.success(request, _("Facility updated."))
             if in_modal:
-                return redirect(detail_url + "?modal_close=1")
+                return redirect("admin_app:admin_facility_modal_close", facility_slug=facility.slug)
             return redirect("admin_app:admin_facility_detail", slug=facility.slug)
     else:
         form = FacilityForm(instance=facility)
-    cancel_url = detail_url + "?modal_close=1" if in_modal else _get_cancel_url(request, detail_url)
+    cancel_url = reverse("admin_app:admin_facility_modal_close", kwargs={"facility_slug": facility.slug}) if in_modal else _get_cancel_url(request, detail_url)
     return render(request, "admin_app/facility_form.html", {"form": form, "facility": facility, "cancel_url": cancel_url})
 
 
@@ -770,6 +770,39 @@ def facility_delete(request, slug):
     return redirect("admin_app:admin_facility_list")
 
 
+def _modal_close_html(message_type):
+    """Return minimal HTML that posts message to parent and closes modal (for use in iframe)."""
+    html = """<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Lukker</title></head>
+<body>
+<p>Lukker...</p>
+<script>
+(function() {
+  try {
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage({ type: '%s' }, '*');
+    }
+  } catch (e) {}
+})();
+</script>
+</body></html>"""
+    return HttpResponse(html % message_type, content_type="text/html; charset=utf-8")
+
+
+@staff_required
+def facility_modal_close(request, facility_slug):
+    """Minimal page loaded in iframe after modal form save; sends postMessage so parent closes modal and reloads."""
+    get_object_or_404(Facility, slug=facility_slug)
+    return _modal_close_html("pmg-facility-modal-close")
+
+
+@staff_required
+def rack_modal_close(request, facility_slug, rack_id):
+    """Minimal page loaded in iframe after rack modal form save; sends postMessage so parent closes modal and reloads."""
+    get_object_or_404(Rack, pk=rack_id, facility__slug=facility_slug)
+    return _modal_close_html("pmg-rack-edit-saved")
+
+
 @staff_required
 def facility_customers_edit(request, facility_slug):
     """Edit facility customer access (checkboxes); used in modal from facility detail."""
@@ -783,11 +816,11 @@ def facility_customers_edit(request, facility_slug):
             form.save(facility)
             messages.success(request, _("Customer access updated."))
             if in_modal:
-                return redirect(detail_url + "?modal_close=1")
+                return redirect("admin_app:admin_facility_modal_close", facility_slug=facility.slug)
             return redirect(detail_url)
     else:
         form = FacilityCustomersEditForm(facility=facility)
-    cancel_url = detail_url + "?modal_close=1" if in_modal else detail_url
+    cancel_url = reverse("admin_app:admin_facility_modal_close", kwargs={"facility_slug": facility.slug}) if in_modal else detail_url
     return render(request, "admin_app/facility_customers_edit.html", {
         "form": form,
         "facility": facility,
@@ -824,11 +857,11 @@ def facility_customer_add(request, facility_slug):
             facility.customers.add(customer)
             messages.success(request, _("'%(name)s' now has access to this facility.") % {"name": customer.name})
             if in_modal:
-                return redirect(detail_url + "?modal_close=1")
+                return redirect("admin_app:admin_facility_modal_close", facility_slug=facility.slug)
             return redirect(detail_url)
     else:
         form = FacilityCustomerAddForm(facility=facility)
-    cancel_url = (detail_url + "?modal_close=1") if in_modal else detail_url
+    cancel_url = reverse("admin_app:admin_facility_modal_close", kwargs={"facility_slug": facility.slug}) if in_modal else detail_url
     return render(request, "admin_app/facility_customer_add.html", {
         "form": form,
         "facility": facility,
@@ -853,13 +886,13 @@ def rack_add(request, facility_slug):
             rack.save()
             messages.success(request, "Rack created.")
             if in_modal and request.POST.get("return_to") == "facility":
-                return redirect(reverse("admin_app:admin_facility_detail", kwargs={"slug": facility.slug}) + "?modal_close=1")
+                return redirect("admin_app:admin_facility_modal_close", facility_slug=facility.slug)
             return redirect("admin_app:admin_rack_detail", facility_slug=facility.slug, rack_id=rack.pk)
     else:
         form = RackForm(facility=facility)
     
     facility_url = reverse("admin_app:admin_facility_detail", kwargs={"slug": facility.slug})
-    cancel_url = (facility_url + "?modal_close=1") if (in_modal and return_to_facility) else _get_cancel_url(request, facility_url)
+    cancel_url = reverse("admin_app:admin_facility_modal_close", kwargs={"facility_slug": facility.slug}) if (in_modal and return_to_facility) else _get_cancel_url(request, facility_url)
     return render(request, "admin_app/rack_form.html", {
         "form": form,
         "facility": facility,
@@ -910,15 +943,22 @@ def rack_edit(request, facility_slug, rack_id):
             form.save()
             messages.success(request, "Rack updated.")
             if in_modal and request.POST.get("return_to") == "facility":
-                return redirect(reverse("admin_app:admin_facility_detail", kwargs={"slug": facility.slug}) + "?modal_close=1")
+                return redirect("admin_app:admin_facility_modal_close", facility_slug=facility.slug)
             detail_url = reverse("admin_app:admin_rack_detail", kwargs={"facility_slug": facility.slug, "rack_id": rack.pk})
-            return redirect(detail_url + ("?modal_close=1" if in_modal else ""))
+            if in_modal:
+                return redirect("admin_app:admin_rack_modal_close", facility_slug=facility.slug, rack_id=rack.pk)
+            return redirect(detail_url)
     else:
         form = RackForm(instance=rack, facility=facility)
     
     detail_url = reverse("admin_app:admin_rack_detail", kwargs={"facility_slug": facility.slug, "rack_id": rack.pk})
     facility_url = reverse("admin_app:admin_facility_detail", kwargs={"slug": facility.slug})
-    cancel_url = (facility_url + "?modal_close=1") if (in_modal and return_to_facility) else (detail_url + "?modal_close=1" if in_modal else _get_cancel_url(request, detail_url))
+    if in_modal and return_to_facility:
+        cancel_url = reverse("admin_app:admin_facility_modal_close", kwargs={"facility_slug": facility.slug})
+    elif in_modal:
+        cancel_url = reverse("admin_app:admin_rack_modal_close", kwargs={"facility_slug": facility.slug, "rack_id": rack.pk})
+    else:
+        cancel_url = _get_cancel_url(request, detail_url)
     return render(request, "admin_app/rack_form.html", {
         "form": form,
         "facility": facility,
@@ -1007,7 +1047,37 @@ def rack_seal_remove(request, facility_slug, rack_id, seal_id):
     })
 
 
-# ----- Network Devices -----
+# ----- Network Devices (global list) -----
+@staff_required
+def network_device_list(request):
+    """List all network devices across facilities with search and filter."""
+    qs = NetworkDevice.objects.select_related("facility", "rack").filter(is_active=True).order_by("facility__name", "name")
+    search = (request.GET.get("q") or "").strip()
+    facility_slug = request.GET.get("facility") or ""
+    if search:
+        qs = qs.filter(
+            Q(name__icontains=search)
+            | Q(serial_number__icontains=search)
+            | Q(manufacturer__icontains=search)
+            | Q(model__icontains=search)
+        )
+    if facility_slug:
+        qs = qs.filter(facility__slug=facility_slug)
+    facilities = Facility.objects.filter(is_active=True).order_by("name")
+    total_count = qs.count()
+    paginator = Paginator(qs, 25)
+    page_number = request.GET.get("page", 1)
+    page_obj = paginator.get_page(page_number)
+    return render(request, "admin_app/network_device_list.html", {
+        "page_obj": page_obj,
+        "total_count": total_count,
+        "search": search,
+        "facility_slug": facility_slug,
+        "facilities": facilities,
+    })
+
+
+# ----- Network Devices (per-facility add/edit) -----
 @staff_required
 def network_device_add(request, facility_slug, rack_id=None, rack_position=None):
     """Add a new network device to a facility, optionally to a specific rack and position."""
@@ -1031,22 +1101,23 @@ def network_device_add(request, facility_slug, rack_id=None, rack_position=None)
             device.save()
             messages.success(request, "Network device created.")
             if rack:
-                url = (rack_detail_url + "?modal_close=1") if in_modal else rack_detail_url
-                return redirect(url)
+                if in_modal:
+                    return redirect("admin_app:admin_rack_modal_close", facility_slug=facility.slug, rack_id=rack.pk)
+                return redirect(rack_detail_url)
             else:
                 facility_url = reverse("admin_app:admin_facility_detail", kwargs={"slug": facility.slug})
                 if in_modal or request.POST.get("return_to") == "facility":
-                    return redirect(facility_url + "?modal_close=1")
+                    return redirect("admin_app:admin_facility_modal_close", facility_slug=facility.slug)
                 return redirect(facility_url)
     else:
         form = NetworkDeviceForm(facility=facility, rack=rack, rack_position=rack_position)
     
     return_to_facility = request.GET.get("return_to") == "facility" and not rack
     if rack:
-        cancel_url = (rack_detail_url + "?modal_close=1") if in_modal else (rack_detail_url + "#devices")
+        cancel_url = reverse("admin_app:admin_rack_modal_close", kwargs={"facility_slug": facility.slug, "rack_id": rack.pk}) if in_modal else (rack_detail_url + "#devices")
     else:
         facility_url = reverse("admin_app:admin_facility_detail", kwargs={"slug": facility.slug})
-        cancel_url = (facility_url + "?modal_close=1") if (in_modal and return_to_facility) else _get_cancel_url(request, facility_url)
+        cancel_url = reverse("admin_app:admin_facility_modal_close", kwargs={"facility_slug": facility.slug}) if (in_modal and return_to_facility) else _get_cancel_url(request, facility_url)
     return render(request, "admin_app/network_device_form.html", {
         "form": form,
         "facility": facility,
@@ -1073,19 +1144,20 @@ def network_device_edit(request, facility_slug, device_id):
             form.save()
             messages.success(request, "Network device updated.")
             if device.rack:
-                url = (rack_detail_url + "?modal_close=1") if in_modal else rack_detail_url
-                return redirect(url)
+                if in_modal:
+                    return redirect("admin_app:admin_rack_modal_close", facility_slug=facility.slug, rack_id=device.rack.pk)
+                return redirect(rack_detail_url)
             else:
                 if in_modal or request.POST.get("return_to") == "facility":
-                    return redirect(facility_url + "?modal_close=1")
+                    return redirect("admin_app:admin_facility_modal_close", facility_slug=facility.slug)
                 return redirect(facility_url)
     else:
         form = NetworkDeviceForm(instance=device, facility=facility)
     
     if device.rack:
-        cancel_url = (rack_detail_url + "?modal_close=1") if in_modal else (rack_detail_url + "#devices")
+        cancel_url = reverse("admin_app:admin_rack_modal_close", kwargs={"facility_slug": facility.slug, "rack_id": device.rack.pk}) if in_modal else (rack_detail_url + "#devices")
     else:
-        cancel_url = (facility_url + "?modal_close=1") if (in_modal and return_to_facility) else _get_cancel_url(request, facility_url)
+        cancel_url = reverse("admin_app:admin_facility_modal_close", kwargs={"facility_slug": facility.slug}) if (in_modal and return_to_facility) else _get_cancel_url(request, facility_url)
     return render(request, "admin_app/network_device_form.html", {
         "form": form,
         "facility": facility,
@@ -1141,12 +1213,12 @@ def ip_address_add(request, facility_slug):
             obj.save()
             messages.success(request, _("IP address %(ip)s added.") % {"ip": str(obj.ip_address)})
             if in_modal:
-                return redirect(detail_url + "?modal_close=1")
+                return redirect("admin_app:admin_facility_modal_close", facility_slug=facility.slug)
             return redirect("admin_app:admin_facility_detail", slug=facility.slug)
     else:
         form = IPAddressForm(facility=facility)
     
-    cancel_url = (detail_url + "?modal_close=1") if in_modal else _get_cancel_url(request, detail_url)
+    cancel_url = reverse("admin_app:admin_facility_modal_close", kwargs={"facility_slug": facility.slug}) if in_modal else _get_cancel_url(request, detail_url)
     return render(request, "admin_app/ip_address_form.html", {
         "form": form,
         "facility": facility,
@@ -1210,12 +1282,12 @@ def facility_document_upload(request, facility_slug):
             doc.save()
             messages.success(request, _("Document '%(title)s' uploaded.") % {"title": doc.title})
             if in_modal:
-                return redirect(detail_url + "?modal_close=1")
+                return redirect("admin_app:admin_facility_modal_close", facility_slug=facility.slug)
             return redirect("admin_app:admin_facility_detail", slug=facility.slug)
     else:
         form = FacilityDocumentForm(facility=facility)
     
-    cancel_url = (detail_url + "?modal_close=1") if in_modal else _get_cancel_url(request, detail_url)
+    cancel_url = reverse("admin_app:admin_facility_modal_close", kwargs={"facility_slug": facility.slug}) if in_modal else _get_cancel_url(request, detail_url)
     return render(request, "admin_app/facility_document_form.html", {
         "form": form,
         "facility": facility,

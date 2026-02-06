@@ -1,0 +1,83 @@
+{% extends "admin_app/base.html" %}
+{% load i18n %}
+
+{% block admin_title %}{% trans "Network devices" %}{% endblock %}
+{% block breadcrumb_extra %}<span class="breadcrumb-sep">→</span> <span>{% trans "Network devices" %}</span>{% endblock %}
+
+{% block admin_content %}
+<h1 class="admin-page-title">{% trans "Network devices" %}</h1>
+
+<div class="admin-toolbar admin-toolbar--single-row">
+  <form method="get" action="" class="admin-toolbar-form">
+    <div class="admin-search-wrap">
+      <div class="admin-search-group">
+        <label class="admin-search-label" for="id_q">{% trans "Search" %}</label>
+        <input type="text" name="q" id="id_q" value="{{ search }}" placeholder="{% trans 'Navn, serienummer, produsent…' %}" class="form-input admin-search-input">
+      </div>
+      <div class="admin-filter-group">
+        <label class="admin-filter-label" for="id_facility">{% trans "Anlegg" %}</label>
+        <select name="facility" id="id_facility" class="form-input">
+          <option value="">{% trans "Alle" %}</option>
+          {% for f in facilities %}
+          <option value="{{ f.slug }}" {% if facility_slug == f.slug %}selected{% endif %}>{{ f.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <button type="submit" class="form-btn form-btn-secondary admin-search-btn">{% trans "Søk" %}</button>
+    </div>
+  </form>
+</div>
+
+<p class="muted">{{ total_count }} {% trans "enhet" %}{{ total_count|pluralize:"er" }}</p>
+
+<div class="admin-table-wrap">
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th>{% trans "Navn" %}</th>
+        <th>{% trans "Type" %}</th>
+        <th>{% trans "Produsent" %}</th>
+        <th>{% trans "Modell" %}</th>
+        <th>{% trans "Serienummer" %}</th>
+        <th>{% trans "IP-adresse" %}</th>
+        <th>{% trans "Anlegg" %}</th>
+        <th>{% trans "Rack" %}</th>
+        <th class="admin-table-actions"></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for device in page_obj %}
+      <tr>
+        <td><strong>{{ device.name }}</strong></td>
+        <td>{{ device.get_device_type_display }}</td>
+        <td>{{ device.manufacturer|default:"—" }}</td>
+        <td>{{ device.model|default:"—" }}</td>
+        <td>{{ device.serial_number|default:"—" }}</td>
+        <td><code>{{ device.ip_address|default:"—" }}</code></td>
+        <td><a href="{% url 'admin_app:admin_facility_detail' device.facility.slug %}">{{ device.facility.name }}</a></td>
+        <td>{% if device.rack %}<a href="{% url 'admin_app:admin_rack_detail' device.facility.slug device.rack.pk %}">{{ device.rack.name }}</a>{% if device.rack_position %} (U{{ device.rack_position }}){% endif %}{% else %}—{% endif %}</td>
+        <td class="admin-table-actions">
+          <a href="{% url 'admin_app:admin_network_device_edit' device.facility.slug device.pk %}" class="admin-btn-sm">{% trans "Rediger" %}</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="9">{% trans "Ingen nettverksenheter funnet." %}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% if page_obj.has_other_pages %}
+<nav class="admin-pagination">
+  {% if page_obj.has_previous %}
+  <a href="?page={{ page_obj.previous_page_number }}{% if search %}&q={{ search|urlencode }}{% endif %}{% if facility_slug %}&facility={{ facility_slug }}{% endif %}">{% trans "Forrige" %}</a>
+  {% endif %}
+  <span class="current">{% trans "Side" %} {{ page_obj.number }} {% trans "av" %} {{ page_obj.paginator.num_pages }}</span>
+  {% if page_obj.has_next %}
+  <a href="?page={{ page_obj.next_page_number }}{% if search %}&q={{ search|urlencode }}{% endif %}{% if facility_slug %}&facility={{ facility_slug }}{% endif %}">{% trans "Neste" %}</a>
+  {% endif %}
+</nav>
+{% endif %}
+{% endblock %}

@@ -2,6 +2,14 @@
 
 - 2026-02-06 (Europe/Oslo)
   - Branch: dev
+  - Version: 4.7.0-beta.5
+  - Summary:
+    - Admin: network device list page (network_device_list.html, view, URL); admin home link
+    - views.py: network device list logic and refactor; urls.py: new route
+    - Version bump: 4.7.0-beta.4 → 4.7.0-beta.5
+
+- 2026-02-06 (Europe/Oslo)
+  - Branch: dev
   - Version: 4.7.0-beta.4
   - Summary:
     - rack_detail.html: template refactor and layout updates

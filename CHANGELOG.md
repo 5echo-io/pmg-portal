@@ -17,6 +17,7 @@ Pre-release builds (alpha, beta, rc) are listed here. Only full releases (no bui
 - **Rack detail**: Template refactor and layout updates; IP address form, site footer, portal base and app.css tweaks
 
 ### Added
+- **Admin – Network device list**: Dedicated network device list page (template + view + URL); admin home link
 
 #### Facility Management (Anlegg)
 - **Facility Model**: New Facility model with comprehensive fields (name, slug, description, address, city, postal code, country, contact information)
