@@ -217,6 +217,17 @@ def customer_logo_upload(request, pk):
     import logging
     logger = logging.getLogger(__name__)
     
+    # Ensure media directory exists before saving
+    from django.conf import settings
+    media_root = settings.MEDIA_ROOT
+    customer_logos_dir = media_root / "customer_logos"
+    try:
+        customer_logos_dir.mkdir(parents=True, exist_ok=True)
+        logger.info(f"Ensured customer_logos directory exists: {customer_logos_dir}")
+    except Exception as e:
+        logger.error(f"Failed to create customer_logos directory: {e}")
+    
+    # Save the logo
     customer.logo = logo_file
     customer.save()
     
@@ -231,9 +242,14 @@ def customer_logo_upload(request, pk):
             logger.info(f"Logo saved: {customer.logo.name}, path: {saved_path}, exists: {file_exists}")
             if not file_exists:
                 logger.warning(f"Logo file not found at expected path: {saved_path}")
-                # Check MEDIA_ROOT
-                from django.conf import settings
-                logger.info(f"MEDIA_ROOT: {settings.MEDIA_ROOT}, exists: {settings.MEDIA_ROOT.exists()}")
+                # List directory contents to debug
+                try:
+                    if os.path.exists(customer_logos_dir):
+                        files_in_dir = os.listdir(customer_logos_dir)
+                        logger.info(f"Files in customer_logos directory: {files_in_dir}")
+                except Exception:
+                    pass
+                logger.info(f"MEDIA_ROOT: {media_root}, exists: {media_root.exists()}")
         except Exception as e:
             logger.error(f"Error checking logo path: {e}")
     
