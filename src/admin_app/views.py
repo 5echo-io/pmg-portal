@@ -13,6 +13,7 @@ from django.http import JsonResponse
 import os
 
 from portal.models import Customer, CustomerMembership, PortalLink, Facility
+from portal.decorators import dev_required
 
 User = get_user_model()
 
@@ -638,8 +639,9 @@ def portal_link_edit(request, pk):
     return render(request, "admin_app/portal_link_form.html", {"form": form, "link": link})
 
 
-# ----- Facilities (staff) -----
-@staff_required
+# ----- Facilities (dev features - superuser only) -----
+@superuser_required
+@dev_required
 def facility_list(request):
     qs = Facility.objects.all().order_by("name")
     search = request.GET.get("q", "").strip()
@@ -663,6 +665,7 @@ def facility_list(request):
 
 
 @staff_required
+@beta_required
 def facility_add(request):
     from .forms import FacilityForm
     if request.method == "POST":
@@ -676,7 +679,8 @@ def facility_add(request):
     return render(request, "admin_app/facility_form.html", {"form": form, "facility": None})
 
 
-@staff_required
+@superuser_required
+@dev_required
 def facility_detail(request, pk):
     """Modern facility card view showing all facility information."""
     facility = get_object_or_404(Facility, pk=pk)
@@ -701,6 +705,7 @@ def facility_detail(request, pk):
 
 
 @staff_required
+@beta_required
 def facility_edit(request, pk):
     from .forms import FacilityForm
     facility = get_object_or_404(Facility, pk=pk)
@@ -715,7 +720,8 @@ def facility_edit(request, pk):
     return render(request, "admin_app/facility_form.html", {"form": form, "facility": facility})
 
 
-@staff_required
+@superuser_required
+@dev_required
 @require_POST
 def facility_delete(request, pk):
     """Delete a facility and all related data."""

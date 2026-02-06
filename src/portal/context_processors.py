@@ -15,6 +15,7 @@ import re
 import urllib.request
 import urllib.error
 import json
+from django.conf import settings
 from .models import CustomerMembership, Customer, Facility
 
 
@@ -81,10 +82,24 @@ def user_customers(request):
         except Customer.DoesNotExist:
             pass
     
+    # Check dev access (only for superusers/admins)
+    has_dev_access = False
+    if settings.ENABLE_DEV_FEATURES:
+        if request.user.is_superuser:
+            # If DEV_ACCESS_USERS is empty, all superusers have access
+            if not settings.DEV_ACCESS_USERS:
+                has_dev_access = True
+            else:
+                # Check if user's email or username is in DEV_ACCESS_USERS
+                user_identifier = request.user.email or request.user.username
+                has_dev_access = user_identifier in settings.DEV_ACCESS_USERS
+    
     return {
         "user_customers": user_customers_list,
         "active_customer_id": active_customer_id,
         "user_facilities": user_facilities,
+        "has_dev_access": has_dev_access,
+        "dev_features_enabled": settings.ENABLE_DEV_FEATURES,
     }
 
 def footer_info(request):

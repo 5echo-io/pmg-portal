@@ -61,6 +61,8 @@ POSTGRES_DB_DEFAULT="${POSTGRES_DB:-pmg_portal}"
 POSTGRES_USER_DEFAULT="${POSTGRES_USER:-pmg_portal}"
 POSTGRES_PASSWORD_DEFAULT="${POSTGRES_PASSWORD:-change-me}"
 APP_BIND_DEFAULT="${APP_BIND:-0.0.0.0:8097}"
+ENABLE_DEV_FEATURES_DEFAULT="${ENABLE_DEV_FEATURES:-false}"
+DEV_ACCESS_USERS_DEFAULT="${DEV_ACCESS_USERS:-}"
 
 prompt_default DJANGO_SECRET_KEY "DJANGO_SECRET_KEY (leave blank to auto-generate)" "$DJANGO_SECRET_KEY_DEFAULT"
 if [ -z "$DJANGO_SECRET_KEY" ]; then
@@ -83,6 +85,8 @@ prompt_default POSTGRES_DB "POSTGRES_DB" "$POSTGRES_DB_DEFAULT"
 prompt_default POSTGRES_USER "POSTGRES_USER" "$POSTGRES_USER_DEFAULT"
 prompt_default POSTGRES_PASSWORD "POSTGRES_PASSWORD" "$POSTGRES_PASSWORD_DEFAULT" true
 prompt_default APP_BIND "APP_BIND" "$APP_BIND_DEFAULT"
+prompt_default ENABLE_DEV_FEATURES "ENABLE_DEV_FEATURES (true/false - enable development features like Facility management, admin only)" "$ENABLE_DEV_FEATURES_DEFAULT"
+prompt_default DEV_ACCESS_USERS "DEV_ACCESS_USERS (comma-separated emails/usernames, leave empty for all superusers)" "$DEV_ACCESS_USERS_DEFAULT"
 
 echo "Writing $APP_DIR/.env"
 sudo tee "$APP_DIR/.env" >/dev/null <<EOF
@@ -108,6 +112,12 @@ POSTGRES_PASSWORD=$POSTGRES_PASSWORD
 
 # --- Runtime ---
 APP_BIND=$APP_BIND
+
+# --- Development Features ---
+# Enable development features (Facility management, etc.) - admin/superuser only
+ENABLE_DEV_FEATURES=$ENABLE_DEV_FEATURES
+# Restrict dev access to specific superusers (leave empty for all superusers)
+DEV_ACCESS_USERS=$DEV_ACCESS_USERS
 EOF
 
 escape_psql_literal() {

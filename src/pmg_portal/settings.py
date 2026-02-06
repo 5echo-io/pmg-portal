@@ -133,6 +133,15 @@ LOGOUT_REDIRECT_URL = "/account/login/"
 
 ENABLE_REGISTRATION = env("ENABLE_REGISTRATION", "true").lower() == "true"
 
+# Development Feature Flags
+# Set ENABLE_DEV_FEATURES=true to enable development features (Facility management, etc.)
+# Dev features are only accessible to superusers/admins
+# Set DEV_ACCESS_USERS to comma-separated list of usernames/emails who can access dev features
+# Example: DEV_ACCESS_USERS=admin@example.com,developer@example.com
+# Leave empty to allow all superusers only
+ENABLE_DEV_FEATURES = env("ENABLE_DEV_FEATURES", "false").lower() == "true"
+DEV_ACCESS_USERS = [u.strip() for u in env("DEV_ACCESS_USERS", "").split(",") if u.strip()]
+
 # Production-friendly defaults (keep simple)
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 SESSION_COOKIE_SECURE = not DEBUG

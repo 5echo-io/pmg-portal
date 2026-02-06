@@ -22,6 +22,7 @@ import urllib.request
 import urllib.error
 import json
 from .models import CustomerMembership, Customer, Facility
+from .decorators import dev_required
 
 def _portal_home_context(request, customer, links, active_role=None, memberships=None):
     """Build context for portal home (full page or fragment)."""
