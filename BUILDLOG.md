@@ -15,6 +15,24 @@
     - Foundation for future facility features: installations, management, operations, maintenance, documentation, network management
 
 - 2026-02-06 (Europe/Oslo)
+  - Branch: dev
+  - Version: 3.0.0-alpha.1
+  - Release Type: Alpha Release
+  - Summary:
+    - Complete Facility (Anlegg) management system implementation
+    - Added Facility model with comprehensive fields (name, slug, description, address, city, postal code, country, contact information)
+    - Customer-Facility many-to-many relationship for access control
+    - Admin Panel: Full CRUD operations for Facilities (list, add, detail card, edit, delete)
+    - Portal: Facility list and detail pages with overview statistics
+    - Related models: FacilityDocument, Rack, NetworkDevice, IPAddress
+    - Context processor updated to include user facilities based on active customer
+    - Facility button enabled in portal topbar when customer profile is selected
+    - Facility link added to admin home in Portal management section
+    - Removed dev feature protection (ENABLE_DEV_FEATURES, DEV_ACCESS_USERS) - Facility features now directly available
+    - All Facility views use standard @staff_required decorator (admin) and @login_required (portal)
+    - Foundation for future facility features: installations, management, operations, maintenance, documentation, network management
+
+- 2026-02-06 (Europe/Oslo)
   - Branch: dev → main
   - Version: 2.0.0
   - Release Type: Final Release (Major)

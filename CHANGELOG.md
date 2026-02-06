@@ -7,7 +7,7 @@ This project follows Semantic Versioning (SemVer).
 
 Pre-release builds (alpha, beta, rc) are listed here. Only full releases (no build suffix) get a dedicated version section below.
 
-## [3.0.0-alpha.1] - 2026-02-05
+## [3.0.0-alpha.1] - 2026-02-06
 
 ### Added
 
@@ -32,6 +32,12 @@ Pre-release builds (alpha, beta, rc) are listed here. Only full releases (no bui
   - `NetworkDevice`: Network equipment tracking (switches, routers, firewalls, servers, etc.)
   - `IPAddress`: IP address reservation and tracking
 - **Context Processor**: Updated to include `user_facilities` based on active customer
+
+### Changed
+- **Removed Dev Feature Protection**: Removed `ENABLE_DEV_FEATURES` and `DEV_ACCESS_USERS` feature flags - Facility features are now directly available
+- **Simplified Access Control**: Facility views use standard `@staff_required` decorator (admin) and `@login_required` (portal) instead of `@dev_required`
+- **Context Processor**: Simplified to directly return `user_facilities` without dev feature checks
+- **Templates**: Removed conditional dev feature checks - Facility button shows when customer profile is selected
 
 #### UI/UX
 - Facility card grid layout with modern design

@@ -29,16 +29,18 @@ def dev_required(view_func):
         if not request.user.is_authenticated:
             return redirect("login")
         
-        # Dev features are only for superusers (admins)
-        if not request.user.is_superuser:
-            messages.error(request, "Only administrators can access development features.")
-            return redirect("portal_home")
-        
-        # If DEV_ACCESS_USERS is set, check if user is in the list
-        if settings.DEV_ACCESS_USERS:
+        # Check if DEV_ACCESS_USERS is set - if so, use that list instead of superuser check
+        if hasattr(settings, 'DEV_ACCESS_USERS') and settings.DEV_ACCESS_USERS:
+            # Parse comma-separated list
+            dev_users = [u.strip() for u in settings.DEV_ACCESS_USERS.split(',') if u.strip()]
             user_identifier = request.user.email or request.user.username
-            if user_identifier not in settings.DEV_ACCESS_USERS:
+            if user_identifier not in dev_users:
                 messages.error(request, "You do not have access to development features.")
+                return redirect("portal_home")
+        else:
+            # Default: Dev features are only for superusers (admins)
+            if not request.user.is_superuser:
+                messages.error(request, "Only administrators can access development features.")
                 return redirect("portal_home")
         
         return view_func(request, *args, **kwargs)

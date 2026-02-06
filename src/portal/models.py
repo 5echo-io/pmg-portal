@@ -118,3 +118,143 @@ class PortalLink(models.Model):
 
     def __str__(self) -> str:
         return f"{self.customer}: {self.title}"
+
+
+class Facility(models.Model):
+    """
+    Facility (Anlegg) - Physical locations/sites that customers can have access to.
+    Facilities contain installations, management info, operations, maintenance, documentation, network, racks, IP addresses, etc.
+    """
+    name = models.CharField(max_length=200, unique=True)
+    slug = models.SlugField(max_length=80, unique=True)
+    description = models.TextField(blank=True, default="", help_text="Description of the facility")
+    address = models.CharField(max_length=500, blank=True, default="", help_text="Physical address")
+    city = models.CharField(max_length=100, blank=True, default="")
+    postal_code = models.CharField(max_length=20, blank=True, default="")
+    country = models.CharField(max_length=100, blank=True, default="Norway")
+    contact_person = models.CharField(max_length=200, blank=True, default="", help_text="Primary contact person")
+    contact_email = models.EmailField(blank=True, default="")
+    contact_phone = models.CharField(max_length=50, blank=True, default="")
+    is_active = models.BooleanField(default=True, help_text="Whether this facility is currently active")
+    customers = models.ManyToManyField(Customer, related_name="facilities", blank=True, help_text="Customers that have access to this facility")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["name"]
+        verbose_name_plural = "Facilities"
+
+    def __str__(self) -> str:
+        return self.name
+    
+    def get_customer_count(self):
+        """Return the number of customers with access to this facility."""
+        return self.customers.count()
+
+
+class FacilityDocument(models.Model):
+    """
+    Documents uploaded to a facility (manuals, diagrams, certificates, etc.)
+    """
+    facility = models.ForeignKey(Facility, on_delete=models.CASCADE, related_name="documents")
+    title = models.CharField(max_length=200)
+    description = models.TextField(blank=True, default="")
+    file = models.FileField(upload_to="facility_documents/", help_text="Upload document file")
+    category = models.CharField(
+        max_length=50,
+        choices=[
+            ("manual", "Manual"),
+            ("diagram", "Diagram"),
+            ("certificate", "Certificate"),
+            ("report", "Report"),
+            ("other", "Other"),
+        ],
+        default="other",
+    )
+    uploaded_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-uploaded_at"]
+
+    def __str__(self) -> str:
+        return f"{self.facility.name}: {self.title}"
+
+
+class Rack(models.Model):
+    """
+    Rack within a facility for organizing equipment.
+    """
+    facility = models.ForeignKey(Facility, on_delete=models.CASCADE, related_name="racks")
+    name = models.CharField(max_length=100, help_text="Rack name/number (e.g., 'Rack 01', 'A1')")
+    location = models.CharField(max_length=200, blank=True, default="", help_text="Physical location within facility")
+    description = models.TextField(blank=True, default="")
+    height_units = models.PositiveIntegerField(default=42, help_text="Height in rack units (U)")
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["facility", "name"]
+        unique_together = ("facility", "name")
+
+    def __str__(self) -> str:
+        return f"{self.facility.name} - {self.name}"
+
+
+class NetworkDevice(models.Model):
+    """
+    Network devices (switches, routers, firewalls, etc.) in a facility.
+    """
+    facility = models.ForeignKey(Facility, on_delete=models.CASCADE, related_name="network_devices")
+    rack = models.ForeignKey(Rack, on_delete=models.SET_NULL, null=True, blank=True, related_name="devices")
+    name = models.CharField(max_length=200)
+    device_type = models.CharField(
+        max_length=50,
+        choices=[
+            ("switch", "Switch"),
+            ("router", "Router"),
+            ("firewall", "Firewall"),
+            ("access_point", "Access Point"),
+            ("server", "Server"),
+            ("other", "Other"),
+        ],
+        default="other",
+    )
+    manufacturer = models.CharField(max_length=100, blank=True, default="")
+    model = models.CharField(max_length=100, blank=True, default="")
+    serial_number = models.CharField(max_length=100, blank=True, default="")
+    ip_address = models.GenericIPAddressField(null=True, blank=True, help_text="Primary IP address")
+    mac_address = models.CharField(max_length=17, blank=True, default="", help_text="MAC address (format: XX:XX:XX:XX:XX:XX)")
+    rack_position = models.PositiveIntegerField(null=True, blank=True, help_text="Position in rack (U)")
+    description = models.TextField(blank=True, default="")
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["facility", "rack", "rack_position", "name"]
+
+    def __str__(self) -> str:
+        return f"{self.facility.name} - {self.name}"
+
+
+class IPAddress(models.Model):
+    """
+    Reserved IP addresses for a facility.
+    """
+    facility = models.ForeignKey(Facility, on_delete=models.CASCADE, related_name="ip_addresses")
+    ip_address = models.GenericIPAddressField(unique=True)
+    subnet = models.CharField(max_length=18, blank=True, default="", help_text="Subnet mask (e.g., /24)")
+    description = models.CharField(max_length=200, blank=True, default="")
+    reserved_for = models.CharField(max_length=200, blank=True, default="", help_text="What this IP is reserved for")
+    device = models.ForeignKey(NetworkDevice, on_delete=models.SET_NULL, null=True, blank=True, related_name="ip_addresses")
+    is_in_use = models.BooleanField(default=False)
+    reserved_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["facility", "ip_address"]
+
+    def __str__(self) -> str:
+        return f"{self.facility.name} - {self.ip_address}"

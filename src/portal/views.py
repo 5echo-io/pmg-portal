@@ -21,7 +21,7 @@ import re
 import urllib.request
 import urllib.error
 import json
-from .models import CustomerMembership, Customer
+from .models import CustomerMembership, Customer, Facility
 
 def _portal_home_context(request, customer, links, active_role=None, memberships=None):
     """Build context for portal home (full page or fragment)."""
@@ -244,3 +244,80 @@ def set_language_custom(request):
             request.session['user_preferred_language'] = language
     
     return response
+
+
+@login_required
+def facility_list(request):
+    """List all facilities the active customer has access to."""
+    
+    active_customer_id = request.session.get("active_customer_id")
+    if not active_customer_id:
+        messages.info(request, "Please select a customer profile to view facilities.")
+        return redirect("portal_home")
+    
+    try:
+        customer = Customer.objects.get(pk=active_customer_id)
+    except Customer.DoesNotExist:
+        messages.error(request, "Customer not found.")
+        return redirect("portal_home")
+    
+    # Get facilities for this customer
+    facilities = Facility.objects.filter(customers=customer, is_active=True).order_by("name")
+    
+    return render(
+        request,
+        "portal/facility_list.html",
+        {
+            "facilities": facilities,
+            "customer": customer,
+        },
+    )
+
+
+@login_required
+def facility_detail(request, pk):
+    """Show detailed information about a facility."""
+    facility = get_object_or_404(Facility, pk=pk, is_active=True)
+    active_customer_id = request.session.get("active_customer_id")
+    
+    # Check if user's active customer has access to this facility
+    if active_customer_id:
+        try:
+            customer = Customer.objects.get(pk=active_customer_id)
+            if customer not in facility.customers.all():
+                messages.error(request, "You do not have access to this facility.")
+                return redirect("facility_list")
+        except Customer.DoesNotExist:
+            messages.error(request, "Customer not found.")
+            return redirect("portal_home")
+    else:
+        messages.info(request, "Please select a customer profile to view facilities.")
+        return redirect("portal_home")
+    
+    # Get related data
+    racks = facility.racks.filter(is_active=True).order_by("name")
+    network_devices = facility.network_devices.filter(is_active=True).order_by("rack", "rack_position", "name")
+    ip_addresses = facility.ip_addresses.all().order_by("ip_address")
+    documents = facility.documents.all().order_by("-uploaded_at")
+    
+    # Statistics
+    stats = {
+        "racks_count": racks.count(),
+        "network_devices_count": network_devices.count(),
+        "ip_addresses_count": ip_addresses.count(),
+        "documents_count": documents.count(),
+    }
+    
+    return render(
+        request,
+        "portal/facility_detail.html",
+        {
+            "facility": facility,
+            "customer": customer,
+            "racks": racks,
+            "network_devices": network_devices,
+            "ip_addresses": ip_addresses,
+            "documents": documents,
+            "stats": stats,
+        },
+    )

@@ -16,6 +16,7 @@ import urllib.request
 import urllib.error
 import json
 from .models import CustomerMembership, Customer
+from django.conf import settings
 
 
 def language_menu(request):
@@ -82,15 +83,19 @@ def user_customers(request):
         # Save to session so it persists
         request.session["active_customer_id"] = active_customer_id
 
-    # Facilities not available in v2.0.0 (main branch)
-    # This will be available in v3.0.0-alpha.1 (dev branch)
+    # Get facilities for active customer
+    user_facilities = []
+    if active_customer_id:
+        try:
+            customer = Customer.objects.get(pk=active_customer_id)
+            user_facilities = customer.facilities.filter(is_active=True).order_by("name")
+        except Customer.DoesNotExist:
+            pass
     
     return {
         "user_customers": user_customers_list,
         "active_customer_id": active_customer_id,
-        "user_facilities": [],  # Empty list for v2.0.0
-        "has_dev_access": False,  # Dev features not available in v2.0.0
-        "dev_features_enabled": False,  # Dev features not available in v2.0.0
+        "user_facilities": user_facilities,
     }
 
 def footer_info(request):
