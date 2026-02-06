@@ -151,15 +151,17 @@ sudo "$SRC_DIR/.venv/bin/pip" install -r "$SRC_DIR/requirements.txt"
 echo "Creating media directory..."
 MEDIA_DIR="$APP_DIR/media"
 sudo mkdir -p "$MEDIA_DIR"
-# Set ownership to the user running the service (typically www-data or the app user)
-# Try to detect the service user, fallback to www-data
-SERVICE_USER="${SERVICE_USER:-www-data}"
-if id "$SERVICE_USER" &>/dev/null; then
-  sudo chown -R "$SERVICE_USER:$SERVICE_USER" "$MEDIA_DIR"
-else
-  # If www-data doesn't exist, use the current user
-  sudo chown -R "$(whoami):$(whoami)" "$MEDIA_DIR"
+# Set ownership: check systemd service file for User, fallback to root (default in pmg-portal.service)
+# Media directory should be writable by the service user
+SERVICE_USER="root"  # Default from pmg-portal.service
+if [ -f "$APP_DIR/deploy/systemd/pmg-portal.service" ]; then
+  # Try to extract User from service file if specified
+  EXTRACTED_USER=$(grep -E "^User=" "$APP_DIR/deploy/systemd/pmg-portal.service" | cut -d'=' -f2 | tr -d ' ' || echo "")
+  if [ -n "$EXTRACTED_USER" ]; then
+    SERVICE_USER="$EXTRACTED_USER"
+  fi
 fi
+sudo chown -R "$SERVICE_USER:$SERVICE_USER" "$MEDIA_DIR"
 sudo chmod -R 755 "$MEDIA_DIR"
 
 echo "Running migrations + collectstatic + compilemessages..."
