@@ -1,7 +1,7 @@
 {% load i18n static %}
 <div class="facility-detail-container">
   <div class="breadcrumb-row">
-    <a href="{% url 'facility_list' %}" class="breadcrumb-back-btn" aria-label="{% trans 'Back to Facilities' %}" hx-get="{% url 'facility_list' %}" hx-target="#main-content" hx-push-url="true">← {% trans "Facilities" %}</a>
+    <a href="{% url 'facility_detail' facility.slug %}" class="breadcrumb-back-btn" aria-label="{% trans 'Back to facility' %}" hx-get="{% url 'facility_detail' facility.slug %}" hx-target="#main-content" hx-push-url="true">← {{ facility.name }}</a>
     <nav class="breadcrumb admin-breadcrumb" aria-label="Breadcrumb">
       <a href="{% url 'facility_list' %}" hx-get="{% url 'facility_list' %}" hx-target="#main-content" hx-push-url="true">{% trans "Facilities" %}</a>
       <span class="breadcrumb-sep">→</span>
@@ -18,6 +18,7 @@
         <p class="customer-card-slug" style="margin: 0;">{{ facility.name }} — {{ service_log.service_id }}</p>
       </div>
       <div class="customer-card-header-actions">
+        <a href="{% url 'facility_service_log_detail' facility.slug service_log.pk %}?print=1" target="_blank" class="admin-btn admin-btn-secondary">🖨 {% trans "Print report" %}</a>
         <a href="{% url 'facility_detail' facility.slug %}" hx-get="{% url 'facility_detail' facility.slug %}" hx-target="#main-content" hx-push-url="true" class="admin-btn admin-btn-secondary">← {% trans "Back to facility" %}</a>
       </div>
     </div>
@@ -35,7 +36,7 @@
         <dt>{% trans "Performed at" %}</dt>
         <dd>{{ service_log.performed_at|date:"d.m.Y H:i" }}</dd>
 
-        <dt>{% trans "Technician (employee no.)" %}</dt>
+        <dt>{% trans "Technician" %}</dt>
         <dd>{{ service_log.technician_employee_no|default:"—" }}</dd>
 
         {% if service_log.asset_name or service_log.asset_id %}

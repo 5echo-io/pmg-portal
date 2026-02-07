@@ -26,6 +26,8 @@ Pre-release builds (alpha, beta, rc) are listed here. Only full releases (no bui
 - **compilemessages**: Removed duplicate msgid entries in locale nb django.po so msgfmt succeeds on update; update.sh shows clearer error when compilemessages fails.
 
 ### Changed
+- **Install wizard / manuelle Django-kommandoer**: Nytt skript `scripts/run_manage.sh` som laster .env og kjører manage.py (fiks for «Missing environment variable: POSTGRES_DB» ved manuell kjøring). update.sh viser run_manage.sh i migrasjonsfeilmelding; SETUP_GUIDE og FILE_LOCATIONS oppdatert.
+- **Portal**: facility_detail, facility_service_log_detail og fragments; datasheet_detail; views; locale +15.
 - **Servicelogg utvidelser**: ServiceLog-utvidelser (migrasjon 0012, 0013); ServiceType, ServiceRapport, ServiceVisit, vedlegg, PDF-eksport; admin facility service visit/rapport/attachment/export; portal facility service log detail og datasheet-oppdateringer; locale +153; docs SERVICEDESK_PLUS_INTEGRATION.md; requirements +1
 - **Install/update logging**: install.sh logs full output to /var/log/pmg-portal-install-&lt;timestamp&gt;.log; update.sh logs to &lt;app_dir&gt;/logs/update-&lt;timestamp&gt;.log when run standalone. On failure, scripts print the log path for easier debugging.
 - **compilemessages**: Install/update scripts now run compilemessages with `--locale nb` so only the project Norwegian locale is compiled; avoids processing Django's contrib locales and reduces noise/errors.
@@ -53,6 +55,7 @@ Pre-release builds (alpha, beta, rc) are listed here. Only full releases (no bui
 - **Service log**: ServiceLog-modell (migrasjon 0011); admin facility service log skjema/fragment; portal facility service log detalj; facility card/list oppdatert; admin/portal templates og locale +421
 
 ### Added
+- **run_manage.sh**: Wrapper som laster .env og kjører manage.py (for manuelle kommandoer som showmigrations, migrate --fake); dokumentert i SETUP_GUIDE og BUILDLOG.
 - **Servicelogg – typer, rapporter, besøk, vedlegg**: ServiceType, ServiceRapport, ServiceVisit; admin service_type list/form; facility_service_visit list/form/fragment; facility_service_rapport_form; facility_service_log attachment upload/fragment og export PDF; migrasjoner 0012, 0013; SERVICEDESK_PLUS_INTEGRATION.md
 - **Service log (servicelogg)**: ServiceLog-modell knyttet til facility; admin facility_service_log form og fragment; portal facility_service_log_detail; migrasjon 0011
 - **Portal – Produktdatablad-oversikt**: /datasheets/ (datasheet_list) lister enheter med datablad; tilbake-lenke fra detail og not_found

@@ -420,10 +420,12 @@ def facility_service_log_detail(request, slug, log_id):
         pk=log_id,
         facility=facility,
     )
+    print_mode = request.GET.get("print") == "1"
     context = {
         "facility": facility,
         "customer": customer,
         "service_log": service_log,
+        "print_mode": print_mode,
     }
     is_htmx = request.headers.get("HX-Request") == "true"
     if is_htmx:

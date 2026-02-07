@@ -71,9 +71,15 @@
 <style>
 .datasheet-page { width: 100%; padding: 0; }
 
+/* Allow sticky TOC: avoid overflow:hidden on ancestors so position:sticky works */
+.main-content:has(.datasheet-page),
+#main-content:has(.datasheet-page) {
+  overflow: visible;
+}
+
 .datasheet-layout {
   display: flex;
-  gap: 32px;
+  gap: 48px;
   align-items: flex-start;
 }
 .datasheet-toc-col {
@@ -85,17 +91,20 @@
   align-self: flex-start;
   max-height: calc(100vh - 2rem);
   overflow-y: auto;
+  background: var(--bg);
+  z-index: 5;
+  padding-right: 0;
 }
 .datasheet-toc {
   padding: 12px 0;
   border-right: 1px solid var(--line, #d1d5db);
-  padding-right: 40px;
+  padding-right: 56px;
   margin-right: 0;
 }
 .datasheet-main-col {
   flex: 1;
   min-width: 0;
-  padding-left: 8px;
+  padding-left: 24px;
 }
 .datasheet-toc-title {
   font-size: 0.75rem;

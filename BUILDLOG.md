@@ -11,11 +11,19 @@ Last Modified: 2026-02-06
 
 - 2026-02-07 (Europe/Oslo)
   - Branch: dev
+  - Version: 4.8.0-beta.21
+  - Summary:
+    - scripts/run_manage.sh: wrapper that loads .env and runs manage.py (fix manual commands missing POSTGRES_DB); update.sh migration message and SETUP_GUIDE, FILE_LOCATIONS, BUILDLOG updated
+    - Portal: facility_detail, facility_service_log_detail and fragments, datasheet_detail, views; locale +15
+    - Version bump: 4.8.0-beta.20 → 4.8.0-beta.21
+
+- 2026-02-07 (Europe/Oslo)
+  - Branch: dev
   - Version: 4.8.0-beta.20
   - Summary:
     - Locale: remove 2 duplicate msgid (Type, All) in nb django.po so compilemessages succeeds
     - Version bump: 4.8.0-beta.19 → 4.8.0-beta.20
-  - Migration note: If update fails on portal.0014 with "relation ... already exists", migration 0014 may have been auto-generated on the server by makemigrations. If 0012 and 0013 are already applied and the app works, you can mark 0014 as applied: `cd /opt/pmg-portal/src && sudo -E .venv/bin/python manage.py migrate --fake portal 0014` (only if 0014 exists under portal/migrations/).
+  - Migration note: If update fails on portal.0014 with "relation ... already exists", migration 0014 may have been auto-generated on the server. If 0012 and 0013 are already applied, mark 0014 as applied: `sudo bash /opt/pmg-portal/scripts/run_manage.sh migrate --fake portal 0014` (only if 0014 exists). run_manage.sh loads .env so POSTGRES_DB etc. are set.
 
 - 2026-02-07 (Europe/Oslo)
   - Branch: dev

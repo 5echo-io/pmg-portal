@@ -241,12 +241,12 @@
 
         <!-- Servicelogg -->
         <div class="customer-tab-panel" id="tab-servicelogg">
-          <div class="customer-section-header">
+          <div class="customer-section-header servicelogg-header">
             <h2>{% trans "Servicelogg" %}</h2>
             {% if service_types %}
-            <form method="get" action="" style="display: flex; gap: 8px; align-items: center;">
-              <label for="filter-service-type" class="muted">{% trans "Type" %}:</label>
-              <select name="service_type" id="filter-service-type" onchange="this.form.submit()">
+            <form method="get" action="" class="servicelogg-type-filter">
+              <label for="filter-service-type" class="servicelogg-type-label">{% trans "Type" %}:</label>
+              <select name="service_type" id="filter-service-type" class="servicelogg-type-select" onchange="this.form.submit()">
                 <option value="">{% trans "All" %}</option>
                 {% for st in service_types %}
                 <option value="{{ st.slug }}" {% if service_type_filter == st.slug %}selected{% endif %}>{{ st.name }}</option>
@@ -263,19 +263,19 @@
                   <th>{% trans "Date" %}</th>
                   <th>{% trans "Service ID" %}</th>
                   <th>{% trans "Type" %}</th>
-                  <th>{% trans "Technician (employee no.)" %}</th>
                   <th>{% trans "Description" %}</th>
+                  <th>{% trans "Technician" %}</th>
                   <th></th>
                 </tr>
               </thead>
               <tbody>
                 {% for log in service_logs %}
                 <tr>
-                  <td>{{ log.performed_at|date:"Y-m-d H:i" }}</td>
+                  <td>{{ log.performed_at|date:"d.m.Y" }}</td>
                   <td><strong>{{ log.service_id }}</strong></td>
                   <td>{% if log.service_type %}{{ log.service_type.name }}{% else %}—{% endif %}</td>
-                  <td>{{ log.technician_employee_no|default:"—" }}</td>
                   <td>{{ log.description|truncatewords:15|default:"—" }}</td>
+                  <td>{{ log.technician_employee_no|default:"—" }}</td>
                   <td>
                     <a href="{% url 'facility_service_log_detail' facility.slug log.pk %}" class="admin-btn-sm">{% trans "Open" %}</a>
                   </td>
@@ -306,6 +306,11 @@
 .customer-tab-panel.active { display: block; }
 .customer-section-header { margin-bottom: 16px; }
 .customer-section-header h2 { margin: 0; font-size: 1rem; font-weight: 600; }
+.servicelogg-header { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.servicelogg-type-filter { display: flex; align-items: center; gap: 8px; }
+.servicelogg-type-label { margin: 0; font-size: 13px; font-weight: 500; color: var(--muted, #6b7280); }
+.servicelogg-type-select { padding: 8px 12px; border-radius: 8px; border: 1px solid var(--line, #e5e7eb); background: var(--card, #fff); color: var(--text, #111); font-size: 14px; font-family: inherit; min-width: 160px; }
+.servicelogg-type-select:focus { outline: none; border-color: #3b82f6; }
 </style>
 
 <script>

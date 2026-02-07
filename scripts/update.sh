@@ -183,10 +183,9 @@ MIGRATE_OUTPUT=$(sudo -E "$SRC_DIR/.venv/bin/python" manage.py migrate --noinput
             }
         else
             echo "Could not determine failed migration name automatically."
-            echo "Please run migrations manually:"
-            echo "  cd $SRC_DIR"
-            echo "  sudo -E $SRC_DIR/.venv/bin/python manage.py showmigrations"
-            echo "  sudo -E $SRC_DIR/.venv/bin/python manage.py migrate --fake <migration_name>"
+            echo "Please run migrations manually (run_manage.sh loads .env for you):"
+            echo "  sudo bash $APP_DIR/scripts/run_manage.sh showmigrations portal"
+            echo "  sudo bash $APP_DIR/scripts/run_manage.sh migrate --fake portal <migration_name>"
             echo ""
             echo "Attempting to continue with other steps..."
         fi

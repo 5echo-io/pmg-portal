@@ -94,6 +94,10 @@ cd /opt/pmg-portal && sudo git pull origin dev && sudo bash scripts/update.sh
 
 This pulls the latest code, then runs: stop service → reinstall Python deps → migrate → collectstatic → **compilemessages** (so Norwegian works) → start service.
 
+For **manual Django commands** (e.g. `showmigrations`, `migrate --fake`), use the wrapper so `.env` is loaded and `POSTGRES_DB` etc. are set:  
+`sudo bash /opt/pmg-portal/scripts/run_manage.sh showmigrations portal`  
+`sudo bash /opt/pmg-portal/scripts/run_manage.sh migrate --fake portal 0014`
+
 ## Internationalization (Languages)
 
 The portal supports **Norwegian (Bokmål)** and **English**. Users can switch language from the avatar menu (when logged in) or from the login page footer. For adding or editing translated strings, see **[docs/I18N.md](docs/I18N.md)**.

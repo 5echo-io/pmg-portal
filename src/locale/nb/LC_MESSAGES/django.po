@@ -1002,6 +1002,21 @@ msgstr "Notater"
 msgid "Back to facility"
 msgstr "Tilbake til anlegg"
 
+msgid "Print report"
+msgstr "Skriv ut rapport"
+
+msgid "Technician"
+msgstr "Tekniker"
+
+msgid "Leverandøren"
+msgstr "Leverandøren"
+
+msgid "Kunden"
+msgstr "Kunden"
+
+msgid "None"
+msgstr "Ingen"
+
 msgid "Date"
 msgstr "Dato"
 

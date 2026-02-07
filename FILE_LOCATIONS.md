@@ -200,6 +200,7 @@ This file is the single reference for where important project files are located.
 |------|------|
 | Update script | `scripts/update.sh` |
 | Install script | `scripts/install.sh` |
+| Run manage.py with .env loaded | `scripts/run_manage.sh` |
 | Version file | `VERSION` |
 
 ---
