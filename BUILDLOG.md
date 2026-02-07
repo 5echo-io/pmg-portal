@@ -11,6 +11,13 @@ Last Modified: 2026-02-06
 
 - 2026-02-06 (Europe/Oslo)
   - Branch: dev
+  - Version: 4.8.0-beta.10
+  - Summary:
+    - Portal: datasheet_detail.html, datasheet_pdf.html template updates
+    - Version bump: 4.8.0-beta.9 → 4.8.0-beta.10
+
+- 2026-02-06 (Europe/Oslo)
+  - Branch: dev
   - Version: 4.8.0-beta.9
   - Summary:
     - Migration 0010: fix AlterModelOptions (name= not model_name=) for Django compatibility
