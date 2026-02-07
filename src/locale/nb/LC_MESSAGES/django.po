@@ -199,6 +199,9 @@ msgstr "Opprettet"
 msgid "Last Updated"
 msgstr "Sist oppdatert"
 
+msgid "Updated"
+msgstr "Oppdatert"
+
 msgid "Facilities available for"
 msgstr "Anlegg tilgjengelig for"
 

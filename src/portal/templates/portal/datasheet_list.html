@@ -6,7 +6,7 @@
 <div class="datasheet-list-page">
   <div class="breadcrumb-row">
     <a href="/" class="breadcrumb-back-btn" aria-label="{% trans 'Back to Dashboard' %}" hx-get="/" hx-target="#main-content" hx-push-url="true">← {% trans "Dashboard" %}</a>
-    <nav class="breadcrumb" aria-label="Breadcrumb">
+    <nav class="breadcrumb admin-breadcrumb" aria-label="Breadcrumb">
       <a href="/" hx-get="/" hx-target="#main-content" hx-push-url="true">{% trans "Dashboard" %}</a>
       <span class="breadcrumb-sep">→</span>
       <span>{% trans "Product datasheets" %}</span>
@@ -16,24 +16,30 @@
   <h1 class="datasheet-list-page-title">{% trans "Product datasheets" %}</h1>
   <p class="datasheet-list-page-desc">{% trans "Choose a product to view or download its datasheet." %}</p>
 
-  {% if device_types %}
+  {% if datasheet_items %}
   <div class="datasheet-list-toolbar">
-    <label for="datasheet-search" class="datasheet-search-label">{% trans "Search" %}</label>
-    <input type="search" id="datasheet-search" class="datasheet-search-input" placeholder="{% trans 'Search by product name…' %}" autocomplete="off" aria-label="{% trans 'Search datasheets' %}">
+    <div class="datasheet-search-wrap">
+      <input type="search" id="datasheet-search" class="datasheet-search-input" placeholder="{% trans 'Search by product name…' %}" autocomplete="off" aria-label="{% trans 'Search datasheets' %}">
+    </div>
     <span class="datasheet-list-count" id="datasheet-list-count" aria-live="polite"></span>
   </div>
 
   <ul class="datasheet-list-cards" id="datasheet-list-cards">
-    {% for dt in device_types %}
-    <li class="datasheet-card" data-name="{{ dt.name }}">
+    {% for item in datasheet_items %}
+    <li class="datasheet-card" data-name="{{ item.device_type.name }}">
       <div class="datasheet-card-inner">
-        <h2 class="datasheet-card-title">{{ dt.name }}</h2>
+        <h2 class="datasheet-card-title">{{ item.device_type.name }}</h2>
+        {% if item.datasheet %}
+        <p class="datasheet-card-meta">
+          {% trans "Created" %}: {{ item.datasheet.uploaded_at|date:"Y-m-d" }}{% if item.datasheet.updated_at %} · {% trans "Updated" %}: {{ item.datasheet.updated_at|date:"Y-m-d" }}{% endif %}
+        </p>
+        {% endif %}
         <div class="datasheet-card-actions">
-          <a href="{% url 'datasheet_by_slug' dt.slug %}" class="datasheet-card-btn datasheet-card-btn-primary" hx-get="{% url 'datasheet_by_slug' dt.slug %}" hx-target="#main-content" hx-push-url="true">
+          <a href="{% url 'datasheet_by_slug' item.device_type.slug %}" class="datasheet-card-btn datasheet-card-btn-primary" hx-get="{% url 'datasheet_by_slug' item.device_type.slug %}" hx-target="#main-content" hx-push-url="true">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
             {% trans "View datasheet" %}
           </a>
-          <a href="{% url 'datasheet_pdf' dt.slug %}" class="datasheet-card-btn datasheet-card-btn-secondary" target="_blank" rel="noopener">
+          <a href="{% url 'datasheet_pdf' item.device_type.slug %}" class="datasheet-card-btn datasheet-card-btn-secondary" target="_blank" rel="noopener">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M12 18v-6"/><path d="M9 15l3 3 3-3"/></svg>
             {% trans "Download PDF" %}
           </a>
@@ -49,7 +55,7 @@
   {% endif %}
 </div>
 <style>
-.datasheet-list-page { width: 100%; max-width: 900px; }
+.datasheet-list-page { width: 100%; max-width: 1200px; }
 .datasheet-list-page-title { margin: 0 0 0.5rem 0; font-size: 1.5rem; }
 .datasheet-list-page-desc { color: var(--muted); font-size: 0.9375rem; margin: 0 0 1.25rem 0; }
 .datasheet-list-toolbar {
@@ -59,28 +65,46 @@
   gap: 12px;
   margin-bottom: 1.25rem;
 }
-.datasheet-search-label { font-size: 0.875rem; color: var(--muted); }
-.datasheet-search-input {
+.datasheet-search-wrap {
   flex: 1;
   min-width: 200px;
-  max-width: 320px;
-  padding: 8px 12px;
-  font-size: 0.9375rem;
+  max-width: 360px;
+  position: relative;
+}
+.datasheet-search-input {
+  width: 100%;
+  padding: 8px 12px 8px 36px;
+  font-size: 0.875rem;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: var(--bg);
+  background: var(--card);
   color: var(--text);
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
+.datasheet-search-input::placeholder { color: var(--muted); }
 .datasheet-search-input:focus {
-  outline: 2px solid var(--line);
-  outline-offset: 2px;
+  outline: none;
+  border-color: var(--muted);
+  box-shadow: 0 0 0 2px rgba(0,0,0,0.06);
 }
-.datasheet-list-count { font-size: 0.875rem; color: var(--muted); }
+.datasheet-search-wrap::before {
+  content: '';
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E") no-repeat center;
+  pointer-events: none;
+}
+.datasheet-list-count { font-size: 0.8125rem; color: var(--muted); }
 .datasheet-list-cards {
   list-style: none;
   padding: 0;
   margin: 0;
   display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 12px;
 }
 .datasheet-card {
@@ -93,8 +117,9 @@
 }
 .datasheet-card:hover { border-color: var(--muted); box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
 .datasheet-card.hidden { display: none; }
-.datasheet-card-inner { padding: 16px 20px; }
-.datasheet-card-title { margin: 0 0 12px 0; font-size: 1.0625rem; font-weight: 600; }
+.datasheet-card-inner { padding: 14px 18px; }
+.datasheet-card-title { margin: 0 0 6px 0; font-size: 1rem; font-weight: 600; }
+.datasheet-card-meta { margin: 0 0 10px 0; font-size: 0.75rem; color: var(--muted); line-height: 1.4; }
 .datasheet-card-actions {
   display: flex;
   flex-wrap: wrap;

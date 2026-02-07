@@ -145,7 +145,7 @@
 .datasheet-title { font-size: 1.75rem; margin: 0 0 0.5rem 0; }
 .datasheet-meta { color: var(--muted); font-size: 0.9rem; margin: 0; }
 
-/* Action buttons: equal height, vertically aligned; no browser title (only custom tooltip) */
+/* Action buttons: equal height, same baseline; no browser title (only custom tooltip) */
 .datasheet-actions {
   display: flex;
   gap: 8px;
@@ -161,6 +161,7 @@
   height: 40px;
   min-height: 40px;
   padding: 0;
+  margin: 0;
   border-radius: 8px;
   background: var(--btn);
   border: 1px solid var(--line);
@@ -174,6 +175,8 @@
   font: inherit;
   line-height: 0;
   vertical-align: middle;
+  -webkit-appearance: none;
+  appearance: none;
 }
 .datasheet-action-btn svg {
   stroke: currentColor;
@@ -181,6 +184,8 @@
   display: block;
   width: 20px;
   height: 20px;
+  margin: 0;
+  vertical-align: middle;
 }
 .datasheet-action-btn:hover {
   background: var(--btnHover);

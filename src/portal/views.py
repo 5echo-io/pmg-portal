@@ -568,13 +568,21 @@ def set_portal_preference(request):
 @login_required
 def datasheet_list(request):
     """List device types that have a product datasheet (portal overview)."""
+    from django.db.models import Prefetch
     from django.utils.translation import gettext as _
-    device_types_with_datasheet = DeviceType.objects.filter(
+    from portal.models import ProductDatasheet
+    qs = DeviceType.objects.filter(
         is_active=True,
         datasheets__isnull=False,
-    ).distinct().order_by("name")
+    ).distinct().order_by("name").prefetch_related(
+        Prefetch("datasheets", queryset=ProductDatasheet.objects.order_by("-updated_at"))
+    )
+    datasheet_items = []
+    for dt in qs:
+        primary = dt.datasheets.all()[0] if dt.datasheets.exists() else None
+        datasheet_items.append({"device_type": dt, "datasheet": primary})
     return render(request, "portal/datasheet_list.html", {
-        "device_types": device_types_with_datasheet,
+        "datasheet_items": datasheet_items,
     })
 
 
