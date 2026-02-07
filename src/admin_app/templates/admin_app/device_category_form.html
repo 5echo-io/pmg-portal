@@ -2,6 +2,7 @@
 {% load i18n %}
 
 {% block admin_title %}{% if category %}{% trans "Edit category" %}{% else %}{% trans "Add category" %}{% endif %}{% endblock %}
+{% block breadcrumb_back %}<a href="{% url 'admin_app:admin_device_list' %}" class="breadcrumb-back-btn" aria-label="{% trans 'Back to Devices' %}">← {% trans "Devices" %}</a>{% endblock %}
 {% block breadcrumb_extra %}
 <span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_device_list' %}">{% trans "Devices" %}</a>
 <span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_device_category_list' %}">{% trans "Categories" %}</a>

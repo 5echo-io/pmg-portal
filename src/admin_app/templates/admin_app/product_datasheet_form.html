@@ -2,6 +2,7 @@
 {% load i18n %}
 
 {% block admin_title %}{% trans "Upload product datasheet" %}{% endblock %}
+{% block breadcrumb_back %}<a href="{% url 'admin_app:admin_device_list' %}" class="breadcrumb-back-btn" aria-label="{% trans 'Back to Devices' %}">← {% trans "Devices" %}</a>{% endblock %}
 {% block breadcrumb_extra %}
 <span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_device_list' %}">{% trans "Devices" %}</a>
 <span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_product_datasheet_list' %}">{% trans "Product datasheets" %}</a>
@@ -10,7 +11,7 @@
 
 {% block admin_content %}
 <h1 class="admin-page-title">{% trans "Upload product datasheet" %}</h1>
-<p class="muted">{% trans "Upload a PDF and optionally link it to a device type." %}</p>
+<p class="muted">{% trans "Upload a PDF and optionally link it to a device." %}</p>
 
 <form method="post" action="" enctype="multipart/form-data" class="admin-form admin-form--wide">
   {% csrf_token %}
@@ -27,7 +28,7 @@
   <div class="admin-form-field">
     <label for="{{ form.device_type.id_for_label }}">{{ form.device_type.label }}</label>
     {{ form.device_type }}
-    <p class="muted">{% trans "Optional. Link to a device type so it appears on that device's page." %}</p>
+    <p class="muted">{% trans "Optional. Link to a device so it appears on that product's page." %}</p>
     {% if form.device_type.errors %}<p class="form-error">{{ form.device_type.errors.0 }}</p>{% endif %}
   </div>
   <div class="admin-form-actions">

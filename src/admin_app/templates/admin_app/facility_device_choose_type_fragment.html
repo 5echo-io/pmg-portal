@@ -1,10 +1,10 @@
 {% load i18n %}
-<p class="muted">{% trans "Choose a device type, then fill in the instance details." %}</p>
+<p class="muted">{% trans "Choose a device (product), then fill in the instance details." %}</p>
 <div class="admin-table-wrap">
   <table class="admin-table">
     <thead>
       <tr>
-        <th>{% trans "Device type" %}</th>
+        <th>{% trans "Device" %}</th>
         <th>{% trans "Category" %}</th>
         <th class="admin-table-actions"></th>
       </tr>
@@ -20,7 +20,7 @@
       </tr>
       {% empty %}
       <tr>
-        <td colspan="3">{% trans "No device types. Create device types under Devices first." %}</td>
+        <td colspan="3">{% trans "No devices. Create devices under Devices first." %}</td>
       </tr>
       {% endfor %}
     </tbody>

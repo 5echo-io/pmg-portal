@@ -2,6 +2,7 @@
 {% load i18n %}
 
 {% block admin_title %}{% trans "Manufacturers" %}{% endblock %}
+{% block breadcrumb_back %}<a href="{% url 'admin_app:admin_device_list' %}" class="breadcrumb-back-btn" aria-label="{% trans 'Back to Devices' %}">← {% trans "Devices" %}</a>{% endblock %}
 {% block breadcrumb_extra %}
 <span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_device_list' %}">{% trans "Devices" %}</a>
 <span class="breadcrumb-sep">→</span> <span>{% trans "Manufacturers" %}</span>
@@ -9,7 +10,7 @@
 
 {% block admin_content %}
 <h1 class="admin-page-title">{% trans "Manufacturers" %}</h1>
-<p class="muted">{% trans "Manufacturers for device types (selectable in device type form)." %}</p>
+<p class="muted">{% trans "Manufacturers for devices (selectable in device form)." %}</p>
 
 <div class="admin-toolbar admin-toolbar--single-row">
   <a href="{% url 'admin_app:admin_manufacturer_add' %}" class="admin-toolbar-add-btn">{% trans "Add manufacturer" %}</a>

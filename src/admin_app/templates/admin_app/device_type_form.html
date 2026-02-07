@@ -1,16 +1,17 @@
 {% extends "admin_app/base.html" %}
 {% load i18n %}
 
-{% block admin_title %}{% if device_type %}{% trans "Edit device type" %}{% else %}{% trans "Add device type" %}{% endif %}{% endblock %}
+{% block admin_title %}{% if device_type %}{% trans "Edit produkt" %}{% else %}{% trans "Add device" %}{% endif %}{% endblock %}
+{% block breadcrumb_back %}<a href="{% url 'admin_app:admin_device_list' %}" class="breadcrumb-back-btn" aria-label="{% trans 'Back to Devices' %}">← {% trans "Devices" %}</a>{% endblock %}
 {% block breadcrumb_extra %}
 <span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_device_list' %}">{% trans "Devices" %}</a>
-<span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_device_type_list' %}">{% trans "Device types" %}</a>
+<span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_device_type_list' %}">{% trans "Devices" %}</a>
 <span class="breadcrumb-sep">→</span> <span>{% if device_type %}{% trans "Edit" %}{% else %}{% trans "Add" %}{% endif %}</span>
 {% endblock %}
 
 {% block admin_content %}
-<h1 class="admin-page-title">{% if device_type %}{% trans "Edit device type" %}{% else %}{% trans "Add device type" %}{% endif %}</h1>
-<p class="muted">{% if device_type %}{% trans "Update product/template." %}{% else %}{% trans "Create a product/template. You can then add instances (physical units) under it." %}{% endif %}</p>
+<h1 class="admin-page-title">{% if device_type %}{% trans "Edit produkt" %}{% else %}{% trans "Add device" %}{% endif %}</h1>
+<p class="muted">{% if device_type %}{% trans "Update product." %}{% else %}{% trans "Create a product. You can then add instances (physical units) under it." %}{% endif %}</p>
 
 <form method="post" action="" enctype="multipart/form-data" class="admin-form admin-form--wide">
   {% csrf_token %}

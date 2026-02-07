@@ -1,14 +1,15 @@
 {% extends "admin_app/base.html" %}
 {% load i18n %}
 
-{% block admin_title %}{% trans "Device types" %}{% endblock %}
+{% block admin_title %}{% trans "Devices" %}{% endblock %}
+{% block breadcrumb_back %}<a href="{% url 'admin_app:admin_device_list' %}" class="breadcrumb-back-btn" aria-label="{% trans 'Back to Devices' %}">← {% trans "Devices" %}</a>{% endblock %}
 {% block breadcrumb_extra %}
 <span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_device_list' %}">{% trans "Devices" %}</a>
-<span class="breadcrumb-sep">→</span> <span>{% trans "Device types" %}</span>
+<span class="breadcrumb-sep">→</span> <span>{% trans "Devices" %}</span>
 {% endblock %}
 
 {% block admin_content %}
-<h1 class="admin-page-title">{% trans "Device types" %}</h1>
+<h1 class="admin-page-title">{% trans "Devices" %}</h1>
 
 <div class="admin-toolbar admin-toolbar--single-row">
   <form method="get" action="" class="admin-toolbar-form">
@@ -32,7 +33,7 @@
   <a href="{% url 'admin_app:admin_device_type_add' %}" class="admin-toolbar-add-btn">{% trans "Add device" %}</a>
 </div>
 
-<p class="muted">{{ total_count }} {% trans "device type" %}{{ total_count|pluralize:"s" }}</p>
+<p class="muted">{{ total_count }} {% trans "device" %}{{ total_count|pluralize:"s" }}</p>
 
 <div class="admin-table-wrap">
   <table class="admin-table">
@@ -58,7 +59,7 @@
       </tr>
       {% empty %}
       <tr>
-        <td colspan="5">{% trans "No device types. Add a device type to get started." %}</td>
+        <td colspan="5">{% trans "No devices. Add a device to get started." %}</td>
       </tr>
       {% endfor %}
     </tbody>

@@ -2,13 +2,14 @@
 {% load i18n %}
 
 {% block admin_title %}{{ device_type.name }}{% endblock %}
+{% block breadcrumb_back %}<a href="{% url 'admin_app:admin_device_list' %}" class="breadcrumb-back-btn" aria-label="{% trans 'Back to Devices' %}">← {% trans "Devices" %}</a>{% endblock %}
 {% block breadcrumb_extra %}
-<span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_device_list' %}">{% trans "Devices" %}</a>
+<span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_device_type_list' %}">{% trans "Devices" %}</a>
 <span class="breadcrumb-sep">→</span> <span>{{ device_type.name }}</span>
 {% endblock %}
 
 {% block admin_content %}
-<div class="facility-card-body" style="margin-bottom: 24px;">
+<div class="device-detail-card" style="display: flex; gap: 24px; align-items: flex-start; margin-bottom: 24px;">
   <div class="customer-logo-upload-area" style="cursor: default; flex-shrink: 0;">
     {% if device_type.product_image %}
     <img src="{{ device_type.product_image.url }}" alt="{{ device_type.name }}" style="max-width: 120px; max-height: 120px; object-fit: contain;">
@@ -28,10 +29,10 @@
     {% if device_type.description %}
     <p class="muted" style="margin-top: 8px;">{{ device_type.description }}</p>
     {% endif %}
-    <div style="margin-top: 12px;">
-      <a href="{% url 'admin_app:admin_device_type_edit' device_type.pk %}" class="admin-btn-sm form-btn-secondary">{% trans "Edit device type" %}</a>
-      <a href="{% url 'admin_app:admin_device_instance_add' device_type.pk %}" class="admin-toolbar-add-btn" style="margin-left: 8px;">{% trans "Add instance" %}</a>
-    </div>
+  </div>
+  <div style="flex-shrink: 0; display: flex; gap: 8px; align-items: flex-start;">
+    <a href="{% url 'admin_app:admin_device_type_edit' device_type.pk %}" class="admin-btn-sm form-btn-secondary">{% trans "Edit produkt" %}</a>
+    <a href="{% url 'admin_app:admin_device_instance_add' device_type.pk %}" class="admin-toolbar-add-btn">{% trans "Legg til instans" %}</a>
   </div>
 </div>
 {% if device_type.datasheets.all %}

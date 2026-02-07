@@ -2,6 +2,13 @@
 
 - 2026-02-06 (Europe/Oslo)
   - Branch: dev
+  - Version: 4.8.0-beta.5
+  - Summary:
+    - Admin device templates: device_category, device_instance, device_landing, device_type, facility_device_choose_type, home, manufacturer, product_datasheet – refinements
+    - Version bump: 4.8.0-beta.4 → 4.8.0-beta.5
+
+- 2026-02-06 (Europe/Oslo)
+  - Branch: dev
   - Version: 4.8.0-beta.4
   - Summary:
     - Portal base.html updates; site_footer.html; app.css +81

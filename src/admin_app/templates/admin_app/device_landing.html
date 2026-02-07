@@ -6,28 +6,28 @@
 
 {% block admin_content %}
 <h1 class="admin-page-title">{% trans "Devices" %}</h1>
-<p class="muted">{% trans "Manage device types, categories, manufacturers and product datasheets." %}</p>
+<p class="muted">{% trans "Manage products, categories, manufacturers and product datasheets." %}</p>
 
-<div class="admin-home-grid admin-home-grid-three" style="margin-top: 24px;">
-  <div class="panel admin-home-panel">
-    <div class="admin-home-panel-heading">{% trans "Device types" %}</div>
-    <p class="muted" style="margin: 8px 0;">{% trans "Product templates; add instances under each type." %}</p>
-    <p style="margin: 0;"><strong>{{ type_count }}</strong> {% trans "types" %}</p>
+<div class="admin-home-grid admin-home-grid-four" style="margin-top: 24px; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px;">
+  <div class="panel admin-home-panel device-landing-card">
+    <div class="admin-home-panel-heading">{% trans "Devices" %}</div>
+    <p class="muted" style="margin: 8px 0;">{% trans "Product catalog; add instances under each product." %}</p>
+    <p style="margin: 0;"><strong>{{ type_count }}</strong> {% trans "products" %}</p>
     <ul class="admin-home-links" style="margin-top: 12px;">
       <li><a href="{% url 'admin_app:admin_device_type_list' %}" class="admin-home-link">{% trans "View all" %}</a></li>
-      <li><a href="{% url 'admin_app:admin_device_type_add' %}" class="admin-home-link">{% trans "Add device type" %}</a></li>
+      <li><a href="{% url 'admin_app:admin_device_type_add' %}" class="admin-home-link">{% trans "Add device" %}</a></li>
     </ul>
   </div>
-  <div class="panel admin-home-panel">
+  <div class="panel admin-home-panel device-landing-card">
     <div class="admin-home-panel-heading">{% trans "Categories" %}</div>
-    <p class="muted" style="margin: 8px 0;">{% trans "Categories and subcategories for device types." %}</p>
+    <p class="muted" style="margin: 8px 0;">{% trans "Categories and subcategories for devices." %}</p>
     <p style="margin: 0;"><strong>{{ category_count }}</strong> {% trans "categories" %}</p>
     <ul class="admin-home-links" style="margin-top: 12px;">
       <li><a href="{% url 'admin_app:admin_device_category_list' %}" class="admin-home-link">{% trans "View all" %}</a></li>
       <li><a href="{% url 'admin_app:admin_device_category_add' %}" class="admin-home-link">{% trans "Add category" %}</a></li>
     </ul>
   </div>
-  <div class="panel admin-home-panel">
+  <div class="panel admin-home-panel device-landing-card">
     <div class="admin-home-panel-heading">{% trans "Manufacturers" %}</div>
     <p class="muted" style="margin: 8px 0;">{% trans "Manufacturer/brand list for devices." %}</p>
     <p style="margin: 0;"><strong>{{ manufacturer_count }}</strong> {% trans "manufacturers" %}</p>
@@ -36,9 +36,9 @@
       <li><a href="{% url 'admin_app:admin_manufacturer_add' %}" class="admin-home-link">{% trans "Add manufacturer" %}</a></li>
     </ul>
   </div>
-  <div class="panel admin-home-panel">
+  <div class="panel admin-home-panel device-landing-card">
     <div class="admin-home-panel-heading">{% trans "Product datasheets" %}</div>
-    <p class="muted" style="margin: 8px 0;">{% trans "Upload and link PDF datasheets to device types." %}</p>
+    <p class="muted" style="margin: 8px 0;">{% trans "Upload PDF datasheets and link to devices." %}</p>
     <p style="margin: 0;"><strong>{{ datasheet_count }}</strong> {% trans "datasheets" %}</p>
     <ul class="admin-home-links" style="margin-top: 12px;">
       <li><a href="{% url 'admin_app:admin_product_datasheet_list' %}" class="admin-home-link">{% trans "View all" %}</a></li>

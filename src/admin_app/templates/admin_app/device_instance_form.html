@@ -2,6 +2,7 @@
 {% load i18n %}
 
 {% block admin_title %}{% if instance %}{% trans "Edit instance" %}{% else %}{% trans "Add instance" %}{% endif %} – {{ device_type.name }}{% endblock %}
+{% block breadcrumb_back %}<a href="{% url 'admin_app:admin_device_list' %}" class="breadcrumb-back-btn" aria-label="{% trans 'Back to Devices' %}">← {% trans "Devices" %}</a>{% endblock %}
 {% block breadcrumb_extra %}
 <span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_device_list' %}">{% trans "Devices" %}</a>
 <span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_device_type_detail' device_type.pk %}">{{ device_type.name }}</a>
