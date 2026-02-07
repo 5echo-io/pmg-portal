@@ -149,6 +149,8 @@ html.theme-dark .logo-dark {
   font-size: 22px;
 }
 h2 { margin: 0 0 10px 0; font-size: 16px; }
+.admin-section-title { margin-top: 24px; margin-bottom: 10px; font-size: 16px; }
+.admin-section-title:first-of-type { margin-top: 0; }
 .muted { color: var(--muted); }
 
 label { display:block; margin: 14px 0 6px; font-size: 13px; color: var(--muted); }
@@ -1350,14 +1352,27 @@ html.theme-dark .topbar-theme-btn .theme-icon-moon {
   margin-top: 14px;
 }
 
-/* Systemmeldinger panel (top of customer card / dashboard) */
+/* Systemmeldinger panel (above Oversikt on facility; top on dashboard) */
 .systemmeldinger-panel {
   margin-bottom: 20px;
 }
 .systemmeldinger-panel-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   margin: 0 0 12px 0;
   font-size: 1rem;
   font-weight: 600;
+}
+.systemmeldinger-panel-icon {
+  flex-shrink: 0;
+  color: var(--accent);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.systemmeldinger-panel-icon svg {
+  display: block;
 }
 .systemmeldinger-panel--facility {
   margin-bottom: 16px;
@@ -1423,6 +1438,8 @@ html.theme-dark .topbar-theme-btn .theme-icon-moon {
 }
 
 .announcement-item {
+  display: flex;
+  gap: 12px;
   padding: 12px 0;
   border-top: 1px solid var(--line);
 }
@@ -1431,7 +1448,22 @@ html.theme-dark .topbar-theme-btn .theme-icon-moon {
   border-top: 0;
 }
 
-.announcement-item--pinned {
+.announcement-item-icon {
+  flex-shrink: 0;
+  color: var(--accent);
+  margin-top: 2px;
+  display: inline-flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+.announcement-item-icon svg {
+  display: block;
+}
+.announcement-item-content {
+  flex: 1;
+  min-width: 0;
+}
+.announcement-item--pinned .announcement-item-content {
   padding-left: 8px;
   border-left: 3px solid var(--muted);
 }

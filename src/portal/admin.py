@@ -233,7 +233,7 @@ class FacilityAdmin(admin.ModelAdmin):
     search_fields = ("name", "slug", "customers__name")
     list_filter = ("is_active", "status_label")
     fieldsets = (
-        (None, {"fields": ("name", "slug", "description", "is_active", "status_label")}),
+        (None, {"fields": ("name", "slug", "description", "is_active", "status_label", "status_label_year")}),
         ("Adresse", {"fields": ("address", "city", "postal_code", "country")}),
         ("Kontakt (generelt)", {"fields": ("contact_person", "contact_email", "contact_phone")}),
         ("Portal – viktig informasjon", {"fields": ("important_info",), "description": "Tekst som vises på anleggskortet i portalen (f.eks. åpningstider, adkomst, kunngjøringer)."}),

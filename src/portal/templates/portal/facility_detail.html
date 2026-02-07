@@ -16,24 +16,6 @@
 
   <!-- Facility card (same layout as admin) -->
   <div class="customer-card-container">
-    {% if facility_announcements %}
-    <div class="systemmeldinger-panel panel systemmeldinger-panel--facility">
-      <h2 class="systemmeldinger-panel-title">{% trans "Systemmeldinger" %}</h2>
-      <ul class="announcement-list">
-        {% for ann in facility_announcements %}
-        <li class="announcement-item {% if ann.is_pinned %}announcement-item--pinned{% endif %}">
-          <div class="announcement-title">{{ ann.title }}</div>
-          <div class="announcement-meta muted">
-            {% if ann.created_by %}{{ ann.created_by.get_full_name|default:ann.created_by.username }}{% endif %}
-            · {{ ann.created_at|date:"SHORT_DATE_FORMAT" }}
-            {% if ann.is_pinned %}<span class="announcement-pin-badge">{% trans "Pinned" %}</span>{% endif %}
-          </div>
-          <div class="announcement-body">{{ ann.body|safe|linebreaks }}</div>
-        </li>
-        {% endfor %}
-      </ul>
-    </div>
-    {% endif %}
     <div class="customer-card-header">
       <div class="customer-card-logo-section">
         <div class="facility-logo-with-overlay">
@@ -96,6 +78,35 @@
         {% endif %}
       </div>
     </div>
+
+    {% if facility_announcements %}
+    <div class="systemmeldinger-panel panel systemmeldinger-panel--facility">
+      <h2 class="systemmeldinger-panel-title">
+        <span class="systemmeldinger-panel-icon" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+        </span>
+        {% trans "Systemmeldinger" %}
+      </h2>
+      <ul class="announcement-list">
+        {% for ann in facility_announcements %}
+        <li class="announcement-item {% if ann.is_pinned %}announcement-item--pinned{% endif %}">
+          <span class="announcement-item-icon" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+          </span>
+          <div class="announcement-item-content">
+            <div class="announcement-title">{{ ann.title }}</div>
+            <div class="announcement-meta muted">
+              {% if ann.created_by %}{{ ann.created_by.get_full_name|default:ann.created_by.username }}{% endif %}
+              · {{ ann.created_at|date:"SHORT_DATE_FORMAT" }}
+              {% if ann.is_pinned %}<span class="announcement-pin-badge">{% trans "Pinned" %}</span>{% endif %}
+            </div>
+            <div class="announcement-body">{{ ann.body|safe|linebreaks }}</div>
+          </div>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
 
     <!-- Oversikt (under the card) -->
     <div class="facility-portal-overview">

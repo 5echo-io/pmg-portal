@@ -40,7 +40,7 @@
     <tbody>
       {% for ann in page_obj %}
       <tr>
-        <td><a href="{% url 'admin_app:admin_customer_detail' ann.customer.slug %}">{{ ann.customer.name }}</a></td>
+        <td>{% if ann.customer %}<a href="{% url 'admin_app:admin_customer_detail' ann.customer.slug %}">{{ ann.customer.name }}</a>{% else %}<span class="muted">—</span>{% endif %}</td>
         <td>{% if ann.facility %}<a href="{% url 'admin_app:admin_facility_detail' ann.facility.slug %}">{{ ann.facility.name }}</a>{% else %}<span class="muted">{% trans "General" %}</span>{% endif %}</td>
         <td>{{ ann.title }}</td>
         <td>{% if ann.is_pinned %}{% trans "Yes" %}{% else %}—{% endif %}</td>

@@ -198,18 +198,71 @@ def user_delete(request, pk):
     return redirect("admin_app:admin_user_list")
 
 
-# ----- Roles (Groups, platform/super admin) -----
+# ----- Roles: default (system) roles + custom (Django Groups), platform/super admin only -----
+def _get_default_roles_with_counts():
+    """Build the five default roles (cannot be deleted) with user counts. No DB role table."""
+    from portal.models import UserProfile
+    User = get_user_model()
+    # Platform admin: is_superuser
+    platform_admin_count = User.objects.filter(is_superuser=True).count()
+    # Super admin: UserProfile.system_role == 'super_admin'
+    super_admin_count = UserProfile.objects.filter(system_role="super_admin").count()
+    # Tenant roles: distinct users with at least one membership in that role
+    owner_count = CustomerMembership.objects.filter(role="owner").values("user").distinct().count()
+    administrator_count = CustomerMembership.objects.filter(role="administrator").values("user").distinct().count()
+    user_role_count = CustomerMembership.objects.filter(role="user").values("user").distinct().count()
+    return [
+        {
+            "slug": "platform_admin",
+            "name": _("Platform admin"),
+            "description": _("Se og styre alle tenants, overstyre roller, opprette/slette tenants. Kun for SaaS-oppsett."),
+            "user_count": platform_admin_count,
+            "is_system": True,
+        },
+        {
+            "slug": "super_admin",
+            "name": _("Super admin"),
+            "description": _("Nesten som platform admin; kan ikke endre/slette platform admin."),
+            "user_count": super_admin_count,
+            "is_system": True,
+        },
+        {
+            "slug": "owner",
+            "name": _("Owner"),
+            "description": _("Eier tenant; kan overføre owner til andre. Første bruker ved install er Owner."),
+            "user_count": owner_count,
+            "is_system": True,
+        },
+        {
+            "slug": "administrator",
+            "name": _("Administrator"),
+            "description": _("Mest mulig innenfor tenant, ikke systeminnstillinger."),
+            "user_count": administrator_count,
+            "is_system": True,
+        },
+        {
+            "slug": "user",
+            "name": _("User"),
+            "description": _("Vanlig bruker/kunde."),
+            "user_count": user_role_count,
+            "is_system": True,
+        },
+    ]
+
+
 @platform_or_super_admin_required
 def role_list(request):
+    default_roles = _get_default_roles_with_counts()
     qs = Group.objects.all().order_by("name")
     search = request.GET.get("q", "").strip()
     if search:
         qs = qs.filter(name__icontains=search)
-    # Annotate with user count per group (simple: count users in each group)
-    roles = []
-    for g in qs:
-        roles.append({"group": g, "user_count": g.user_set.count()})
-    return render(request, "admin_app/user/role_list.html", {"roles": roles, "search": search})
+    custom_roles = [{"group": g, "user_count": g.user_set.count(), "is_system": False} for g in qs]
+    return render(
+        request,
+        "admin_app/user/role_list.html",
+        {"default_roles": default_roles, "custom_roles": custom_roles, "search": search},
+    )
 
 
 @platform_or_super_admin_required

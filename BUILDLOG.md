@@ -4,7 +4,7 @@ Project: PMG Portal
 Purpose: Build and release log
 Path: BUILDLOG.md
 Created: 2026-02-05
-Last Modified: 2026-02-10
+Last Modified: 2026-02-07
 -->
 
 # BUILDLOG
@@ -12,6 +12,27 @@ Last Modified: 2026-02-10
 Chronological log of builds and releases (newest first). Each entry: date, branch, version (on bump), short summary.
 
 ---
+
+- 2026-02-07 (Europe/Oslo)
+  - Branch: dev
+  - Version: 5.0.0-beta.4
+  - Summary:
+    - Tema: Følger enheten (prefers-color-scheme) som standard; brukeren overstyrer med Light/Dark-knappen i menyen. Aria-label/title på tema-knappen oppdatert. VERSION 5.0.0-beta.3 → 5.0.0-beta.4.
+  - Version bump: 5.0.0-beta.3 → 5.0.0-beta.4
+
+- 2026-02-10 (Europe/Oslo)
+  - Branch: dev
+  - Version: 5.0.0-beta.3
+  - Summary:
+    - Kunngjøringer: Kunde valgfri når anlegg valgt (Announcement.customer null=True, migrering 0025); form validering; facility_announcements inkluderer anleggskunngjøringer uten kunde; admin-liste "—" for tom kunde. Systemmeldinger: flyttet over Oversikt på anlegg; ikon i tittel og per melding. Anleggskort: statuslabel under adresse; status_label_year og get_status_label_display for 08/09. Revert: venstre statuskant forsvinner igjen ved hover (som før). VERSION 5.0.0-beta.2 → 5.0.0-beta.3.
+  - Version bump: 5.0.0-beta.2 → 5.0.0-beta.3
+
+- 2026-02-10 (Europe/Oslo)
+  - Branch: dev
+  - Version: 5.0.0-beta.2
+  - Summary:
+    - Admin roller: /admin/roles/ viser nå alltid de fem standardrollene (Platform admin, Super admin, Owner, Administrator, User) med beskrivelse og brukertall; kan ikke slettes. Egendefinerte roller (Groups) under med søk og Rediger. VERSION 5.0.0-beta.1 → 5.0.0-beta.2.
+  - Version bump: 5.0.0-beta.1 → 5.0.0-beta.2
 
 - 2026-02-10 (Europe/Oslo)
   - Branch: dev

@@ -4,7 +4,7 @@ Project: PMG Portal
 Purpose: Detailed changelog (SemVer)
 Path: CHANGELOG.md
 Created: 2026-02-05
-Last Modified: 2026-02-10
+Last Modified: 2026-02-07
 -->
 
 # Changelog
@@ -15,6 +15,48 @@ This project follows Semantic Versioning (SemVer).
 ## [Unreleased]
 
 _(Ingen endringer ennå.)_
+
+---
+
+## [5.0.0-beta.4] - 2026-02-07
+
+### Changed
+
+#### Portal / Tema
+- **Tema følger enheten som standard**: Når brukeren ikke har valgt lys/mørk manuelt, brukes enhetens innstilling (`prefers-color-scheme`). Siden oppdateres automatisk ved endring av systemets lys/mørk-modus.
+- **Overstyring via meny**: Tema-knappen (sol/måne) i topplinjen lagrer eksplisitt lys eller mørk og overstyrer enhetsinnstillingen inntil brukeren bytter på nytt. Aria-label og title oppdatert til «Switch theme (overrides device setting)».
+
+---
+
+## [5.0.0-beta.3] - 2026-02-10
+
+### Added
+
+#### Kunngjøringer
+- **Kunde valgfri når anlegg valgt**: `Announcement.customer` kan være null (migrering 0025) når kunngjøringen knyttes til et anlegg; form-validering tilpasset. `facility_announcements` inkluderer anleggskunngjøringer uten kunde. Admin-listen viser «—» for tom kunde.
+
+#### Portal / Anlegg
+- **Systemmeldinger**: Flyttet over Oversikt på anleggssiden; ikon i tittel og per melding.
+- **Anleggskort**: Statuslabel under adresse; `status_label_year` og `get_status_label_display` for 08/09; venstre kant beholdes ved hover.
+
+### Changed
+
+#### Kunngjøringer
+- Admin-liste for kunngjøringer: kolonne for kunde viser «—» når kunde er tom (anleggsspesifikke kunngjøringer).
+
+---
+
+## [5.0.0-beta.2] - 2026-02-10
+
+### Added
+
+#### Admin / Roller
+- **/admin/roles/ – standardroller vises**: Rollesiden viser nå alltid de fem **standardrollene** (Platform admin, Super admin, Owner, Administrator, User) med beskrivelse og antall brukere. Disse kan ikke slettes eller endres. Egendefinerte roller (Django Groups) vises under med søk og Rediger. Knapp «Add custom role» for å opprette egendefinerte roller.
+
+### Changed
+
+#### Admin / Roller
+- **Rollesiden**: Standardroller er ikke lenger tomme – de beregnes fra `User` (is_superuser), `UserProfile` (super_admin), og `CustomerMembership` (owner/administrator/user). CSS: `.admin-section-title` for avstand mellom Standard roles og Custom roles.
 
 ---
 
@@ -165,14 +207,33 @@ _(Ingen endringer ennå.)_
 
 ---
 
-## [Unreleased]
+## [5.0.0-beta.3] - 2026-02-10
 
-Pre-release builds (alpha, beta, rc) are listed here. Only full releases (without build suffix) get their own version section below.
+### Added
+
+#### Kunngjøringer
+- **Kunde valgfri ved anlegg**: Når du velger anlegg ved opprettelse av kunngjøring, trenger du ikke velge kunde – meldingen vises på anleggssiden for alle med tilgang. Announcement.customer er valgfri (null=True); migrering 0025. Skjema: validering at minst én av kunde eller anlegg er satt; hjelpetekster oppdatert.
+- **Systemmeldinger – plassering og ikoner**: På anleggssiden vises Systemmeldinger nå **over Oversikt** (mellom kortheader og Oversikt), ikke øverst i kortet. Seksjonstittel har snakkeboble-ikon; hver melding har info-ikon. Samme ikonbruk på dashboard (Systemmeldinger øverst).
+
+### Changed
+
+#### Kunngjøringer
+- **Anleggsside**: Henter kunngjøringer for anlegget (uavhengig av kunde) pluss generelle for aktiv kunde. Admin-liste viser "—" i kunde-kolonne når kunngjøringen kun gjelder anlegg.
+
+#### Anleggsoversikt (/facilities/)
+- **Statusetikett under adresse**: Statuslabel vises nå under adressen på anleggskortet (ikke under navnet).
+- **Årstall for etiketter**: Etiketter 08 Kontrollert (årstall) og 09 Godkjent (årstall) viser valgt år (f.eks. "Kontrollert 2024"). Nytt felt Facility.status_label_year og get_status_label_display(); migrering 0024. Admin: status_label_year i facility-skjema og Django admin.
 
 ### Fixed
 
 #### Portal
 - **Serviceavtale-indikator**: Fjernet sort/grå overlay (bakgrunn) bak serviceavtale-badge over anleggsbildet. Badge (Serviceavtale / Ingen serviceavtale) vises nå uten mørk stripe; kun badge og tekst over bildet (facility_detail.html, facility_detail_content.html).
+
+---
+
+## [Unreleased]
+
+Pre-release builds (alpha, beta, rc) are listed here. Only full releases (without build suffix) get their own version section below.
 
 ---
 

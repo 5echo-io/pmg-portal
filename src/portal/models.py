@@ -190,10 +190,18 @@ class PortalLink(models.Model):
 class Announcement(models.Model):
     """
     Announcements posted by admins, visible to customer members.
-    - facility is None: general announcement (shown on portal dashboard).
-    - facility is set: announcement only shown when viewing that facility.
+    - facility is None: general announcement (shown on portal dashboard); customer required.
+    - facility is set: announcement shown on that facility's page; customer can be null (all with access see it).
     """
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name="announcements", db_index=True)
+    customer = models.ForeignKey(
+        Customer,
+        on_delete=models.CASCADE,
+        related_name="announcements",
+        db_index=True,
+        null=True,
+        blank=True,
+        help_text="Required when facility is empty (dashboard announcement). Optional when facility is set (shown on facility for all with access).",
+    )
     facility = models.ForeignKey(
         "Facility",
         on_delete=models.CASCADE,
@@ -224,7 +232,7 @@ class Announcement(models.Model):
         ]
 
     def __str__(self) -> str:
-        return f"{self.customer}: {self.title}"
+        return f"{self.customer or self.facility or '?'}: {self.title}"
 
 
 class PortalUserPreference(models.Model):
@@ -325,6 +333,11 @@ class Facility(models.Model):
         related_name="facilities",
         help_text="Status label (e.g. Kontrollert, Ute av drift). Overstyrer statusfarge i anleggsoversikten.",
     )
+    status_label_year = models.PositiveIntegerField(
+        null=True,
+        blank=True,
+        help_text="Årstall for statusetiketter som viser år (f.eks. Kontrollert/Godkjent). Brukes når status label er 08 eller 09.",
+    )
     customers = models.ManyToManyField(Customer, related_name="facilities", blank=True, help_text="Customers that have access to this facility")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -339,6 +352,17 @@ class Facility(models.Model):
     def get_customer_count(self):
         """Return the number of customers with access to this facility."""
         return self.customers.count()
+
+    def get_status_label_display(self):
+        """Return label text for display; replaces (årstall) with status_label_year when set (e.g. 08, 09)."""
+        if not self.status_label:
+            return ""
+        name = self.status_label.name
+        if self.status_label_year and "(årstall)" in name:
+            return name.replace("(årstall)", str(self.status_label_year))
+        if "(årstall)" in name:
+            return name.replace("(årstall)", "").strip()
+        return name
 
 
 class ServiceType(models.Model):

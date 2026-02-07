@@ -144,17 +144,26 @@ class AnnouncementForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if "customer" in self.fields:
             self.fields["customer"].queryset = Customer.objects.all().order_by("name")
+            self.fields["customer"].required = False
+            self.fields["customer"].help_text = _(
+                "Påkrevd når anlegg er tom (dashboard). Valgfri når anlegg er valgt – meldingen vises da på anlegget for alle med tilgang."
+            )
         if "facility" in self.fields:
             self.fields["facility"].queryset = Facility.objects.all().order_by("name")
             self.fields["facility"].required = False
             self.fields["facility"].help_text = _(
-                "Velg anlegg: kunngjøringen vises på anleggssiden for alle med tilgang. La stå tom: kunngjøringen vises på dashboard for valgt kunde."
+                "Velg anlegg: kunngjøringen vises på anleggssiden for alle med tilgang (kunde trengs ikke). La stå tom: kunngjøringen vises på dashboard for valgt kunde."
             )
 
     def clean(self):
         data = super().clean()
         facility = data.get("facility")
         customer = data.get("customer")
+        if not facility and not customer:
+            self.add_error(
+                "customer",
+                forms.ValidationError(_("Velg enten kunde (for dashboard) eller anlegg (for anleggssiden).")),
+            )
         if facility and customer and not facility.customers.filter(pk=customer.pk).exists():
             self.add_error(
                 "facility",
@@ -170,7 +179,7 @@ class FacilityForm(forms.ModelForm):
             "name", "slug", "description", "address", "city", "postal_code", "country",
             "contact_person", "contact_email", "contact_phone",
             "important_info",
-            "is_active", "status_label", "customers"
+            "is_active", "status_label", "status_label_year", "customers"
         )
         widgets = {
             "description": forms.Textarea(attrs={"rows": 4}),

@@ -19,13 +19,13 @@
       </div>
       <div class="facility-card-content">
         <h3 class="facility-card-name">{{ facility.name }}</h3>
-        {% if facility.status_label %}
-        <span class="facility-card-status-badge" style="background: {{ facility.status_label.color }}20; color: {{ facility.status_label.color }};">{{ facility.status_label.code }} {{ facility.status_label.name }}</span>
-        {% endif %}
         {% if facility.address %}
         <p class="facility-card-location">{{ facility.address }}</p>
         {% elif facility.city %}
         <p class="facility-card-location">{{ facility.city }}{% if facility.country %}, {{ facility.country }}{% endif %}</p>
+        {% endif %}
+        {% if facility.status_label %}
+        <span class="facility-card-status-badge" style="background: {{ facility.status_label.color }}20; color: {{ facility.status_label.color }};">{{ facility.status_label.code }} {{ facility.get_status_label_display }}</span>
         {% endif %}
         {% if facility.description %}
         <p class="facility-card-description">{{ facility.description|truncatewords:15 }}</p>

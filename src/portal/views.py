@@ -57,7 +57,7 @@ def _portal_home_context(request, customer, links, active_role=None, memberships
     """Build context for portal home (full page or fragment)."""
     now = timezone.now()
     announcements = list(
-        Announcement.objects.filter(customer=customer)
+        Announcement.objects.filter(customer=customer)  # dashboard: only customer-scoped, no facility
         .filter(facility__isnull=True)
         .filter(Q(valid_from__isnull=True) | Q(valid_from__lte=now))
         .filter(Q(valid_until__isnull=True) | Q(valid_until__gte=now))
@@ -410,14 +410,15 @@ def facility_detail(request, slug):
         "service_logs_count": service_logs.count(),
     }
 
-    # Announcements for this facility: general (no facility) + announcements for this facility
+    # Announcements for this facility: (1) for this facility (any/no customer), (2) general for current customer
     now = timezone.now()
     facility_announcements = list(
-        Announcement.objects.filter(customer=customer)
-        .filter(Q(facility__isnull=True) | Q(facility=facility))
+        Announcement.objects.filter(
+            Q(facility=facility) | (Q(facility__isnull=True) & Q(customer=customer))
+        )
         .filter(Q(valid_from__isnull=True) | Q(valid_from__lte=now))
         .filter(Q(valid_until__isnull=True) | Q(valid_until__gte=now))
-        .select_related("created_by", "facility")
+        .select_related("created_by", "facility", "customer")
         .order_by("-is_pinned", "-created_at")[:20]
     )
 
