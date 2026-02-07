@@ -17,9 +17,14 @@
     <div class="customer-selection-list">
       {% for customer in customers %}
       <div class="customer-selection-item" data-customer-id="{{ customer.id }}" data-customer-name="{{ customer.name|escape }}" data-customer-select="true">
-        {% if customer.logo_url %}
+        {% if customer.logo_url or customer.logo_url_dark %}
         <div class="customer-selection-item-logo">
-          <img src="{{ customer.logo_url }}" alt="{{ customer.name }} logo" onerror="this.style.display='none';" />
+          {% if customer.logo_url %}
+          <img src="{{ customer.logo_url }}" alt="{{ customer.name }} logo" class="{% if customer.logo_url_dark %}logo-light{% endif %}" onerror="this.style.display='none';" />
+          {% endif %}
+          {% if customer.logo_url_dark %}
+          <img src="{{ customer.logo_url_dark }}" alt="{{ customer.name }} logo" class="logo-dark" onerror="this.style.display='none';" />
+          {% endif %}
         </div>
         {% else %}
         <div class="customer-selection-item-logo customer-selection-item-logo--placeholder">

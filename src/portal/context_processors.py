@@ -198,13 +198,24 @@ def footer_info(request):
                             else:
                                 changelog_section = "Ingen endringer listet."
                         else:
-                            # Non–full MAJOR (0.x, beta, alpha): short view always shows Unreleased (one section only)
-                            if "## [Unreleased]" in content:
+                            # Pre-release (beta/alpha/rc): show section for current version if present, else [Unreleased]
+                            version_header = f"## [{version}]"
+                            if version_header in content:
+                                after = content.split(version_header, 1)[1]
+                                section = after.split("\n## ")[0].strip()
+                                # Drop optional date line (e.g. "- 2026-02-07") on first line
+                                if section.startswith("- "):
+                                    section = "\n".join(section.split("\n")[1:]).strip()
+                                changelog_section = section or "Ingen endringer listet for denne versjonen."
+                            elif "## [Unreleased]" in content:
                                 after = content.split("## [Unreleased]", 1)[1]
                                 unreleased = after.split("\n## ")[0].strip()
-                                changelog_section = unreleased or "Ingen unreleased endringer."
+                                if unreleased and not unreleased.startswith("Pre-release builds"):
+                                    changelog_section = unreleased
+                                else:
+                                    changelog_section = unreleased or "Ingen unreleased endringer."
                             else:
-                                changelog_section = "Ingen unreleased endringer."
+                                changelog_section = "Ingen endringer listet."
                         break
                 except (OSError, IOError, UnicodeDecodeError, PermissionError):
                     continue
@@ -274,6 +285,20 @@ def _get_release_notes_for_request(request, footer_result):
                 break
         except (OSError, IOError, UnicodeDecodeError, json.JSONDecodeError):
             continue
+
+
+def theme_customizations(request):
+    """
+    Add theme override CSS for system customization (Admin → System customization).
+    Only overrides stored in DB are applied; defaults come from theme-dark.css / theme-light.css.
+    """
+    try:
+        from admin_app.theme_settings import get_theme_customizations, build_theme_override_css
+        overrides = get_theme_customizations()
+        css = build_theme_override_css(overrides)
+        return {"theme_customizations_css": css, "theme_customizations": overrides}
+    except Exception:
+        return {"theme_customizations_css": "", "theme_customizations": {"dark": {}, "light": {}}}
 
 
 def about_info(request):

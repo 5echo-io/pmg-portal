@@ -2,6 +2,7 @@
 Forms for custom admin (admin_app).
 """
 from django import forms
+from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm as BaseUserCreationForm
 from django.contrib.auth.models import Group
@@ -53,19 +54,22 @@ class UserEditForm(forms.ModelForm):
 class CustomerForm(forms.ModelForm):
     class Meta:
         model = Customer
-        fields = ("name", "slug", "org_number", "contact_info", "logo", "primary_contact")
+        fields = ("name", "slug", "org_number", "contact_info", "logo", "logo_dark", "primary_contact")
         widgets = {
             "contact_info": forms.Textarea(attrs={"rows": 3}),
             "logo": forms.FileInput(attrs={"accept": "image/*"}),
+            "logo_dark": forms.FileInput(attrs={"accept": "image/*"}),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        if "slug" in self.fields:
+            self.fields["slug"].label = _("Kundenummer")
         if "primary_contact" in self.fields:
             self.fields["primary_contact"].queryset = User.objects.all().order_by("username")
-        # Make logo field not required (allow clearing it)
-        if "logo" in self.fields:
-            self.fields["logo"].required = False
+        for f in ("logo", "logo_dark"):
+            if f in self.fields:
+                self.fields[f].required = False
 
 
 class CustomerMembershipForm(forms.ModelForm):

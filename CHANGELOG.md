@@ -12,7 +12,36 @@ Last Modified: 2026-02-07
 All notable changes to this project will be documented in this file.
 This project follows Semantic Versioning (SemVer).
 
-## [4.8.0-beta.35] - 2026-02-07
+## [4.9.0-beta.1] - 2026-02-07
+
+### Versjonsberegning (SemVer)
+
+- **MAJOR 4**: Ingen brytende API- eller oppførselsendringer for brukere; portalen forblir kompatibel.
+- **MINOR 9**: Stor ny funksjonssett siden 4.8.0-beta.1: tema (lys/mørk), anleggsoverlay og -badges, kontakter (FacilityContact), teknisk support, viktig info, dokumentmaler og WeasyPrint-PDF, servicelogg-PDF, release notes-popup, enheter-detalj, nettverksdokumentasjon-PDF, knappestyring og modaler, CHANGELOG/BUILDLOG-reorganisering. 4.8.x hadde 25+ beta-pushes med disse funksjonene – 4.9.0 markerer at vi er på en ny MINOR med dette funksjonssettet.
+- **PATCH 0**: Første release i 4.9-minor.
+- **BUILD 1**: Første beta i 4.9.0-linjen (build-nummer resettes per MINOR).
+
+### Fixed
+
+#### Portal / Changelog
+- **Changelog visning for pre-release**: Pre-release-bygg (beta/alpha/rc) viser nå changelog-seksjonen for gjeldende versjon i stedet for alltid [Unreleased]. Footer/changelog-modalen viser dermed riktig innhold for installert versjon.
+
+---
+
+## [Unreleased]
+
+Pre-release builds (alpha, beta, rc) are listed here. Only full releases (without build suffix) get their own version section below.
+
+---
+
+## 4.8.0-beta (endringer per push til dev)
+
+*Kronologisk (nyeste først). Hver underseksjon tilsvarer én push til dev med versjonsbump. BUILDLOG har full historikk.*
+
+### [4.8.0-beta.36] - 2026-02-07
+- Changelog/portal: Pre-release viser nå gjeldende versjons changelog-seksjon i stedet for [Unreleased]. context_processors.py oppdatert.
+
+### [4.8.0-beta.35] - 2026-02-07
 
 ### Fixed
 
@@ -66,11 +95,74 @@ This project follows Semantic Versioning (SemVer).
 #### Portal – User experience
 - **Release notes popup**: On first login/visit after a final release (no -beta/-alpha/-rc) a modal "New update" is shown with short, readable text about important new features and fixes; "View changelog" button opens changelog modal; visibility stored per version in localStorage. RELEASE_NOTES.json in project root with text per version and language (nb/en); footer_info extended with release_notes_body and release_notes_version; locale "New update" → "Ny oppdatering"; FILE_LOCATIONS updated.
 
----
+### [4.8.0-beta.34] - 2026-02-08
+- CHANGELOG/BUILDLOG: Reorganisert for lesbarhet; [Unreleased] gruppert med kategorier (Portal, Admin, Design); tidligere endringer under "Previous changes (4.8.x)" med Fixes/Changes/Added.
 
-## [Unreleased]
+### [4.8.0-beta.33] - 2026-02-07
+- Portal facility: Kontakter øverst i sidemeny og som standard fane; overview med Contacts først; hash #contacts. Important info på anleggskort (migration 0016); service agreement-status (grønn/rød); Technical support (migration 0017), admin og portal-boks.
 
-Pre-release builds (alpha, beta, rc) are listed here. Only full releases (without build suffix) get their own version section below.
+### [4.8.0-beta.32] - 2026-02-07
+- Admin document template: forhåndsvisning med hvit bakgrunn, scrollbar, toolbar (Update, Open in new tab); panel til høyre (4/10), debounced auto-update, preview-draft endpoint. Portal: Product datasheets-søk sentrert; Service log Type på samme linje; "View product datasheet" i nytt vindu; menyrekkefølge og default tab. Portal: facility_device_detail, nettverksdokumentasjon-PDF. DocumentTemplate (0014), WeasyPrint, servicerapport-PDF; FacilityContact (0015), admin tab og portal-boks.
+
+### [4.8.0-beta.31] - 2026-02-07
+- Portal datasheet: TOC 1/6 bredde, sticky; fjernet Download PDF-knapp; produsent-PDF-ikon; tooltips; sidebrudd og th hvit i print/PDF. /datasheets/: breadcrumb, Create til høyre, grid min 3 kolonner, Opprettet/Oppdatert, søk med ikon. Facility detail: Produktdatablader-fane, hash i sidemeny, kompakte oversiktsbokser. Footer: Kunnskapsbase med lenke til Produktdatablader. Admin produktdatablad-liste: radhandlinger som nedtrekksmeny.
+
+### [4.8.0-beta.30] - 2026-02-07
+- WeasyPrint/pydyf: pydyf&lt;0.12 i requirements (AttributeError); portal og admin bruker xhtml2pdf-fallback ved AttributeError.
+
+### [4.8.0-beta.29] - 2026-02-07
+- WeasyPrint PDF: OSError ved manglende Pango/Cairo fanges; brukervennlig melding med apt-kommando; install/update med libcairo2; docs/WEASYPRINT_PDF.md.
+
+### [4.8.0-beta.28] - 2026-02-07
+- WeasyPrint: install.sh og update.sh installerer Pango/GdkPixbuf (libpango-1.0-0, libpangocairo-1.0-0, libgdk-pixbuf2.0-0); update.sh kjører apt-get install ved oppdatering.
+
+### [4.8.0-beta.27] - 2026-02-07
+- Admin: product_datasheet_list utvidet; portal: facility_service_log_detail og fragment; urls og views +59.
+
+### [4.8.0-beta.26] - 2026-02-07
+- DocumentTemplate (migration 0014); admin document_template list/form; portal facility_device_detail, facility_network_documentation_pdf og fragment; requirements +1.
+
+### [4.8.0-beta.25] - 2026-02-07
+- Portal: datasheet_list, datasheet_detail; views; locale +3.
+
+### [4.8.0-beta.24] - 2026-02-07
+- Portal: datasheet_detail, facility_detail, facility_detail_content, facility_service_log_detail og fragment (justeringer/layout).
+
+### [4.8.0-beta.23] - 2026-02-07
+- Portal: facility_detail, facility_detail_content, facility_service_log_detail og fragment; views; locale +3.
+
+### [4.8.0-beta.22] - 2026-02-07
+- Admin: facility_card, facility_service_log_export_pdf; portal: datasheet_detail, facility_service_log_detail (layout/innhold).
+
+### [4.8.0-beta.21] - 2026-02-07
+- run_manage.sh: wrapper som laster .env og kjører manage.py; update.sh migrasjonsmelding; SETUP_GUIDE, FILE_LOCATIONS, BUILDLOG. Portal: facility_detail, facility_service_log_detail og fragment, datasheet_detail, views; locale +15.
+
+### [4.8.0-beta.20] - 2026-02-07
+- Locale: fjernet 2 duplikat msgid (Type, All) i nb django.po slik at compilemessages lykkes.
+
+### [4.8.0-beta.19] - 2026-02-07
+- Admin: ServiceTypeAdmin search_fields (E040); NetworkDevice registrert for ServiceLogDeviceAdmin autocomplete (E039).
+
+### [4.8.0-beta.18] - 2026-02-06
+- Servicelogg-utvidelser: migrasjoner 0012, 0013 (ServiceType, ServiceRapport, ServiceVisit); admin service_type, facility_service_visit, facility_service_rapport_form; vedlegg, PDF-eksport; portal facility service log detail; locale +153; SERVICEDESK_PLUS_INTEGRATION.md.
+
+### [4.8.0-beta.17] - 2026-02-06
+- Locale: fjernet 2 duplikat msgid (Search customers…, Inactive). Install/update: full logg til /var/log/pmg-portal-install-*.log og APP_DIR/logs/update-*.log.
+
+### [4.8.0-beta.16] - 2026-02-06
+- compilemessages med --locale nb i update.sh, install.sh, install-dual.sh, merge-dev-to-prod.sh.
+
+### [4.8.0-beta.15] - 2026-02-06
+- Locale: fjernet 12 duplikat msgid i nb django.po slik at msgfmt lykkes.
+
+### [4.8.0-beta.14] - 2026-02-06
+- FacilityAdmin: kun Facility-felter (name, slug, customer_count; list_filter is_active); fikset E108/E116.
+
+### [4.8.0-beta.13] - 2026-02-06
+- Admin: Facility registrert (FacilityAdmin) slik at ServiceLogAdmin autocomplete_fields fungerer; E039 og update/migrate på server.
+
+### [4.8.0-beta.12] - 2026-02-06
+- ServiceLog (portal), migrasjon 0011; admin facility_service_log_form og fragment; portal facility_service_log_detail og fragment; facility_card, facility_list, facility_detail; backup_restore, base, customer_*, portal, user; locale nb +421.
 
 ---
 

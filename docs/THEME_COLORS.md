@@ -99,8 +99,21 @@ Change the **color codes** in these two files to adjust dark and light mode resp
 
 ## Changing colors
 
+### Option 1: Admin (recommended for production)
+
+Superusers can override theme variables without editing code:
+
+1. Go to **Admin** → **Server management** → **System customization**.
+2. Adjust **Dark theme** and **Light theme** variables (e.g. accent, buttons, backgrounds).
+3. Click **Save changes**. Overrides are stored in the database and apply site-wide. Empty fields use the default from the theme CSS files.
+4. Use **Reset dark theme** / **Reset light theme** / **Reset all to default** to clear customizations.
+
+Customizations are stored in `portal.SystemInfo` (key `theme_customizations`) and are included in Backup & Restore, so they survive updates and migrations.
+
+### Option 2: Edit CSS files
+
 1. Open **`src/static/css/theme-dark.css`** for dark mode or **`src/static/css/theme-light.css`** for light mode.
 2. Change the hex codes (e.g. `#0b1220` → `#0d1525`) or rgba values for the variables you want to adjust.
 3. Save. On next load the whole page will use the new values.
 
-You do not need to touch `app.css` or other files to change colors; just edit the two theme files.
+You do not need to touch `app.css` or other files to change colors; just edit the two theme files. Admin overrides (if any) are applied on top of these defaults.

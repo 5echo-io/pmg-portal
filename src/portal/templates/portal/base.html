@@ -15,6 +15,9 @@
   })();
   </script>
   <link rel="stylesheet" href="{% static 'app.css' %}">
+  {% if theme_customizations_css %}
+  <style id="theme-customizations">{{ theme_customizations_css }}</style>
+  {% endif %}
   <script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg7tCRwA0TfVH/t7q6ZcdP2U6Fb2G6FOhDWWktNp4SZM" crossorigin="anonymous"></script>
 </head>
 <body class="page-wrapper" data-theme="{{ portal_theme|default:'system' }}" data-js="theme">
@@ -499,9 +502,14 @@
       <div class="customer-switch-modal-list">
         {% for membership in user_customers %}
         <div class="customer-switch-card {% if membership.customer.id == active_customer_id %}customer-switch-card--active{% endif %}" data-customer-id="{{ membership.customer.id }}" data-customer-name="{{ membership.customer.name|escape }}" {% if membership.customer.id != active_customer_id %}data-customer-switch="true"{% endif %}>
-          {% if membership.customer.logo_url %}
+          {% if membership.customer.logo_url or membership.customer.logo_url_dark %}
           <div class="customer-switch-card-logo">
-            <img src="{{ membership.customer.logo_url }}" alt="{{ membership.customer.name }} logo" onerror="this.style.display='none';" />
+            {% if membership.customer.logo_url %}
+            <img src="{{ membership.customer.logo_url }}" alt="{{ membership.customer.name }} logo" class="customer-logo {% if membership.customer.logo_url_dark %}logo-light{% endif %}" onerror="this.style.display='none';" />
+            {% endif %}
+            {% if membership.customer.logo_url_dark %}
+            <img src="{{ membership.customer.logo_url_dark }}" alt="{{ membership.customer.name }} logo" class="customer-logo logo-dark" onerror="this.style.display='none';" />
+            {% endif %}
           </div>
           {% else %}
           <div class="customer-switch-card-logo customer-switch-card-logo--placeholder">

@@ -36,13 +36,13 @@
     <tbody>
       {% for c in page_obj %}
       <tr>
-        <td><a href="{% url 'admin_app:admin_customer_detail' c.pk %}">{{ c.name }}</a></td>
+        <td><a href="{% url 'admin_app:admin_customer_detail' c.slug %}">{{ c.name }}</a></td>
         <td>{{ c.slug }}</td>
         <td>{{ c.org_number|default:"—" }}</td>
         <td>{% if c.primary_contact %}{{ c.primary_contact.get_full_name|default:c.primary_contact.username }}{% else %}—{% endif %}</td>
         <td class="admin-table-actions">
-          <a href="{% url 'admin_app:admin_customer_detail' c.pk %}" class="admin-btn-sm">{% trans "View" %}</a>
-          <button type="button" class="admin-btn-sm admin-btn-danger" data-delete-url="{% url 'admin_app:admin_customer_delete' c.pk %}" data-delete-message="{% blocktrans with name=c.name %}Are you sure you want to delete the customer '{{ name }}'? This will also delete all memberships and portal links associated with this customer.{% endblocktrans %}">{% trans "Delete" %}</button>
+          <a href="{% url 'admin_app:admin_customer_detail' c.slug %}" class="admin-btn-sm">{% trans "View" %}</a>
+          <button type="button" class="admin-btn-sm admin-btn-danger" data-delete-url="{% url 'admin_app:admin_customer_delete' c.slug %}" data-delete-message="{% blocktrans with name=c.name %}Are you sure you want to delete the customer '{{ name }}'? This will also delete all memberships and portal links associated with this customer.{% endblocktrans %}">{% trans "Delete" %}</button>
         </td>
       </tr>
       {% empty %}

@@ -9,7 +9,7 @@ Last Modified: 2026-02-05
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
-from django.db.models import Prefetch, Q
+from django.db.models import Exists, OuterRef, Prefetch, Q
 from django.contrib import messages
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_POST
@@ -352,7 +352,11 @@ def facility_detail(request, slug):
         return redirect("portal_home")
     
     # Get related data
-    racks = facility.racks.filter(is_active=True).order_by("name")
+    racks = (
+        facility.racks.filter(is_active=True)
+        .annotate(has_sla=Exists(NetworkDevice.objects.filter(rack=OuterRef("pk"), is_sla=True)))
+        .order_by("name")
+    )
     network_devices = facility.network_devices.filter(is_active=True).select_related("product", "rack").order_by("rack", "rack_position", "name")
     ip_addresses = facility.ip_addresses.all().select_related("device").order_by("ip_address")
     documents = facility.documents.all().order_by("-uploaded_at")

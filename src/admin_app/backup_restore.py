@@ -3,6 +3,10 @@ Full backup and restore for PMG Portal: database (PostgreSQL) + media files.
 Produces a single .tar.gz that can be restored on a fresh server.
 Backup format is versioned; all formats in SUPPORTED_BACKUP_FORMAT_VERSIONS
 can be restored by any app version that supports them (backwards compatible).
+
+The database dump includes all tables, including portal.SystemInfo (app version,
+theme customizations from Admin → System customization, etc.). Restore replaces
+the full DB and media, so custom theme settings are restored with the backup.
 """
 from __future__ import annotations
 

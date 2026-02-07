@@ -82,7 +82,7 @@
           <tbody>
             {% for membership in memberships %}
             <tr>
-              <td><a href="{% url 'admin_app:admin_customer_detail' membership.customer.pk %}">{{ membership.customer.name }}</a></td>
+              <td><a href="{% url 'admin_app:admin_customer_detail' membership.customer.slug %}">{{ membership.customer.name }}</a></td>
               <td>
                 <span class="role-badge role-badge--{{ membership.role }}">
                   {{ membership.get_role_display }}

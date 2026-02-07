@@ -39,8 +39,32 @@
         <input type="file" id="logo-file-input" accept="image/*" style="display: none;" />
       </div>
       <div class="customer-logo-upload-info">
-        <p class="muted">Click to upload or change logo</p>
+        <p class="muted">Light mode logo</p>
         <p class="muted" style="font-size: 11px;">Recommended: 200x200px, PNG or JPG</p>
+      </div>
+      <div class="customer-logo-upload-area" id="logo-dark-upload-area" style="margin-top: 12px;">
+        {% if customer.logo_url_dark %}
+        <div class="customer-logo-preview-wrapper">
+          <img src="{{ customer.logo_url_dark }}" alt="{{ customer.name }} logo (dark)" class="customer-logo-preview" id="logo-dark-preview" />
+          <button type="button" class="logo-delete-btn" id="logo-dark-delete-btn" title="Delete dark logo">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
+          </button>
+        </div>
+        {% else %}
+        <div class="customer-logo-placeholder" id="logo-dark-placeholder">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+            <path d="M21 15l-5-5L5 21"></path>
+          </svg>
+          <span>Upload dark logo</span>
+        </div>
+        {% endif %}
+        <input type="file" id="logo-dark-file-input" accept="image/*" style="display: none;" />
+      </div>
+      <div class="customer-logo-upload-info">
+        <p class="muted">Dark mode logo (optional)</p>
+        <p class="muted" style="font-size: 11px;">Shown when portal is in dark theme</p>
       </div>
     </div>
     
@@ -51,13 +75,13 @@
           <span class="customer-card-slug">{{ customer.slug }}</span>
         </div>
         <div class="customer-card-header-actions">
-          <a href="{% url 'admin_app:admin_customer_edit' customer.pk %}" class="customer-card-icon-btn customer-card-icon-btn--edit" title="Edit Details">
+          <a href="{% url 'admin_app:admin_customer_edit' customer.slug %}" class="customer-card-icon-btn customer-card-icon-btn--edit" title="Edit Details">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
               <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
             </svg>
           </a>
-          <button type="button" class="customer-card-icon-btn customer-card-icon-btn--delete" data-delete-url="{% url 'admin_app:admin_customer_delete' customer.pk %}" data-delete-message="Are you sure you want to delete the customer '{{ customer.name }}'? This will also delete all memberships and portal links associated with this customer." title="Delete Customer">
+          <button type="button" class="customer-card-icon-btn customer-card-icon-btn--delete" data-delete-url="{% url 'admin_app:admin_customer_delete' customer.slug %}" data-delete-message="Are you sure you want to delete the customer '{{ customer.name }}'? This will also delete all memberships and portal links associated with this customer." title="Delete Customer">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M3 6h18"></path>
               <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
@@ -75,16 +99,16 @@
     </div>
   </div>
 
-  <!-- Tabs Section -->
-  <div class="customer-card-tabs">
-    <button class="customer-tab active" data-tab="members">Members ({{ memberships|length }})</button>
-    <button class="customer-tab" data-tab="links">Portal Links ({{ portal_links|length }})</button>
-  </div>
+  <!-- Sidebar + Content (same layout as facility) -->
+  <div class="facility-card-body">
+    <nav class="facility-card-sidemenu" aria-label="Customer sections">
+      <a href="#members" class="facility-sidemenu-item active" data-tab="members">Members ({{ memberships|length }})</a>
+      <a href="#links" class="facility-sidemenu-item" data-tab="links">Portal Links ({{ portal_links|length }})</a>
+    </nav>
 
-  <!-- Tab Content -->
-  <div class="customer-card-content">
+    <div class="facility-card-content">
     <!-- Members Tab -->
-    <div class="customer-tab-panel active" id="tab-members">
+    <div class="customer-tab-panel active" id="members">
       <div class="customer-section-header">
         <h2>Customer Members</h2>
         <a href="{% url 'admin_app:admin_customer_access_add' %}?customer={{ customer.pk }}&redirect_to=admin_app:admin_customer_detail" class="form-btn form-btn-primary form-btn--narrow">Add Member</a>
@@ -124,7 +148,7 @@
     </div>
 
     <!-- Links Tab -->
-    <div class="customer-tab-panel" id="tab-links">
+    <div class="customer-tab-panel" id="links">
       <div class="customer-section-header">
         <h2>Portal Links</h2>
         <a href="{% url 'admin_app:admin_portal_link_add' %}?customer={{ customer.pk }}&redirect_to=admin_app:admin_customer_detail" class="form-btn form-btn-primary form-btn--narrow">Add Link</a>
@@ -159,9 +183,41 @@
       {% endif %}
     </div>
 
+    </div>
   </div>
 </div>
 
+<style>
+.facility-card-body { display: flex; gap: 0 24px; align-items: flex-start; margin-top: 0; }
+.facility-card-sidemenu { flex-shrink: 0; width: 180px; display: flex; flex-direction: column; gap: 0; margin: 0; padding: 0; border-right: 1px solid var(--line); padding-right: 16px; }
+.facility-card-sidemenu .facility-sidemenu-item { text-decoration: none; color: inherit; display: block; width: 100%; padding: 10px 12px; margin: 0; text-align: left; font-size: 13px; font-weight: 500; color: var(--muted); background: transparent; border: none; border-radius: 0; cursor: pointer; transition: all 0.15s; font-family: inherit; }
+.facility-card-sidemenu .facility-sidemenu-item:hover { color: var(--text); background: rgba(255,255,255,0.04); }
+.facility-card-sidemenu .facility-sidemenu-item.active { color: #3b82f6; background: rgba(59,130,246,0.1); }
+.facility-card-content { flex: 1; min-width: 0; }
+</style>
+<script>
+(function() {
+  var sidemenuItems = document.querySelectorAll('.facility-card-sidemenu .facility-sidemenu-item');
+  var panels = document.querySelectorAll('.facility-card-content .customer-tab-panel');
+  function setActiveTab(tabId) {
+    sidemenuItems.forEach(function(i) { i.classList.toggle('active', i.dataset.tab === tabId); });
+    panels.forEach(function(p) { p.classList.toggle('active', p.id === tabId); });
+    if (history.replaceState) history.replaceState(null, '', '#' + tabId);
+  }
+  function getHashTab() {
+    var hash = (window.location.hash || '').replace(/^#/, '');
+    return hash && document.getElementById(hash) ? hash : 'members';
+  }
+  sidemenuItems.forEach(function(item) {
+    item.addEventListener('click', function(e) {
+      e.preventDefault();
+      setActiveTab(item.dataset.tab);
+    });
+  });
+  window.addEventListener('hashchange', function() { setActiveTab(getHashTab()); });
+  setActiveTab(getHashTab());
+})();
+</script>
 <script>
 (function() {
   const uploadArea = document.getElementById('logo-upload-area');
@@ -169,7 +225,7 @@
   const logoPreview = document.getElementById('logo-preview');
   const logoPlaceholder = document.getElementById('logo-placeholder');
   const deleteBtn = document.getElementById('logo-delete-btn');
-  const customerId = {{ customer.pk }};
+  const customerSlug = "{{ customer.slug|escapejs }}";
   
   // Upload area click handler
   if (uploadArea) {
@@ -212,7 +268,7 @@
       const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || '';
       formData.append('csrfmiddlewaretoken', csrfToken);
       
-      fetch('/admin/customers/' + customerId + '/logo/', {
+      fetch('/admin/customers/' + customerSlug + '/logo/', {
         method: 'POST',
         body: formData,
         headers: {
@@ -256,7 +312,7 @@
               if (!confirm('Are you sure you want to delete this logo?')) return;
               
               const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || '';
-              fetch('/admin/customers/' + customerId + '/logo/delete/', {
+              fetch('/admin/customers/' + customerSlug + '/logo/delete/', {
                 method: 'POST',
                 headers: {
                   'X-CSRFToken': csrfToken,
@@ -300,7 +356,7 @@
       if (!confirm('Are you sure you want to delete this logo?')) return;
       
       const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || '';
-      fetch('/admin/customers/' + customerId + '/logo/delete/', {
+      fetch('/admin/customers/' + customerSlug + '/logo/delete/', {
         method: 'POST',
         headers: {
           'X-CSRFToken': csrfToken,
@@ -322,6 +378,79 @@
         console.error('Error:', error);
         alert('Error deleting logo. Please try again.');
       });
+    });
+  }
+
+  // Dark logo upload/delete (same pattern as light)
+  const darkUploadArea = document.getElementById('logo-dark-upload-area');
+  const darkFileInput = document.getElementById('logo-dark-file-input');
+  const darkPreview = document.getElementById('logo-dark-preview');
+  const darkPlaceholder = document.getElementById('logo-dark-placeholder');
+  const darkDeleteBtn = document.getElementById('logo-dark-delete-btn');
+
+  if (darkUploadArea) {
+    darkUploadArea.addEventListener('click', function(e) {
+      if (darkDeleteBtn && e.target !== darkDeleteBtn && !darkDeleteBtn.contains(e.target))
+        darkFileInput?.click();
+    });
+  }
+  if (darkFileInput) {
+    darkFileInput.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file || !file.type.startsWith('image/')) { if (file) alert('Please select an image file.'); return; }
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        if (darkPlaceholder) darkPlaceholder.style.display = 'none';
+        let wrapper = darkUploadArea.querySelector('.customer-logo-preview-wrapper');
+        if (!wrapper) {
+          wrapper = document.createElement('div');
+          wrapper.className = 'customer-logo-preview-wrapper';
+          wrapper.innerHTML = '<img src="" class="customer-logo-preview" id="logo-dark-preview" /><button type="button" class="logo-delete-btn" id="logo-dark-delete-btn" title="Delete dark logo"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg></button>';
+          darkUploadArea.appendChild(wrapper);
+        }
+        const img = wrapper.querySelector('.customer-logo-preview');
+        if (img) img.src = ev.target.result;
+      };
+      reader.readAsDataURL(file);
+      const formData = new FormData();
+      formData.append('logo_dark', file);
+      formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]')?.value || '');
+      const csrf = document.querySelector('[name=csrfmiddlewaretoken]')?.value || '';
+      fetch('/admin/customers/' + customerSlug + '/logo-dark/', { method: 'POST', body: formData, headers: { 'X-CSRFToken': csrf } })
+        .then(r => r.json())
+        .then(data => {
+          if (data.success && data.logo_url_dark) {
+            if (darkPlaceholder) darkPlaceholder.style.display = 'none';
+            let w = darkUploadArea.querySelector('.customer-logo-preview-wrapper');
+            if (!w) {
+              w = document.createElement('div');
+              w.className = 'customer-logo-preview-wrapper';
+              w.innerHTML = '<img src="" class="customer-logo-preview" id="logo-dark-preview" /><button type="button" class="logo-delete-btn" id="logo-dark-delete-btn" title="Delete dark logo"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg></button>';
+              darkUploadArea.appendChild(w);
+              const delBtn = w.querySelector('.logo-delete-btn');
+              if (delBtn) delBtn.addEventListener('click', function(ev) { ev.stopPropagation(); if (!confirm('Delete dark logo?')) return; fetch('/admin/customers/' + customerSlug + '/logo-dark/delete/', { method: 'POST', headers: { 'X-CSRFToken': csrf } }).then(r => r.json()).then(d => { if (d.success) { w.remove(); if (darkPlaceholder) darkPlaceholder.style.display = 'flex'; darkFileInput.value = ''; } else alert('Error: ' + (d.error || 'Unknown')); }); });
+            }
+            const im = darkUploadArea.querySelector('.customer-logo-preview');
+            if (im) im.src = data.logo_url_dark + '?t=' + Date.now();
+          } else alert('Error uploading: ' + (data.error || 'Unknown'));
+        })
+        .catch(() => alert('Error uploading dark logo.'));
+    });
+  }
+  if (darkDeleteBtn) {
+    darkDeleteBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      if (!confirm('Are you sure you want to delete the dark logo?')) return;
+      const csrf = document.querySelector('[name=csrfmiddlewaretoken]')?.value || '';
+      fetch('/admin/customers/' + customerSlug + '/logo-dark/delete/', { method: 'POST', headers: { 'X-CSRFToken': csrf } })
+        .then(r => r.json())
+        .then(data => {
+          if (data.success) {
+            darkDeleteBtn.closest('.customer-logo-preview-wrapper')?.remove();
+            if (darkPlaceholder) darkPlaceholder.style.display = 'flex';
+            if (darkFileInput) darkFileInput.value = '';
+          } else alert('Error: ' + (data.error || 'Unknown'));
+        });
     });
   }
   

@@ -751,6 +751,57 @@ msgstr "Serverstyring"
 msgid "Backup & Restore"
 msgstr "Sikkerhetskopi og gjenoppretting"
 
+msgid "System customization"
+msgstr "Systemtilpasning"
+
+msgid "Save changes"
+msgstr "Lagre endringer"
+
+msgid "Reset dark theme"
+msgstr "Tilbakestill mørkt tema"
+
+msgid "Reset light theme"
+msgstr "Tilbakestill lyst tema"
+
+msgid "Reset all to default"
+msgstr "Tilbakestill alt til standard"
+
+msgid "Dark theme"
+msgstr "Mørkt tema"
+
+msgid "Light theme"
+msgstr "Lyst tema"
+
+msgid "Variables applied when users have dark mode selected."
+msgstr "Variabler som brukes når brukere har mørk modus valgt."
+
+msgid "Variables applied when users have light mode selected."
+msgstr "Variabler som brukes når brukere har lys modus valgt."
+
+msgid "Theme customizations saved."
+msgstr "Tematilpasninger lagret."
+
+msgid "Dark theme reset to default."
+msgstr "Mørkt tema tilbakestilt til standard."
+
+msgid "Light theme reset to default."
+msgstr "Lyst tema tilbakestilt til standard."
+
+msgid "All theme customizations reset to default."
+msgstr "Alle tematilpasninger tilbakestilt til standard."
+
+msgid "Override theme colors and other CSS variables for the entire portal. Values are stored in the database and survive updates. Leave a field empty to use the default. Backup & Restore includes these settings."
+msgstr "Overstyr temafarger og andre CSS-variabler for hele portalen. Verdier lagres i databasen og overlever oppdateringer. La et felt stå tomt for å bruke standard. Sikkerhetskopi inkluderer disse innstillingene."
+
+msgid "Note:"
+msgstr "Merk:"
+
+msgid "Use hex colors (e.g. #3b82f6) or rgba (e.g. rgba(0,0,0,0.5)). RGB-only values use comma-separated numbers (e.g. 59, 130, 246). Changes apply immediately after save across the portal and admin."
+msgstr "Bruk heksadesimale farger (f.eks. #3b82f6) eller rgba (f.eks. rgba(0,0,0,0.5)). Kun RGB-verdier bruker kommaseparerte tall (f.eks. 59, 130, 246). Endringer gjelder umiddelbart etter lagring i portalen og admin."
+
+msgid "Backup and restore use PostgreSQL client tools (pg_dump, psql), installed with the standard installer. Older backup formats are supported. The database backup includes all data, including system customization (theme colors) and app version."
+msgstr "Sikkerhetskopi og gjenoppretting bruker PostgreSQL-verktøy (pg_dump, psql), som installeres med standardinstallatoren. Eldre sikkerhetskopiformat støttes. Database-sikkerhetskopien inkluderer alle data, inkludert systemtilpasning (temaer) og appversjon."
+
 msgid "Add facility"
 msgstr "Legg til anlegg"
 

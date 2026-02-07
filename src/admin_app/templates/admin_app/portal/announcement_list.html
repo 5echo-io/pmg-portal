@@ -39,7 +39,7 @@
     <tbody>
       {% for ann in page_obj %}
       <tr>
-        <td><a href="{% url 'admin_app:admin_customer_detail' ann.customer_id %}">{{ ann.customer.name }}</a></td>
+        <td><a href="{% url 'admin_app:admin_customer_detail' ann.customer.slug %}">{{ ann.customer.name }}</a></td>
         <td>{{ ann.title }}</td>
         <td>{% if ann.is_pinned %}{% trans "Yes" %}{% else %}—{% endif %}</td>
         <td>{{ ann.created_at|date:"SHORT_DATETIME_FORMAT" }}{% if ann.created_by %} {% trans "by" %} {{ ann.created_by.get_full_name|default:ann.created_by.username }}{% endif %}</td>

@@ -47,7 +47,7 @@
       {% for m in page_obj %}
       <tr>
         <td><a href="{% url 'admin_app:admin_user_edit' m.user_id %}">{{ m.user.username }}</a></td>
-        <td><a href="{% url 'admin_app:admin_customer_edit' m.customer_id %}">{{ m.customer.name }}</a></td>
+        <td><a href="{% url 'admin_app:admin_customer_edit' m.customer.slug %}">{{ m.customer.name }}</a></td>
         <td>{{ m.get_role_display }}</td>
         <td><a href="{% url 'admin_app:admin_customer_access_edit' m.pk %}" class="admin-btn-sm">{% trans "Edit" %}</a></td>
       </tr>

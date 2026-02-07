@@ -32,10 +32,10 @@
   --accent-rgb: 59, 130, 246;
   --on-accent: #ffffff;
 
-  /* Fare (Slett, feil, advarsel) */
-  --danger: #e63939;
-  --danger-hover: #c53030;
-  --danger-rgb: 230, 57, 57;
+  /* Fare (Slett, feil, advarsel) – dempet rød, godt synlig mot mørk bakgrunn */
+  --danger: #b91c1c;
+  --danger-hover: #991b1b;
+  --danger-rgb: 185, 28, 28;
   --on-danger: #ffffff;
 
   /* Suksess (bekreftelse, status) */

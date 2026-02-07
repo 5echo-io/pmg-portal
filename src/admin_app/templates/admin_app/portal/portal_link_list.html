@@ -39,7 +39,7 @@
     <tbody>
       {% for link in page_obj %}
       <tr>
-        <td><a href="{% url 'admin_app:admin_customer_edit' link.customer_id %}">{{ link.customer.name }}</a></td>
+        <td><a href="{% url 'admin_app:admin_customer_edit' link.customer.slug %}">{{ link.customer.name }}</a></td>
         <td><a href="{{ link.url }}" target="_blank" rel="noopener">{{ link.title }}</a></td>
         <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis;">{{ link.url }}</td>
         <td>{{ link.sort_order }}</td>

@@ -112,6 +112,7 @@
 </script>
 
 <div class="admin-backup-note">
-  <strong>Note:</strong> Backup and restore use PostgreSQL client tools (<code>pg_dump</code>, <code>psql</code>). These are installed automatically when you install PMG Portal with the standard installer. Backups created with older app versions can be restored here as long as the backup format is supported.
+  <strong>{% trans "Note:" %}</strong>
+  {% trans "Backup and restore use PostgreSQL client tools (pg_dump, psql), installed with the standard installer. Older backup formats are supported. The database backup includes all data, including system customization (theme colors) and app version." %}
 </div>
 {% endblock %}

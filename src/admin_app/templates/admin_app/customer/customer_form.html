@@ -1,10 +1,11 @@
 {% extends "admin_app/base.html" %}
+{% load i18n %}
 
 {% block admin_title %}{% if customer %}Edit customer{% else %}Add customer{% endif %}{% endblock %}
-{% block breadcrumb_back %}<a href="{% url 'admin_app:admin_customer_list' %}" class="breadcrumb-back-btn" aria-label="Back to Customers">← Customers</a>{% endblock %}
+{% block breadcrumb_back %}<a href="{% url 'admin_app:admin_customer_list' %}" class="breadcrumb-back-btn" aria-label="Back to Customers">← {% trans "Customers" %}</a>{% endblock %}
 {% block breadcrumb_extra %}
-<span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_customer_list' %}">Customers</a>
-<span class="breadcrumb-sep">→</span> <span>{% if customer %}Edit{% else %}Add{% endif %}</span>
+<span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_customer_list' %}">{% trans "Customers" %}</a>
+<span class="breadcrumb-sep">→</span> {% if customer %}<a href="{% url 'admin_app:admin_customer_detail' customer.slug %}">{{ customer.name }}</a><span class="breadcrumb-sep">→</span> <span>{% trans "Edit" %}</span>{% else %}<span>{% trans "Add" %}</span>{% endif %}
 {% endblock %}
 
 {% block admin_content %}
@@ -41,12 +42,24 @@
     {% if customer and customer.logo_url %}
     <div class="admin-logo-preview" style="margin-bottom: 12px;">
       <img src="{{ customer.logo_url }}" alt="{{ customer.name }} logo" style="max-width: 200px; max-height: 80px; border: 1px solid var(--line); border-radius: 4px; padding: 4px; background: var(--card);" onerror="this.parentElement.style.display='none';">
-      <p class="admin-form-help" style="margin-top: 4px; color: var(--muted); font-size: 12px;">Current logo</p>
+      <p class="admin-form-help" style="margin-top: 4px; color: var(--muted); font-size: 12px;">Light mode logo</p>
     </div>
     {% endif %}
     {{ form.logo }}
     {% if form.logo.help_text %}<p class="admin-form-help">{{ form.logo.help_text|escape }}</p>{% endif %}
     {% if form.logo.errors %}<p class="form-error">{{ form.logo.errors.0 }}</p>{% endif %}
+  </div>
+  <div class="admin-form-field">
+    <label for="{{ form.logo_dark.id_for_label }}">{{ form.logo_dark.label }}</label>
+    {% if customer and customer.logo_url_dark %}
+    <div class="admin-logo-preview" style="margin-bottom: 12px;">
+      <img src="{{ customer.logo_url_dark }}" alt="{{ customer.name }} logo (dark)" style="max-width: 200px; max-height: 80px; border: 1px solid var(--line); border-radius: 4px; padding: 4px; background: var(--card);" onerror="this.parentElement.style.display='none';">
+      <p class="admin-form-help" style="margin-top: 4px; color: var(--muted); font-size: 12px;">Dark mode logo</p>
+    </div>
+    {% endif %}
+    {{ form.logo_dark }}
+    {% if form.logo_dark.help_text %}<p class="admin-form-help">{{ form.logo_dark.help_text|escape }}</p>{% endif %}
+    {% if form.logo_dark.errors %}<p class="form-error">{{ form.logo_dark.errors.0 }}</p>{% endif %}
   </div>
   <div class="admin-form-field">
     <label for="{{ form.primary_contact.id_for_label }}">{{ form.primary_contact.label }}</label>
@@ -55,8 +68,8 @@
     {% if form.primary_contact.errors %}<p class="form-error">{{ form.primary_contact.errors.0 }}</p>{% endif %}
   </div>
   <div class="admin-form-actions">
-    <button type="submit" class="form-btn form-btn-primary form-btn--narrow">Save</button>
-    <a href="{% url 'admin_app:admin_customer_list' %}" class="form-btn form-btn-secondary">Cancel</a>
+    <button type="submit" class="form-btn form-btn-primary">{% trans "Save" %}</button>
+    {% if customer %}<a href="{% url 'admin_app:admin_customer_detail' customer.slug %}" class="form-btn form-btn-secondary">{% trans "Cancel" %}</a>{% else %}<a href="{% url 'admin_app:admin_customer_list' %}" class="form-btn form-btn-secondary">{% trans "Cancel" %}</a>{% endif %}
   </div>
 </form>
 {% endblock %}

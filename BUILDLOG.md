@@ -15,6 +15,14 @@ Chronological log of builds and releases (newest first). Each entry: date, branc
 
 - 2026-02-07 (Europe/Oslo)
   - Branch: dev
+  - Version: 4.9.0-beta.1
+  - Summary:
+    - Versjonsberegning (SemVer): MAJOR 4 (ingen brytende endringer); MINOR 9 (stor funksjonssett siden 4.8.0-beta.1 – tema, anlegg, kontakter, dokumentmaler, servicelogg, release notes, enheter, nettverk-PDF m.m. – 25+ beta-pushes); PATCH 0; BUILD 1 (første beta i 4.9.0-linjen). VERSION 4.8.0-beta.36 → 4.9.0-beta.1.
+    - CHANGELOG: Ryddet og tilpasset pushes til dev – [4.9.0-beta.1] øverst med versjonsberegning og changelog-fiks; seksjon "4.8.0-beta (endringer per push til dev)" med underseksjoner for beta.36 ned til beta.12; "Previous changes (4.8.x)" beholdt. Pre-release viser nå gjeldende versjons changelog (context_processors).
+  - Version bump: 4.8.0-beta.36 → 4.9.0-beta.1 (MINOR 8→9, BUILD reset to 1)
+
+- 2026-02-07 (Europe/Oslo)
+  - Branch: dev
   - Version: 4.8.0-beta.35
   - Summary:
     - Release: All local/agent changes from [Unreleased] promoted to 4.8.0-beta.35. Theme (theme-dark/theme-light.css, THEME_COLORS.md, no flash); facility overlay/badges/overview/address/contacts/menu; buttons/modals/delete styling; document template preview; release notes popup; important info, technical support, devices, network PDF, FacilityContact; WeasyPrint service report PDF. CHANGELOG and BUILDLOG updated; VERSION 4.8.0-beta.34 → 4.8.0-beta.35.

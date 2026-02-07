@@ -10,7 +10,8 @@ class Customer(models.Model):
     slug = models.SlugField(max_length=80, unique=True)
     org_number = models.CharField(max_length=32, blank=True, default="")
     contact_info = models.TextField(blank=True, default="")
-    logo = models.ImageField(upload_to="customer_logos/", blank=True, null=True, help_text="Customer logo displayed on dashboard")
+    logo = models.ImageField(upload_to="customer_logos/", blank=True, null=True, verbose_name="Logo (light mode)", help_text="Customer logo for light mode (and fallback)")
+    logo_dark = models.ImageField(upload_to="customer_logos/", blank=True, null=True, verbose_name="Logo (dark mode)", help_text="Customer logo for dark mode (optional)")
     primary_contact = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
@@ -51,28 +52,55 @@ class Customer(models.Model):
                 return settings.MEDIA_URL + self.logo.name
             except Exception:
                 return None
-    
+
+    def logo_url_dark(self):
+        """Return dark-mode logo URL if logo_dark exists. Same logic as logo_url."""
+        if not self.logo_dark or not self.logo_dark.name:
+            return None
+        try:
+            url = self.logo_dark.url
+            try:
+                if hasattr(self.logo_dark, "storage") and hasattr(self.logo_dark.storage, "exists"):
+                    if self.logo_dark.storage.exists(self.logo_dark.name):
+                        return url
+                if hasattr(self.logo_dark, "path"):
+                    import os
+                    if os.path.exists(self.logo_dark.path):
+                        return url
+            except Exception:
+                pass
+            return url
+        except Exception:
+            try:
+                return settings.MEDIA_URL + self.logo_dark.name
+            except Exception:
+                return None
+
     def delete(self, *args, **kwargs):
-        """Override delete to remove logo file and all related files when customer is deleted."""
-        # Store logo path before deletion
+        """Override delete to remove logo files when customer is deleted."""
         logo_path = None
+        logo_dark_path = None
         if self.logo:
             try:
                 logo_path = self.logo.path
             except Exception:
                 pass
-        
-        # Delete the customer (this will cascade delete CustomerMembership and PortalLink)
-        super().delete(*args, **kwargs)
-        
-        # Delete logo file after model deletion
-        if logo_path:
+        if self.logo_dark:
             try:
-                import os
-                if os.path.exists(logo_path):
-                    os.remove(logo_path)
+                logo_dark_path = self.logo_dark.path
             except Exception:
-                pass  # Silently fail if file deletion fails
+                pass
+
+        super().delete(*args, **kwargs)
+
+        for path in (logo_path, logo_dark_path):
+            if path:
+                try:
+                    import os
+                    if os.path.exists(path):
+                        os.remove(path)
+                except Exception:
+                    pass
 
 
 class CustomerMembership(models.Model):

@@ -1,0 +1,93 @@
+{% extends "admin_app/base.html" %}
+{% load static i18n %}
+
+{% block admin_title %}{% trans "System customization" %}{% endblock %}
+{% block breadcrumb_extra %}<span class="breadcrumb-sep">→</span> <span>{% trans "Server management" %}</span><span class="breadcrumb-sep">→</span> <span>{% trans "System customization" %}</span>{% endblock %}
+
+{% block admin_content %}
+<h1 class="admin-page-title">{% trans "System customization" %}</h1>
+
+<p class="admin-customize-intro">
+  {% trans "Override theme colors and other CSS variables for the entire portal. Values are stored in the database and survive updates. Leave a field empty to use the default. Backup & Restore includes these settings." %}
+</p>
+
+<form method="post" action="{% url 'admin_app:admin_system_customize' %}" id="system-customize-form">
+  {% csrf_token %}
+
+  <div class="admin-customize-actions-top">
+    <button type="submit" name="action" value="save" class="form-btn form-btn-primary">{% trans "Save changes" %}</button>
+    <div class="admin-customize-reset-wrap">
+      <button type="submit" name="action" value="reset_dark" class="form-btn form-btn-secondary admin-customize-reset-btn">{% trans "Reset dark theme" %}</button>
+      <button type="submit" name="action" value="reset_light" class="form-btn form-btn-secondary admin-customize-reset-btn">{% trans "Reset light theme" %}</button>
+      {% if has_customizations %}
+      <button type="submit" name="action" value="reset_all" class="form-btn form-btn-secondary admin-customize-reset-btn">{% trans "Reset all to default" %}</button>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="admin-customize-grid">
+    <div class="panel admin-customize-panel admin-customize-panel-dark">
+      <div class="admin-customize-panel-heading">
+        <span class="admin-customize-panel-icon admin-customize-panel-icon-dark" aria-hidden="true">◐</span>
+        {% trans "Dark theme" %}
+      </div>
+      <p class="admin-customize-panel-desc">{% trans "Variables applied when users have dark mode selected." %}</p>
+      <div class="admin-customize-fields">
+        {% for row in var_rows %}
+        <div class="admin-customize-field">
+          <label for="id_dark_{{ row.key_slug }}">{{ row.label }}</label>
+          <div class="admin-customize-input-wrap">
+            <input type="text"
+                   id="id_dark_{{ row.key_slug }}"
+                   name="dark--{{ row.key }}"
+                   value="{{ row.dark_value }}"
+                   placeholder="{{ row.default_dark }}"
+                   class="form-input admin-customize-input"
+                   autocomplete="off">
+            {% if row.is_hex %}
+            <span class="admin-customize-swatch" style="background: {{ row.dark_value }}" title="{{ row.dark_value }}"></span>
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="panel admin-customize-panel admin-customize-panel-light">
+      <div class="admin-customize-panel-heading">
+        <span class="admin-customize-panel-icon admin-customize-panel-icon-light" aria-hidden="true">◑</span>
+        {% trans "Light theme" %}
+      </div>
+      <p class="admin-customize-panel-desc">{% trans "Variables applied when users have light mode selected." %}</p>
+      <div class="admin-customize-fields">
+        {% for row in var_rows %}
+        <div class="admin-customize-field">
+          <label for="id_light_{{ row.key_slug }}">{{ row.label }}</label>
+          <div class="admin-customize-input-wrap">
+            <input type="text"
+                   id="id_light_{{ row.key_slug }}"
+                   name="light--{{ row.key }}"
+                   value="{{ row.light_value }}"
+                   placeholder="{{ row.default_light }}"
+                   class="form-input admin-customize-input"
+                   autocomplete="off">
+            {% if row.is_hex %}
+            <span class="admin-customize-swatch" style="background: {{ row.light_value }}" title="{{ row.light_value }}"></span>
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <div class="admin-customize-actions-bottom">
+    <button type="submit" name="action" value="save" class="form-btn form-btn-primary">{% trans "Save changes" %}</button>
+  </div>
+</form>
+
+<div class="admin-customize-note">
+  <strong>{% trans "Note:" %}</strong>
+  {% trans "Use hex colors (e.g. #3b82f6) or rgba (e.g. rgba(0,0,0,0.5)). RGB-only values use comma-separated numbers (e.g. 59, 130, 246). Changes apply immediately after save across the portal and admin." %}
+</div>
+{% endblock %}

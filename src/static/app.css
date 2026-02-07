@@ -15,16 +15,7 @@ html.theme-light .btn.btn-primary:hover {
   border-color: var(--accent-hover);
   color: var(--on-accent);
 }
-html.theme-light .form-btn-primary {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: var(--on-accent);
-}
-html.theme-light .form-btn-primary:hover {
-  background: var(--accent-hover);
-  border-color: var(--accent-hover);
-  color: var(--on-accent);
-}
+/* Primærknapp (Lagre osv.) bruker alltid standard knappestil (var(--btn)), ikke accent */
 html.theme-light .topbar-btn.active {
   background: rgba(var(--accent-rgb), 0.12);
   border-color: var(--accent);
@@ -133,6 +124,17 @@ h1 { margin: 0 0 6px 0; font-size: 22px; }
 .customer-logo[src=""],
 .customer-logo:not([src]) {
   display: none;
+}
+
+/* Theme-aware customer logos: show light or dark version by theme */
+.logo-dark {
+  display: none !important;
+}
+html.theme-dark .logo-light {
+  display: none !important;
+}
+html.theme-dark .logo-dark {
+  display: block !important;
 }
 
 .customer-header-text {
@@ -1607,6 +1609,7 @@ html.theme-dark .topbar-theme-btn .theme-icon-moon {
   min-width: 0;
   flex-shrink: 0;
   vertical-align: middle;
+  margin: 0;
 }
 
 .form-btn-primary {
@@ -2699,6 +2702,161 @@ button.btn { width: auto; margin: 0; -webkit-appearance: none; appearance: none;
   border-radius: 4px;
 }
 
+/* System customization page */
+.admin-customize-intro {
+  color: var(--muted);
+  margin: 0 0 20px 0;
+  max-width: 640px;
+  line-height: 1.5;
+}
+
+.admin-customize-actions-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.admin-customize-reset-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.admin-customize-reset-btn {
+  font-size: 13px;
+  padding: 8px 14px;
+}
+
+.admin-customize-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 1024px) {
+  .admin-customize-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.admin-customize-panel {
+  padding: 24px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md, 12px);
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-customize-panel-dark {
+  border-left: 4px solid var(--accent);
+}
+
+.admin-customize-panel-light {
+  border-left: 4px solid var(--muted);
+}
+
+.admin-customize-panel-heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 8px 0;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.admin-customize-panel-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  font-size: 16px;
+}
+
+.admin-customize-panel-icon-dark {
+  background: rgba(var(--accent-rgb), 0.15);
+  color: var(--accent);
+}
+
+.admin-customize-panel-icon-light {
+  background: rgba(0, 0, 0, 0.08);
+  color: var(--muted);
+}
+
+html.theme-light .admin-customize-panel-icon-light {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.admin-customize-panel-desc {
+  color: var(--muted);
+  font-size: 13px;
+  margin: 0 0 20px 0;
+  line-height: 1.4;
+}
+
+.admin-customize-fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px 20px;
+}
+
+.admin-customize-field label {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.admin-customize-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-customize-input {
+  flex: 1;
+  min-width: 0;
+  font-size: 13px;
+  padding: 8px 10px;
+}
+
+.admin-customize-swatch {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  flex-shrink: 0;
+}
+
+.admin-customize-actions-bottom {
+  margin-bottom: 20px;
+}
+
+.admin-customize-note {
+  margin-top: 0;
+  padding: 14px 18px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.admin-customize-note code {
+  font-size: 12px;
+  padding: 2px 6px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
 .admin-messages {
   list-style: none;
   padding: 0;
@@ -2966,7 +3124,9 @@ button.btn { width: auto; margin: 0; -webkit-appearance: none; appearance: none;
   gap: 6px;
   height: 32px;
   min-height: 32px;
-  padding: 0 14px;
+  padding: 0 10px;
+  width: max-content;
+  max-width: 100%;
   font-size: 0.8125rem;
   font-weight: 500;
   border-radius: 8px;
@@ -3152,7 +3312,8 @@ button.admin-btn-sm {
 }
 
 .admin-form-actions .form-btn,
-.admin-form-actions a.form-btn {
+.admin-form-actions a.form-btn,
+.admin-form-actions button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -3165,6 +3326,7 @@ button.admin-btn-sm {
   min-width: 0;
   flex-shrink: 0;
   vertical-align: middle;
+  margin: 0;
 }
 
 .admin-form-actions--modal {

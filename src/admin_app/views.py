@@ -250,16 +250,16 @@ def customer_add(request):
         if form.is_valid():
             customer = form.save()
             messages.success(request, "Customer created.")
-            return redirect("admin_app:admin_customer_detail", pk=customer.pk)
+            return redirect("admin_app:admin_customer_detail", slug=customer.slug)
     else:
         form = CustomerForm()
     return render(request, "admin_app/customer/customer_form.html", {"form": form, "customer": None})
 
 
 @staff_required
-def customer_detail(request, pk):
+def customer_detail(request, slug):
     """Modern customer card view showing all customer information."""
-    customer = get_object_or_404(Customer, pk=pk)
+    customer = get_object_or_404(Customer, slug=slug)
     memberships = CustomerMembership.objects.filter(customer=customer).select_related("user").order_by("user__username")
     portal_links = PortalLink.objects.filter(customer=customer).order_by("sort_order", "title")
     
@@ -276,9 +276,9 @@ def customer_detail(request, pk):
 
 @staff_required
 @require_POST
-def customer_logo_upload(request, pk):
+def customer_logo_upload(request, slug):
     """Handle logo upload via AJAX."""
-    customer = get_object_or_404(Customer, pk=pk)
+    customer = get_object_or_404(Customer, slug=slug)
     
     if "logo" not in request.FILES:
         return JsonResponse({"error": "No file provided"}, status=400)
@@ -424,9 +424,9 @@ def customer_logo_upload(request, pk):
 
 @staff_required
 @require_POST
-def customer_logo_delete(request, pk):
+def customer_logo_delete(request, slug):
     """Handle logo deletion via AJAX."""
-    customer = get_object_or_404(Customer, pk=pk)
+    customer = get_object_or_404(Customer, slug=slug)
     
     if not customer.logo:
         return JsonResponse({"error": "No logo to delete"}, status=400)
@@ -467,50 +467,174 @@ def customer_logo_delete(request, pk):
     return JsonResponse({"success": True})
 
 
+def _customer_logo_upload_for_field(customer, logo_file, field_name, url_method_name):
+    """Save uploaded file to customer logo or logo_dark; return (success, logo_url or error_msg)."""
+    import logging
+    import uuid
+    from django.core.files.storage import default_storage
+    from django.core.files.base import ContentFile
+
+    logger = logging.getLogger(__name__)
+    if not logo_file.content_type.startswith("image/"):
+        return False, "File must be an image"
+
+    old_name = None
+    old_path = None
+    field = getattr(customer, field_name)
+    if field:
+        try:
+            old_name = field.name
+            old_path = field.path
+        except Exception:
+            pass
+
+    media_root = settings.MEDIA_ROOT
+    customer_logos_dir = media_root / "customer_logos"
+    try:
+        customer_logos_dir.mkdir(parents=True, exist_ok=True)
+    except Exception as e:
+        logger.error(f"Failed to create customer_logos directory: {e}")
+        return False, str(e)
+
+    logo_file.seek(0)
+    file_content = logo_file.read()
+    logo_file.seek(0)
+    file_ext = os.path.splitext(logo_file.name)[1]
+    unique_filename = f"{os.path.splitext(logo_file.name)[0]}_{uuid.uuid4().hex[:8]}{file_ext}"
+    storage_path = f"customer_logos/{unique_filename}"
+
+    try:
+        saved_name = default_storage.save(storage_path, ContentFile(file_content))
+        setattr(customer, field_name, saved_name)
+        customer.save()
+    except Exception as e:
+        logger.error(f"Error saving {field_name}: {e}")
+        return False, str(e)
+
+    customer.refresh_from_db()
+    if old_path and old_name:
+        try:
+            new_name = getattr(customer, field_name).name if getattr(customer, field_name) else None
+            if new_name != old_name and os.path.exists(old_path):
+                os.remove(old_path)
+        except Exception:
+            pass
+
+    url = getattr(customer, url_method_name)()
+    if not url:
+        url = settings.MEDIA_URL + getattr(customer, field_name).name
+    return True, url
+
+
+def _customer_logo_delete_for_field(customer, field_name):
+    """Clear customer logo or logo_dark and remove file. Return (success, error_msg)."""
+    field = getattr(customer, field_name)
+    if not field:
+        return False, "No logo to delete"
+    try:
+        logo_path = None
+        try:
+            logo_path = field.path
+        except Exception:
+            pass
+        field.delete(save=False)
+        customer.save()
+        if logo_path and os.path.exists(logo_path):
+            try:
+                os.remove(logo_path)
+                logo_dir = os.path.dirname(logo_path)
+                if os.path.exists(logo_dir) and not os.listdir(logo_dir):
+                    os.rmdir(logo_dir)
+            except Exception:
+                pass
+        return True, None
+    except Exception as e:
+        return False, str(e)
+
+
 @staff_required
-def customer_edit(request, pk):
+@require_POST
+def customer_logo_dark_upload(request, slug):
+    """Handle dark-mode logo upload via AJAX."""
+    customer = get_object_or_404(Customer, slug=slug)
+    if "logo_dark" not in request.FILES:
+        return JsonResponse({"error": "No file provided"}, status=400)
+    success, result = _customer_logo_upload_for_field(
+        customer, request.FILES["logo_dark"], "logo_dark", "logo_url_dark"
+    )
+    if not success:
+        return JsonResponse({"error": result}, status=400)
+    return JsonResponse({"success": True, "logo_url_dark": result})
+
+
+@staff_required
+@require_POST
+def customer_logo_dark_delete(request, slug):
+    """Handle dark-mode logo deletion via AJAX."""
+    customer = get_object_or_404(Customer, slug=slug)
+    success, err = _customer_logo_delete_for_field(customer, "logo_dark")
+    if not success:
+        return JsonResponse({"error": err}, status=400)
+    return JsonResponse({"success": True})
+
+
+@staff_required
+def customer_edit(request, slug):
     from .forms import CustomerForm
-    customer = get_object_or_404(Customer, pk=pk)
+    customer = get_object_or_404(Customer, slug=slug)
     if request.method == "POST":
         # Store old logo info before form processing
         old_logo_name = None
         old_logo_path = None
+        old_logo_dark_name = None
+        old_logo_dark_path = None
         if customer.logo:
             try:
                 old_logo_name = customer.logo.name
                 old_logo_path = customer.logo.path
             except Exception:
                 pass
-        
+        if customer.logo_dark:
+            try:
+                old_logo_dark_name = customer.logo_dark.name
+                old_logo_dark_path = customer.logo_dark.path
+            except Exception:
+                pass
+
         form = CustomerForm(request.POST, request.FILES, instance=customer)
         if form.is_valid():
-            # Check if a new logo file was actually uploaded
-            new_logo_uploaded = 'logo' in request.FILES and request.FILES['logo']
-            
-            # Save the form (this will save the new logo if uploaded)
+            new_logo_uploaded = "logo" in request.FILES and request.FILES["logo"]
+            new_logo_dark_uploaded = "logo_dark" in request.FILES and request.FILES["logo_dark"]
             saved_customer = form.save()
-            
-            # If a new logo was uploaded and we had an old one, delete the old file
-            if new_logo_uploaded and old_logo_path and old_logo_name:
+
+            def remove_old_if_replaced(old_path, old_name, new_name):
+                if not old_path or not old_name:
+                    return
                 try:
-                    # Refresh to get new logo name
-                    saved_customer.refresh_from_db()
-                    # Only delete if the new logo is different from the old one
-                    if not saved_customer.logo or saved_customer.logo.name != old_logo_name:
-                        if os.path.exists(old_logo_path):
-                            os.remove(old_logo_path)
-                            # Try to remove empty directory
-                            try:
-                                old_dir = os.path.dirname(old_logo_path)
-                                if os.path.exists(old_dir) and not os.listdir(old_dir):
-                                    os.rmdir(old_dir)
-                            except Exception:
-                                pass
+                    if not new_name or new_name != old_name:
+                        if os.path.exists(old_path):
+                            os.remove(old_path)
+                            old_dir = os.path.dirname(old_path)
+                            if os.path.exists(old_dir) and not os.listdir(old_dir):
+                                os.rmdir(old_dir)
                 except Exception:
-                    pass  # Silently fail if file deletion fails
-            
+                    pass
+
+            if new_logo_uploaded and old_logo_path and old_logo_name:
+                saved_customer.refresh_from_db()
+                remove_old_if_replaced(
+                    old_logo_path, old_logo_name,
+                    saved_customer.logo.name if saved_customer.logo else None,
+                )
+            if new_logo_dark_uploaded and old_logo_dark_path and old_logo_dark_name:
+                saved_customer.refresh_from_db()
+                remove_old_if_replaced(
+                    old_logo_dark_path, old_logo_dark_name,
+                    saved_customer.logo_dark.name if saved_customer.logo_dark else None,
+                )
+
             messages.success(request, "Customer updated.")
-            return redirect("admin_app:admin_customer_detail", pk=customer.pk)
+            return redirect("admin_app:admin_customer_detail", slug=customer.slug)
     else:
         form = CustomerForm(instance=customer)
     return render(request, "admin_app/customer/customer_form.html", {"form": form, "customer": customer})
@@ -518,9 +642,9 @@ def customer_edit(request, pk):
 
 @staff_required
 @require_POST
-def customer_delete(request, pk):
+def customer_delete(request, slug):
     """Delete a customer and all related data."""
-    customer = get_object_or_404(Customer, pk=pk)
+    customer = get_object_or_404(Customer, slug=slug)
     customer_name = customer.name
     
     # Delete customer (this will cascade delete CustomerMembership and PortalLink)
@@ -577,7 +701,11 @@ def customer_access_add(request):
             messages.success(request, "Access added.")
             # If customer_id was provided, redirect to customer card
             if customer_id:
-                return redirect("admin_app:admin_customer_detail", pk=customer_id)
+                try:
+                    c = Customer.objects.get(pk=customer_id)
+                    return redirect("admin_app:admin_customer_detail", slug=c.slug)
+                except Customer.DoesNotExist:
+                    pass
             return redirect(redirect_to)
     else:
         form = CustomerMembershipForm()
@@ -605,7 +733,11 @@ def customer_access_edit(request, pk):
             messages.success(request, "Access updated.")
             # If customer_id was provided, redirect to customer card
             if customer_id:
-                return redirect("admin_app:admin_customer_detail", pk=customer_id)
+                try:
+                    c = Customer.objects.get(pk=customer_id)
+                    return redirect("admin_app:admin_customer_detail", slug=c.slug)
+                except Customer.DoesNotExist:
+                    pass
             return redirect(redirect_to)
     else:
         form = CustomerMembershipForm(instance=membership)
@@ -653,7 +785,11 @@ def portal_link_add(request):
             messages.success(request, "Portal link created.")
             # If customer_id was provided, redirect to customer card
             if customer_id:
-                return redirect("admin_app:admin_customer_detail", pk=customer_id)
+                try:
+                    c = Customer.objects.get(pk=customer_id)
+                    return redirect("admin_app:admin_customer_detail", slug=c.slug)
+                except Customer.DoesNotExist:
+                    pass
             return redirect(redirect_to)
     else:
         form = PortalLinkForm()
@@ -681,7 +817,11 @@ def portal_link_edit(request, pk):
             messages.success(request, "Portal link updated.")
             # If customer_id was provided, redirect to customer card
             if customer_id:
-                return redirect("admin_app:admin_customer_detail", pk=customer_id)
+                try:
+                    c = Customer.objects.get(pk=customer_id)
+                    return redirect("admin_app:admin_customer_detail", slug=c.slug)
+                except Customer.DoesNotExist:
+                    pass
             return redirect(redirect_to)
     else:
         form = PortalLinkForm(instance=link)
@@ -2728,3 +2868,78 @@ def backup_restore(request):
             return redirect("admin_app:admin_backup_restore")
 
     return render(request, "admin_app/backup/backup_restore.html")
+
+
+# ----- System customization (theme colors, superuser only) -----
+@superuser_required
+@require_http_methods(["GET", "POST"])
+def system_customize(request):
+    """Server management: customize theme colors (stored in DB, applied site-wide)."""
+    from .theme_settings import (
+        get_theme_customizations,
+        set_theme_customizations,
+        get_default_theme_vars,
+        DEFAULT_THEME_VARS,
+        VARIABLE_LABELS,
+        THEME_VAR_ORDER,
+    )
+    if request.method == "POST":
+        action = request.POST.get("action")
+        if action == "reset_dark":
+            custom = get_theme_customizations()
+            custom["dark"] = {}
+            set_theme_customizations(custom)
+            messages.success(request, _("Dark theme reset to default."))
+            return redirect("admin_app:admin_system_customize")
+        if action == "reset_light":
+            custom = get_theme_customizations()
+            custom["light"] = {}
+            set_theme_customizations(custom)
+            messages.success(request, _("Light theme reset to default."))
+            return redirect("admin_app:admin_system_customize")
+        if action == "reset_all":
+            set_theme_customizations({"dark": {}, "light": {}})
+            messages.success(request, _("All theme customizations reset to default."))
+            return redirect("admin_app:admin_system_customize")
+        if action == "save":
+            data = {"dark": {}, "light": {}}
+            def_d = DEFAULT_THEME_VARS["dark"]
+            def_l = DEFAULT_THEME_VARS["light"]
+            for key in THEME_VAR_ORDER:
+                for theme, def_map in (("dark", def_d), ("light", def_l)):
+                    if key not in def_map:
+                        continue
+                    val = request.POST.get(f"{theme}--{key}")
+                    if val is None:
+                        continue
+                    val = str(val).strip()
+                    if val and val != def_map[key]:
+                        data[theme][key] = val
+            set_theme_customizations(data)
+            messages.success(request, _("Theme customizations saved."))
+            return redirect("admin_app:admin_system_customize")
+
+    custom = get_theme_customizations()
+    defaults = get_default_theme_vars()
+    dark_merged = {k: custom["dark"].get(k, defaults["dark"][k]) for k in THEME_VAR_ORDER}
+    light_merged = {k: custom["light"].get(k, defaults["light"][k]) for k in THEME_VAR_ORDER}
+    def_light = DEFAULT_THEME_VARS["light"]
+    def_dark = DEFAULT_THEME_VARS["dark"]
+    var_rows = [
+        {
+            "key": k,
+            "key_slug": k.replace("--", "").replace("-", "_"),
+            "label": VARIABLE_LABELS.get(k, k),
+            "dark_value": dark_merged[k],
+            "light_value": light_merged[k],
+            "default_dark": def_dark[k],
+            "default_light": def_light[k],
+            "is_hex": def_dark[k].strip().startswith("#"),
+        }
+        for k in THEME_VAR_ORDER
+    ]
+    context = {
+        "var_rows": var_rows,
+        "has_customizations": bool(custom["dark"] or custom["light"]),
+    }
+    return render(request, "admin_app/system/system_customize.html", context)

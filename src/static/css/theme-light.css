@@ -32,10 +32,10 @@ html.theme-light {
   --accent-rgb: 37, 99, 235;
   --on-accent: #ffffff;
 
-  /* Fare (Slett, feil, advarsel) */
-  --danger: #dc2626;
-  --danger-hover: #b91c1c;
-  --danger-rgb: 220, 38, 38;
+  /* Fare (Slett, feil, advarsel) – dempet rød, ikke for skrikende */
+  --danger: #c53030;
+  --danger-hover: #a61e1e;
+  --danger-rgb: 197, 48, 48;
   --on-danger: #ffffff;
 
   /* Suksess (bekreftelse, status) */
