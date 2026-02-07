@@ -18,6 +18,16 @@ _(Ingen endringer ennå.)_
 
 ---
 
+## [5.0.0-beta.6] - 2026-02-07
+
+### Changed
+
+#### Migrering / Feilsøking
+- **SETUP_GUIDE.md**: Ny troubleshooting for feilen «relation portal_userprofile does not exist» (migreringsstatus ute av sync): steg for å fjerne 0021–0023 fra `django_migrations` og kjøre migrate på nytt.
+- **update.sh**: Ved migreringsfeil som inneholder «relation … does not exist» eller «portal_userprofile» vises nå hint om recovery i SETUP_GUIDE.
+
+---
+
 ## [5.0.0-beta.5] - 2026-02-07
 
 ### Changed

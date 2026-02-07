@@ -201,6 +201,9 @@ MIGRATE_OUTPUT=$(sudo -E "$SRC_DIR/.venv/bin/python" manage.py migrate --noinput
         echo ""
         echo "Migration failed. The database schema must match the application code."
         echo "If you see 'column X does not exist', run this update script after every code deploy so migrations are applied."
+        if echo "$MIGRATE_OUTPUT" | grep -q "relation.*does not exist\|portal_userprofile"; then
+            echo "If you see 'relation \"portal_userprofile\" does not exist', migration state may be out of sync. See SETUP_GUIDE.md Troubleshooting for recovery (clear migration state for 0021–0023, then run migrate again)."
+        fi
         echo "To run migrations manually (with .env loaded):"
         echo "  sudo bash $APP_DIR/scripts/run_manage.sh migrate --noinput"
         echo "  sudo bash $APP_DIR/scripts/run_manage.sh showmigrations portal   # list migration status"

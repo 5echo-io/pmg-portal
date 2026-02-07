@@ -15,6 +15,13 @@ Chronological log of builds and releases (newest first). Each entry: date, branc
 
 - 2026-02-07 (Europe/Oslo)
   - Branch: dev
+  - Version: 5.0.0-beta.6
+  - Summary:
+    - Migrering/recovery: SETUP_GUIDE troubleshooting for «relation portal_userprofile does not exist» (fjern 0021–0023 fra django_migrations, kjør migrate); update.sh viser hint ved slik feil. VERSION 5.0.0-beta.5 → 5.0.0-beta.6.
+  - Version bump: 5.0.0-beta.5 → 5.0.0-beta.6
+
+- 2026-02-07 (Europe/Oslo)
+  - Branch: dev
   - Version: 5.0.0-beta.5
   - Summary:
     - Install/oppdatering: Install-wizard tydeliggjør at migreringer må kjøres; update.sh bedre feilmelding ved migreringsfeil («column X does not exist»). Backup & restore: migreringer + set_stored_version kjøres automatisk etter restore slik at gjenopprettet DB matcher app. SETUP_GUIDE og BACKWARDS_COMPATIBILITY oppdatert. VERSION 5.0.0-beta.4 → 5.0.0-beta.5.
