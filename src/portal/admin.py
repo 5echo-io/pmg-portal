@@ -9,7 +9,7 @@ Last Modified: 2026-02-05
 from django.contrib import admin
 from django.contrib import messages
 from django.db.models import Q
-from .models import Customer, CustomerMembership, PortalLink, Facility, ServiceLog, ServiceType, ServiceLogAttachment, ServiceLogDevice, ServiceVisit
+from .models import Customer, CustomerMembership, PortalLink, Facility, ServiceLog, ServiceType, ServiceLogAttachment, ServiceLogDevice, ServiceVisit, NetworkDevice
 from .forms import CustomerMembershipForm
 
 @admin.register(Customer)
@@ -227,7 +227,16 @@ class FacilityAdmin(admin.ModelAdmin):
 class ServiceTypeAdmin(admin.ModelAdmin):
     list_display = ("name", "slug", "sort_order", "is_active")
     list_editable = ("sort_order", "is_active")
+    search_fields = ("name", "slug")
     prepopulated_fields = {"slug": ("name",)}
+
+
+@admin.register(NetworkDevice)
+class NetworkDeviceAdmin(admin.ModelAdmin):
+    """Minimal admin so ServiceLogDeviceAdmin can use autocomplete_fields on device."""
+    list_display = ("name", "facility", "device_type", "model")
+    search_fields = ("name", "model", "serial_number", "manufacturer")
+    list_filter = ("facility", "device_type", "is_active")
 
 
 @admin.register(ServiceLog)

@@ -9,6 +9,14 @@ Last Modified: 2026-02-06
 
 # BUILDLOG
 
+- 2026-02-07 (Europe/Oslo)
+  - Branch: dev
+  - Version: 4.8.0-beta.19
+  - Summary:
+    - Admin: ServiceTypeAdmin search_fields (fix E040); register NetworkDevice (NetworkDeviceAdmin) for ServiceLogDeviceAdmin autocomplete (fix E039)
+    - Version bump: 4.8.0-beta.18 → 4.8.0-beta.19
+  - Versioning note: We stay on 4.8.0-beta.X for fixes and small changes in the 4.8 line. When stable: release as 4.8.0 (no suffix). Next minor line (e.g. new feature set): 4.9.0-beta.1. PATCH (4.8.1) for post-release bugfixes; MINOR (4.9.0) for new features; MAJOR (5.0.0) for breaking changes.
+
 - 2026-02-06 (Europe/Oslo)
   - Branch: dev
   - Version: 4.8.0-beta.18
