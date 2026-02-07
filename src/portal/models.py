@@ -940,3 +940,53 @@ class SystemInfo(models.Model):
 
     def __str__(self) -> str:
         return f"{self.key}={self.value}"
+
+
+class DocumentTemplate(models.Model):
+    """
+    Master template for PDF documents (e.g. servicerapport, nettverksdokumentasjon).
+    HTML + CSS are rendered with a context (e.g. service_log, facility) and converted to PDF via WeasyPrint.
+    Use Django template variables in html_content, e.g. {{ service_log.service_id }}, {{ facility.name }}.
+    """
+    DOCUMENT_TYPE_SERVICERAPPORT = "servicerapport"
+    DOCUMENT_TYPE_NETWORK = "nettverksdokumentasjon"
+    DOCUMENT_TYPE_CHOICES = [
+        (DOCUMENT_TYPE_SERVICERAPPORT, "Servicerapport"),
+        (DOCUMENT_TYPE_NETWORK, "Nettverksdokumentasjon"),
+    ]
+    name = models.CharField(max_length=200, help_text="Template name (e.g. Standard servicerapport)")
+    document_type = models.CharField(
+        max_length=50,
+        choices=DOCUMENT_TYPE_CHOICES,
+        db_index=True,
+        help_text="Type of document this template is used for",
+    )
+    html_content = models.TextField(
+        blank=True,
+        default="",
+        help_text="Full HTML document. Use Django template variables, e.g. {{ service_log.description }}, {{ facility.name }}.",
+    )
+    css_content = models.TextField(
+        blank=True,
+        default="",
+        help_text="CSS for print/PDF (e.g. @page, typography, margins). Used with WeasyPrint.",
+    )
+    is_default = models.BooleanField(
+        default=False,
+        help_text="Use this template when generating this document type (only one default per type).",
+    )
+    variables_help = models.TextField(
+        blank=True,
+        default="",
+        help_text="Optional: list of available variable names for this document type (for reference when editing).",
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["document_type", "name"]
+        verbose_name = "Document template"
+        verbose_name_plural = "Document templates"
+
+    def __str__(self) -> str:
+        return f"{self.get_document_type_display()}: {self.name}"

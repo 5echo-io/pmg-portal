@@ -26,6 +26,7 @@ Pre-release builds (alpha, beta, rc) are listed here. Only full releases (no bui
 - **compilemessages**: Removed duplicate msgid entries in locale nb django.po so msgfmt succeeds on update; update.sh shows clearer error when compilemessages fails.
 
 ### Changed
+- **Document template & nettverksdokumentasjon**: DocumentTemplate-modell (migrasjon 0014); admin document_template list/form; portal facility device detail og facility_network_documentation_pdf; facility_detail og facility_detail_content; requirements +1.
 - **Portal – Produktdatablad**: datasheet_list og datasheet_detail; views; locale +3.
 - **Portal**: datasheet_detail, facility_detail, facility_detail_content, facility_service_log_detail og fragment (justeringer/layout).
 - **Portal**: facility_detail og facility_detail_content (layout/innhold); facility_service_log_detail og fragment; views; locale +3.
@@ -59,6 +60,7 @@ Pre-release builds (alpha, beta, rc) are listed here. Only full releases (no bui
 - **Service log**: ServiceLog-modell (migrasjon 0011); admin facility service log skjema/fragment; portal facility service log detalj; facility card/list oppdatert; admin/portal templates og locale +421
 
 ### Added
+- **Document template**: DocumentTemplate-modell (migrasjon 0014); admin document_template_list og document_template_form; portal facility_device_detail, facility_network_documentation_pdf og fragment.
 - **run_manage.sh**: Wrapper som laster .env og kjører manage.py (for manuelle kommandoer som showmigrations, migrate --fake); dokumentert i SETUP_GUIDE og BUILDLOG.
 - **Servicelogg – typer, rapporter, besøk, vedlegg**: ServiceType, ServiceRapport, ServiceVisit; admin service_type list/form; facility_service_visit list/form/fragment; facility_service_rapport_form; facility_service_log attachment upload/fragment og export PDF; migrasjoner 0012, 0013; SERVICEDESK_PLUS_INTEGRATION.md
 - **Service log (servicelogg)**: ServiceLog-modell knyttet til facility; admin facility_service_log form og fragment; portal facility_service_log_detail; migrasjon 0011

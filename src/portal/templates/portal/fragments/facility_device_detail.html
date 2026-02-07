@@ -1,0 +1,93 @@
+{% load i18n static %}
+<div class="facility-detail-container">
+  <div class="breadcrumb-row">
+    <a href="{% url 'facility_detail' facility.slug %}#devices" class="breadcrumb-back-btn" aria-label="{% trans 'Back to facility' %}" hx-get="{% url 'facility_detail' facility.slug %}" hx-target="#main-content" hx-push-url="{% url 'facility_detail' facility.slug %}#devices">← {{ facility.name }}</a>
+    <nav class="breadcrumb admin-breadcrumb" aria-label="Breadcrumb">
+      <a href="{% url 'facility_list' %}" hx-get="{% url 'facility_list' %}" hx-target="#main-content" hx-push-url="true">{% trans "Facilities" %}</a>
+      <span class="breadcrumb-sep">→</span>
+      <a href="{% url 'facility_detail' facility.slug %}#devices" hx-get="{% url 'facility_detail' facility.slug %}" hx-target="#main-content" hx-push-url="{% url 'facility_detail' facility.slug %}#devices">{{ facility.name }}</a>
+      <span class="breadcrumb-sep">→</span>
+      <span>{% trans "Enhet" %}: {{ device.name }}</span>
+    </nav>
+  </div>
+
+  <div class="customer-card-container">
+    <div class="customer-card-header" style="padding-bottom: 16px;">
+      <div class="customer-card-info" style="flex: 1;">
+        <h1 class="customer-card-name" style="margin: 0 0 8px 0;">{{ device.name }}</h1>
+        <p class="customer-card-slug" style="margin: 0;">{{ facility.name }} — {{ device.get_device_type_display }}</p>
+      </div>
+      {% if device.product and device.product.slug %}
+      <div class="customer-card-header-actions">
+        <a href="{% url 'datasheet_by_slug' device.product.slug %}" target="_blank" rel="noopener" class="admin-btn-sm">{% trans "View datasheet" %}</a>
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="panel" style="margin-top: 24px;">
+      <dl class="service-log-dl">
+        <dt>{% trans "Name" %}</dt>
+        <dd><strong>{{ device.name }}</strong></dd>
+
+        <dt>{% trans "Type" %}</dt>
+        <dd>{{ device.get_device_type_display }}</dd>
+
+        {% if device.manufacturer %}
+        <dt>{% trans "Manufacturer" %}</dt>
+        <dd>{{ device.manufacturer }}</dd>
+        {% endif %}
+
+        {% if device.model %}
+        <dt>{% trans "Model" %}</dt>
+        <dd>{{ device.model }}</dd>
+        {% endif %}
+
+        {% if device.serial_number %}
+        <dt>{% trans "Serial number" %}</dt>
+        <dd><code>{{ device.serial_number }}</code></dd>
+        {% endif %}
+
+        {% if device.rack %}
+        <dt>{% trans "Rack" %}</dt>
+        <dd>{{ device.rack.name }}{% if device.rack_position %} — {% trans "Position" %} {{ device.rack_position }}U{% endif %}</dd>
+        {% endif %}
+
+        {% if device.ip_address %}
+        <dt>{% trans "IP Address" %}</dt>
+        <dd><code>{{ device.ip_address }}</code></dd>
+        {% endif %}
+
+        {% with ips=device.ip_addresses.all %}
+        {% if ips %}
+        <dt>{% trans "IP addresses" %}</dt>
+        <dd>
+          <ul style="margin:0;padding-left:20px;">
+            {% for ip in ips %}
+            <li><code>{{ ip.ip_address }}</code>{% if ip.subnet %} ({{ ip.subnet }}){% endif %}{% if ip.reserved_for %} — {{ ip.reserved_for }}{% endif %}</li>
+            {% endfor %}
+          </ul>
+        </dd>
+        {% endif %}
+        {% endwith %}
+
+        {% if device.mac_address %}
+        <dt>{% trans "MAC address" %}</dt>
+        <dd><code>{{ device.mac_address }}</code></dd>
+        {% endif %}
+
+        <dt>{% trans "SLA" %}</dt>
+        <dd>{% if device.is_sla %}{% trans "Yes" %}{% else %}{% trans "No" %}{% endif %}</dd>
+
+        {% if device.description %}
+        <dt>{% trans "Description" %}</dt>
+        <dd><div style="white-space: pre-wrap;">{{ device.description }}</div></dd>
+        {% endif %}
+
+        {% if device.product %}
+        <dt>{% trans "Product" %}</dt>
+        <dd>{{ device.product.name }}{% if device.product.slug %} — <a href="{% url 'datasheet_by_slug' device.product.slug %}" target="_blank" rel="noopener">{% trans "View datasheet" %}</a>{% endif %}</dd>
+        {% endif %}
+      </dl>
+    </div>
+  </div>
+</div>

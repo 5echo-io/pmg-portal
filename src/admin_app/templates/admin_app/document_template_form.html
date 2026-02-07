@@ -1,0 +1,47 @@
+{% extends "admin_app/base.html" %}
+{% load i18n %}
+
+{% block admin_title %}{% if template %}{% trans "Edit template" %}: {{ template.name }}{% else %}{% trans "Add document template" %}{% endif %}{% endblock %}
+{% block breadcrumb_back %}<a href="{% url 'admin_app:admin_document_template_list' %}" class="breadcrumb-back-btn" aria-label="Back to Document templates">← {% trans "Document templates" %}</a>{% endblock %}
+{% block breadcrumb_extra %}
+<span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_document_template_list' %}">{% trans "Document templates" %}</a>
+<span class="breadcrumb-sep">→</span> <span>{% if template %}{% trans "Edit" %}{% else %}{% trans "Add" %}{% endif %}</span>
+{% endblock %}
+
+{% block admin_content %}
+<h1 class="admin-page-title">{% if template %}{% trans "Edit template" %}: {{ template.name }}{% else %}{% trans "Add document template" %}{% endif %}</h1>
+
+<form method="post" action="" class="admin-form admin-form--wide">
+  {% csrf_token %}
+  <div class="admin-form-field">
+    <label for="name">{% trans "Name" %}</label>
+    <input type="text" id="name" name="name" value="{{ template.name|default:'' }}" class="form-input" required maxlength="200" placeholder="e.g. Standard servicerapport">
+  </div>
+  <div class="admin-form-field">
+    <label for="document_type">{% trans "Document type" %}</label>
+    <select id="document_type" name="document_type" class="form-input" required>
+      <option value="servicerapport" {% if template.document_type == 'servicerapport' %}selected{% endif %}>{% trans "Servicerapport" %}</option>
+      <option value="nettverksdokumentasjon" {% if template.document_type == 'nettverksdokumentasjon' %}selected{% endif %}>{% trans "Nettverksdokumentasjon" %}</option>
+    </select>
+  </div>
+  <div class="admin-form-field">
+    <label><input type="checkbox" name="is_default" {% if template.is_default %}checked{% endif %}> {% trans "Use as default for this document type" %}</label>
+  </div>
+  <div class="admin-form-field">
+    <label for="variables_help">{% trans "Variables help (optional)" %}</label>
+    <textarea id="variables_help" name="variables_help" class="form-input" rows="4" placeholder="List of available variables for reference, e.g. service_log.service_id, facility.name, customer.name">{{ template.variables_help|default:'' }}</textarea>
+  </div>
+  <div class="admin-form-field">
+    <label for="html_content">{% trans "HTML content" %} <span class="muted">({% trans "full document, use Django template variables" %})</span></label>
+    <textarea id="html_content" name="html_content" class="form-input" rows="24" style="font-family: monospace; font-size: 12px;">{{ template.html_content|default:'' }}</textarea>
+  </div>
+  <div class="admin-form-field">
+    <label for="css_content">{% trans "CSS content" %} <span class="muted">({% trans "WeasyPrint: @page, typography, margins" %})</span></label>
+    <textarea id="css_content" name="css_content" class="form-input" rows="16" style="font-family: monospace; font-size: 12px;">{{ template.css_content|default:'' }}</textarea>
+  </div>
+  <div class="admin-form-actions">
+    <button type="submit" class="form-btn form-btn-primary">{% trans "Save" %}</button>
+    <a href="{% url 'admin_app:admin_document_template_list' %}" class="form-btn form-btn-secondary">{% trans "Cancel" %}</a>
+  </div>
+</form>
+{% endblock %}

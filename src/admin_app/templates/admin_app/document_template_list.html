@@ -1,0 +1,48 @@
+{% extends "admin_app/base.html" %}
+{% load i18n %}
+
+{% block admin_title %}{% trans "Document templates" %}{% endblock %}
+{% block breadcrumb_extra %}<span class="breadcrumb-sep">→</span> <span>{% trans "Document templates" %}</span>{% endblock %}
+
+{% block admin_content %}
+<div class="admin-page-header">
+  <h1 class="admin-page-title">{% trans "Document templates" %}</h1>
+  <a href="{% url 'admin_app:admin_document_template_add' %}" class="admin-btn-sm admin-btn-primary">{% trans "Add template" %}</a>
+  <a href="{% url 'admin_app:admin_document_template_load_default' 'servicerapport' %}" class="admin-btn-sm form-btn-secondary">{% trans "Load default servicerapport" %}</a>
+</div>
+
+<p class="muted">{% trans "Master templates for PDF documents (e.g. servicerapport). HTML + CSS are rendered with context and converted to PDF via WeasyPrint. In HTML use Django template variables, e.g. service_log.service_id, facility.name." %}</p>
+
+<div class="admin-table-wrap">
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th>{% trans "Name" %}</th>
+        <th>{% trans "Document type" %}</th>
+        <th>{% trans "Default" %}</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for t in templates %}
+      <tr>
+        <td><strong>{{ t.name }}</strong></td>
+        <td>{{ t.get_document_type_display }}</td>
+        <td>{% if t.is_default %}{% trans "Yes" %}{% else %}—{% endif %}</td>
+        <td>
+          <a href="{% url 'admin_app:admin_document_template_edit' t.pk %}" class="admin-btn-sm">{% trans "Edit" %}</a>
+          <form method="post" action="{% url 'admin_app:admin_document_template_delete' t.pk %}" style="display: inline;" onsubmit="return confirm('{% trans "Delete this template?" %}');">
+            {% csrf_token %}
+            <button type="submit" class="admin-btn-sm admin-btn-danger">{% trans "Delete" %}</button>
+          </form>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="4">{% trans "No document templates. Add one to use WeasyPrint for servicerapport PDF." %}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

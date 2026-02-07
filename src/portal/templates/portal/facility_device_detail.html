@@ -1,0 +1,7 @@
+{% extends "portal/base.html" %}
+{% load i18n static %}
+{% block title %}{{ device.name }} | {{ facility.name }} | {% trans "PMG Portal" %}{% endblock %}
+
+{% block content %}
+{% include "portal/fragments/facility_device_detail.html" %}
+{% endblock %}

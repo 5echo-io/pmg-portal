@@ -461,6 +461,84 @@ def facility_service_log_detail(request, slug, log_id):
 
 
 @login_required
+def facility_device_detail(request, slug, device_id):
+    """Show a single network device at a facility (read-only info)."""
+    facility = get_object_or_404(Facility, slug=slug, is_active=True)
+    active_customer_id = request.session.get("active_customer_id")
+    if not active_customer_id:
+        messages.info(request, "Please select a customer profile to view facilities.")
+        return redirect("portal_home")
+    try:
+        customer = Customer.objects.get(pk=active_customer_id)
+        if customer not in facility.customers.all():
+            messages.error(request, "You do not have access to this facility.")
+            return redirect("facility_list")
+    except Customer.DoesNotExist:
+        messages.error(request, "Customer not found.")
+        return redirect("portal_home")
+
+    device = get_object_or_404(
+        NetworkDevice.objects.select_related("product", "rack").prefetch_related("ip_addresses"),
+        pk=device_id,
+        facility=facility,
+        is_active=True,
+    )
+    context = {
+        "facility": facility,
+        "customer": customer,
+        "device": device,
+    }
+    is_htmx = request.headers.get("HX-Request") == "true"
+    if is_htmx:
+        r = render(request, "portal/fragments/facility_device_detail.html", context)
+        title = f"{device.name} | {facility.name} | PMG Portal"
+        r["HX-Trigger"] = '{"setTitle": {"title": "' + title.replace('"', '\\"') + '"}}'
+        return r
+    return render(request, "portal/facility_device_detail.html", context)
+
+
+@login_required
+def facility_network_documentation_pdf(request, slug):
+    """Export facility network documentation as PDF (equipment = network devices only, + IP overview)."""
+    from io import BytesIO
+    from django.template.loader import render_to_string
+    from xhtml2pdf import pisa
+
+    facility = get_object_or_404(Facility, slug=slug, is_active=True)
+    active_customer_id = request.session.get("active_customer_id")
+    if not active_customer_id:
+        messages.info(request, "Please select a customer profile.")
+        return redirect("portal_home")
+    try:
+        customer = Customer.objects.get(pk=active_customer_id)
+        if customer not in facility.customers.all():
+            messages.error(request, "You do not have access to this facility.")
+            return redirect("facility_list")
+    except Customer.DoesNotExist:
+        messages.error(request, "Customer not found.")
+        return redirect("portal_home")
+
+    network_devices = facility.network_devices.filter(is_active=True).select_related("rack").order_by("rack", "rack_position", "name")
+    ip_addresses = facility.ip_addresses.all().select_related("device").order_by("ip_address")
+    html = render_to_string("portal/facility_network_documentation_pdf.html", {
+        "facility": facility,
+        "network_devices": network_devices,
+        "ip_addresses": ip_addresses,
+        "now": timezone.now(),
+    })
+    buf = BytesIO()
+    pisa_status = pisa.CreatePDF(html.encode("utf-8"), dest=buf, encoding="utf-8")
+    if pisa_status.err:
+        messages.error(request, "PDF generation failed.")
+        return redirect("facility_detail", slug=slug)
+    buf.seek(0)
+    filename = f"nettverksdokumentasjon-{facility.slug}-{timezone.now().strftime('%Y%m%d')}.pdf"
+    response = HttpResponse(buf.getvalue(), content_type="application/pdf")
+    response["Content-Disposition"] = f'attachment; filename="{filename}"'
+    return response
+
+
+@login_required
 def portal_search(request):
     """
     Global search for the active customer: facilities, devices, portal links, documents.

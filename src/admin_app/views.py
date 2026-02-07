@@ -39,6 +39,7 @@ from portal.models import (
     ServiceLogDevice,
     ServiceType,
     ServiceVisit,
+    DocumentTemplate,
 )
 from admin_app.models import AdminNotification
 from django.utils import timezone
@@ -2205,6 +2206,256 @@ def facility_service_log_export(request, facility_slug):
         response = HttpResponse(buf.getvalue(), content_type="application/pdf")
         response["Content-Disposition"] = f'attachment; filename="{filename}"'
         return response
+
+
+# ----- Document templates (master PDF templates: HTML + CSS, WeasyPrint) -----
+@staff_required
+def document_template_list(request):
+    """List all document templates."""
+    templates = DocumentTemplate.objects.all().order_by("document_type", "name")
+    return render(request, "admin_app/document_template_list.html", {"templates": templates})
+
+
+@staff_required
+@require_http_methods(["GET", "POST"])
+def document_template_add(request):
+    """Add a new document template."""
+    if request.method == "POST":
+        name = request.POST.get("name", "").strip()
+        document_type = request.POST.get("document_type", "").strip()
+        html_content = request.POST.get("html_content", "")
+        css_content = request.POST.get("css_content", "")
+        is_default = request.POST.get("is_default") == "on"
+        variables_help = request.POST.get("variables_help", "")
+        if not name or document_type not in (DocumentTemplate.DOCUMENT_TYPE_SERVICERAPPORT, DocumentTemplate.DOCUMENT_TYPE_NETWORK):
+            messages.error(request, _("Name and document type are required."))
+        else:
+            if is_default:
+                DocumentTemplate.objects.filter(document_type=document_type).update(is_default=False)
+            t = DocumentTemplate.objects.create(
+                name=name,
+                document_type=document_type,
+                html_content=html_content,
+                css_content=css_content,
+                is_default=is_default,
+                variables_help=variables_help,
+            )
+            messages.success(request, _("Template '%(name)s' created.") % {"name": t.name})
+            return redirect("admin_app:admin_document_template_edit", pk=t.pk)
+    return render(request, "admin_app/document_template_form.html", {"template": None})
+
+
+def _get_default_servicerapport_css():
+    """Default WeasyPrint CSS for servicerapport (A4, typography, footer)."""
+    return """/* servicerapport.css - A4 print layout */
+@page {
+  size: A4;
+  margin: 18mm 18mm 16mm 18mm;
+  @bottom-center {
+    content: element(footer);
+  }
+}
+* { box-sizing: border-box; }
+html, body {
+  padding: 0;
+  margin: 0;
+  color: #000;
+  font-family: "Open Sans", Arial, sans-serif;
+  font-size: 10pt;
+  line-height: 1.35;
+}
+.page { page-break-after: always; min-height: calc(297mm - 18mm - 16mm); position: relative; }
+.page-cover { padding-top: 18mm; }
+.cover-top .title-block { padding-left: 6mm; }
+.kicker { font-family: "Montserrat", Arial, sans-serif; font-weight: 700; font-size: 24pt; margin-bottom: 6mm; }
+.report-line { display: flex; gap: 6mm; align-items: baseline; margin-bottom: 6mm; }
+.report-title { font-size: 12pt; font-weight: 400; }
+.pipe { font-size: 12pt; }
+.report-date { font-size: 12pt; }
+.asset-title { font-weight: 700; font-size: 14pt; margin: 5mm 0 1.5mm 0; }
+.asset-address { font-weight: 700; font-size: 10pt; margin-bottom: 4mm; }
+.client-name { font-family: "Montserrat", Arial, sans-serif; font-weight: 400; margin-top: 4mm; }
+.client-address, .client-org { margin-top: 1.5mm; }
+.meta { margin-top: 7mm; }
+.cover-mid { margin-top: 10mm; }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16mm; padding-left: 2mm; }
+.col-title { font-family: "Montserrat", Arial, sans-serif; font-weight: 700; margin-bottom: 2mm; }
+.signatures { display: grid; grid-template-columns: 1fr 1fr; gap: 16mm; margin-top: 22mm; padding-left: 2mm; }
+.sig-line { border-bottom: 1px solid #000; height: 12mm; }
+.sig-label { margin-top: 2mm; }
+.contact-card { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16mm; padding-left: 2mm; }
+.contact-label { font-weight: 700; margin-bottom: 2mm; }
+.contact-value { margin-top: 1mm; }
+.page-header { margin-top: 2mm; }
+.h1 { font-weight: 700; }
+.sub { font-weight: 700; margin-top: 2mm; }
+.section { margin-top: 10mm; }
+.section-title { font-weight: 700; margin-bottom: 3mm; }
+.rule { border-bottom: 1px solid #000; margin-bottom: 8mm; }
+.block { margin-top: 6mm; }
+.block-title { font-weight: 700; margin-bottom: 2mm; }
+.p { white-space: pre-wrap; }
+.list { margin-top: 4mm; }
+.li { margin: 1.5mm 0; }
+.footer { position: running(footer); display: flex; justify-content: center; gap: 2mm; font-size: 9pt; margin-top: 8mm; }
+.footer-page::before { content: counter(page); }
+"""
+
+
+def _get_default_servicerapport_html():
+    """Default HTML for servicerapport with Django template variables."""
+    return """<!DOCTYPE html>
+<html lang="nb">
+<head>
+  <meta charset="utf-8">
+  <title>Servicerapport – {{ service_log.service_id }}</title>
+</head>
+<body>
+  <div class="footer">Side <span class="footer-page"></span></div>
+  <div class="page page-cover">
+    <div class="cover-top">
+      <div class="kicker">SERVICERAPPORT</div>
+      <div class="report-line">
+        <span class="report-title">Servicerapport</span>
+        <span class="pipe">|</span>
+        <span class="report-date">{{ service_log.performed_at|date:"d.m.Y" }}</span>
+      </div>
+      <div class="asset-title">{{ service_log.asset_name|default:facility.name }}</div>
+      <div class="asset-address">{% if service_log.asset_id %}{{ service_log.asset_id }}{% endif %}</div>
+      <div class="client-name">{{ service_log.customer_name|default:"" }}</div>
+      <div class="client-address">{{ service_log.customer_address|default:"" }}</div>
+      <div class="client-org">{{ service_log.customer_org_numbers|default:"" }}</div>
+    </div>
+    <div class="cover-mid two-col">
+      <div><div class="col-title">Leverandør</div><div>{{ service_log.supplier_name|default:"" }}</div><div>{{ service_log.supplier_org_number|default:"" }}</div></div>
+      <div><div class="col-title">Avtalenummer</div><div>{{ service_log.contract_number|default:"" }}</div></div>
+    </div>
+    <div class="signatures">
+      <div><div class="sig-line"></div><div class="sig-label">Leverandør</div></div>
+      <div><div class="sig-line"></div><div class="sig-label">Kunde</div></div>
+    </div>
+  </div>
+  <div class="page">
+    <div class="page-header">
+      <h1 class="h1">Sammendrag</h1>
+      <div class="section"><div class="section-title">Bakgrunn</div><div class="p">{{ service_log.background|default:"" }}</div></div>
+      <div class="section"><div class="section-title">Oppsummering</div><div class="p">{{ service_log.summary|default:"" }}</div></div>
+    </div>
+    <div class="section"><div class="section-title">Rapport</div><div class="p">{{ service_log.description|default:"" }}</div></div>
+    <div class="section"><div class="section-title">Funn og observasjoner</div><div class="p">{{ service_log.findings_observations|default:"" }}</div></div>
+    <div class="section"><div class="section-title">Konklusjon</div><div class="p">{{ service_log.conclusion|default:"" }}</div></div>
+    <div class="section"><div class="section-title">Anbefalinger</div><div class="block"><div class="block-title">Umiddelbare</div><div class="p">{{ service_log.recommendations_immediate|default:"" }}</div></div><div class="block"><div class="block-title">Langsiktige</div><div class="p">{{ service_log.recommendations_long_term|default:"" }}</div></div></div>
+    {% if service_log.serviced_devices.all %}<div class="section"><div class="section-title">Enheter som ble servet</div><ul class="list">{% for sd in service_log.serviced_devices.all %}<li class="li">{{ sd.device.name }}{% if sd.serviced_at %} ({{ sd.serviced_at|date:"d.m.Y H:i" }}){% endif %}{% if sd.notes %} – {{ sd.notes }}{% endif %}</li>{% endfor %}</ul></div>{% endif %}
+  </div>
+</body>
+</html>
+"""
+
+
+@staff_required
+def document_template_load_default(request, document_type):
+    """Create a new document template with default content and redirect to edit."""
+    if document_type == DocumentTemplate.DOCUMENT_TYPE_SERVICERAPPORT:
+        DocumentTemplate.objects.filter(document_type=document_type).update(is_default=False)
+        t = DocumentTemplate.objects.create(
+            name=_("Standard servicerapport"),
+            document_type=document_type,
+            html_content=_get_default_servicerapport_html(),
+            css_content=_get_default_servicerapport_css(),
+            is_default=True,
+            variables_help="service_log, facility, customer, now. service_log fields: service_id, performed_at, asset_name, asset_id, customer_name, customer_address, supplier_name, contract_number, background, summary, description, findings_observations, conclusion, recommendations_immediate, recommendations_long_term, serviced_devices.",
+        )
+        messages.success(request, _("Default servicerapport template created. You can edit it now."))
+        return redirect("admin_app:admin_document_template_edit", pk=t.pk)
+    messages.error(request, _("No default for this document type."))
+    return redirect("admin_app:admin_document_template_list")
+
+
+@staff_required
+@require_http_methods(["GET", "POST"])
+def document_template_edit(request, pk):
+    """Edit a document template."""
+    template = get_object_or_404(DocumentTemplate, pk=pk)
+    if request.method == "POST":
+        template.name = request.POST.get("name", "").strip()
+        document_type = request.POST.get("document_type", "").strip()
+        if document_type in (DocumentTemplate.DOCUMENT_TYPE_SERVICERAPPORT, DocumentTemplate.DOCUMENT_TYPE_NETWORK):
+            template.document_type = document_type
+        template.html_content = request.POST.get("html_content", "")
+        template.css_content = request.POST.get("css_content", "")
+        template.variables_help = request.POST.get("variables_help", "")
+        is_default = request.POST.get("is_default") == "on"
+        if is_default and not template.is_default:
+            DocumentTemplate.objects.filter(document_type=template.document_type).update(is_default=False)
+        template.is_default = is_default
+        template.save()
+        messages.success(request, _("Template '%(name)s' updated.") % {"name": template.name})
+        return redirect("admin_app:admin_document_template_list")
+    return render(request, "admin_app/document_template_form.html", {"template": template})
+
+
+@staff_required
+@require_http_methods(["POST"])
+def document_template_delete(request, pk):
+    """Delete a document template."""
+    template = get_object_or_404(DocumentTemplate, pk=pk)
+    name = template.name
+    template.delete()
+    messages.success(request, _("Template '%(name)s' deleted.") % {"name": name})
+    return redirect("admin_app:admin_document_template_list")
+
+
+def _render_pdf_from_template(template, context):
+    """Render HTML from template (Django template) with context, then WeasyPrint to PDF. Returns bytes."""
+    from django.template import Template, Context
+    from io import BytesIO
+    try:
+        from weasyprint import HTML, CSS
+    except ImportError:
+        return None
+    t = Template(template.html_content)
+    html_str = t.render(Context(context))
+    buf = BytesIO()
+    doc = HTML(string=html_str)
+    stylesheets = [CSS(string=template.css_content)] if template.css_content else []
+    doc.write_pdf(buf, stylesheets=stylesheets)
+    buf.seek(0)
+    return buf.getvalue()
+
+
+@staff_required
+def facility_service_log_pdf_single(request, facility_slug, log_id):
+    """Generate a single servicerapport as PDF using the master document template (WeasyPrint)."""
+    facility = get_object_or_404(Facility, slug=facility_slug)
+    service_log = get_object_or_404(
+        ServiceLog.objects.select_related("service_type", "approved_by", "facility").prefetch_related("serviced_devices__device"),
+        pk=log_id,
+        facility=facility,
+    )
+    template = DocumentTemplate.objects.filter(
+        document_type=DocumentTemplate.DOCUMENT_TYPE_SERVICERAPPORT,
+        is_default=True,
+    ).first()
+    if not template:
+        template = DocumentTemplate.objects.filter(document_type=DocumentTemplate.DOCUMENT_TYPE_SERVICERAPPORT).first()
+    if not template:
+        messages.error(request, _("No document template for servicerapport. Create one under Admin → Document templates."))
+        return redirect("admin_app:admin_facility_detail", slug=facility.slug)
+    customer = facility.customers.first()
+    context = {
+        "service_log": service_log,
+        "facility": facility,
+        "customer": customer,
+        "now": timezone.now(),
+    }
+    pdf_bytes = _render_pdf_from_template(template, context)
+    if not pdf_bytes:
+        messages.error(request, _("PDF generation failed (WeasyPrint may not be installed)."))
+        return redirect("admin_app:admin_facility_detail", slug=facility.slug)
+    filename = f"servicerapport-{service_log.service_id}-{timezone.now().strftime('%Y%m%d')}.pdf"
+    response = HttpResponse(pdf_bytes, content_type="application/pdf")
+    response["Content-Disposition"] = f'attachment; filename="{filename}"'
+    return response
 
 
 # ----- Backup & Restore (superuser only) -----

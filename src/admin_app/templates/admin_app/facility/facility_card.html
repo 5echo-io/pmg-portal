@@ -309,6 +309,7 @@
               </td>
               <td class="admin-table-actions">
                 <a href="{% url 'admin_app:admin_facility_service_log_edit' facility.slug log.pk %}" class="admin-btn-sm">{% trans "Rediger" %}</a>
+                <a href="{% url 'admin_app:admin_facility_service_log_pdf_single' facility.slug log.pk %}" class="admin-btn-sm" target="_blank" rel="noopener" title="{% trans 'Last ned PDF (master-mal)' %}">PDF</a>
                 <form method="post" action="{% url 'admin_app:admin_facility_service_log_delete' facility.slug log.pk %}" style="display: inline;" onsubmit="return confirm('{% trans "Er du sikker på at du vil slette denne serviceloggføringen?" %}');">
                   {% csrf_token %}
                   <button type="submit" class="admin-btn-sm admin-btn-danger">{% trans "Slett" %}</button>

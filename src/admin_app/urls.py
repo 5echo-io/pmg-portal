@@ -94,6 +94,13 @@ urlpatterns = [
     path("facilities/<slug:facility_slug>/service-log/<int:log_id>/attachments/upload/", views.facility_service_log_attachment_upload, name="admin_facility_service_log_attachment_upload"),
     path("facilities/<slug:facility_slug>/service-log/<int:log_id>/attachments/<int:attachment_id>/delete/", views.facility_service_log_attachment_delete, name="admin_facility_service_log_attachment_delete"),
     path("facilities/<slug:facility_slug>/service-log/export/", views.facility_service_log_export, name="admin_facility_service_log_export"),
+    path("facilities/<slug:facility_slug>/service-log/<int:log_id>/pdf/", views.facility_service_log_pdf_single, name="admin_facility_service_log_pdf_single"),
+    # Document templates (master PDF: HTML + CSS → WeasyPrint)
+    path("document-templates/", views.document_template_list, name="admin_document_template_list"),
+    path("document-templates/add/", views.document_template_add, name="admin_document_template_add"),
+    path("document-templates/load-default/<str:document_type>/", views.document_template_load_default, name="admin_document_template_load_default"),
+    path("document-templates/<int:pk>/edit/", views.document_template_edit, name="admin_document_template_edit"),
+    path("document-templates/<int:pk>/delete/", views.document_template_delete, name="admin_document_template_delete"),
     # Service Types
     path("service-types/", views.service_type_list, name="admin_service_type_list"),
     path("service-types/add/", views.service_type_add, name="admin_service_type_add"),

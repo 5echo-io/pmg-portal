@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+  <meta charset="utf-8">
+  <title>Nettverksdokumentasjon – {{ facility.name }}</title>
+  <style>
+    @page { size: A4; margin: 18mm; }
+    body { font-family: Helvetica, Arial, sans-serif; font-size: 10pt; margin: 0; padding: 18mm; color: #000; }
+    h1 { font-size: 14pt; margin: 0 0 4mm 0; }
+    h2 { font-size: 11pt; margin: 8mm 0 3mm 0; }
+    p.muted { color: #666; font-size: 9pt; margin: 0 0 3mm 0; }
+    table { width: 100%; border-collapse: collapse; margin-top: 3mm; page-break-inside: auto; }
+    tr { page-break-inside: avoid; page-break-after: auto; }
+    th, td { border: 1px solid #333; padding: 3mm 4mm; text-align: left; }
+    th { background: #eee; font-weight: 600; }
+    code { font-family: Consolas, monospace; font-size: 9pt; }
+  </style>
+</head>
+<body>
+  <h1>Nettverksdokumentasjon – {{ facility.name }}</h1>
+  <p class="muted">Generert {{ now|date:"d.m.Y H:i" }}</p>
+
+  <h2>Utstyrsoversikt</h2>
+  <p class="muted">Kun nettverksenheter (switcher, rutere, brannmurer, tilgangspunkter m.m.).</p>
+  {% if network_devices %}
+  <table>
+    <thead>
+      <tr>
+        <th>Navn</th>
+        <th>Type</th>
+        <th>Produsent</th>
+        <th>Modell</th>
+        <th>Rack</th>
+        <th>IP-adresse</th>
+        <th>SLA</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for device in network_devices %}
+      <tr>
+        <td><strong>{{ device.name }}</strong></td>
+        <td>{{ device.get_device_type_display }}</td>
+        <td>{{ device.manufacturer|default:"—" }}</td>
+        <td>{{ device.model|default:"—" }}</td>
+        <td>{% if device.rack %}{{ device.rack.name }}{% if device.rack_position %} ({{ device.rack_position }}U){% endif %}{% else %}—{% endif %}</td>
+        <td>{% if device.ip_address %}<code>{{ device.ip_address }}</code>{% else %}—{% endif %}</td>
+        <td>{% if device.is_sla %}Ja{% else %}—{% endif %}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p>Ingen nettverksenheter registrert for dette anlegget.</p>
+  {% endif %}
+
+  <h2>IP-adresser</h2>
+  {% if ip_addresses %}
+  <table>
+    <thead>
+      <tr>
+        <th>IP-adresse</th>
+        <th>Subnett</th>
+        <th>Reservert for</th>
+        <th>Enhet</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for ip in ip_addresses %}
+      <tr>
+        <td><code>{{ ip.ip_address }}</code></td>
+        <td>{{ ip.subnet|default:"—" }}</td>
+        <td>{{ ip.reserved_for|default:"—" }}</td>
+        <td>{% if ip.device %}{{ ip.device.name }}{% else %}—{% endif %}</td>
+        <td>{% if ip.is_in_use %}I bruk{% else %}Ledig{% endif %}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p>Ingen IP-adresser registrert for dette anlegget.</p>
+  {% endif %}
+</body>
+</html>
