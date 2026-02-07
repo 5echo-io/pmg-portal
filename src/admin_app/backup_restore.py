@@ -7,6 +7,10 @@ can be restored by any app version that supports them (backwards compatible).
 The database dump includes all tables, including portal.SystemInfo (app version,
 theme customizations from Admin → System customization, etc.). Restore replaces
 the full DB and media, so custom theme settings are restored with the backup.
+
+After restoring the database, Django migrations are run automatically so the
+restored schema is upgraded to match the current app (e.g. restore a backup
+from an older version onto a server with newer code).
 """
 from __future__ import annotations
 
@@ -242,6 +246,11 @@ def restore_from_archive(archive_path: Path) -> None:
         if not sql_path.exists():
             raise ValueError("Invalid backup: missing database.sql")
         _run_psql(sql_path, db)
+
+        # Run Django migrations so restored schema matches current app (e.g. backup from v4, restore on v5).
+        from django.core.management import call_command
+        call_command("migrate", "--noinput")
+        call_command("set_stored_version")
 
         media_src = root / MEDIA_ARCHIVE_DIR
         if media_src.exists():

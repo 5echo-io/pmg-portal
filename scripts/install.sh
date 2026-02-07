@@ -63,6 +63,7 @@ if [ "$PROD_EXISTS" = "true" ]; then
                 MODE="update"
                 echo ""
                 echo -e "${GREEN}Selected: Update Production${NC}"
+                echo "  (Database migrations will be applied so schema matches the new code.)"
                 ;;
             2) 
                 MODE="reinstall"
@@ -540,11 +541,12 @@ sudo chmod -R 755 "$MEDIA_DIR"
 
 echo ""
 echo "Running migrations + collectstatic + compilemessages..."
+echo "(Migrations are required so the database schema matches the application code.)"
 set -a
 source "$APP_DIR/.env"
 set +a
 
-# Create migrations if needed, then apply them
+# Create migrations if needed, then apply them (do not skip: schema must match code)
 sudo -E "$SRC_DIR/.venv/bin/python" manage.py makemigrations --noinput || true
 sudo -E "$SRC_DIR/.venv/bin/python" manage.py migrate --noinput
 # Record installed app version for backwards-compatibility checks (upgrade/downgrade)

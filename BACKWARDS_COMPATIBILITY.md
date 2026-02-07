@@ -99,4 +99,4 @@ In short: **The app remains functional per version because each deploy is one co
 - **Can I restore a backup from v2 on v5?** Yes, if the backup format is supported (currently format "1").
 - **Can I restore a backup from v5 on v2?** Only if the backup format is the same and the schema in the backup is compatible with v2 (typically a backup taken on v2).
 - **Why do I get 503 after downgrade?** Because the DB still has a “newer” stored version. Run migrations backward and then `set_stored_version`, and the block is removed.
-- **Do I need to do anything after restore?** No. Restore replaces the DB (and media); stored version in DB comes from the backup. The app will not block because code version is >= stored after restore (upgrade or same version).
+- **Do I need to do anything after restore?** No. Restore replaces the DB (and media), then runs Django migrations and set_stored_version so the schema matches the current app. You can restore an older backup on newer code and use the app immediately.

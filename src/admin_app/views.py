@@ -2949,7 +2949,10 @@ def backup_restore(request):
                         messages.error(request, err or "Backup file validation failed.")
                         return redirect("admin_app:admin_backup_restore")
                     br.restore_from_archive(Path(tmp_path))
-                    messages.success(request, "Restore completed successfully. Database and media have been restored.")
+                    messages.success(
+                        request,
+                        "Restore completed successfully. Database and media have been restored; migrations were applied so the schema matches this app version.",
+                    )
                 finally:
                     try:
                         os.unlink(tmp_path)

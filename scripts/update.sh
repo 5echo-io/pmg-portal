@@ -198,7 +198,12 @@ MIGRATE_OUTPUT=$(sudo -E "$SRC_DIR/.venv/bin/python" manage.py migrate --noinput
             echo "Attempting to continue with other steps..."
         fi
     else
-        echo "Migration failed with an unexpected error."
+        echo ""
+        echo "Migration failed. The database schema must match the application code."
+        echo "If you see 'column X does not exist', run this update script after every code deploy so migrations are applied."
+        echo "To run migrations manually (with .env loaded):"
+        echo "  sudo bash $APP_DIR/scripts/run_manage.sh migrate --noinput"
+        echo "  sudo bash $APP_DIR/scripts/run_manage.sh showmigrations portal   # list migration status"
         exit $MIGRATE_EXIT_CODE
     fi
 }

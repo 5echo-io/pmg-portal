@@ -18,6 +18,23 @@ _(Ingen endringer ennå.)_
 
 ---
 
+## [5.0.0-beta.5] - 2026-02-07
+
+### Changed
+
+#### Install / Oppdatering
+- **Install-wizard**: Tydelig melding om at migreringer må kjøres slik at databaseskjema matcher koden; ved «Update Production» angis at migreringer vil bli kjørt.
+- **update.sh**: Ved migreringsfeil (f.eks. «column X does not exist») vises nå tydelig at schema må matche koden og at update må kjøres etter hver deploy, pluss kommandoer for manuell migrering.
+
+#### Backup & Restore
+- **Etter restore**: Django-migreringer og `set_stored_version` kjøres automatisk etter database-restore, slik at gjenopprettet DB alltid matcher gjeldende app (f.eks. gammel backup på ny kode). Success-melding i admin oppdatert.
+
+#### Dokumentasjon
+- **SETUP_GUIDE.md**: Under «Updating the app» vektlagt at migreringer må kjøres etter hver kodeoppdatering; rask fiks ved «column X does not exist»; Troubleshooting for denne feilen.
+- **BACKWARDS_COMPATIBILITY.md**: Oppdatert at restore nå kjører migreringer automatisk etter gjenopprettelse.
+
+---
+
 ## [5.0.0-beta.4] - 2026-02-07
 
 ### Changed

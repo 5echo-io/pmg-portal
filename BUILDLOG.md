@@ -15,6 +15,13 @@ Chronological log of builds and releases (newest first). Each entry: date, branc
 
 - 2026-02-07 (Europe/Oslo)
   - Branch: dev
+  - Version: 5.0.0-beta.5
+  - Summary:
+    - Install/oppdatering: Install-wizard tydeliggjør at migreringer må kjøres; update.sh bedre feilmelding ved migreringsfeil («column X does not exist»). Backup & restore: migreringer + set_stored_version kjøres automatisk etter restore slik at gjenopprettet DB matcher app. SETUP_GUIDE og BACKWARDS_COMPATIBILITY oppdatert. VERSION 5.0.0-beta.4 → 5.0.0-beta.5.
+  - Version bump: 5.0.0-beta.4 → 5.0.0-beta.5
+
+- 2026-02-07 (Europe/Oslo)
+  - Branch: dev
   - Version: 5.0.0-beta.4
   - Summary:
     - Tema: Følger enheten (prefers-color-scheme) som standard; brukeren overstyrer med Light/Dark-knappen i menyen. Aria-label/title på tema-knappen oppdatert. VERSION 5.0.0-beta.3 → 5.0.0-beta.4.

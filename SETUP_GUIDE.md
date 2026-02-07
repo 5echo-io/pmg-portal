@@ -74,6 +74,11 @@ Last Modified: 2026-02-06
 
 ## Troubleshooting
 
+**Error: "column X does not exist" (e.g. `portal_facility.status_label_year does not exist`)?**  
+- The database schema is behind the application code. Run migrations after every code deploy:  
+  `sudo bash /opt/pmg-portal/scripts/update.sh`  
+  Or only: `sudo bash /opt/pmg-portal/scripts/run_manage.sh migrate --noinput` then restart the service.
+
 **"No customer access" message after login?**
 - Create a CustomerMembership linking your user to a Customer
 
@@ -86,13 +91,29 @@ Last Modified: 2026-02-06
 
 ## Updating the app
 
+**Important:** After every code update (e.g. `git pull` or new deploy), you must run the update script so **database migrations** are applied. Otherwise you may see errors like `column X does not exist`.
+
 From the server (e.g. `/opt/pmg-portal`):
 
 ```bash
 cd /opt/pmg-portal && sudo git pull origin dev && sudo bash scripts/update.sh
 ```
 
-This pulls the latest code, then runs: stop service → reinstall Python deps → migrate → collectstatic → **compilemessages** (so Norwegian works) → start service.
+This pulls the latest code, then runs: stop service → reinstall Python deps → **migrate** (required for schema) → collectstatic → compilemessages → start service.
+
+If you already pulled code but did not run `update.sh`, run migrations now:
+
+```bash
+sudo bash /opt/pmg-portal/scripts/update.sh
+```
+
+Or only migrations (if deps/static are already up to date):
+
+```bash
+sudo bash /opt/pmg-portal/scripts/run_manage.sh migrate --noinput
+sudo bash /opt/pmg-portal/scripts/run_manage.sh set_stored_version
+sudo systemctl restart pmg-portal.service
+```
 
 For **manual Django commands** (e.g. `showmigrations`, `migrate --fake`), use the wrapper so `.env` is loaded and `POSTGRES_DB` etc. are set:  
 `sudo bash /opt/pmg-portal/scripts/run_manage.sh showmigrations portal`  
