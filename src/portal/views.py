@@ -37,6 +37,7 @@ from .models import (
     DeviceType,
     ProductDatasheet,
     DocumentTemplate,
+    TechnicalSupportContact,
 )
 
 
@@ -389,6 +390,12 @@ def facility_detail(request, slug):
                 facility_datasheets.append(ds)
     facility_datasheets.sort(key=lambda d: (d.title or "").lower())
 
+    # Serviceavtale: anlegget har serviceavtale hvis minst én enhet er markert med SLA
+    has_serviceavtale = any(getattr(d, "is_sla", False) for d in network_devices)
+
+    # Teknisk support / nøkkelperson (global, vist på anleggskortet)
+    technical_support = TechnicalSupportContact.objects.filter(is_active=True).order_by("sort_order").first()
+
     # Statistics
     stats = {
         "racks_count": racks.count(),
@@ -404,6 +411,8 @@ def facility_detail(request, slug):
         "customer": customer,
         "racks": racks,
         "network_devices": network_devices,
+        "has_serviceavtale": has_serviceavtale,
+        "technical_support": technical_support,
         "ip_addresses": ip_addresses,
         "documents": documents,
         "contacts": contacts,

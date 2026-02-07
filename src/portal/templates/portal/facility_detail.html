@@ -27,6 +27,23 @@
             <span>{% trans "Facility" %}</span>
           </div>
         </div>
+        <div class="facility-side-status">
+          <div class="facility-serviceavtale-badge facility-serviceavtale-badge--{% if has_serviceavtale %}yes{% else %}no{% endif %}" aria-label="{% if has_serviceavtale %}{% trans 'Service agreement active' %}{% else %}{% trans 'No service agreement' %}{% endif %}">
+            <span class="facility-serviceavtale-dot" aria-hidden="true"></span>
+            <span class="facility-serviceavtale-label">{% if has_serviceavtale %}{% trans "Serviceavtale" %}{% else %}{% trans "Ingen serviceavtale" %}{% endif %}</span>
+          </div>
+          {% if technical_support %}
+          <div class="facility-technical-support">
+            <h3 class="facility-technical-support-title">{% trans "Teknisk support" %}</h3>
+            {% if technical_support.name %}<p class="facility-technical-support-name">{{ technical_support.name }}{% if technical_support.role %} <span class="facility-technical-support-role">({{ technical_support.role }})</span>{% endif %}</p>{% endif %}
+            <div class="facility-technical-support-links">
+              {% if technical_support.email %}<a href="mailto:{{ technical_support.email }}" class="facility-technical-support-link">{% trans "E-post" %}</a>{% endif %}
+              {% if technical_support.phone %}<a href="tel:{{ technical_support.phone }}" class="facility-technical-support-link">{% trans "Telefon" %}</a>{% endif %}
+            </div>
+            {% if technical_support.support_info %}<p class="facility-technical-support-info">{{ technical_support.support_info|linebreaksbr }}</p>{% endif %}
+          </div>
+          {% endif %}
+        </div>
       </div>
       <div class="customer-card-info">
         <div class="customer-card-name-wrapper">
@@ -57,6 +74,10 @@
       {% endif %}
       <div class="facility-overview-grid">
         <div class="facility-overview-item">
+          <span class="facility-overview-num">{{ contacts|length }}</span>
+          <span class="facility-overview-label">{% trans "Kontaktpersoner" %}</span>
+        </div>
+        <div class="facility-overview-item">
           <span class="facility-overview-num">{{ network_devices|length }}</span>
           <span class="facility-overview-label">{% trans "Enheter" %}</span>
         </div>
@@ -80,28 +101,65 @@
           <span class="facility-overview-num">{{ documents|length }}</span>
           <span class="facility-overview-label">{% trans "Dokumenter" %}</span>
         </div>
-        <div class="facility-overview-item">
-          <span class="facility-overview-num">{{ contacts|length }}</span>
-          <span class="facility-overview-label">{% trans "Kontaktpersoner" %}</span>
-        </div>
       </div>
+      {% if facility.important_info %}
+      <div class="facility-important-info">
+        <h3 class="facility-important-info-title">{% trans "Viktig informasjon" %}</h3>
+        <div class="facility-important-info-body">{{ facility.important_info|linebreaks }}</div>
+      </div>
+      {% endif %}
     </div>
 
-    <!-- Sidemenu + content: Enheter, Racks, Nettverk, Produktdatablader, Servicelogg, Dokumenter, Kontaktpersoner -->
+    <!-- Sidemenu + content: Kontaktpersoner, Enheter, Racks, Nettverk, Produktdatablader, Servicelogg, Dokumenter -->
     <div class="facility-card-body">
       <nav class="facility-card-sidemenu" aria-label="{% trans 'Facility sections' %}">
-        <a href="{% url 'facility_detail' facility.slug %}#devices" class="facility-sidemenu-item active" data-tab="devices">{% trans "Enheter" %} ({{ network_devices|length }})</a>
+        <a href="{% url 'facility_detail' facility.slug %}#contacts" class="facility-sidemenu-item active" data-tab="contacts">{% trans "Kontaktpersoner" %} ({{ contacts|length }})</a>
+        <a href="{% url 'facility_detail' facility.slug %}#devices" class="facility-sidemenu-item" data-tab="devices">{% trans "Enheter" %} ({{ network_devices|length }})</a>
         <a href="{% url 'facility_detail' facility.slug %}#racks" class="facility-sidemenu-item" data-tab="racks">{% trans "Racks" %} ({{ racks|length }})</a>
         <a href="{% url 'facility_detail' facility.slug %}#network" class="facility-sidemenu-item" data-tab="network">{% trans "Nettverk" %} ({{ ip_addresses|length }})</a>
         <a href="{% url 'facility_detail' facility.slug %}#produktdatablader" class="facility-sidemenu-item" data-tab="produktdatablader">{% trans "Product datasheets" %} ({{ facility_datasheets|length }})</a>
         <a href="{% url 'facility_detail' facility.slug %}#servicelogg" class="facility-sidemenu-item" data-tab="servicelogg">{% trans "Servicelogg" %} ({{ service_logs|length }})</a>
         <a href="{% url 'facility_detail' facility.slug %}#documents" class="facility-sidemenu-item" data-tab="documents">{% trans "Dokumenter" %} ({{ documents|length }})</a>
-        <a href="{% url 'facility_detail' facility.slug %}#contacts" class="facility-sidemenu-item" data-tab="contacts">{% trans "Kontaktpersoner" %} ({{ contacts|length }})</a>
       </nav>
 
       <div class="facility-card-content">
+        <!-- Kontaktpersoner -->
+        <div class="customer-tab-panel active" id="tab-contacts">
+          <div class="customer-section-header">
+            <h2>{% trans "Kontaktpersoner" %}</h2>
+          </div>
+          {% if contacts %}
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>{% trans "Name" %}</th>
+                  <th>{% trans "Role" %}</th>
+                  <th>{% trans "Email" %}</th>
+                  <th>{% trans "Phone" %}</th>
+                  <th>{% trans "Primary" %}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for c in contacts %}
+                <tr>
+                  <td><strong>{{ c.name }}</strong></td>
+                  <td>{{ c.role|default:"—" }}</td>
+                  <td>{% if c.email %}<a href="mailto:{{ c.email }}">{{ c.email }}</a>{% else %}—{% endif %}</td>
+                  <td>{% if c.phone %}<a href="tel:{{ c.phone }}">{{ c.phone }}</a>{% else %}—{% endif %}</td>
+                  <td>{% if c.is_primary %}{% trans "Yes" %}{% else %}—{% endif %}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <p class="muted">{% trans "No contact persons for this facility." %}</p>
+          {% endif %}
+        </div>
+
         <!-- Enheter -->
-        <div class="customer-tab-panel active" id="tab-devices">
+        <div class="customer-tab-panel" id="tab-devices">
           <div class="customer-section-header">
             <h2>{% trans "Enheter" %}</h2>
           </div>
@@ -356,41 +414,6 @@
           <p class="muted">{% trans "No documents uploaded for this facility." %}</p>
           {% endif %}
         </div>
-
-        <!-- Kontaktpersoner -->
-        <div class="customer-tab-panel" id="tab-contacts">
-          <div class="customer-section-header">
-            <h2>{% trans "Kontaktpersoner" %}</h2>
-          </div>
-          {% if contacts %}
-          <div class="admin-table-wrap">
-            <table class="admin-table">
-              <thead>
-                <tr>
-                  <th>{% trans "Name" %}</th>
-                  <th>{% trans "Role" %}</th>
-                  <th>{% trans "Email" %}</th>
-                  <th>{% trans "Phone" %}</th>
-                  <th>{% trans "Primary" %}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for c in contacts %}
-                <tr>
-                  <td><strong>{{ c.name }}</strong></td>
-                  <td>{{ c.role|default:"—" }}</td>
-                  <td>{% if c.email %}<a href="mailto:{{ c.email }}">{{ c.email }}</a>{% else %}—{% endif %}</td>
-                  <td>{% if c.phone %}<a href="tel:{{ c.phone }}">{{ c.phone }}</a>{% else %}—{% endif %}</td>
-                  <td>{% if c.is_primary %}{% trans "Yes" %}{% else %}—{% endif %}</td>
-                </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
-          {% else %}
-          <p class="muted">{% trans "No contact persons for this facility." %}</p>
-          {% endif %}
-        </div>
       </div>
     </div>
   </div>
@@ -408,6 +431,26 @@
 }
 .facility-overview-num { font-size: 1.25rem; font-weight: 600; color: var(--text); line-height: 1.2; }
 .facility-overview-label { font-size: 0.75rem; color: var(--muted, #6b7280); }
+.facility-side-status { margin-top: 16px; display: flex; flex-direction: column; gap: 12px; }
+.facility-serviceavtale-badge { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 8px; font-size: 0.8125rem; font-weight: 600; width: fit-content; }
+.facility-serviceavtale-badge--yes { background: rgba(34, 197, 94, 0.15); color: #15803d; border: 1px solid rgba(34, 197, 94, 0.4); }
+.facility-serviceavtale-badge--no { background: rgba(239, 68, 68, 0.1); color: #b91c1c; border: 1px solid rgba(239, 68, 68, 0.35); }
+.facility-serviceavtale-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.facility-serviceavtale-badge--yes .facility-serviceavtale-dot { background: #22c55e; }
+.facility-serviceavtale-badge--no .facility-serviceavtale-dot { background: #ef4444; }
+.facility-technical-support { padding: 12px 14px; background: var(--card, #fff); border: 1px solid var(--line, #e5e7eb); border-radius: 8px; }
+.facility-technical-support-title { margin: 0 0 8px 0; font-size: 0.8125rem; font-weight: 600; color: var(--muted, #6b7280); text-transform: uppercase; letter-spacing: 0.02em; }
+.facility-technical-support-name { margin: 0 0 6px 0; font-size: 0.875rem; font-weight: 500; color: var(--text, #111); }
+.facility-technical-support-role { font-weight: 400; color: var(--muted); }
+.facility-technical-support-links { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 6px; }
+.facility-technical-support-link { font-size: 0.8125rem; color: #3b82f6; text-decoration: none; }
+.facility-technical-support-link:hover { text-decoration: underline; }
+.facility-technical-support-info { margin: 0; font-size: 0.75rem; color: var(--muted); line-height: 1.4; white-space: pre-wrap; }
+.facility-important-info { margin-top: 16px; padding: 14px 16px; background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 8px; }
+.facility-important-info-title { margin: 0 0 8px 0; font-size: 0.9375rem; font-weight: 600; color: var(--text, #111); }
+.facility-important-info-body { font-size: 0.875rem; line-height: 1.5; color: var(--text); white-space: pre-wrap; }
+.facility-important-info-body p { margin: 0 0 0.5em 0; }
+.facility-important-info-body p:last-child { margin-bottom: 0; }
 .facility-card-body { display: flex; gap: 0 24px; align-items: flex-start; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--line, #e5e7eb); }
 .facility-card-sidemenu { flex-shrink: 0; width: 180px; display: flex; flex-direction: column; gap: 0; margin: 0; padding: 0; border-right: 1px solid var(--line, #e5e7eb); padding-right: 16px; }
 .facility-sidemenu-item { display: block; width: 100%; padding: 8px 12px; margin: 0; text-align: left; font-size: 0.8125rem; font-weight: 500; color: var(--muted, #6b7280); background: transparent; border: none; border-radius: 6px; cursor: pointer; transition: all 0.15s; font-family: inherit; text-decoration: none; box-sizing: border-box; }
@@ -433,9 +476,10 @@
 .facility-datasheet-row.hidden { display: none; }
 .facility-datasheet-title { font-size: 0.875rem; font-weight: 500; }
 .facility-datasheet-actions { display: flex; gap: 8px; flex-shrink: 0; }
-.facility-datasheet-btn { font-size: 0.8125rem; padding: 4px 10px; border-radius: 6px; text-decoration: none; background: var(--btn); color: var(--text); border: 1px solid var(--line); transition: background 0.2s, color 0.2s; }
+.facility-datasheet-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; font-size: 0.875rem; border-radius: 8px; text-decoration: none; background: var(--btn); color: var(--text); border: 1px solid var(--line); transition: background 0.2s, color 0.2s, border-color 0.2s; }
 .facility-datasheet-btn:hover { background: var(--btnHover); }
-.facility-datasheet-btn--secondary { background: transparent; }
+.facility-datasheet-btn--secondary { background: transparent; color: var(--muted); }
+.facility-datasheet-btn--secondary:hover { color: var(--text); border-color: var(--muted); }
 .facility-datasheets-empty { margin-top: 8px; }
 </style>
 
@@ -444,7 +488,7 @@
   var hashToTab = { racks: 'racks', network: 'network', devices: 'devices', documents: 'documents', servicelogg: 'servicelogg', produktdatablader: 'produktdatablader', contacts: 'contacts' };
   function getHashTab() {
     var h = (window.location.hash || '').replace(/^#/, '');
-    return hashToTab[h] || 'devices';
+    return hashToTab[h] || 'contacts';
   }
   function setActiveTab(tabId) {
     var sidemenuItems = document.querySelectorAll('.facility-sidemenu-item');

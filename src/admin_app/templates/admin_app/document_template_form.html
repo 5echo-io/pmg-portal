@@ -15,6 +15,15 @@
 
 <style>
 .document-template-edit-layout { display: grid; grid-template-columns: minmax(0, 6fr) minmax(180px, 4fr); gap: 1.5rem; align-items: start; }
+.document-template-preview-col { display: flex; flex-direction: column; gap: 0; }
+.doc-preview-toolbar { display: flex; align-items: center; justify-content: flex-end; gap: 0.5rem; margin-bottom: 0.5rem; min-height: 2rem; }
+.doc-preview-toolbar .doc-preview-btn { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; padding: 0; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); color: var(--text-secondary); cursor: pointer; transition: var(--transition); }
+.doc-preview-toolbar .doc-preview-btn:hover { background: var(--surface-elevated); color: var(--text-primary); border-color: var(--border-hover); }
+.doc-preview-iframe-wrap { border: 1px solid var(--border); background: #fff; overflow: auto; min-height: 300px; }
+.doc-preview-iframe-wrap::-webkit-scrollbar { width: 10px; height: 10px; }
+.doc-preview-iframe-wrap::-webkit-scrollbar-track { background: var(--bg); }
+.doc-preview-iframe-wrap::-webkit-scrollbar-thumb { background: var(--border); border-radius: 5px; }
+.doc-preview-iframe-wrap::-webkit-scrollbar-thumb:hover { background: var(--border-hover); }
 @media (max-width: 900px) {
   .document-template-edit-layout { grid-template-columns: 1fr; }
   .document-template-preview-col { position: static !important; }
@@ -59,14 +68,16 @@
   </div>
 
   <div class="document-template-preview-col" style="position: sticky; top: 1rem;">
-    <div style="border: 1px solid #ccc; background: #f5f5f5; padding: 0.75rem; border-radius: 4px;">
-      <h2 class="admin-section-title" style="margin: 0 0 0.5rem 0; font-size: 1rem;">{% trans "Preview" %}</h2>
-      <p class="muted" style="margin: 0 0 0.5rem 0; font-size: 0.85rem;">{% trans "Uses sample data. Click Update to refresh." %}</p>
-      <button type="button" id="doc-preview-update-btn" class="form-btn form-btn-secondary" style="width: 100%; margin-bottom: 0.5rem;">{% trans "Update" %}</button>
-      <a href="#" id="doc-preview-newtab-link" target="_blank" rel="noopener" class="form-btn form-btn-secondary" style="display: block; text-align: center; font-size: 0.85rem;">{% trans "Open in new tab" %}</a>
+    <div class="doc-preview-toolbar">
+      <button type="button" id="doc-preview-update-btn" class="doc-preview-btn" title="{% trans 'Update preview' %}" aria-label="{% trans 'Update preview' %}">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
+      </button>
+      <a href="#" id="doc-preview-newtab-link" class="doc-preview-btn" target="_blank" rel="noopener" title="{% trans 'Open in new tab' %}" aria-label="{% trans 'Open in new tab' %}">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      </a>
     </div>
-    <div style="border: 1px solid #ccc; background: #fff; margin-top: 0.5rem; min-height: 300px; overflow: auto;">
-      <iframe id="doc-preview-iframe" title="{% trans 'Document preview' %}" style="width: 100%; height: 70vh; min-height: 400px; border: 0;"></iframe>
+    <div class="doc-preview-iframe-wrap">
+      <iframe id="doc-preview-iframe" title="{% trans 'Document preview' %}" style="width: 100%; height: 70vh; min-height: 400px; border: 0; display: block; background: #fff;"></iframe>
     </div>
   </div>
 </div>
@@ -99,17 +110,17 @@
     body.append('document_type', data.document_type);
     body.append('csrfmiddlewaretoken', data.csrfmiddlewaretoken);
     updateBtn.disabled = true;
-    updateBtn.textContent = "{% trans 'Updating…' %}";
+    updateBtn.setAttribute('aria-busy', 'true');
     fetch(previewDraftUrl, { method: 'POST', body: body, credentials: 'same-origin' })
       .then(function(r) { return r.text(); })
       .then(function(html) {
         iframe.srcdoc = html;
         updateBtn.disabled = false;
-        updateBtn.textContent = "{% trans 'Update' %}";
+        updateBtn.removeAttribute('aria-busy');
       })
       .catch(function() {
         updateBtn.disabled = false;
-        updateBtn.textContent = "{% trans 'Update' %}";
+        updateBtn.removeAttribute('aria-busy');
       });
   }
 

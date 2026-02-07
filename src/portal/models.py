@@ -214,6 +214,11 @@ class Facility(models.Model):
     contact_person = models.CharField(max_length=200, blank=True, default="", help_text="Primary contact person")
     contact_email = models.EmailField(blank=True, default="")
     contact_phone = models.CharField(max_length=50, blank=True, default="")
+    important_info = models.TextField(
+        blank=True,
+        default="",
+        help_text="Viktig informasjon eller kunngjøring som vises på anleggskortet i portalen (f.eks. åpningstider, adkomst, nedetid).",
+    )
     is_active = models.BooleanField(default=True, help_text="Whether this facility is currently active")
     customers = models.ManyToManyField(Customer, related_name="facilities", blank=True, help_text="Customers that have access to this facility")
     created_at = models.DateTimeField(auto_now_add=True)
@@ -635,6 +640,34 @@ class FacilityContact(models.Model):
 
     def __str__(self) -> str:
         return f"{self.facility.name}: {self.name}"
+
+
+class TechnicalSupportContact(models.Model):
+    """
+    Global teknisk kontakt / nøkkelperson fra leverandørens side.
+    Vises på anleggskortet slik at kunden vet hvem de skal kontakte ved teknisk support.
+    """
+    name = models.CharField(max_length=200, help_text="Navn på teknisk kontakt (f.eks. Support, NOC)")
+    role = models.CharField(max_length=200, blank=True, default="", help_text="Rolle/tittel (f.eks. Teknisk support)")
+    email = models.EmailField(blank=True, default="")
+    phone = models.CharField(max_length=50, blank=True, default="")
+    support_info = models.TextField(
+        blank=True,
+        default="",
+        help_text="Ekstra informasjon (f.eks. åpningstider: Man–Fre 08–16, eller hvordan man åpner sak).",
+    )
+    sort_order = models.PositiveIntegerField(default=100, db_index=True)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["sort_order", "name"]
+        verbose_name = "Technical support contact"
+        verbose_name_plural = "Technical support contacts"
+
+    def __str__(self) -> str:
+        return self.name or "Technical support"
 
 
 class Rack(models.Model):

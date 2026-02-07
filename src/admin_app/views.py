@@ -2533,10 +2533,19 @@ def document_template_preview(request, pk):
     t = Template(template.html_content)
     html_body = t.render(Context(context))
     css = template.css_content or ""
+    preview_doc_styles = (
+        "body{background:#fff !important;}"
+        "::-webkit-scrollbar{width:10px;height:10px}"
+        "::-webkit-scrollbar-track{background:#f1f1f1;border-radius:5px}"
+        "::-webkit-scrollbar-thumb{background:#c1c1c1;border-radius:5px}"
+        "::-webkit-scrollbar-thumb:hover{background:#a8a8a8}"
+        "*{scrollbar-width:thin;scrollbar-color:#c1c1c1 #f1f1f1}"
+    )
     full_html = (
         "<!DOCTYPE html><html><head><meta charset=\"utf-8\"><title>Preview – "
         + escape(template.name)
         + "</title><style>"
+        + preview_doc_styles
         + css
         + "</style></head><body>"
         + html_body
@@ -2560,8 +2569,17 @@ def document_template_preview_draft(request):
     t = Template(html_content)
     html_body = t.render(Context(context))
     css = css_content or ""
+    preview_doc_styles = (
+        "body{background:#fff !important;}"
+        "::-webkit-scrollbar{width:10px;height:10px}"
+        "::-webkit-scrollbar-track{background:#f1f1f1;border-radius:5px}"
+        "::-webkit-scrollbar-thumb{background:#c1c1c1;border-radius:5px}"
+        "::-webkit-scrollbar-thumb:hover{background:#a8a8a8}"
+        "*{scrollbar-width:thin;scrollbar-color:#c1c1c1 #f1f1f1}"
+    )
     full_html = (
         "<!DOCTYPE html><html><head><meta charset=\"utf-8\"><title>Preview</title><style>"
+        + preview_doc_styles
         + css
         + "</style></head><body>"
         + html_body

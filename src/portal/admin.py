@@ -9,7 +9,7 @@ Last Modified: 2026-02-05
 from django.contrib import admin
 from django.contrib import messages
 from django.db.models import Q
-from .models import Customer, CustomerMembership, PortalLink, Facility, ServiceLog, ServiceType, ServiceLogAttachment, ServiceLogDevice, ServiceVisit, NetworkDevice
+from .models import Customer, CustomerMembership, PortalLink, Facility, TechnicalSupportContact, ServiceLog, ServiceType, ServiceLogAttachment, ServiceLogDevice, ServiceVisit, NetworkDevice
 from .forms import CustomerMembershipForm
 
 @admin.register(Customer)
@@ -215,12 +215,33 @@ class FacilityAdmin(admin.ModelAdmin):
     list_display = ("name", "slug", "customer_count")
     search_fields = ("name", "slug", "customers__name")
     list_filter = ("is_active",)
+    fieldsets = (
+        (None, {"fields": ("name", "slug", "description", "is_active")}),
+        ("Adresse", {"fields": ("address", "city", "postal_code", "country")}),
+        ("Kontakt (generelt)", {"fields": ("contact_person", "contact_email", "contact_phone")}),
+        ("Portal – viktig informasjon", {"fields": ("important_info",), "description": "Tekst som vises på anleggskortet i portalen (f.eks. åpningstider, adkomst, kunngjøringer)."}),
+        ("Tilgang", {"fields": ("customers",)}),
+    )
 
     def customer_count(self, obj):
         if not obj or not obj.pk:
             return "-"
         return obj.customers.count()
     customer_count.short_description = "Customers"
+
+
+@admin.register(TechnicalSupportContact)
+class TechnicalSupportContactAdmin(admin.ModelAdmin):
+    """Teknisk kontakt / nøkkelperson som vises på anleggskortet i portalen."""
+    list_display = ("name", "role", "email", "phone", "sort_order", "is_active")
+    list_editable = ("sort_order", "is_active")
+    search_fields = ("name", "role", "email", "phone")
+    list_filter = ("is_active",)
+    fieldsets = (
+        (None, {"fields": ("name", "role", "is_active", "sort_order")}),
+        ("Kontakt", {"fields": ("email", "phone")}),
+        ("Ekstra informasjon", {"fields": ("support_info",), "description": "F.eks. åpningstider eller hvordan kunden åpner sak."}),
+    )
 
 
 @admin.register(ServiceType)

@@ -4,15 +4,50 @@ Project: PMG Portal
 Purpose: Build and release log
 Path: BUILDLOG.md
 Created: 2026-02-05
-Last Modified: 2026-02-07
+Last Modified: 2026-02-08
 -->
 
 # BUILDLOG
+
+Kronologisk logg over bygg og utgivelser (nyeste først). Hver post: dato, branch, versjon (ved bump), kort oppsummering.
+
+---
+
+- 2026-02-08 (Europe/Oslo)
+  - Branch: dev
+  - Version: 4.8.0-beta.34
+  - Summary:
+    - CHANGELOG: Reorganisert for lesbarhet – [Unreleased] gruppert med #### (Portal, Admin, Design, Dokumentmal, Kontaktpersoner); tidligere endringer under «Tidligere endringer (4.8.x)» med Rettelser/Endringer/Tillegg og kategorier (PDF, Admin, compilemessages, Portal, Install, Servicelogg).
+    - BUILDLOG: Intro lagt til; konsistent «Version» på poster; korte oppsummeringer der det manglet.
+  - Version bump: 4.8.0-beta.33 → 4.8.0-beta.34
+
+- 2026-02-07 (Europe/Oslo)
+  - Branch: dev
+  - Version: 4.8.0-beta.33
+  - Summary:
+    - Portal facility: Kontaktpersoner øverst i sidemenyen og som standard fane ved åpning; oversiktsrute med Kontaktpersoner først; default hash #contacts.
+    - Portal facility: Viktig informasjon på anleggskortet – Facility.important_info (migrasjon 0016), admin «Portal – viktig informasjon», portal-blokk «Viktig informasjon» under oversikten.
+    - Portal facility: Serviceavtale-status i venstre kolonne – grønn «Serviceavtale» / rød «Ingen serviceavtale» basert på om minst én enhet har SLA (is_sla).
+    - Portal facility: Teknisk support / nøkkelperson – TechnicalSupportContact (migrasjon 0017), admin Technical support contacts; portal-boks «Teknisk support» under serviceavtale-badge med e-post/telefon og support_info.
+  - Version bump: 4.8.0-beta.32 → 4.8.0-beta.33
+
+- 2026-02-07 (Europe/Oslo)
+  - Branch: dev
+  - Version: (ingen bump)
+  - Summary:
+    - Knapper og modaler: Se datablad / Last ned PDF som app-standard (primær/sekundær); form-btn, modal-btn m.m. justert; .modal-actions og .admin-form-actions standardisert (app.css, backup_restore.html).
+
+- 2026-02-07 (Europe/Oslo)
+  - Branch: dev
+  - Version: (ingen bump)
+  - Summary:
+    - Portal light/dark-tema: CSS-variabler, forbedret light mode, tema-veksler (sol/måne) ved avatar (ikke pushet).
 
 - 2026-02-07 (Europe/Oslo)
   - Branch: dev
   - Version: 4.8.0-beta.32
   - Summary:
+    - Admin document template preview: white background in preview content; scrollbar styled to match admin; toolbar with icon buttons (Update, Open in new tab) on the right; preview box aligned with form start.
     - Admin document template edit: preview panel on the right (4/10 width); Update button and debounced auto-update for live draft preview; preview-draft endpoint (POST).
     - Portal facility: Søkefelt produktdatablader vertikalt sentrert med «Søk»; Servicelogg Type-dropdown på linje med tittelen; «Vis produktdatablad» åpner i nytt vindu.
     - Portal facility: Menyrekkefølge endret til Enheter, Racks, Nettverk, Produktdatablader, Servicelogg, Dokumenter, Kontaktpersoner; standard fane Enheter; oversiktsrute oppdatert.

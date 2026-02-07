@@ -43,9 +43,9 @@
         <h3>{% trans "Warning: This action cannot be undone" %}</h3>
         <p class="delete-confirm-modal-message"></p>
         <p><strong>{% trans "This action is irreversible." %}</strong></p>
-        <form method="post" action="" class="delete-confirm-form" style="margin-top: 24px;">
+        <form method="post" action="" class="delete-confirm-form">
           {% csrf_token %}
-          <div style="display: flex; gap: 12px; margin-top: 20px; justify-content: flex-end;">
+          <div class="admin-form-actions admin-form-actions--modal">
             <button type="button" class="form-btn form-btn-secondary delete-confirm-cancel">{% trans "Cancel" %}</button>
             <button type="submit" class="form-btn form-btn-danger delete-confirm-submit" disabled data-delete-label="{% trans 'Delete' %}">
               <span class="delete-confirm-countdown"></span>

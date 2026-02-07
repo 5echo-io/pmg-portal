@@ -58,11 +58,9 @@
       <span class="topbar-customer-name">{% for m in user_customers %}{% if m.customer.id == active_customer_id %}{{ m.customer.name }}{% endif %}{% endfor %}</span>
       {% endif %}
       <div class="topbar-theme-toggle" role="group" aria-label="{% trans 'Theme' %}">
-        <button type="button" class="topbar-btn topbar-theme-btn" data-theme="light" aria-pressed="false" title="{% trans 'Light theme' %}">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-        </button>
-        <button type="button" class="topbar-btn topbar-theme-btn" data-theme="dark" aria-pressed="false" title="{% trans 'Dark theme' %}">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <button type="button" class="topbar-btn topbar-theme-btn" id="theme-toggle-btn" title="{% trans 'Switch theme' %}" aria-label="{% trans 'Switch theme' %}">
+          <span class="theme-icon-sun" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></span>
+          <span class="theme-icon-moon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></span>
         </button>
       </div>
       <span class="topbar-btn topbar-btn--disabled topbar-btn--with-tooltip">
@@ -289,7 +287,7 @@
       }
     });
 
-    // Theme toggle: apply theme and persist
+    // Theme toggle: single button (sun in light mode, moon in dark), click toggles light/dark and persists
     (function() {
       function getEffectiveTheme() {
         const data = document.body.getAttribute('data-theme') || 'system';
@@ -301,32 +299,26 @@
       function applyTheme(theme) {
         document.body.classList.remove('theme-light', 'theme-dark');
         document.body.classList.add('theme-' + theme);
-        document.body.setAttribute('data-theme', theme);
       }
       function setSavedTheme(theme) {
         document.body.setAttribute('data-theme', theme);
-        applyTheme(getEffectiveTheme());
-        document.querySelectorAll('.topbar-theme-btn').forEach(function(btn) {
-          const t = btn.getAttribute('data-theme');
-          btn.setAttribute('aria-pressed', t === theme ? 'true' : 'false');
-        });
+        applyTheme(theme);
       }
-      document.querySelectorAll('.topbar-theme-btn').forEach(function(btn) {
-        btn.addEventListener('click', function() {
-          const theme = this.getAttribute('data-theme');
-          setSavedTheme(theme);
-          const formData = new FormData();
-          formData.append('theme', theme);
+      var toggleBtn = document.getElementById('theme-toggle-btn');
+      if (toggleBtn) {
+        toggleBtn.addEventListener('click', function() {
+          var effective = getEffectiveTheme();
+          var next = effective === 'dark' ? 'light' : 'dark';
+          setSavedTheme(next);
+          var formData = new FormData();
+          formData.append('theme', next);
           formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]')?.value || '');
           fetch('/api/preferences/', { method: 'POST', body: formData });
         });
-      });
-      // Initial apply from data-theme (from server)
+      }
+      // Initial apply from data-theme (from server); system uses effective theme for display
       var saved = document.body.getAttribute('data-theme') || 'system';
-      applyTheme(getEffectiveTheme());
-      document.querySelectorAll('.topbar-theme-btn').forEach(function(btn) {
-        btn.setAttribute('aria-pressed', btn.getAttribute('data-theme') === saved ? 'true' : 'false');
-      });
+      applyTheme(saved === 'system' ? getEffectiveTheme() : saved);
       if (window.matchMedia) {
         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
           if ((document.body.getAttribute('data-theme') || '') === 'system') applyTheme(getEffectiveTheme());
