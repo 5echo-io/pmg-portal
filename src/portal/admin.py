@@ -209,6 +209,14 @@ class PortalLinkAdmin(admin.ModelAdmin):
     list_editable = ("sort_order",)
 
 
+@admin.register(Facility)
+class FacilityAdmin(admin.ModelAdmin):
+    """Minimal admin so ServiceLogAdmin can use autocomplete_fields on facility."""
+    list_display = ("name", "slug", "customer")
+    search_fields = ("name", "slug", "customer__name")
+    list_filter = ("customer",)
+
+
 @admin.register(ServiceLog)
 class ServiceLogAdmin(admin.ModelAdmin):
     """Service log entries per facility (also manageable in Admin under each facility)."""
