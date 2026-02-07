@@ -11,6 +11,13 @@ Last Modified: 2026-02-06
 
 - 2026-02-06 (Europe/Oslo)
   - Branch: dev
+  - Version: 4.8.0-beta.14
+  - Summary:
+    - FacilityAdmin: use Facility fields only (name, slug, customer_count; list_filter is_active); fix E108/E116 (no customer field, use customers M2M)
+    - Version bump: 4.8.0-beta.13 → 4.8.0-beta.14
+
+- 2026-02-06 (Europe/Oslo)
+  - Branch: dev
   - Version: 4.8.0-beta.13
   - Summary:
     - Admin: register Facility in portal admin (FacilityAdmin) so ServiceLogAdmin autocomplete_fields works; fixes E039 and update/migrate on server

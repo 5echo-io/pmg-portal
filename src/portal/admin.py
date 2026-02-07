@@ -212,9 +212,15 @@ class PortalLinkAdmin(admin.ModelAdmin):
 @admin.register(Facility)
 class FacilityAdmin(admin.ModelAdmin):
     """Minimal admin so ServiceLogAdmin can use autocomplete_fields on facility."""
-    list_display = ("name", "slug", "customer")
-    search_fields = ("name", "slug", "customer__name")
-    list_filter = ("customer",)
+    list_display = ("name", "slug", "customer_count")
+    search_fields = ("name", "slug", "customers__name")
+    list_filter = ("is_active",)
+
+    def customer_count(self, obj):
+        if not obj or not obj.pk:
+            return "-"
+        return obj.customers.count()
+    customer_count.short_description = "Customers"
 
 
 @admin.register(ServiceLog)
