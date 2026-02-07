@@ -1,6 +1,6 @@
 """
 System theme customizations (colors, etc.) stored in DB (SystemInfo).
-Superusers can override CSS variables via Admin → Server management → System customization.
+Superusers can override CSS variables via Admin → System settings → System customization.
 Defaults come from theme-dark.css and theme-light.css; only overrides are stored and applied.
 Backup/restore includes the database, so customizations are preserved.
 """

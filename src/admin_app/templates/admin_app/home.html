@@ -38,7 +38,7 @@
   </div>
   {% if request.user.is_superuser %}
   <div class="panel admin-home-panel">
-    <div class="admin-home-panel-heading">{% trans "Server management" %}</div>
+    <div class="admin-home-panel-heading">{% trans "System settings" %}</div>
     <ul class="admin-home-links">
       <li><a href="{% url 'admin_app:admin_system_customize' %}" class="admin-home-link">{% trans "System customization" %}</a></li>
       <li><a href="{% url 'admin_app:admin_backup_restore' %}" class="admin-home-link">{% trans "Backup & Restore" %}</a></li>

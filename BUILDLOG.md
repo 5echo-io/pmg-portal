@@ -13,6 +13,13 @@ Chronological log of builds and releases (newest first). Each entry: date, branc
 
 ---
 
+- 2026-02-08 (Europe/Oslo)
+  - Branch: dev
+  - Version: 4.9.0-beta.2
+  - Summary:
+    - Admin: System customization – ny side (Server → System customization) for å tilpasse tema-farger (lys/mørk) i DB; theme_settings, system_customize view/template, Reset dark/light/all; admin-customize CSS; context_processors bruker get_theme_customizations og build_theme_override_css. Facility customers edit-fragment forbedret; facility_detail/facility_detail_content og backup_restore/facility_card småjusteringer; THEME_COLORS.md og locale nb +3.
+  - Version bump: 4.9.0-beta.1 → 4.9.0-beta.2
+
 - 2026-02-07 (Europe/Oslo)
   - Branch: dev
   - Version: 4.9.0-beta.1

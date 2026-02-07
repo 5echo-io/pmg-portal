@@ -2821,7 +2821,7 @@ def facility_service_log_pdf_single(request, facility_slug, log_id):
 @superuser_required
 @require_http_methods(["GET", "POST"])
 def backup_restore(request):
-    """Server management: create full backup (download) or restore from uploaded backup file."""
+    """System settings: create full backup (download) or restore from uploaded backup file."""
     from . import backup_restore as br
 
     if request.method == "POST":
@@ -2874,7 +2874,7 @@ def backup_restore(request):
 @superuser_required
 @require_http_methods(["GET", "POST"])
 def system_customize(request):
-    """Server management: customize theme colors (stored in DB, applied site-wide)."""
+    """System settings: customize theme colors (stored in DB, applied site-wide)."""
     from .theme_settings import (
         get_theme_customizations,
         set_theme_customizations,

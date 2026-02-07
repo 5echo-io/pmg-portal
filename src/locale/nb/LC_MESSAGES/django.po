@@ -748,6 +748,9 @@ msgstr "Varsler"
 msgid "Server management"
 msgstr "Serverstyring"
 
+msgid "System settings"
+msgstr "Systeminnstillinger"
+
 msgid "Backup & Restore"
 msgstr "Sikkerhetskopi og gjenoppretting"
 

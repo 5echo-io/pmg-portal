@@ -28,6 +28,22 @@ This project follows Semantic Versioning (SemVer).
 
 ---
 
+## [4.9.0-beta.2] - 2026-02-08
+
+### Added
+
+#### Admin
+- **System customization (tema)**: Ny side Server → System customization for å tilpasse tema-farger (lys/mørk) lagret i DB og brukt portalen bredt. theme_settings.py, system_customize view/template; Reset dark/light/all; admin-customize CSS i app.css; lenke fra admin home.
+
+### Changed
+
+#### Admin
+- **Facility – customers edit**: Forbedret facility_customers_edit_fragment (layout/UX).
+- **Portal**: context_processors bruker get_theme_customizations og build_theme_override_css for tilpassede tema-variabler; facility_detail og facility_detail_content småjusteringer.
+- **Docs**: THEME_COLORS.md oppdatert. Locale nb +3.
+
+---
+
 ## [Unreleased]
 
 Pre-release builds (alpha, beta, rc) are listed here. Only full releases (without build suffix) get their own version section below.

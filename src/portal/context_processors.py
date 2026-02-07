@@ -15,7 +15,7 @@ import re
 import urllib.request
 import urllib.error
 import json
-from django.db.models import Q
+from django.db.models import Q, F
 from .models import CustomerMembership, Customer, PortalUserPreference, Facility
 
 
@@ -92,12 +92,15 @@ def user_customers(request):
         except Customer.DoesNotExist:
             pass
     
-    # Theme preference for portal (light/dark/system)
+    # Theme preference for portal (light/dark/system). Prefer customer-specific over global (customer_id=None).
     portal_theme = "system"
     if request.user and request.user.is_authenticated:
-        prefs = PortalUserPreference.objects.filter(user=request.user).filter(
-            Q(customer_id=active_customer_id) | Q(customer__isnull=True)
-        ).order_by("-customer_id").first()
+        prefs = (
+            PortalUserPreference.objects.filter(user=request.user)
+            .filter(Q(customer_id=active_customer_id) | Q(customer__isnull=True))
+            .order_by(F("customer_id").desc(nulls_last=True))
+            .first()
+        )
         if prefs:
             portal_theme = prefs.theme
 

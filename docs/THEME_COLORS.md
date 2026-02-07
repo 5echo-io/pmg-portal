@@ -103,7 +103,7 @@ Change the **color codes** in these two files to adjust dark and light mode resp
 
 Superusers can override theme variables without editing code:
 
-1. Go to **Admin** → **Server management** → **System customization**.
+1. Go to **Admin** → **System settings** → **System customization**.
 2. Adjust **Dark theme** and **Light theme** variables (e.g. accent, buttons, backgrounds).
 3. Click **Save changes**. Overrides are stored in the database and apply site-wide. Empty fields use the default from the theme CSS files.
 4. Use **Reset dark theme** / **Reset light theme** / **Reset all to default** to clear customizations.

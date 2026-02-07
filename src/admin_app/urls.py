@@ -117,7 +117,7 @@ urlpatterns = [
     path("facilities/<slug:facility_slug>/service-visits/add/", views.facility_service_visit_add, name="admin_facility_service_visit_add"),
     path("facilities/<slug:facility_slug>/service-visits/<int:visit_id>/edit/", views.facility_service_visit_edit, name="admin_facility_service_visit_edit"),
     path("facilities/<slug:facility_slug>/service-visits/<int:visit_id>/delete/", views.facility_service_visit_delete, name="admin_facility_service_visit_delete"),
-    # Server management (superuser only)
+    # System settings (superuser only)
     path("server/backup-restore/", views.backup_restore, name="admin_backup_restore"),
     path("server/system-customize/", views.system_customize, name="admin_system_customize"),
 ]

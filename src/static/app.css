@@ -1652,6 +1652,18 @@ html.theme-dark .topbar-theme-btn .theme-icon-moon {
   border-color: var(--muted);
 }
 
+/* Portal facility: Admin as gear icon only */
+.facility-admin-gear-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  min-width: 36px;
+}
+.facility-admin-gear-btn svg {
+  display: block;
+}
+
 /* --- Default app button style (from /datasheets/ "Se datablad" / "Last ned PDF") ---
    Use .btn .btn-primary (filled) or .btn .btn-secondary (outline) for all actions.
    Excluded: footer links, avatar menu, breadcrumb back, danger/delete buttons. */
