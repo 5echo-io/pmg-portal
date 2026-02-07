@@ -4,10 +4,24 @@ Project: PMG Portal
 Purpose: Build and release log
 Path: BUILDLOG.md
 Created: 2026-02-05
-Last Modified: 2026-02-06
+Last Modified: 2026-02-07
 -->
 
 # BUILDLOG
+
+- 2026-02-07 (Europe/Oslo)
+  - Branch: dev
+  - Version: 4.8.0-beta.29
+  - Summary:
+    - WeasyPrint PDF: portal and admin views catch OSError when Pango/Cairo missing and show friendly message with apt command; install.sh and update.sh add libcairo2 to WeasyPrint deps; docs/WEASYPRINT_PDF.md
+    - Version bump: 4.8.0-beta.28 → 4.8.0-beta.29
+
+- 2026-02-07 (Europe/Oslo)
+  - Branch: dev
+  - Version: 4.8.0-beta.28
+  - Summary:
+    - WeasyPrint PDF: install.sh and update.sh ensure Pango/GdkPixbuf system packages (libpango-1.0-0, libpangocairo-1.0-0, libgdk-pixbuf2.0-0) so service log PDF export works; update.sh runs an explicit apt-get install of these on every update
+    - Version bump: 4.8.0-beta.27 → 4.8.0-beta.28
 
 - 2026-02-07 (Europe/Oslo)
   - Branch: dev

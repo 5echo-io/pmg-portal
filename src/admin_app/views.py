@@ -2416,11 +2416,14 @@ def _render_pdf_from_template(template, context):
     t = Template(template.html_content)
     html_str = t.render(Context(context))
     buf = BytesIO()
-    doc = HTML(string=html_str)
-    stylesheets = [CSS(string=template.css_content)] if template.css_content else []
-    doc.write_pdf(buf, stylesheets=stylesheets)
-    buf.seek(0)
-    return buf.getvalue()
+    try:
+        doc = HTML(string=html_str)
+        stylesheets = [CSS(string=template.css_content)] if template.css_content else []
+        doc.write_pdf(buf, stylesheets=stylesheets)
+        buf.seek(0)
+        return buf.getvalue()
+    except OSError:
+        return None
 
 
 @staff_required
@@ -2450,7 +2453,11 @@ def facility_service_log_pdf_single(request, facility_slug, log_id):
     }
     pdf_bytes = _render_pdf_from_template(template, context)
     if not pdf_bytes:
-        messages.error(request, _("PDF generation failed (WeasyPrint may not be installed)."))
+        messages.error(
+            request,
+            _("PDF generation failed. Install WeasyPrint system libraries on the server: "
+              "sudo apt-get install -y libpango-1.0-0 libpangocairo-1.0-0 libgdk-pixbuf2.0-0 libcairo2"),
+        )
         return redirect("admin_app:admin_facility_detail", slug=facility.slug)
     filename = f"servicerapport-{service_log.service_id}-{timezone.now().strftime('%Y%m%d')}.pdf"
     response = HttpResponse(pdf_bytes, content_type="application/pdf")

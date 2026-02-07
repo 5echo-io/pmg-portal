@@ -509,10 +509,21 @@ def facility_service_log_pdf(request, slug, log_id):
     t = Template(template.html_content)
     html_str = t.render(Context(context))
     buf = BytesIO()
-    doc = HTML(string=html_str)
-    stylesheets = [CSS(string=template.css_content)] if template.css_content else []
-    doc.write_pdf(buf, stylesheets=stylesheets)
-    buf.seek(0)
+    try:
+        doc = HTML(string=html_str)
+        stylesheets = [CSS(string=template.css_content)] if template.css_content else []
+        doc.write_pdf(buf, stylesheets=stylesheets)
+        buf.seek(0)
+    except OSError as e:
+        if "pango" in str(e).lower() or "cairo" in str(e).lower() or "cannot load library" in str(e).lower():
+            messages.error(
+                request,
+                "PDF generation failed: missing system libraries (Pango/Cairo). "
+                "Ask the server administrator to run: sudo apt-get install -y libpango-1.0-0 libpangocairo-1.0-0 libgdk-pixbuf2.0-0 libcairo2",
+            )
+        else:
+            messages.error(request, "PDF generation failed.")
+        return redirect("facility_service_log_detail", slug=slug, log_id=log_id)
     filename = f"servicerapport-{service_log.service_id}-{timezone.now().strftime('%Y%m%d')}.pdf"
     response = HttpResponse(buf.getvalue(), content_type="application/pdf")
     response["Content-Disposition"] = f'attachment; filename="{filename}"'

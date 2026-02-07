@@ -55,10 +55,17 @@ fi
 if ! command -v pkg-config >/dev/null 2>&1 || ! pkg-config --exists cairo 2>/dev/null; then
   NEED_UPDATE=true
 fi
+# WeasyPrint (service log PDF etc.): need Pango and GdkPixbuf
+if ! dpkg -l libpango-1.0-0 2>/dev/null | grep -q '^ii' || ! dpkg -l libpangocairo-1.0-0 2>/dev/null | grep -q '^ii'; then
+  NEED_UPDATE=true
+fi
 if [ "$NEED_UPDATE" = "true" ]; then
   sudo apt-get update -y
-  sudo apt-get install -y gettext libjpeg-dev libpng-dev zlib1g-dev pkg-config libcairo2-dev
+  sudo apt-get install -y gettext libjpeg-dev libpng-dev zlib1g-dev pkg-config libcairo2-dev libpango-1.0-0 libpangocairo-1.0-0 libgdk-pixbuf2.0-0 libcairo2
 fi
+# WeasyPrint (servicerapport PDF / Document templates): require Pango, Cairo, GdkPixbuf at runtime
+sudo apt-get update -y
+sudo apt-get install -y --no-install-recommends libpango-1.0-0 libpangocairo-1.0-0 libgdk-pixbuf2.0-0 libcairo2
 
 echo "Re-installing python deps..."
 cd "$SRC_DIR"

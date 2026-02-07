@@ -4,7 +4,7 @@ Project: PMG Portal
 Purpose: Detailed changelog (SemVer)
 Path: CHANGELOG.md
 Created: 2026-02-05
-Last Modified: 2026-02-06
+Last Modified: 2026-02-07
 -->
 
 # Changelog
@@ -17,6 +17,8 @@ This project follows Semantic Versioning (SemVer).
 Pre-release builds (alpha, beta, rc) are listed here. Only full releases (no build suffix) get a dedicated version section below.
 
 ### Fixed
+- **WeasyPrint / servicerapport PDF**: Ved manglende Pango/Cairo på serveren (OSError «cannot load library pango-1.0-0») fanger portal- og admin-PDF-visninger nå OSError og viser en tydelig feilmelding med apt-kommando. install.sh og update.sh inkluderer libcairo2 i WeasyPrint-avhengighetene. Ny doc: docs/WEASYPRINT_PDF.md.
+- **WeasyPrint / service log PDF**: Install- og update-skript installerer nå alltid Pango/GdkPixbuf (libpango-1.0-0, libpangocairo-1.0-0, libgdk-pixbuf2.0-0) slik at PDF-eksport for servicelogg ikke feiler med «cannot load library pango-1.0-0». update.sh kjører et eksplisitt apt-get install av disse pakkene ved hver oppdatering.
 - **compilemessages**: Removed 2 more duplicate msgid in nb django.po (Type, All); msgfmt succeeds.
 - **Admin E040/E039**: ServiceTypeAdmin now has search_fields (name, slug) for ServiceLogAdmin autocomplete; NetworkDevice registered in portal admin (NetworkDeviceAdmin) so ServiceLogDeviceAdmin.autocomplete_fields for device works; fixes migrate/update on server.
 - **compilemessages**: Removed 2 more duplicate msgid in nb django.po (Search customers…, Inactive); msgfmt succeeds.

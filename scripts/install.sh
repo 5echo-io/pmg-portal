@@ -337,7 +337,7 @@ echo ""
 # Install OS dependencies (postgresql-client for Backup & Restore; pkg-config+libcairo2-dev for xhtml2pdf/svglib/pycairo)
 echo "Installing OS dependencies..."
 sudo apt-get update -y
-sudo apt-get install -y python3 python3-venv python3-pip postgresql postgresql-client rsync gettext libjpeg-dev libpng-dev zlib1g-dev git pkg-config libcairo2-dev
+sudo apt-get install -y python3 python3-venv python3-pip postgresql postgresql-client rsync gettext libjpeg-dev libpng-dev zlib1g-dev git pkg-config libcairo2-dev libcairo2 libpango-1.0-0 libpangocairo-1.0-0 libgdk-pixbuf2.0-0
 
 # Copy files
 echo ""
