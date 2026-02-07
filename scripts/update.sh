@@ -139,6 +139,9 @@ cleanup_branch_files "$BRANCH" "$APP_DIR"
 # Create migrations if needed
 sudo -E "$SRC_DIR/.venv/bin/python" manage.py makemigrations --noinput || true
 
+# Repair out-of-sync state (e.g. portal_userprofile missing but 0021 marked applied, or duplicate index)
+sudo -E "$SRC_DIR/.venv/bin/python" manage.py repair_portal_migrations || true
+
 # Handle migration errors for existing tables
 # If migration fails with "already exists", mark it as fake
 echo "Applying migrations..."
@@ -147,8 +150,13 @@ MIGRATE_OUTPUT=$(sudo -E "$SRC_DIR/.venv/bin/python" manage.py migrate --noinput
     echo "$MIGRATE_OUTPUT"
     if echo "$MIGRATE_OUTPUT" | grep -q "already exists\|DuplicateTable\|relation.*already exists"; then
         echo ""
-        echo "Warning: Some tables already exist. Attempting to fake the migration..."
-        
+        echo "Warning: Migration failed (table/index already exists or missing). Running repair then retry..."
+        sudo -E "$SRC_DIR/.venv/bin/python" manage.py repair_portal_migrations || true
+        echo "Retrying migrations..."
+        MIGRATE_OUTPUT=$(sudo -E "$SRC_DIR/.venv/bin/python" manage.py migrate --noinput 2>&1) || true
+        if echo "$MIGRATE_OUTPUT" | grep -q "No migrations to apply"; then
+            echo "Migrations succeeded after repair."
+        else
         # Try multiple patterns to extract the migration name
         # Pattern 1: Look for "Applying portal.XXXX_..." in the output
         FAILED_MIGRATION=$(echo "$MIGRATE_OUTPUT" | grep -oE "Applying portal\.[0-9]{4}_[a-zA-Z0-9_]+" | sed 's/Applying //' | head -1)
@@ -196,6 +204,7 @@ MIGRATE_OUTPUT=$(sudo -E "$SRC_DIR/.venv/bin/python" manage.py migrate --noinput
             echo "  sudo bash $APP_DIR/scripts/run_manage.sh migrate --fake portal <migration_name>"
             echo ""
             echo "Attempting to continue with other steps..."
+        fi
         fi
     else
         echo ""

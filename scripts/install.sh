@@ -548,6 +548,8 @@ set +a
 
 # Create migrations if needed, then apply them (do not skip: schema must match code)
 sudo -E "$SRC_DIR/.venv/bin/python" manage.py makemigrations --noinput || true
+# Repair out-of-sync state (e.g. portal_userprofile missing / duplicate index from partial 0021)
+sudo -E "$SRC_DIR/.venv/bin/python" manage.py repair_portal_migrations || true
 sudo -E "$SRC_DIR/.venv/bin/python" manage.py migrate --noinput
 # Record installed app version for backwards-compatibility checks (upgrade/downgrade)
 sudo -E "$SRC_DIR/.venv/bin/python" manage.py set_stored_version

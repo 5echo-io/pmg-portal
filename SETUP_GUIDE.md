@@ -79,17 +79,14 @@ Last Modified: 2026-02-06
   `sudo bash /opt/pmg-portal/scripts/update.sh`  
   Or only: `sudo bash /opt/pmg-portal/scripts/run_manage.sh migrate --noinput` then restart the service.
 
-**Error: "relation \"portal_userprofile\" does not exist" (but 0021 is marked applied)?**  
-- Migration state is out of sync (e.g. 0021 was faked or DB restored without the table). Re-run the affected migrations by clearing their state, then migrate:
-
-```bash
-# Use your actual DB name from .env (POSTGRES_DB). Example: pmg_portal
-sudo -u postgres psql -d pmg_portal -c "DELETE FROM django_migrations WHERE app = 'portal' AND name IN ('0021_userprofile_and_tenant_roles', '0022_migrate_member_admin_to_user_administrator', '0023_sync_is_staff_from_roles');"
-sudo bash /opt/pmg-portal/scripts/run_manage.sh migrate --noinput
-sudo systemctl restart pmg-portal.service
-```
-
-Replace `pmg_portal` with the value of `POSTGRES_DB` from `/opt/pmg-portal/.env` if different.
+**Error: "relation \"portal_userprofile\" does not exist" or "DuplicateTable: relation ... already exists" (e.g. portal_customermembership_role_4ff17715)?**  
+- Install and update scripts now run **repair_portal_migrations** before migrate, which creates the missing table and marks 0021 applied so the rest can run. If you hit this once, run update again:  
+  `sudo bash /opt/pmg-portal/scripts/update.sh`  
+- Manual recovery (if needed): create table and mark 0021 applied, then migrate:  
+  `sudo bash /opt/pmg-portal/scripts/run_manage.sh repair_portal_migrations`  
+  `sudo bash /opt/pmg-portal/scripts/run_manage.sh migrate --noinput`  
+  `sudo systemctl restart pmg-portal.service`  
+- Legacy: you can still clear migration state for 0021–0023 and run migrate (see older SETUP_GUIDE or BACKWARDS_COMPATIBILITY).
 
 **"No customer access" message after login?**
 - Create a CustomerMembership linking your user to a Customer
