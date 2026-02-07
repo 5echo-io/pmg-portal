@@ -1,3 +1,12 @@
+<!--
+Copyright (c) 2026 5echo.io
+Project: PMG Portal
+Purpose: Detailed changelog (SemVer)
+Path: CHANGELOG.md
+Created: 2026-02-05
+Last Modified: 2026-02-06
+-->
+
 # Changelog
 
 All notable changes to this project will be documented in this file.
@@ -26,8 +35,10 @@ Pre-release builds (alpha, beta, rc) are listed here. Only full releases (no bui
 - **Oppgradering/nedgradering**: Lagret appversjon i DB (SystemInfo), versjonssjekk ved oppstart (503 ved nedgradering uten migrering bakover), set_stored_version etter migrate; BACKWARDS_COMPATIBILITY.md og retningslinjer for filer/funksjoner per versjon
 - **Portal base, footer og styling**: base.html oppdatert; site_footer; app.css +81
 - **Admin device-templates**: device category/list/form, device instance add/form, device landing, device type list/detail/form, facility device choose type, home, manufacturer list/form, product datasheet list/form – justeringer og forbedringer
+- **Admin templates omstrukturert**: Alle admin-app-maler flyttet til undermapper (backup/, customer/, device/, facility/, notifications/, portal/, user/); views og urls oppdatert; FILE_LOCATIONS.md; dokumentasjon og install/update-skript oppdatert
 
 ### Added
+- **FILE_LOCATIONS.md**: Oversikt over malplasseringer etter omstrukturering
 - **Versjonering og kompatibilitet**: SystemInfo-modell (migrasjon 0009), versioning.py og version_middleware; install/update kjører set_stored_version; backup-manifest inkluderer app_version; BACKWARDS_COMPATIBILITY.md
 - **Admin – Notifications & announcements**: admin_notification_list, announcement_list, announcement_form; admin_app models and migration 0001
 - **Admin – Device catalog**: device_category_list/form, manufacturer_list/form, product_datasheet_list/form; device_landing

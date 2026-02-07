@@ -1,3 +1,12 @@
+<!--
+Copyright (c) 2026 5echo.io
+Project: PMG Portal
+Purpose: Admin layout reference (CSS and structure)
+Path: docs/ADMIN_LAYOUT.md
+Created: 2026-02-05
+Last Modified: 2026-02-06
+-->
+
 # Admin layout – reference for revert
 
 If the admin layout breaks again (sidebar at top, footer wrong, etc.), revert to this approach:

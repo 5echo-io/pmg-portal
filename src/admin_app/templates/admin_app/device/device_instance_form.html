@@ -5,7 +5,7 @@
 {% block breadcrumb_back %}<a href="{% url 'admin_app:admin_device_list' %}" class="breadcrumb-back-btn" aria-label="{% trans 'Back to Devices' %}">← {% trans "Devices" %}</a>{% endblock %}
 {% block breadcrumb_extra %}
 <span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_device_list' %}">{% trans "Devices" %}</a>
-<span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_device_type_detail' device_type.pk %}">{{ device_type.name }}</a>
+<span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_device_type_detail' device_type.slug %}">{{ device_type.name }}</a>
 <span class="breadcrumb-sep">→</span> <span>{% if instance %}{% trans "Edit instance" %}{% else %}{% trans "Add instance" %}{% endif %}</span>
 {% endblock %}
 
@@ -73,7 +73,7 @@
   </div>
   <div class="admin-form-actions">
     <button type="submit" class="form-btn form-btn-primary">{% trans "Save" %}</button>
-    <a href="{% url 'admin_app:admin_device_type_detail' device_type.pk %}" class="form-btn form-btn-secondary">{% trans "Cancel" %}</a>
+    <a href="{% url 'admin_app:admin_device_type_detail' device_type.slug %}" class="form-btn form-btn-secondary">{% trans "Cancel" %}</a>
   </div>
 </form>
 {% endblock %}

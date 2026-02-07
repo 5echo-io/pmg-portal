@@ -1,4 +1,21 @@
+<!--
+Copyright (c) 2026 5echo.io
+Project: PMG Portal
+Purpose: Build and release log
+Path: BUILDLOG.md
+Created: 2026-02-05
+Last Modified: 2026-02-06
+-->
+
 # BUILDLOG
+
+- 2026-02-06 (Europe/Oslo)
+  - Branch: dev
+  - Version: 4.8.0-beta.6
+  - Summary:
+    - Admin templates restructure: moved to subdirs backup/, customer/, device/, facility/, notifications/, portal/, user/; urls.py and views.py updated for new paths; backup_restore.py template path
+    - FILE_LOCATIONS.md; BACKWARDS_COMPATIBILITY, BUILDLOG, CHANGELOG, CHANGELOG_SUMMARY, IMPROVEMENTS, README, SETUP_GUIDE, docs/* updated; install.sh, update.sh; locale nb +9
+    - Version bump: 4.8.0-beta.5 → 4.8.0-beta.6
 
 - 2026-02-06 (Europe/Oslo)
   - Branch: dev

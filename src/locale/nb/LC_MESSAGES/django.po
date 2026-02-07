@@ -580,3 +580,12 @@ msgstr "Slett"
 msgid "Edit Device"
 msgstr "Rediger enhet"
 
+msgid "Edit product"
+msgstr "Rediger produkt"
+
+msgid "Choose a device (product), then fill in the instance details."
+msgstr "Velg et produkt, deretter fyll ut detaljene for instansen."
+
+msgid "No devices. Create devices under Devices first."
+msgstr "Ingen enheter. Opprett enheter under Enheter først."
+

@@ -5,7 +5,7 @@
 {% block breadcrumb_back %}<a href="{% url 'admin_app:admin_device_list' %}" class="breadcrumb-back-btn" aria-label="{% trans 'Back to Devices' %}">← {% trans "Devices" %}</a>{% endblock %}
 {% block breadcrumb_extra %}
 <span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_device_list' %}">{% trans "Devices" %}</a>
-<span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_device_type_detail' device_type.pk %}">{{ device_type.name }}</a>
+<span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_device_type_detail' device_type.slug %}">{{ device_type.name }}</a>
 <span class="breadcrumb-sep">→</span> <span>{% trans "Add instance" %}</span>
 {% endblock %}
 
@@ -25,14 +25,14 @@
       <tr>
         <td><span class="muted">{% trans "Not assigned" %}</span></td>
         <td class="admin-table-actions">
-          <a href="{% url 'admin_app:admin_device_instance_add' device_type.pk %}?facility=none" class="admin-btn-sm admin-toolbar-add-btn">{% trans "Add instance" %}</a>
+          <a href="{% url 'admin_app:admin_device_instance_add' device_type.slug %}?facility=none" class="admin-btn-sm admin-toolbar-add-btn">{% trans "Add instance" %}</a>
         </td>
       </tr>
       {% for f in facilities %}
       <tr>
         <td><a href="{% url 'admin_app:admin_facility_detail' f.slug %}">{{ f.name }}</a></td>
         <td class="admin-table-actions">
-          <a href="{% url 'admin_app:admin_device_instance_add' device_type.pk %}?facility={{ f.slug }}" class="admin-btn-sm admin-toolbar-add-btn">{% trans "Add instance" %}</a>
+          <a href="{% url 'admin_app:admin_device_instance_add' device_type.slug %}?facility={{ f.slug }}" class="admin-btn-sm admin-toolbar-add-btn">{% trans "Add instance" %}</a>
         </td>
       </tr>
       {% endfor %}
@@ -43,5 +43,5 @@
 <p class="muted">{% trans "No facilities defined yet. You can still add an instance without a facility." %}</p>
 {% endif %}
 
-<p><a href="{% url 'admin_app:admin_device_type_detail' device_type.pk %}" class="form-btn form-btn-secondary">{% trans "Back" %}</a></p>
+<p><a href="{% url 'admin_app:admin_device_type_detail' device_type.slug %}" class="form-btn form-btn-secondary">{% trans "Back" %}</a></p>
 {% endblock %}

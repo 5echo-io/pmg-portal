@@ -30,7 +30,7 @@
       {% for ds in datasheets %}
       <tr>
         <td><strong>{{ ds.title }}</strong></td>
-        <td>{% if ds.device_type %}<a href="{% url 'admin_app:admin_device_type_detail' ds.device_type.pk %}">{{ ds.device_type.name }}</a>{% else %}—{% endif %}</td>
+        <td>{% if ds.device_type %}<a href="{% url 'admin_app:admin_device_type_detail' ds.device_type.slug %}">{{ ds.device_type.name }}</a>{% else %}—{% endif %}</td>
         <td>{{ ds.uploaded_at|date:"Y-m-d H:i" }}{% if ds.uploaded_by %} ({{ ds.uploaded_by.get_full_name|default:ds.uploaded_by.username }}){% endif %}</td>
         <td class="admin-table-actions">
           {% if ds.file %}<a href="{{ ds.file.url }}" target="_blank" class="admin-btn-sm">{% trans "Download" %}</a>{% endif %}

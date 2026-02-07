@@ -1,3 +1,12 @@
+<!--
+Copyright (c) 2026 5echo.io
+Project: PMG Portal
+Purpose: Setup and data model guide
+Path: SETUP_GUIDE.md
+Created: 2026-02-05
+Last Modified: 2026-02-06
+-->
+
 # PMG Portal Setup Guide
 
 ## Data Model Overview

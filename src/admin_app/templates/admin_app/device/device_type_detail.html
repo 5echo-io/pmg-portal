@@ -31,8 +31,8 @@
     {% endif %}
   </div>
   <div style="flex-shrink: 0; display: flex; gap: 8px; align-items: flex-start;">
-    <a href="{% url 'admin_app:admin_device_type_edit' device_type.pk %}" class="admin-btn-sm form-btn-secondary">{% trans "Edit produkt" %}</a>
-    <a href="{% url 'admin_app:admin_device_instance_add' device_type.pk %}" class="admin-toolbar-add-btn">{% trans "Legg til instans" %}</a>
+    <a href="{% url 'admin_app:admin_device_type_edit' device_type.slug %}" class="admin-btn-sm form-btn-secondary">{% trans "Edit product" %}</a>
+    <a href="{% url 'admin_app:admin_device_instance_add' device_type.slug %}" class="admin-toolbar-add-btn">{% trans "Add instance" %}</a>
   </div>
 </div>
 {% if device_type.datasheets.all %}
@@ -64,8 +64,8 @@
         <td>{% if inst.rack and inst.facility %}<a href="{% url 'admin_app:admin_rack_detail' inst.facility.slug inst.rack.pk %}">{{ inst.rack.name }}</a>{% if inst.rack_position %} (U{{ inst.rack_position }}){% endif %}{% else %}—{% endif %}</td>
         <td>{% if inst.is_sla %}<span title="{% trans 'Part of service agreement (FDV)' %}">✓</span>{% else %}—{% endif %}</td>
         <td class="admin-table-actions">
-          <a href="{% url 'admin_app:admin_device_instance_edit' device_type.pk inst.pk %}" class="admin-btn-sm">{% trans "Edit" %}</a>
-          <form method="post" action="{% url 'admin_app:admin_device_instance_delete' device_type.pk inst.pk %}" style="display:inline;" onsubmit="return confirm('{% trans "Remove this instance?" %}');">
+          <a href="{% url 'admin_app:admin_device_instance_edit' device_type.slug inst.pk %}" class="admin-btn-sm">{% trans "Edit" %}</a>
+          <form method="post" action="{% url 'admin_app:admin_device_instance_delete' device_type.slug inst.pk %}" style="display:inline;" onsubmit="return confirm('{% trans "Remove this instance?" %}');">
             {% csrf_token %}
             <button type="submit" class="admin-btn-sm admin-btn-danger">{% trans "Remove" %}</button>
           </form>

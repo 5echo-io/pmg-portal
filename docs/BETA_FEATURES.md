@@ -1,3 +1,12 @@
+<!--
+Copyright (c) 2026 5echo.io
+Project: PMG Portal
+Purpose: Development and beta features management
+Path: docs/BETA_FEATURES.md
+Created: 2026-02-05
+Last Modified: 2026-02-06
+-->
+
 # Development Features Management
 
 This document explains how to set up and manage development features in PMG Portal.

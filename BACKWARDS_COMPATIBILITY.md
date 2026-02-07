@@ -1,93 +1,102 @@
+<!--
+Copyright (c) 2026 5echo.io
+Project: PMG Portal
+Purpose: Upgrade/downgrade and backup compatibility guidelines
+Path: BACKWARDS_COMPATIBILITY.md
+Created: 2026-02-05
+Last Modified: 2026-02-06
+-->
+
 # Backwards compatibility – PMG Portal
 
-Dette dokumentet beskriver hvordan vi sikrer at appen kan **oppgradere og nedgradere** mellom versjoner uten at servere havner i inkonsistent tilstand, og at **backup/restore** og **install wizard** fungerer på tvers av versjoner.
+This document describes how we ensure the app can **upgrade and downgrade** between versions without servers ending up in an inconsistent state, and that **backup/restore** and the **install wizard** work across versions.
 
-## Oversikt
+## Overview
 
-- **Versjon lagres i databasen** etter hver vellykket migrering. Ved oppstart sjekker appen om kodeversjonen er **nyere** eller **samme** som DB-versjonen. Hvis DB er nyere (du har nedgradert kode), **blokkeres forespørsler** med 503 og en tydelig melding inntil du har kjørt migreringer bakover.
-- **Backup-format** er versjonert. Alle formatversjoner vi støtter (f.eks. `"1"`) kan gjenopprettes av nåværende og fremtidige appversjoner. Backup-filer inneholder også `app_version` (hvem som laget backupen).
-- **Install/update-skript** kjører alltid `set_stored_version` etter `migrate`, slik at lagret versjon alltid stemmer med siste kjøring.
+- **Version is stored in the database** after each successful migration. On startup the app checks whether the code version is **newer** or **same** as the DB version. If the DB is newer (you have downgraded code), **requests are blocked** with 503 and a clear message until you have run migrations backward.
+- **Backup format** is versioned. All format versions we support (e.g. `"1"`) can be restored by current and future app versions. Backup files also contain `app_version` (which version created the backup).
+- **Install/update scripts** always run `set_stored_version` after `migrate`, so the stored version always matches the last run.
 
-## Komponenter
+## Components
 
-### 1. Lagret appversjon (database)
+### 1. Stored app version (database)
 
-- **Modell:** `portal.SystemInfo` (nøkkel `app_version`, verdi = streng fra `VERSION`-filen).
-- **Settes av:** `manage.py set_stored_version` (kjøres automatisk etter `migrate` i `scripts/update.sh` og `scripts/install.sh`).
-- **Brukes av:** `VersionCompatibilityMiddleware` og `pmg_portal.versioning.check_version_compatibility()`.
+- **Model:** `portal.SystemInfo` (key `app_version`, value = string from `VERSION` file).
+- **Set by:** `manage.py set_stored_version` (run automatically after `migrate` in `scripts/update.sh` and `scripts/install.sh`).
+- **Used by:** `VersionCompatibilityMiddleware` and `pmg_portal.versioning.check_version_compatibility()`.
 
-### 2. Versjonssjekk ved oppstart
+### 2. Version check on startup
 
 - **Middleware:** `pmg_portal.version_middleware.VersionCompatibilityMiddleware`.
-- **Logikk:** Hvis **lagret versjon > nåværende kodeversjon** (nedgradering uten tilpasset migreringstilstand), returneres **503** med forklarende HTML.
-- **Løsning for bruker:** Kjør migreringer bakover til målgruppeversjonen (se under), deretter start appen på nytt.
+- **Logic:** If **stored version > current code version** (downgrade without matching migration state), **503** is returned with explanatory HTML.
+- **User solution:** Run migrations backward to the target version (see below), then restart the app.
 
 ### 3. Backup / Restore
 
-- **Manifest:** `manifest.json` i hver backup inneholder:
-  - `version` – backup-**format**versjon (f.eks. `"1"`). Endres bare når backup-formatet endres (ny struktur, ikke bare appversjon).
-  - `app_version` – appversjon som **laget** backupen (fra `VERSION`).
-- **Støttede formatversjoner:** `admin_app.backup_restore.SUPPORTED_BACKUP_FORMAT_VERSIONS` (i dag `["1"]`). Alle listerte format kan gjenopprettes av nåværende app.
-- **Oppgradering:** Backup fra v2.0.0 kan gjenopprettes på v5.0.0. Etter restore har DB schema og data fra backupen; lagret `app_version` i DB vil være den fra backupen. Det er OK – appen behandler det som en «oppgradering» (kode nyere enn eller lik DB) og kjører ikke blokkering.
-- **Nedgradering:** For å gå tilbake til f.eks. v2.0.0: installer v2.0.0, gjenopprett en backup tatt på v2 (eller kjør migreringer bakover til v2s migreringspunkt), start appen. Ikke gjenopprett en backup fra v5 på en v2-installasjon med mindre du vet at format og schema er kompatible.
+- **Manifest:** `manifest.json` in each backup contains:
+  - `version` – backup **format** version (e.g. `"1"`). Only changed when the backup format changes (new structure, not just app version). Validation accepts both string and integer (e.g. `1` or `"1"`) for compatibility.
+  - `app_version` – app version that **created** the backup (from `VERSION`); optional in older backups.
+- **Supported format versions:** `admin_app.backup_restore.SUPPORTED_BACKUP_FORMAT_VERSIONS` (currently format `"1"`). All listed formats can be restored by the current app, including backups from older app versions.
+- **Upgrade:** A backup from v2.0.0 can be restored on v5.0.0. After restore the DB has the schema and data from the backup; stored `app_version` in DB will be that of the backup. That is OK – the app treats it as an “upgrade” (code newer than or equal to DB) and does not block.
+- **Downgrade:** To go back to e.g. v2.0.0: install v2.0.0, restore a backup taken on v2 (or run migrations backward to v2’s migration point), start the app. Do not restore a backup from v5 on a v2 installation unless you know the format and schema are compatible.
 
-### 4. Install wizard og .env
+### 4. Install wizard and .env
 
-- Nye .env-nøkler bør ha **standardverdier** i `settings.py` (f.eks. `env("NY_NØKKEL", "default")`), slik at eldre installasjoner ikke må oppdatere .env for å starte.
-- Install/update-skriptene endrer ikke .env ved oppdatering; de beholder eksisterende .env. Unntak: manuell endring eller dokumentert migrering av konfigurasjon.
+- New .env keys should have **default values** in `settings.py` (e.g. `env("NEW_KEY", "default")`), so older installations do not have to update .env to start.
+- Install/update scripts do not change .env on update; they keep the existing .env. Exception: manual change or documented configuration migration.
 
-## Oppgradering (f.eks. v2.0.0 → v5.0.0)
+## Upgrade (e.g. v2.0.0 → v5.0.0)
 
-1. Deploy ny kode (v5.0.0).
-2. Kjør som vanlig:  
+1. Deploy new code (v5.0.0).
+2. Run as usual:  
    `sudo bash scripts/update.sh`  
-   eller  
+   or  
    `sudo bash scripts/install.sh`  
-   (velg Update).
-3. Script kjører `migrate`, deretter `set_stored_version`. DB lagrer nå v5.0.0.
-4. Appen starter; middleware ser at kodeversjon >= lagret versjon → ingen blokkering.
+   (choose Update).
+3. Script runs `migrate`, then `set_stored_version`. DB now stores v5.0.0.
+4. App starts; middleware sees code version >= stored version → no block.
 
-## Nedgradering (f.eks. v5.0.0 → v2.0.0)
+## Downgrade (e.g. v5.0.0 → v2.0.0)
 
-1. **Stopp tjenesten.**
-2. **Deploy gammel kode** (v2.0.0).
-3. Kjør migreringer **bakover** til det migreringspunktet v2.0.0 forventer, f.eks.:
+1. **Stop the service.**
+2. **Deploy old code** (v2.0.0).
+3. Run migrations **backward** to the migration point v2.0.0 expects, e.g.:
    ```bash
    cd /opt/pmg-portal/src
-   sudo -E .venv/bin/python manage.py migrate portal 0006_device_type_and_product_fk   # eksempel – sjekk v2 sin siste migrering
-   sudo -E .venv/bin/python manage.py migrate admin_app 0001_add_admin_notifications   # om nødvendig
+   sudo -E .venv/bin/python manage.py migrate portal 0006_device_type_and_product_fk   # example – check v2’s last migration
+   sudo -E .venv/bin/python manage.py migrate admin_app 0001_add_admin_notifications   # if needed
    ```
-4. Sett lagret versjon til nåværende (v2), slik at middleware ikke blokkerer:
+4. Set stored version to current (v2), so middleware does not block:
    ```bash
    sudo -E .venv/bin/python manage.py set_stored_version
    ```
-5. Start tjenesten.
+5. Start the service.
 
-Hvis du **ikke** kjører migreringer bakover og starter v2-kode mot en DB som har v5-migreringer, vil appen enten feile (manglende tabeller/kolonner) eller middleware vil returnere 503 fordi lagret versjon (v5) er nyere enn kode (v2). Da må du enten kjøre migreringer bakover som over, eller gjenopprette en backup tatt før oppgradering.
+If you **do not** run migrations backward and start v2 code against a DB that has v5 migrations, the app will either fail (missing tables/columns) or middleware will return 503 because stored version (v5) is newer than code (v2). You must then either run migrations backward as above, or restore a backup taken before the upgrade.
 
-## Funksjoner og filer (flyttet / slettet / lagt til)
+## Features and files (moved / removed / added)
 
-For at appen skal **forbli funksjonell uansett versjon** når filer flyttes, slettes eller legges til:
+So that the app **remains functional regardless of version** when files are moved, removed or added:
 
-- **Én kodeversjon per deploy:** Ved oppgradering deployer du ny kode (med nye filer/URLer/views); ved nedgradering deployer du gammel kode (med gammel filstruktur). Appen som kjører har alltid den filstrukturen som hører til den versjonen – så lenge migreringer og lagret versjon er tilpasset (se over).
-- **Nye filer/views/URLer:** Når du legger til en ny funksjon (ny template, ny view, ny URL), påvirker det ikke eldre versjoner – de har ikke den koden. Etter nedgradering bruker du gammel kode som ikke refererer til de nye filene.
-- **Flytting/sletting av filer:** Gjør det i **nye** commits/versjoner. Eldre versjoner har fortsatt de gamle stiene. Unngå at **samme** versjon av koden refererer til en fil som er slettet eller flyttet i samme release (dvs. refaktorer flytt/slett i én konsistent endring).
-- **Templates som kan mangle:** Hvis en view brukes på tvers av versjoner men template kan variere, vurder `get_template()` med fallback eller try/except rundt `render` og returner en enkel melding (f.eks. 404 eller «Ikke tilgjengelig i denne versjonen») i stedet for å la TemplateDoesNotExist krasje hele forespørselen.
-- **URL-er:** Unngå at en URL i en eldre versjon peker på en view som ikke lenger finnes i den versjonen (typisk unngått ved at hele urlconf er del av samme kodeversjon).
+- **One code version per deploy:** On upgrade you deploy new code (with new files/URLs/views); on downgrade you deploy old code (with old file structure). The running app always has the file structure that belongs to that version – as long as migrations and stored version are aligned (see above).
+- **New files/views/URLs:** When you add a new feature (new template, new view, new URL), it does not affect older versions – they do not have that code. After downgrade you use old code that does not reference the new files.
+- **Moving/removing files:** Do it in **new** commits/versions. Older versions still have the old paths. Avoid the **same** code version referring to a file that has been removed or moved in the same release (i.e. refactor move/remove in one consistent change).
+- **Templates that may be missing:** If a view is used across versions but the template can vary, consider `get_template()` with fallback or try/except around `render` and return a simple message (e.g. 404 or “Not available in this version”) instead of letting TemplateDoesNotExist crash the request.
+- **URLs:** Avoid a URL in an older version pointing to a view that no longer exists in that version (typically avoided by the whole urlconf being part of the same code version).
 
-Kort sagt: **Appen opprettholdes funksjonell per versjon fordi hver deploy er én kodeversjon med tilhørende filer; migreringer + set_stored_version sikrer at DB og kode er i sync ved opp- og nedgradering.**
+In short: **The app remains functional per version because each deploy is one code version with its files; migrations + set_stored_version ensure DB and code are in sync on upgrade and downgrade.**
 
-## Regler for utviklere
+## Rules for developers
 
-1. **Migreringer:** Skriv **reversible** migreringer der det er mulig (`RunPython` med `reverse_code`, `AlterField` som kan rulles tilbake). Dette gjør nedgradering tryggere.
-2. **Backup-format:** Når du endrer **struktur** på backup (nye filer i arkivet, annen manifest-struktur), øk `BACKUP_FORMAT_VERSION` og legg den **gamle** versjonen i `SUPPORTED_BACKUP_FORMAT_VERSIONS` slik at eldre backup-filer fortsatt kan gjenopprettes.
-3. **VERSION-fil:** Hold `VERSION` oppdatert ved release. Den brukes både for visning og for versjonssjekk.
-4. **Nye innstillinger:** Bruk `env("NAVN", "default")` for nye .env-variabler slik at eksisterende installasjoner ikke brekker.
-5. **Nye filer/funksjoner:** Ved å legge til eller fjerne filer/views/URLer, gjør det i én konsistent versjon; ved nedgradering deployes koden som ikke refererer til de nye filene.
+1. **Migrations:** Write **reversible** migrations where possible (`RunPython` with `reverse_code`, `AlterField` that can be rolled back). This makes downgrade safer.
+2. **Backup format:** When you change the **structure** of backup (new files in archive, different manifest structure), increment `BACKUP_FORMAT_VERSION` and add the **old** version to `SUPPORTED_BACKUP_FORMAT_VERSIONS` so older backup files can still be restored.
+3. **VERSION file:** Keep `VERSION` updated on release. It is used for display and for version checks.
+4. **New settings:** Use `env("NAME", "default")` for new .env variables so existing installations do not break.
+5. **New files/features:** When adding or removing files/views/URLs, do it in one consistent version; on downgrade the code that does not reference the new files is deployed.
 
-## Korte svar på vanlige spørsmål
+## Short answers to common questions
 
-- **Kan jeg gjenopprette en backup fra v2 på v5?** Ja, hvis backup-formatet er støttet (i dag format "1").
-- **Kan jeg gjenopprette en backup fra v5 på v2?** Kun hvis backup-formatet er det samme og schema i backupen er kompatibelt med v2 (typisk backup tatt på v2).
-- **Hvorfor får jeg 503 etter nedgradering?** Fordi DB fortsatt har «nyere» lagret versjon. Kjør migreringer bakover og deretter `set_stored_version`, så forsvinner blokkeringen.
-- **Må jeg gjøre noe etter restore?** Nei. Restore erstatter DB (og media); lagret versjon i DB kommer fra backupen. Appen vil ikke blokkere fordi kodeversjon er >= den lagrede etter restore (oppgradering eller lik versjon).
+- **Can I restore a backup from v2 on v5?** Yes, if the backup format is supported (currently format "1").
+- **Can I restore a backup from v5 on v2?** Only if the backup format is the same and the schema in the backup is compatible with v2 (typically a backup taken on v2).
+- **Why do I get 503 after downgrade?** Because the DB still has a “newer” stored version. Run migrations backward and then `set_stored_version`, and the block is removed.
+- **Do I need to do anything after restore?** No. Restore replaces the DB (and media); stored version in DB comes from the backup. The app will not block because code version is >= stored after restore (upgrade or same version).

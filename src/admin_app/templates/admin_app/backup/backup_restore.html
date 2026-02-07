@@ -7,7 +7,7 @@
 {% block admin_content %}
 <h1 class="admin-page-title">Backup & Restore</h1>
 
-<p class="admin-backup-intro">Create a full backup of the database and all uploaded files (logos, documents), or restore from a previous backup. Use this when migrating to a new server or recovering from failure.</p>
+<p class="admin-backup-intro">Create a full backup of the database and all uploaded files (logos, documents), or restore from a previous backup. Use this when migrating to a new server or recovering from failure. Backups use a versioned format and can be restored on this installation or another PMG Portal server (same or newer app version).</p>
 
 <div class="admin-backup-grid">
   <div class="panel admin-backup-panel">
@@ -112,6 +112,6 @@
 </script>
 
 <div class="admin-backup-note">
-  <strong>Note:</strong> Backup and restore use PostgreSQL client tools (<code>pg_dump</code>, <code>psql</code>). These are installed automatically when you install PMG Portal with the standard installer.
+  <strong>Note:</strong> Backup and restore use PostgreSQL client tools (<code>pg_dump</code>, <code>psql</code>). These are installed automatically when you install PMG Portal with the standard installer. Backups created with older app versions can be restored here as long as the backup format is supported.
 </div>
 {% endblock %}

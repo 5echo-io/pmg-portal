@@ -1,3 +1,12 @@
+<!--
+Copyright (c) 2026 5echo.io
+Project: PMG Portal
+Purpose: Project overview and quick start
+Path: README.md
+Created: 2026-02-05
+Last Modified: 2026-02-06
+-->
+
 # PMG Portal (Foundation)
 
 A Django + Postgres portal foundation:

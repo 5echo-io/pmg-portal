@@ -91,10 +91,10 @@ cleanup_branch_files() {
         # - portal/templates/portal/fragments/facility_list_content.html
         # - portal/templates/portal/fragments/facility_detail_content.html
         
-        # Remove admin_app Facility templates (admin-only, can be removed if not needed)
-        # sudo rm -f "$src_dir/admin_app/templates/admin_app/facility_list.html" 2>/dev/null || true
-        # sudo rm -f "$src_dir/admin_app/templates/admin_app/facility_form.html" 2>/dev/null || true
-        # sudo rm -f "$src_dir/admin_app/templates/admin_app/facility_card.html" 2>/dev/null || true
+        # Remove admin_app Facility templates (admin-only, under facility/ subdir)
+        # sudo rm -f "$src_dir/admin_app/templates/admin_app/facility/facility_list.html" 2>/dev/null || true
+        # sudo rm -f "$src_dir/admin_app/templates/admin_app/facility/facility_form.html" 2>/dev/null || true
+        # sudo rm -f "$src_dir/admin_app/templates/admin_app/facility/facility_card.html" 2>/dev/null || true
         
         # Remove dev feature decorators
         sudo rm -f "$src_dir/portal/decorators.py" 2>/dev/null || true

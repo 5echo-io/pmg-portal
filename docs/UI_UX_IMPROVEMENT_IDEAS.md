@@ -1,102 +1,111 @@
-# UI/UX-forbedringsforslag – PMG Portal
+<!--
+Copyright (c) 2026 5echo.io
+Project: PMG Portal
+Purpose: UI/UX improvement ideas and backlog
+Path: docs/UI_UX_IMPROVEMENT_IDEAS.md
+Created: 2026-02-05
+Last Modified: 2026-02-06
+-->
 
-## Allerede implementert
-- **«Legg til enhet» på anlegg**: Først velg enhetstype, deretter fyll ut instans (serienummer, anlegg forhåndsvalgt). Modal med to steg: 1) Velg enhetstype, 2) Skjema for instans.
+# UI/UX improvement ideas – PMG Portal
 
----
-
-## Admin / Anlegg
-
-### 1. **Breadcrumbs og navigasjon**
-- Klikkbare breadcrumbs på alle nivåer (Anlegg → [Anleggsnavn] → Racks → [Rack]).
-- «Tilbake til anlegg»-lenke tydelig på rack- og enhetsider.
-- Siste besøkte anlegg/rack huskes (f.eks. i session) og tilbys som snarvei.
-
-### 2. **Tabeller og lister**
-- Sorterbare kolonner (klikk på kolonneheader).
-- Kolonnevis synlighet (velg hvilke kolonner som vises).
-- Eksport til CSV/Excel på lister (enheter, anlegg, kunder).
-- Sticky table header ved scrolling på lange lister.
-- Empty state med tydelig CTA: «Ingen enheter – legg til en» med lenke til riktig handling.
-
-### 3. **Søk og filtre**
-- Ett samlet søkefelt med forslag (anlegg, enheter, kunder).
-- Lagrede filtre (f.eks. «Mine anlegg», «Enheter uten serienummer»).
-- Hurtigfiltrering med chips/tags (aktiv/inaktiv, kategori, anlegg).
-- Søk med delvis treff i flere felt (navn, serienummer, merke, modell).
-
-### 4. **Modaler og skjemaer**
-- «Rediger enhet» i modal: Last inn kun skjema-fragment (som andre modaler), ikke hele siden.
-- For store skjemaer: stegindikator (Steg 1 av 3) og «Lagre utkast».
-- Validering i sanntid (felter valideres ved blur/tab, ikke bare ved submit).
-- Tydelig «Lukke uten å lagre» med bekreftelse hvis bruker har endret noe.
-- Fokus på første felt når modal åpnes; Escape lukker modal.
-
-### 5. **Enheter (Devices)**
-- På device type-detalj: rediger produkt (navn, kategori, spec) uten å forlate siden (inline eller egen modal).
-- Spec-editor per kategori: for Nettverk – porter, PoE, hastighet; for PC – CPU, RAM, disk (strukturert UI, ikke bare JSON).
-- Port-visualizer for nettverksenheter (antall porter, PoE-indikator, hastighet per port).
-- Hurtig «Legg til instans» direkte fra device type-listen (ikon/knapp per rad).
-- Filter på instansliste: per anlegg, per rack, «uten serienummer», «uten anlegg».
-
-### 6. **Anleggskort (facility card)**
-- Dashboard-widget: sist endrede anlegg, antall enheter per anlegg.
-- Tabs med tellere som oppdateres uten full reload (HTMX eller fetch).
-- «Du er her»-indikator i sidemeny (aktiv tab tydelig).
-- Hurtighandlinger på kort: «Legg til rack», «Legg til enhet» uten å åpne full liste.
-
-### 7. **Tilgjengelighet og responsivitet**
-- Fokusrekkefølge og tab-navigasjon i modaler (trap focus, lukk med Escape).
-- ARIA-labels på ikoner og knapper.
-- Brukervennlig tabell på mobil (kort per rad eller horisontal scroll med sticky kolonner).
-- Større touch-targets på mobil for «Legg til» og handlinger.
-
-### 8. **Tilbakemeldinger og status**
-- Toast/snackbar ved «Lagret», «Slettet», «Feil» i stedet for kun meldingsboks eller redirect.
-- Loading-state på knapper («Lagrer…», spinner) under submit.
-- Tydelig feilmelding ved validering (under feltet, rød ramme, ikon).
-- Bekreftelse før destruktive handlinger (slett enhet, fjern fra anlegg) med kort forklaring.
-
-### 9. **Kunder og tilgang**
-- «Administrer tilgang»: grupper kunder (f.eks. alfabetisk eller etter org.nr.) og søk som filtrerer listen.
-- Vis antall anlegg per kunde i kundelisten.
-- Massehandlinger: «Gi tilgang til alle valgte» / «Fjern tilgang for valgte».
-
-### 10. **Dokumenter og IP**
-- Forhåndsvisning av dokument (PDF/ bilde) i modal før nedlasting.
-- IP-liste: kopier-ikon for IP-adresse og «Kopier hele blokk».
-- Statusindikator: «Tildelt enhet» vs «Ledig» på IP-adresser.
+## Already implemented
+- **“Add device” on facility**: First choose device type, then fill in instance (serial number, facility pre-selected). Modal with two steps: 1) Choose device type, 2) Instance form.
 
 ---
 
-## Kundeportal (/facilities/, /facility/…)
+## Admin / Facilities
 
-### 11. **Anleggsliste**
-- Kortvisning vs listevisning (toggle).
-- Sortering: navn, sted, sist oppdatert.
-- Favoritter / «Mine anlegg» (stjernemarkering, sortert øverst).
+### 1. **Breadcrumbs and navigation**
+- Clickable breadcrumbs at all levels (Facilities → [Facility name] → Racks → [Rack]).
+- Clear “Back to facility” link on rack and device pages.
+- Last visited facility/rack remembered (e.g. in session) and offered as shortcut.
 
-### 12. **Anleggsdetalj**
-- Kart eller adressevisning for anlegg med koordinater/adresse.
-- «Del denne siden» (lenke som beholder kontekst).
-- Tydelig «Ingen enheter» / «Ingen dokumenter» med forklaring.
-- Nedlast alle dokumenter som ZIP.
+### 2. **Tables and lists**
+- Sortable columns (click column header).
+- Column visibility (choose which columns to show).
+- Export to CSV/Excel on lists (devices, facilities, customers).
+- Sticky table header when scrolling long lists.
+- Empty state with clear CTA: “No devices – add one” with link to the right action.
 
-### 13. **Generelt**
-- Mørk modus (theme-toggle).
-- Språkvelger tydelig (norsk/engelsk).
-- Kort «Sist innlogget» / «Profil» i header.
-- Pålogging: «Husk meg», glemt passord med tydelig flyt.
+### 3. **Search and filters**
+- Single search field with suggestions (facilities, devices, customers).
+- Saved filters (e.g. “My facilities”, “Devices without serial number”).
+- Quick filtering with chips/tags (active/inactive, category, facility).
+- Search with partial match across multiple fields (name, serial number, brand, model).
+
+### 4. **Modals and forms**
+- “Edit device” in modal: Load only form fragment (like other modals), not full page.
+- For large forms: step indicator (Step 1 of 3) and “Save draft”.
+- Real-time validation (fields validated on blur/tab, not only on submit).
+- Clear “Close without saving” with confirmation if user has changed anything.
+- Focus on first field when modal opens; Escape closes modal.
+
+### 5. **Devices**
+- On device type detail: edit product (name, category, spec) without leaving the page (inline or separate modal).
+- Spec editor per category: for Network – ports, PoE, speed; for PC – CPU, RAM, disk (structured UI, not just JSON).
+- Port visualizer for network devices (number of ports, PoE indicator, speed per port).
+- Quick “Add instance” directly from device type list (icon/button per row).
+- Filter on instance list: per facility, per rack, “without serial number”, “without facility”.
+
+### 6. **Facility card**
+- Dashboard widget: recently updated facilities, device count per facility.
+- Tabs with counts that update without full reload (HTMX or fetch).
+- “You are here” indicator in side menu (active tab clear).
+- Quick actions on card: “Add rack”, “Add device” without opening full list.
+
+### 7. **Accessibility and responsiveness**
+- Focus order and tab navigation in modals (trap focus, close with Escape).
+- ARIA labels on icons and buttons.
+- Mobile-friendly table (card per row or horizontal scroll with sticky columns).
+- Larger touch targets on mobile for “Add” and actions.
+
+### 8. **Feedback and status**
+- Toast/snackbar on “Saved”, “Deleted”, “Error” instead of only message box or redirect.
+- Loading state on buttons (“Saving…”, spinner) during submit.
+- Clear validation error (under field, red border, icon).
+- Confirmation before destructive actions (delete device, remove from facility) with short explanation.
+
+### 9. **Customers and access**
+- “Manage access”: group customers (e.g. alphabetically or by org number) and search that filters the list.
+- Show facility count per customer in customer list.
+- Bulk actions: “Grant access to all selected” / “Revoke access for selected”.
+
+### 10. **Documents and IP**
+- Document preview (PDF/image) in modal before download.
+- IP list: copy icon for IP address and “Copy entire block”.
+- Status indicator: “Assigned to device” vs “Available” on IP addresses.
 
 ---
 
-## Teknisk støtte for UX
+## Customer portal (/facilities/, /facility/…)
 
-- **HTMX**: Mer innhold lastet inline (færre full page reloads).
-- **Keyboard shortcuts**: f.eks. `N` for «Ny enhet», `S` for søk.
-- **Session/state**: Husk valgt anlegg, filter og sortering på tvers av sidene.
-- **Performance**: Lazy-load tabeller (pagination eller infinite scroll), defer ikke-kritisk JS.
+### 11. **Facility list**
+- Card view vs list view (toggle).
+- Sort by: name, location, last updated.
+- Favourites / “My facilities” (star, sorted to top).
+
+### 12. **Facility detail**
+- Map or address display for facility with coordinates/address.
+- “Share this page” (link that preserves context).
+- Clear “No devices” / “No documents” with explanation.
+- Download all documents as ZIP.
+
+### 13. **General**
+- Dark mode (theme toggle).
+- Clear language switcher (Norwegian/English).
+- Short “Last login” / “Profile” in header.
+- Login: “Remember me”, forgot password with clear flow.
 
 ---
 
-*Dette dokumentet kan oppdateres når nye forbedringer prioriteres.*
+## Technical support for UX
+
+- **HTMX**: More content loaded inline (fewer full page reloads).
+- **Keyboard shortcuts**: e.g. `N` for “New device”, `S` for search.
+- **Session/state**: Remember selected facility, filter and sort across pages.
+- **Performance**: Lazy-load tables (pagination or infinite scroll), defer non-critical JS.
+
+---
+
+*This document may be updated when new improvements are prioritised.*

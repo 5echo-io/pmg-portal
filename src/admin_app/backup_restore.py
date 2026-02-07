@@ -22,11 +22,19 @@ logger = logging.getLogger(__name__)
 
 # Format version of backups we create (manifest "version" field)
 BACKUP_FORMAT_VERSION = "1"
-# All backup format versions this app can restore (for cross-version restore)
-SUPPORTED_BACKUP_FORMAT_VERSIONS = ["1"]
+# All backup format versions this app can restore (for cross-version restore).
+# When introducing a new format (e.g. "2"), keep "1" in this list so older backups still restore.
+SUPPORTED_BACKUP_FORMAT_VERSIONS = frozenset({"1"})
 MANIFEST_FILENAME = "manifest.json"
 DATABASE_FILENAME = "database.sql"
 MEDIA_ARCHIVE_DIR = "media"
+
+
+def _normalize_format_version(version: str | int | None) -> str | None:
+    """Manifest 'version' may be string or int (JSON). Normalize to string for comparison."""
+    if version is None:
+        return None
+    return str(version).strip() or None
 
 
 def _get_db_config():
@@ -175,11 +183,11 @@ def validate_backup_archive(archive_path: Path) -> tuple[bool, str | None]:
     except OSError as e:
         return False, f"Invalid backup: error reading archive ({e})."
 
-    format_ver = manifest.get("version")
-    if format_ver not in SUPPORTED_BACKUP_FORMAT_VERSIONS:
+    format_ver = _normalize_format_version(manifest.get("version"))
+    if not format_ver or format_ver not in SUPPORTED_BACKUP_FORMAT_VERSIONS:
         return False, (
-            f"Unsupported backup format version: {format_ver!r}. "
-            f"This app supports: {', '.join(SUPPORTED_BACKUP_FORMAT_VERSIONS)}."
+            f"Unsupported backup format version: {manifest.get('version')!r}. "
+            f"This app supports: {', '.join(sorted(SUPPORTED_BACKUP_FORMAT_VERSIONS))}."
         )
     if manifest.get("db_engine") != "postgresql":
         return False, "This backup is for a different database engine. PMG Portal backup/restore requires PostgreSQL."
@@ -217,10 +225,11 @@ def restore_from_archive(archive_path: Path) -> None:
         if not manifest_path.exists():
             raise ValueError("Invalid backup: missing manifest.json")
         manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-        if manifest.get("version") not in SUPPORTED_BACKUP_FORMAT_VERSIONS:
+        format_ver = _normalize_format_version(manifest.get("version"))
+        if not format_ver or format_ver not in SUPPORTED_BACKUP_FORMAT_VERSIONS:
             raise ValueError(
                 f"Unsupported backup format version: {manifest.get('version')!r}. "
-                f"Supported: {SUPPORTED_BACKUP_FORMAT_VERSIONS}."
+                f"Supported: {', '.join(sorted(SUPPORTED_BACKUP_FORMAT_VERSIONS))}."
             )
         if manifest.get("db_engine") != "postgresql":
             raise ValueError("This backup is for a different database engine.")

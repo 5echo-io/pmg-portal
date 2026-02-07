@@ -103,7 +103,7 @@ def user_list(request):
     page_obj = paginator.get_page(page)
     return render(
         request,
-        "admin_app/user_list.html",
+        "admin_app/user/user_list.html",
         {"page_obj": page_obj, "total_count": paginator.count, "search": search},
     )
 
@@ -119,7 +119,7 @@ def user_add(request):
             return redirect("admin_app:admin_user_list")
     else:
         form = UserCreationForm()
-    return render(request, "admin_app/user_form.html", {"form": form, "user_obj": None})
+    return render(request, "admin_app/user/user_form.html", {"form": form, "user_obj": None})
 
 
 @superuser_required
@@ -130,7 +130,7 @@ def user_detail(request, pk):
     
     return render(
         request,
-        "admin_app/user_card.html",
+        "admin_app/user/user_card.html",
         {
             "user_obj": user_obj,
             "memberships": memberships,
@@ -150,7 +150,7 @@ def user_edit(request, pk):
             return redirect("admin_app:admin_user_detail", pk=user_obj.pk)
     else:
         form = UserEditForm(instance=user_obj)
-    return render(request, "admin_app/user_form.html", {"form": form, "user_obj": user_obj})
+    return render(request, "admin_app/user/user_form.html", {"form": form, "user_obj": user_obj})
 
 
 @superuser_required
@@ -184,7 +184,7 @@ def role_list(request):
     roles = []
     for g in qs:
         roles.append({"group": g, "user_count": g.user_set.count()})
-    return render(request, "admin_app/role_list.html", {"roles": roles, "search": search})
+    return render(request, "admin_app/user/role_list.html", {"roles": roles, "search": search})
 
 
 @superuser_required
@@ -198,7 +198,7 @@ def role_add(request):
             return redirect("admin_app:admin_role_list")
     else:
         form = RoleForm()
-    return render(request, "admin_app/role_form.html", {"form": form, "role": None})
+    return render(request, "admin_app/user/role_form.html", {"form": form, "role": None})
 
 
 @superuser_required
@@ -213,7 +213,7 @@ def role_edit(request, pk):
             return redirect("admin_app:admin_role_list")
     else:
         form = RoleForm(instance=role)
-    return render(request, "admin_app/role_form.html", {"form": form, "role": role})
+    return render(request, "admin_app/user/role_form.html", {"form": form, "role": role})
 
 
 # ----- Customers (staff) -----
@@ -230,7 +230,7 @@ def customer_list(request):
     page_obj = paginator.get_page(page)
     return render(
         request,
-        "admin_app/customer_list.html",
+        "admin_app/customer/customer_list.html",
         {"page_obj": page_obj, "total_count": paginator.count, "search": search},
     )
 
@@ -246,7 +246,7 @@ def customer_add(request):
             return redirect("admin_app:admin_customer_detail", pk=customer.pk)
     else:
         form = CustomerForm()
-    return render(request, "admin_app/customer_form.html", {"form": form, "customer": None})
+    return render(request, "admin_app/customer/customer_form.html", {"form": form, "customer": None})
 
 
 @staff_required
@@ -258,7 +258,7 @@ def customer_detail(request, pk):
     
     return render(
         request,
-        "admin_app/customer_card.html",
+        "admin_app/customer/customer_card.html",
         {
             "customer": customer,
             "memberships": memberships,
@@ -506,7 +506,7 @@ def customer_edit(request, pk):
             return redirect("admin_app:admin_customer_detail", pk=customer.pk)
     else:
         form = CustomerForm(instance=customer)
-    return render(request, "admin_app/customer_form.html", {"form": form, "customer": customer})
+    return render(request, "admin_app/customer/customer_form.html", {"form": form, "customer": customer})
 
 
 @staff_required
@@ -547,7 +547,7 @@ def customer_access_list(request):
     customers = Customer.objects.all().order_by("name")
     return render(
         request,
-        "admin_app/customer_access_list.html",
+        "admin_app/customer/customer_access_list.html",
         {
             "page_obj": page_obj,
             "total_count": paginator.count,
@@ -581,7 +581,7 @@ def customer_access_add(request):
                 form.fields["customer"].initial = customer
             except Customer.DoesNotExist:
                 pass
-    return render(request, "admin_app/customer_access_form.html", {"form": form, "membership": None})
+    return render(request, "admin_app/customer/customer_access_form.html", {"form": form, "membership": None})
 
 
 @staff_required
@@ -602,7 +602,7 @@ def customer_access_edit(request, pk):
             return redirect(redirect_to)
     else:
         form = CustomerMembershipForm(instance=membership)
-    return render(request, "admin_app/customer_access_form.html", {"form": form, "membership": membership})
+    return render(request, "admin_app/customer/customer_access_form.html", {"form": form, "membership": membership})
 
 
 # ----- Portal links (staff) -----
@@ -623,7 +623,7 @@ def portal_link_list(request):
     customers = Customer.objects.all().order_by("name")
     return render(
         request,
-        "admin_app/portal_link_list.html",
+        "admin_app/portal/portal_link_list.html",
         {
             "page_obj": page_obj,
             "total_count": paginator.count,
@@ -657,7 +657,7 @@ def portal_link_add(request):
                 form.fields["customer"].initial = customer
             except Customer.DoesNotExist:
                 pass
-    return render(request, "admin_app/portal_link_form.html", {"form": form, "link": None})
+    return render(request, "admin_app/portal/portal_link_form.html", {"form": form, "link": None})
 
 
 @staff_required
@@ -678,7 +678,7 @@ def portal_link_edit(request, pk):
             return redirect(redirect_to)
     else:
         form = PortalLinkForm(instance=link)
-    return render(request, "admin_app/portal_link_form.html", {"form": form, "link": link})
+    return render(request, "admin_app/portal/portal_link_form.html", {"form": form, "link": link})
 
 
 # ----- Announcements (staff) -----
@@ -696,7 +696,7 @@ def announcement_list(request):
     customers = Customer.objects.all().order_by("name")
     return render(
         request,
-        "admin_app/announcement_list.html",
+        "admin_app/portal/announcement_list.html",
         {"page_obj": page_obj, "total_count": paginator.count, "search": search, "customers": customers, "customer_filter": customer_filter},
     )
 
@@ -720,7 +720,7 @@ def announcement_add(request):
                 form.fields["customer"].initial = Customer.objects.get(pk=customer_id)
             except Customer.DoesNotExist:
                 pass
-    return render(request, "admin_app/announcement_form.html", {"form": form, "announcement": None})
+    return render(request, "admin_app/portal/announcement_form.html", {"form": form, "announcement": None})
 
 
 @staff_required
@@ -735,7 +735,7 @@ def announcement_edit(request, pk):
             return redirect("admin_app:admin_announcement_list")
     else:
         form = AnnouncementForm(instance=ann)
-    return render(request, "admin_app/announcement_form.html", {"form": form, "announcement": ann})
+    return render(request, "admin_app/portal/announcement_form.html", {"form": form, "announcement": ann})
 
 
 @staff_required
@@ -762,7 +762,7 @@ def admin_notification_list(request):
     staff_users = User.objects.filter(is_staff=True).order_by("username")
     return render(
         request,
-        "admin_app/admin_notification_list.html",
+        "admin_app/notifications/admin_notification_list.html",
         {"page_obj": page_obj, "unread_count": unread_count, "staff_users": staff_users},
     )
 
@@ -828,7 +828,7 @@ def facility_list(request):
     page_obj = paginator.get_page(page)
     return render(
         request,
-        "admin_app/facility_list.html",
+        "admin_app/facility/facility_list.html",
         {"page_obj": page_obj, "total_count": paginator.count, "search": search},
     )
 
@@ -845,7 +845,7 @@ def facility_add(request):
     else:
         form = FacilityForm()
     cancel_url = _get_cancel_url(request, reverse("admin_app:admin_facility_list"))
-    return render(request, "admin_app/facility_form.html", {"form": form, "facility": None, "cancel_url": cancel_url})
+    return render(request, "admin_app/facility/facility_form.html", {"form": form, "facility": None, "cancel_url": cancel_url})
 
 
 @staff_required
@@ -860,7 +860,7 @@ def facility_detail(request, slug):
     
     return render(
         request,
-        "admin_app/facility_card.html",
+        "admin_app/facility/facility_card.html",
         {
             "facility": facility,
             "customers": customers,
@@ -889,7 +889,7 @@ def facility_edit(request, slug):
     else:
         form = FacilityForm(instance=facility)
     cancel_url = reverse("admin_app:admin_facility_modal_close", kwargs={"facility_slug": facility.slug}) if in_modal else _get_cancel_url(request, detail_url)
-    return render(request, "admin_app/facility_form.html", {"form": form, "facility": facility, "cancel_url": cancel_url})
+    return render(request, "admin_app/facility/facility_form.html", {"form": form, "facility": facility, "cancel_url": cancel_url})
 
 
 @staff_required
@@ -958,14 +958,14 @@ def facility_customers_edit(request, facility_slug):
         form = FacilityCustomersEditForm(facility=facility)
     cancel_url = reverse("admin_app:admin_facility_modal_close", kwargs={"facility_slug": facility.slug}) if in_modal else detail_url
     if request.GET.get("fragment") == "1":
-        return render(request, "admin_app/facility_customers_edit_fragment.html", {
+        return render(request, "admin_app/facility/facility_customers_edit_fragment.html", {
             "form": form,
             "facility": facility,
             "cancel_url": cancel_url,
             "in_modal": in_modal,
             "form_action": request.build_absolute_uri(request.path),
         })
-    return render(request, "admin_app/facility_customers_edit.html", {
+    return render(request, "admin_app/facility/facility_customers_edit.html", {
         "form": form,
         "facility": facility,
         "cancel_url": cancel_url,
@@ -1006,7 +1006,7 @@ def facility_customer_add(request, facility_slug):
     else:
         form = FacilityCustomerAddForm(facility=facility)
     cancel_url = reverse("admin_app:admin_facility_modal_close", kwargs={"facility_slug": facility.slug}) if in_modal else detail_url
-    return render(request, "admin_app/facility_customer_add.html", {
+    return render(request, "admin_app/facility/facility_customer_add.html", {
         "form": form,
         "facility": facility,
         "cancel_url": cancel_url,
@@ -1038,7 +1038,7 @@ def rack_add(request, facility_slug):
     facility_url = reverse("admin_app:admin_facility_detail", kwargs={"slug": facility.slug})
     cancel_url = reverse("admin_app:admin_facility_modal_close", kwargs={"facility_slug": facility.slug}) if (in_modal and return_to_facility) else _get_cancel_url(request, facility_url)
     if request.GET.get("fragment") == "1":
-        return render(request, "admin_app/rack_form_fragment.html", {
+        return render(request, "admin_app/facility/rack_form_fragment.html", {
             "form": form,
             "facility": facility,
             "rack": None,
@@ -1047,7 +1047,7 @@ def rack_add(request, facility_slug):
             "in_modal": in_modal,
             "form_action": request.build_absolute_uri(request.path),
         })
-    return render(request, "admin_app/rack_form.html", {
+    return render(request, "admin_app/facility/rack_form.html", {
         "form": form,
         "facility": facility,
         "rack": None,
@@ -1071,7 +1071,7 @@ def rack_detail(request, facility_slug, rack_id):
     # Create a dict mapping U position to device
     devices_by_position = {device.rack_position: device for device in devices if device.rack_position}
     
-    return render(request, "admin_app/rack_detail.html", {
+    return render(request, "admin_app/facility/rack_detail.html", {
         "facility": facility,
         "rack": rack,
         "active_seals": active_seals,
@@ -1114,7 +1114,7 @@ def rack_edit(request, facility_slug, rack_id):
     else:
         cancel_url = _get_cancel_url(request, detail_url)
     if request.GET.get("fragment") == "1":
-        return render(request, "admin_app/rack_form_fragment.html", {
+        return render(request, "admin_app/facility/rack_form_fragment.html", {
             "form": form,
             "facility": facility,
             "rack": rack,
@@ -1123,7 +1123,7 @@ def rack_edit(request, facility_slug, rack_id):
             "in_modal": in_modal,
             "form_action": request.build_absolute_uri(request.path),
         })
-    return render(request, "admin_app/rack_form.html", {
+    return render(request, "admin_app/facility/rack_form.html", {
         "form": form,
         "facility": facility,
         "rack": rack,
@@ -1169,7 +1169,7 @@ def rack_seal_add(request, facility_slug, rack_id):
     
     # Cancel goes back to rack detail with Seals tab active
     cancel_url = reverse("admin_app:admin_rack_detail", kwargs={"facility_slug": facility.slug, "rack_id": rack.pk}) + "#seals"
-    return render(request, "admin_app/rack_seal_form.html", {
+    return render(request, "admin_app/facility/rack_seal_form.html", {
         "form": form,
         "facility": facility,
         "rack": rack,
@@ -1202,7 +1202,7 @@ def rack_seal_remove(request, facility_slug, rack_id, seal_id):
         form = RackSealRemovalForm(instance=seal, user=request.user)
     
     cancel_url = reverse("admin_app:admin_rack_detail", kwargs={"facility_slug": facility.slug, "rack_id": rack.pk}) + "#seals"
-    return render(request, "admin_app/rack_seal_remove_form.html", {
+    return render(request, "admin_app/facility/rack_seal_remove_form.html", {
         "form": form,
         "facility": facility,
         "rack": rack,
@@ -1226,7 +1226,7 @@ def device_landing(request):
     category_count = DeviceCategory.objects.count()
     manufacturer_count = Manufacturer.objects.count()
     datasheet_count = ProductDatasheet.objects.count()
-    return render(request, "admin_app/device_landing.html", {
+    return render(request, "admin_app/device/device_landing.html", {
         "type_count": type_count,
         "category_count": category_count,
         "manufacturer_count": manufacturer_count,
@@ -1253,7 +1253,7 @@ def device_type_list(request):
     paginator = Paginator(qs, 25)
     page_number = request.GET.get("page", 1)
     page_obj = paginator.get_page(page_number)
-    return render(request, "admin_app/device_type_list.html", {
+    return render(request, "admin_app/device/device_type_list.html", {
         "page_obj": page_obj,
         "total_count": total_count,
         "search": search,
@@ -1271,50 +1271,50 @@ def device_type_add(request):
         if form.is_valid():
             form.save()
             messages.success(request, _("Device type '%(name)s' created.") % {"name": form.instance.name})
-            return redirect("admin_app:admin_device_type_detail", pk=form.instance.pk)
+            return redirect("admin_app:admin_device_type_detail", slug=form.instance.slug)
     else:
         form = DeviceTypeForm()
-    return render(request, "admin_app/device_type_form.html", {
+    return render(request, "admin_app/device/device_type_form.html", {
         "form": form,
         "device_type": None,
     })
 
 
 @staff_required
-def device_type_detail(request, pk):
+def device_type_detail(request, slug):
     """View device type (product) and list its instances. Add instance button."""
-    device_type = get_object_or_404(DeviceType, pk=pk)
+    device_type = get_object_or_404(DeviceType, slug=slug)
     instances = device_type.instances.filter(is_active=True).select_related("facility", "rack").order_by("facility__name", "name")
-    return render(request, "admin_app/device_type_detail.html", {
+    return render(request, "admin_app/device/device_type_detail.html", {
         "device_type": device_type,
         "instances": instances,
     })
 
 
 @staff_required
-def device_type_edit(request, pk):
+def device_type_edit(request, slug):
     """Edit a device type (product)."""
     from .forms import DeviceTypeForm
-    device_type = get_object_or_404(DeviceType, pk=pk)
+    device_type = get_object_or_404(DeviceType, slug=slug)
     if request.method == "POST":
         form = DeviceTypeForm(request.POST, request.FILES, instance=device_type)
         if form.is_valid():
             form.save()
             messages.success(request, _("Device type updated."))
-            return redirect("admin_app:admin_device_type_detail", pk=device_type.pk)
+            return redirect("admin_app:admin_device_type_detail", slug=device_type.slug)
     else:
         form = DeviceTypeForm(instance=device_type)
-    return render(request, "admin_app/device_type_form.html", {
+    return render(request, "admin_app/device/device_type_form.html", {
         "form": form,
         "device_type": device_type,
     })
 
 
 @staff_required
-def device_instance_add(request, type_pk):
+def device_instance_add(request, type_slug):
     """Add an instance (NetworkDevice) of this device type. Facility optional (can be 'Not assigned')."""
     from .forms import NetworkDeviceForm
-    device_type = get_object_or_404(DeviceType, pk=type_pk)
+    device_type = get_object_or_404(DeviceType, slug=type_slug)
     facilities = Facility.objects.filter(is_active=True).order_by("name")
     facility_slug = request.GET.get("facility") or (request.POST.get("facility") if request.method == "POST" else None)
     facility = None
@@ -1334,7 +1334,7 @@ def device_instance_add(request, type_pk):
             in_modal = request.POST.get("in_modal") == "1"
             if in_modal and facility:
                 return redirect("admin_app:admin_facility_modal_close", facility_slug=facility.slug)
-            return redirect("admin_app:admin_device_type_detail", pk=device_type.pk)
+            return redirect("admin_app:admin_device_type_detail", slug=device_type.slug)
     elif request.method == "POST":
         form = NetworkDeviceForm(request.POST, facility=None)
         form.instance.product = device_type
@@ -1345,18 +1345,18 @@ def device_instance_add(request, type_pk):
             form.instance.product = device_type
 
     if facility is None and facility_slug != "none" and not (request.method == "POST" and request.POST.get("facility") == "none"):
-        return render(request, "admin_app/device_instance_add_choose_facility.html", {
+        return render(request, "admin_app/device/device_instance_add_choose_facility.html", {
             "device_type": device_type,
             "facilities": facilities,
         })
     if request.GET.get("fragment") == "1":
-        return render(request, "admin_app/device_instance_form_fragment.html", {
+        return render(request, "admin_app/device/device_instance_form_fragment.html", {
             "form": form,
             "device_type": device_type,
             "facility": facility,
             "form_action": request.build_absolute_uri(request.path),
         })
-    return render(request, "admin_app/device_instance_form.html", {
+    return render(request, "admin_app/device/device_instance_form.html", {
         "form": form,
         "device_type": device_type,
         "facility": facility,
@@ -1364,10 +1364,10 @@ def device_instance_add(request, type_pk):
 
 
 @staff_required
-def device_instance_edit(request, type_pk, instance_pk):
+def device_instance_edit(request, type_slug, instance_pk):
     """Edit a device instance."""
     from .forms import NetworkDeviceForm
-    device_type = get_object_or_404(DeviceType, pk=type_pk)
+    device_type = get_object_or_404(DeviceType, slug=type_slug)
     instance = get_object_or_404(NetworkDevice, pk=instance_pk, product=device_type)
     facility = instance.facility
     if request.method == "POST":
@@ -1375,10 +1375,10 @@ def device_instance_edit(request, type_pk, instance_pk):
         if form.is_valid():
             form.save()
             messages.success(request, _("Device instance updated."))
-            return redirect("admin_app:admin_device_type_detail", pk=device_type.pk)
+            return redirect("admin_app:admin_device_type_detail", slug=device_type.slug)
     else:
         form = NetworkDeviceForm(instance=instance, facility=facility)
-    return render(request, "admin_app/device_instance_form.html", {
+    return render(request, "admin_app/device/device_instance_form.html", {
         "form": form,
         "device_type": device_type,
         "instance": instance,
@@ -1388,15 +1388,15 @@ def device_instance_edit(request, type_pk, instance_pk):
 
 @staff_required
 @require_POST
-def device_instance_delete(request, type_pk, instance_pk):
+def device_instance_delete(request, type_slug, instance_pk):
     """Delete (deactivate) a device instance."""
-    device_type = get_object_or_404(DeviceType, pk=type_pk)
+    device_type = get_object_or_404(DeviceType, slug=type_slug)
     instance = get_object_or_404(NetworkDevice, pk=instance_pk, product=device_type)
     name = instance.name
     instance.is_active = False
     instance.save()
     messages.success(request, _("Device instance '%(name)s' removed.") % {"name": name})
-    return redirect("admin_app:admin_device_type_detail", pk=device_type.pk)
+    return redirect("admin_app:admin_device_type_detail", slug=device_type.slug)
 
 
 # ----- Device categories -----
@@ -1404,7 +1404,7 @@ def device_instance_delete(request, type_pk, instance_pk):
 def device_category_list(request):
     """List device categories (and subcategories)."""
     categories = DeviceCategory.objects.select_related("parent").order_by("parent__name", "name")
-    return render(request, "admin_app/device_category_list.html", {"categories": categories})
+    return render(request, "admin_app/device/device_category_list.html", {"categories": categories})
 
 
 @staff_required
@@ -1419,7 +1419,7 @@ def device_category_add(request):
             return redirect("admin_app:admin_device_category_list")
     else:
         form = DeviceCategoryForm()
-    return render(request, "admin_app/device_category_form.html", {"form": form, "category": None})
+    return render(request, "admin_app/device/device_category_form.html", {"form": form, "category": None})
 
 
 @staff_required
@@ -1435,7 +1435,7 @@ def device_category_edit(request, pk):
             return redirect("admin_app:admin_device_category_list")
     else:
         form = DeviceCategoryForm(instance=category)
-    return render(request, "admin_app/device_category_form.html", {"form": form, "category": category})
+    return render(request, "admin_app/device/device_category_form.html", {"form": form, "category": category})
 
 
 # ----- Manufacturers -----
@@ -1443,7 +1443,7 @@ def device_category_edit(request, pk):
 def manufacturer_list(request):
     """List manufacturers."""
     manufacturers = Manufacturer.objects.order_by("name")
-    return render(request, "admin_app/manufacturer_list.html", {"manufacturers": manufacturers})
+    return render(request, "admin_app/device/manufacturer_list.html", {"manufacturers": manufacturers})
 
 
 @staff_required
@@ -1458,7 +1458,7 @@ def manufacturer_add(request):
             return redirect("admin_app:admin_manufacturer_list")
     else:
         form = ManufacturerForm()
-    return render(request, "admin_app/manufacturer_form.html", {"form": form, "manufacturer": None})
+    return render(request, "admin_app/device/manufacturer_form.html", {"form": form, "manufacturer": None})
 
 
 @staff_required
@@ -1474,7 +1474,7 @@ def manufacturer_edit(request, pk):
             return redirect("admin_app:admin_manufacturer_list")
     else:
         form = ManufacturerForm(instance=manufacturer)
-    return render(request, "admin_app/manufacturer_form.html", {"form": form, "manufacturer": manufacturer})
+    return render(request, "admin_app/device/manufacturer_form.html", {"form": form, "manufacturer": manufacturer})
 
 
 # ----- Product datasheets -----
@@ -1482,7 +1482,7 @@ def manufacturer_edit(request, pk):
 def product_datasheet_list(request):
     """List product datasheets (under Portal Management)."""
     datasheets = ProductDatasheet.objects.select_related("device_type", "uploaded_by").order_by("-uploaded_at")
-    return render(request, "admin_app/product_datasheet_list.html", {"datasheets": datasheets})
+    return render(request, "admin_app/device/product_datasheet_list.html", {"datasheets": datasheets})
 
 
 @staff_required
@@ -1499,7 +1499,7 @@ def product_datasheet_upload(request):
             return redirect("admin_app:admin_product_datasheet_list")
     else:
         form = ProductDatasheetForm()
-    return render(request, "admin_app/product_datasheet_form.html", {"form": form})
+    return render(request, "admin_app/device/product_datasheet_form.html", {"form": form})
 
 
 @staff_required
@@ -1520,7 +1520,7 @@ def facility_device_choose_type(request, facility_slug):
     device_types = DeviceType.objects.filter(is_active=True).order_by("category", "name")
     if request.GET.get("fragment") != "1":
         return redirect("admin_app:admin_facility_detail", slug=facility.slug)
-    return render(request, "admin_app/facility_device_choose_type_fragment.html", {
+    return render(request, "admin_app/facility/facility_device_choose_type_fragment.html", {
         "facility": facility,
         "device_types": device_types,
     })
@@ -1568,7 +1568,7 @@ def network_device_add(request, facility_slug, rack_id=None, rack_position=None)
         facility_url = reverse("admin_app:admin_facility_detail", kwargs={"slug": facility.slug})
         cancel_url = reverse("admin_app:admin_facility_modal_close", kwargs={"facility_slug": facility.slug}) if (in_modal and return_to_facility) else _get_cancel_url(request, facility_url)
     if request.GET.get("fragment") == "1":
-        return render(request, "admin_app/network_device_form_fragment.html", {
+        return render(request, "admin_app/device/network_device_form_fragment.html", {
             "form": form,
             "facility": facility,
             "rack": rack,
@@ -1578,7 +1578,7 @@ def network_device_add(request, facility_slug, rack_id=None, rack_position=None)
             "in_modal": in_modal,
             "form_action": request.build_absolute_uri(request.path),
         })
-    return render(request, "admin_app/network_device_form.html", {
+    return render(request, "admin_app/device/network_device_form.html", {
         "form": form,
         "facility": facility,
         "rack": rack,
@@ -1619,7 +1619,7 @@ def network_device_edit(request, facility_slug, device_id):
     else:
         cancel_url = reverse("admin_app:admin_facility_modal_close", kwargs={"facility_slug": facility.slug}) if (in_modal and return_to_facility) else _get_cancel_url(request, facility_url)
     if request.GET.get("fragment") == "1":
-        return render(request, "admin_app/network_device_form_fragment.html", {
+        return render(request, "admin_app/device/network_device_form_fragment.html", {
             "form": form,
             "facility": facility,
             "rack": device.rack,
@@ -1629,7 +1629,7 @@ def network_device_edit(request, facility_slug, device_id):
             "in_modal": in_modal,
             "form_action": request.build_absolute_uri(request.path),
         })
-    return render(request, "admin_app/network_device_form.html", {
+    return render(request, "admin_app/device/network_device_form.html", {
         "form": form,
         "facility": facility,
         "rack": device.rack,
@@ -1707,7 +1707,7 @@ def ip_address_add(request, facility_slug):
     form_errors_html = _ip_form_errors_html(form)
     modal_hidden_field = mark_safe('<input type="hidden" name="modal" value="1">') if in_modal else mark_safe("")
     if request.GET.get("fragment") == "1":
-        return render(request, "admin_app/ip_address_form_fragment.html", {
+        return render(request, "admin_app/facility/ip_address_form_fragment.html", {
             "form": form,
             "facility": facility,
             "ip_address": None,
@@ -1719,7 +1719,7 @@ def ip_address_add(request, facility_slug):
             "modal_hidden_field": modal_hidden_field,
             "form_action": request.build_absolute_uri(request.path),
         })
-    return render(request, "admin_app/ip_address_form.html", {
+    return render(request, "admin_app/facility/ip_address_form.html", {
         "form": form,
         "facility": facility,
         "ip_address": None,
@@ -1756,7 +1756,7 @@ def ip_address_edit(request, facility_slug, ip_id):
     page_title = _("Edit IP Address")
     form_errors_html = _ip_form_errors_html(form)
     modal_hidden_field = mark_safe("")  # Edit form not used in facility modal
-    return render(request, "admin_app/ip_address_form.html", {
+    return render(request, "admin_app/facility/ip_address_form.html", {
         "form": form,
         "facility": facility,
         "ip_address": ip_address,
@@ -1805,14 +1805,14 @@ def facility_document_upload(request, facility_slug):
     
     cancel_url = reverse("admin_app:admin_facility_modal_close", kwargs={"facility_slug": facility.slug}) if in_modal else _get_cancel_url(request, detail_url)
     if request.GET.get("fragment") == "1":
-        return render(request, "admin_app/facility_document_form_fragment.html", {
+        return render(request, "admin_app/facility/facility_document_form_fragment.html", {
             "form": form,
             "facility": facility,
             "cancel_url": cancel_url,
             "in_modal": in_modal,
             "form_action": request.build_absolute_uri(request.path),
         })
-    return render(request, "admin_app/facility_document_form.html", {
+    return render(request, "admin_app/facility/facility_document_form.html", {
         "form": form,
         "facility": facility,
         "cancel_url": cancel_url,
@@ -1882,4 +1882,4 @@ def backup_restore(request):
                 messages.error(request, f"Restore failed: {e}")
             return redirect("admin_app:admin_backup_restore")
 
-    return render(request, "admin_app/backup_restore.html")
+    return render(request, "admin_app/backup/backup_restore.html")

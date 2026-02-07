@@ -1,3 +1,12 @@
+<!--
+Copyright (c) 2026 5echo.io
+Project: PMG Portal
+Purpose: Changelog summary of major changes between versions
+Path: CHANGELOG_SUMMARY.md
+Created: 2026-02-05
+Last Modified: 2026-02-06
+-->
+
 # Changelog Summary: 0.1.0-alpha.1 → 1.18.0-beta.1
 
 ## Major Features Added

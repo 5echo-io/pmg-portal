@@ -54,7 +54,7 @@
         <td>{{ dt.get_category_display_full }}</td>
         <td>{{ dt.instance_count }}</td>
         <td class="admin-table-actions">
-          <a href="{% url 'admin_app:admin_device_type_detail' dt.pk %}" class="admin-btn-sm">{% trans "View" %}</a>
+          <a href="{% url 'admin_app:admin_device_type_detail' dt.slug %}" class="admin-btn-sm">{% trans "View" %}</a>
         </td>
       </tr>
       {% empty %}
