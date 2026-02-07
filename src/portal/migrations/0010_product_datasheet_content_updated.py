@@ -28,7 +28,7 @@ class Migration(migrations.Migration):
             field=models.FileField(blank=True, help_text="Optional: PDF from manufacturer", null=True, upload_to="product_datasheets/"),
         ),
         migrations.AlterModelOptions(
-            model_name="productdatasheet",
+            name="productdatasheet",
             options={"ordering": ["-updated_at"]},
         ),
     ]

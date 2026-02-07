@@ -38,6 +38,7 @@ Pre-release builds (alpha, beta, rc) are listed here. Only full releases (no bui
 - **Admin templates omstrukturert**: Alle admin-app-maler flyttet til undermapper (backup/, customer/, device/, facility/, notifications/, portal/, user/); views og urls oppdatert; FILE_LOCATIONS.md; dokumentasjon og install/update-skript oppdatert
 - **Produktdatablad**: content_md og updated_at; valgfri PDF-fil; portal-visning (datasheet detail, PDF, not_found); requirements markdown + xhtml2pdf
 - **Install/update**: pkg-config og libcairo2-dev lagt til som systemavhengigheter (for xhtml2pdf/svglib/pycairo); update.sh sjekker og installerer dem før pip install
+- **Migrasjon 0010**: AlterModelOptions bruker `name=` i stedet for `model_name=` (Django-kompatibel)
 
 ### Added
 - **Portal – Datablad**: /datasheet/&lt;slug&gt;/ (detail), PDF-visning, datasheet_not_found; migrasjon 0010 (content_md, updated_at, file nullable); admin product_datasheet form/list oppdatert
