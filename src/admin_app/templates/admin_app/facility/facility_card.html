@@ -75,6 +75,7 @@
       <a href="#documents" class="facility-sidemenu-item" data-tab="documents">{% trans "Dokumenter" %} ({{ documents|length }})</a>
       <a href="#servicelogg" class="facility-sidemenu-item" data-tab="servicelogg">{% trans "Servicelogg" %} ({{ service_logs|length }})</a>
       <a href="#servicevisits" class="facility-sidemenu-item" data-tab="servicevisits">{% trans "Planlagte turer" %} ({{ service_visits|length }})</a>
+      <a href="#announcements" class="facility-sidemenu-item" data-tab="announcements">{% trans "Kunngjøringer" %} ({{ announcements|length }})</a>
     </nav>
 
     <div class="facility-card-content">
@@ -296,7 +297,7 @@
           <tbody>
             {% for c in contacts %}
             <tr>
-              <td><strong>{{ c.name }}</strong></td>
+              <td>{{ c.name }}</td>
               <td>{{ c.role|default:"—" }}</td>
               <td>{% if c.email %}<a href="mailto:{{ c.email }}">{{ c.email }}</a>{% else %}—{% endif %}</td>
               <td>{% if c.phone %}<a href="tel:{{ c.phone }}">{{ c.phone }}</a>{% else %}—{% endif %}</td>
@@ -412,6 +413,50 @@
       <p class="muted">{% trans "Ingen planlagte serviceturer." %}</p>
       {% endif %}
       <p style="margin-top: 12px;"><a href="{% url 'admin_app:admin_facility_service_visit_list' facility.slug %}">{% trans "Vis alle planlagte turer" %} →</a></p>
+    </div>
+
+    <!-- Kunngjøringer Tab -->
+    <div class="customer-tab-panel" id="announcements">
+      <div class="customer-section-header">
+        <h2>{% trans "Kunngjøringer" %}</h2>
+        <a href="{% url 'admin_app:admin_announcement_add' %}?facility={{ facility.slug }}" class="admin-toolbar-add-btn admin-toolbar-add-btn--fit">{% trans "Opprett kunngjøring" %}</a>
+      </div>
+      <p class="muted">{% trans "Kunngjøringer for kunder med tilgang til dette anlegget. Velg kunde når du oppretter." %}</p>
+      {% if announcements %}
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>{% trans "Tittel" %}</th>
+              <th>{% trans "Kunde" %}</th>
+              <th>{% trans "Opprettet" %}</th>
+              <th>{% trans "Gyldig" %}</th>
+              <th class="admin-table-actions"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for ann in announcements %}
+            <tr>
+              <td>{{ ann.title }}</td>
+              <td><a href="{% url 'admin_app:admin_customer_detail' ann.customer.slug %}">{{ ann.customer.name }}</a></td>
+              <td>{{ ann.created_at|date:"d.m.Y H:i" }}{% if ann.created_by %} ({{ ann.created_by.get_full_name|default:ann.created_by.username }}){% endif %}</td>
+              <td>{% if ann.valid_from %}{{ ann.valid_from|date:"d.m.Y" }}{% endif %}{% if ann.valid_until %} – {{ ann.valid_until|date:"d.m.Y" }}{% endif %}{% if not ann.valid_from and not ann.valid_until %}—{% endif %}</td>
+              <td class="admin-table-actions">
+                <a href="{% url 'admin_app:admin_announcement_edit' ann.pk %}" class="admin-btn-sm">{% trans "Rediger" %}</a>
+                <form method="post" action="{% url 'admin_app:admin_announcement_delete' ann.pk %}" style="display: inline;" onsubmit="return confirm('{% trans "Slette denne kunngjøringen?" %}');">
+                  {% csrf_token %}
+                  <button type="submit" class="admin-btn-sm admin-btn-danger">{% trans "Slett" %}</button>
+                </form>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <p class="muted">{% trans "Ingen kunngjøringer for kunder med tilgang til dette anlegget." %}</p>
+      {% endif %}
+      <p style="margin-top: 12px;"><a href="{% url 'admin_app:admin_announcement_list' %}">{% trans "Alle kunngjøringer i systemet" %} →</a></p>
     </div>
 
     </div>
@@ -588,6 +633,7 @@
   });
   window.addEventListener('hashchange', function() { setActiveTab(getHashTab()); });
   setActiveTab(getHashTab());
+  if (window.location.hash) { window.scrollTo(0, 0); setTimeout(function() { window.scrollTo(0, 0); }, 0); }
 
   const editModal = document.getElementById('facility-edit-modal');
   const editIframe = document.getElementById('facility-edit-iframe');

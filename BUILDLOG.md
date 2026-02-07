@@ -4,7 +4,7 @@ Project: PMG Portal
 Purpose: Build and release log
 Path: BUILDLOG.md
 Created: 2026-02-05
-Last Modified: 2026-02-08
+Last Modified: 2026-02-09
 -->
 
 # BUILDLOG
@@ -12,6 +12,13 @@ Last Modified: 2026-02-08
 Chronological log of builds and releases (newest first). Each entry: date, branch, version (on bump), short summary.
 
 ---
+
+- 2026-02-09 (Europe/Oslo)
+  - Branch: dev
+  - Version: 4.9.0-beta.3
+  - Summary:
+    - Product datasheets: Create datasheet (Markdown + optional PDF), /datasheet/<slug>/, PDF with copyright, print without chrome, icon buttons, full width, breadcrumb, page-break avoid. Admin facility: sidemenu match portal; Se i portal/Admin redirect (no new tab); Admin = gear icon on portal; Administrer tilgang modal = card list. Kontaktpersoner name not bold. No scroll on load when URL has hash (admin + portal). Serviceavtale overlay transparent. Customer card: logo light/dark toggle, Members→Brukertilgang, stats. Announcements tab on facility admin; add from facility with customer limited and redirect back.
+  - Version bump: 4.9.0-beta.2 → 4.9.0-beta.3
 
 - 2026-02-08 (Europe/Oslo)
   - Branch: dev

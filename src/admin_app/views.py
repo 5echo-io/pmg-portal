@@ -262,7 +262,8 @@ def customer_detail(request, slug):
     customer = get_object_or_404(Customer, slug=slug)
     memberships = CustomerMembership.objects.filter(customer=customer).select_related("user").order_by("user__username")
     portal_links = PortalLink.objects.filter(customer=customer).order_by("sort_order", "title")
-    
+    facilities_count = Facility.objects.filter(customers=customer).count()
+    announcements_count = Announcement.objects.filter(customer=customer).count()
     return render(
         request,
         "admin_app/customer/customer_card.html",
@@ -270,6 +271,8 @@ def customer_detail(request, slug):
             "customer": customer,
             "memberships": memberships,
             "portal_links": portal_links,
+            "facilities_count": facilities_count,
+            "announcements_count": announcements_count,
         },
     )
 
@@ -852,22 +855,34 @@ def announcement_list(request):
 def announcement_add(request):
     from .forms import AnnouncementForm
     customer_id = request.GET.get("customer")
+    facility_slug = request.GET.get("facility")
+    redirect_to_facility = None
+    if facility_slug:
+        redirect_to_facility = get_object_or_404(Facility, slug=facility_slug)
     if request.method == "POST":
         form = AnnouncementForm(request.POST)
         if form.is_valid():
             ann = form.save(commit=False)
             ann.created_by = request.user
             ann.save()
-            messages.success(request, "Announcement created.")
+            messages.success(request, _("Announcement created."))
+            if request.POST.get("redirect_facility") and redirect_to_facility:
+                return redirect("admin_app:admin_facility_detail", slug=redirect_to_facility.slug)
             return redirect("admin_app:admin_announcement_list")
     else:
         form = AnnouncementForm()
+        if redirect_to_facility:
+            form.fields["customer"].queryset = redirect_to_facility.customers.all().order_by("name")
         if customer_id:
             try:
                 form.fields["customer"].initial = Customer.objects.get(pk=customer_id)
             except Customer.DoesNotExist:
                 pass
-    return render(request, "admin_app/portal/announcement_form.html", {"form": form, "announcement": None})
+    return render(
+        request,
+        "admin_app/portal/announcement_form.html",
+        {"form": form, "announcement": None, "redirect_to_facility": redirect_to_facility},
+    )
 
 
 @staff_required
@@ -1007,7 +1022,11 @@ def facility_detail(request, slug):
     contacts = facility.contacts.all().order_by("sort_order", "name")
     service_logs = facility.service_logs.all().select_related("service_type").prefetch_related("attachments").order_by("-performed_at")
     service_visits = facility.service_visits.all().select_related("service_log").order_by("scheduled_start")
-    
+    announcements = (
+        Announcement.objects.filter(customer__in=customers)
+        .select_related("customer", "created_by")
+        .order_by("-created_at")
+    )
     return render(
         request,
         "admin_app/facility/facility_card.html",
@@ -1021,6 +1040,7 @@ def facility_detail(request, slug):
             "contacts": contacts,
             "service_logs": service_logs,
             "service_visits": service_visits,
+            "announcements": announcements,
         },
     )
 

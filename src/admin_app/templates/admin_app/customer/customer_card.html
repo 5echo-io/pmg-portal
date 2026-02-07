@@ -1,5 +1,5 @@
 {% extends "admin_app/base.html" %}
-{% load static %}
+{% load static i18n %}
 
 {% block admin_title %}{{ customer.name }}{% endblock %}
 {% block breadcrumb_back %}<a href="{% url 'admin_app:admin_customer_list' %}" class="breadcrumb-back-btn" aria-label="Back to Customers">← Customers</a>{% endblock %}
@@ -14,7 +14,8 @@
   <!-- Header Section -->
   <div class="customer-card-header">
     <div class="customer-card-logo-section">
-      <div class="customer-logo-upload-area" id="logo-upload-area">
+      <div class="customer-logo-toggle-wrap">
+      <div class="customer-logo-upload-area js-logo-area" id="logo-upload-area" data-mode="light">
         {% if customer.logo_url %}
         <div class="customer-logo-preview-wrapper">
           <img src="{{ customer.logo_url }}" alt="{{ customer.name }} logo" class="customer-logo-preview" id="logo-preview" />
@@ -38,11 +39,7 @@
         {% endif %}
         <input type="file" id="logo-file-input" accept="image/*" style="display: none;" />
       </div>
-      <div class="customer-logo-upload-info">
-        <p class="muted">Light mode logo</p>
-        <p class="muted" style="font-size: 11px;">Recommended: 200x200px, PNG or JPG</p>
-      </div>
-      <div class="customer-logo-upload-area" id="logo-dark-upload-area" style="margin-top: 12px;">
+      <div class="customer-logo-upload-area js-logo-area" id="logo-dark-upload-area" data-mode="dark" style="display: none;">
         {% if customer.logo_url_dark %}
         <div class="customer-logo-preview-wrapper">
           <img src="{{ customer.logo_url_dark }}" alt="{{ customer.name }} logo (dark)" class="customer-logo-preview" id="logo-dark-preview" />
@@ -62,9 +59,14 @@
         {% endif %}
         <input type="file" id="logo-dark-file-input" accept="image/*" style="display: none;" />
       </div>
+      <div class="customer-logo-toggle-buttons" role="group" aria-label="Logo mode">
+        <button type="button" class="customer-logo-toggle-btn active" data-mode="light" aria-pressed="true">Light</button>
+        <button type="button" class="customer-logo-toggle-btn" data-mode="dark" aria-pressed="false">Dark</button>
+      </div>
+      </div>
       <div class="customer-logo-upload-info">
-        <p class="muted">Dark mode logo (optional)</p>
-        <p class="muted" style="font-size: 11px;">Shown when portal is in dark theme</p>
+        <p class="muted" id="customer-logo-mode-label">Light mode logo</p>
+        <p class="muted" style="font-size: 11px;">Recommended: 200x200px, PNG or JPG</p>
       </div>
     </div>
     
@@ -96,13 +98,18 @@
       {% if customer.primary_contact %}
       <p class="customer-card-contact">Primary contact: {{ customer.primary_contact.get_full_name|default:customer.primary_contact.email }}</p>
       {% endif %}
+      <div class="customer-card-stats">
+        <span class="customer-card-stat"><strong>{{ facilities_count|default:0 }}</strong> {% trans "Anlegg" %}</span>
+        <span class="customer-card-stat"><strong>{{ portal_links|length }}</strong> {% trans "Portal-lenker" %}</span>
+        <span class="customer-card-stat"><strong>{{ announcements_count|default:0 }}</strong> {% trans "Kunngjøringer" %}</span>
+      </div>
     </div>
   </div>
 
   <!-- Sidebar + Content (same layout as facility) -->
   <div class="facility-card-body">
     <nav class="facility-card-sidemenu" aria-label="Customer sections">
-      <a href="#members" class="facility-sidemenu-item active" data-tab="members">Members ({{ memberships|length }})</a>
+      <a href="#members" class="facility-sidemenu-item active" data-tab="members">{% trans "Brukertilgang" %} ({{ memberships|length }})</a>
       <a href="#links" class="facility-sidemenu-item" data-tab="links">Portal Links ({{ portal_links|length }})</a>
     </nav>
 
@@ -110,7 +117,7 @@
     <!-- Members Tab -->
     <div class="customer-tab-panel active" id="members">
       <div class="customer-section-header">
-        <h2>Customer Members</h2>
+        <h2>{% trans "Brukertilgang" %}</h2>
         <a href="{% url 'admin_app:admin_customer_access_add' %}?customer={{ customer.pk }}&redirect_to=admin_app:admin_customer_detail" class="form-btn form-btn-primary form-btn--narrow">Add Member</a>
       </div>
       {% if memberships %}
@@ -194,6 +201,13 @@
 .facility-card-sidemenu .facility-sidemenu-item:hover { color: var(--text); background: rgba(255,255,255,0.04); }
 .facility-card-sidemenu .facility-sidemenu-item.active { color: #3b82f6; background: rgba(59,130,246,0.1); }
 .facility-card-content { flex: 1; min-width: 0; }
+.customer-logo-toggle-wrap { margin-bottom: 8px; }
+.customer-logo-toggle-buttons { display: flex; gap: 4px; margin-top: 8px; }
+.customer-logo-toggle-btn { padding: 4px 10px; font-size: 12px; border-radius: 6px; border: 1px solid var(--line); background: var(--bg); color: var(--muted); cursor: pointer; }
+.customer-logo-toggle-btn:hover { color: var(--text); border-color: var(--text); }
+.customer-logo-toggle-btn.active { background: var(--line); color: var(--text); border-color: var(--text); }
+.customer-card-stats { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 12px; font-size: 13px; color: var(--muted); }
+.customer-card-stat { white-space: nowrap; }
 </style>
 <script>
 (function() {
@@ -226,6 +240,30 @@
   const logoPlaceholder = document.getElementById('logo-placeholder');
   const deleteBtn = document.getElementById('logo-delete-btn');
   const customerSlug = "{{ customer.slug|escapejs }}";
+
+  // Logo mode toggle (light/dark) – pre-select from theme
+  var preferredMode = (document.documentElement.getAttribute('data-theme') || document.body.getAttribute('data-theme') || '').toLowerCase();
+  if (preferredMode !== 'light' && preferredMode !== 'dark') {
+    preferredMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+  var lightArea = document.getElementById('logo-upload-area');
+  var darkArea = document.getElementById('logo-dark-upload-area');
+  var labelEl = document.getElementById('customer-logo-mode-label');
+  var toggleBtns = document.querySelectorAll('.customer-logo-toggle-btn');
+  function setLogoMode(mode) {
+    if (lightArea) lightArea.style.display = mode === 'light' ? 'flex' : 'none';
+    if (darkArea) darkArea.style.display = mode === 'dark' ? 'flex' : 'none';
+    if (labelEl) labelEl.textContent = mode === 'light' ? 'Light mode logo' : 'Dark mode logo (optional)';
+    toggleBtns.forEach(function(b) {
+      var on = b.getAttribute('data-mode') === mode;
+      b.classList.toggle('active', on);
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+  }
+  setLogoMode(preferredMode);
+  toggleBtns.forEach(function(btn) {
+    btn.addEventListener('click', function() { setLogoMode(this.getAttribute('data-mode')); });
+  });
   
   // Upload area click handler
   if (uploadArea) {

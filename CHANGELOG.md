@@ -4,7 +4,7 @@ Project: PMG Portal
 Purpose: Detailed changelog (SemVer)
 Path: CHANGELOG.md
 Created: 2026-02-05
-Last Modified: 2026-02-07
+Last Modified: 2026-02-09
 -->
 
 # Changelog
@@ -41,6 +41,35 @@ This project follows Semantic Versioning (SemVer).
 - **Facility – customers edit**: Forbedret facility_customers_edit_fragment (layout/UX).
 - **Portal**: context_processors bruker get_theme_customizations og build_theme_override_css for tilpassede tema-variabler; facility_detail og facility_detail_content småjusteringer.
 - **Docs**: THEME_COLORS.md oppdatert. Locale nb +3.
+
+---
+
+## [4.9.0-beta.3] - 2026-02-09
+
+### Added
+
+#### Admin
+- **Facility – Kunngjøringer**: Ny sidemeny-fane «Kunngjøringer» på /admin/facilities/<slug>/ med liste over kunngjøringer for kunder med tilgang til anlegget; knapp «Opprett kunngjøring» som åpner skjema med kunde begrenset til anleggets kunder og redirect tilbake til anlegg (#announcements) etter lagring.
+- **Customer card – statistikk**: På kundekortet (/admin/customers/<slug>/) vises nå antall anlegg, portal-lenker og kunngjøringer under kontaktinfo.
+
+#### Portal
+- **Produktdatablad – full funksjon**: Opprett datasheet (ikke bare opplasting): tittel, valgfri PDF fra produsent, Markdown-innhold (tabeller m.m.). Offentlig URL /datasheet/<slug>/ (slug = produkt/device type). Side viser opprettet/sist endret; nedlasting som PDF med © Park Media Group AS og år; utskrift uten meny/footer; ikonknapper (PDF, skriv ut, produsent-PDF) med tooltips; full bredde og brødsmuler som portal; tabeller/seksjoner splittes ikke på tvers av sider (page-break-inside: avoid).
+
+### Changed
+
+#### Admin
+- **Facility – sidemeny**: Sidemenyen på /admin/facilities/<slug>/ matcher nå portal-design (samme padding, border-radius, font-size, hover; ingen understrek på menypunkter).
+- **Facility – «Se i portal» / «Admin»**: Begge lenker redirecter i samme vindu (fjernet target="_blank").
+- **Portal facility – Admin-knapp**: Byttet fra tekst «Admin» til tannhjul-ikon med tooltip; knappen redirecter (åpner ikke ny fane).
+- **Facility – Administrer tilgang**: Modal «Administrer tilgang» viser nå kunder som kortliste (som «Bytt kundeprofil»): søkefelt, kort med logo/navn/org.nr og avkrysningsboks per kunde.
+- **Kontaktpersoner**: Navn i kontaktperson-tabellen er ikke lenger bold.
+- **Customer card – logo**: Light/dark logo vises én om gangen med veksleknapper «Light»/«Dark» under; startvalg fra brukerens tema (data-theme eller prefers-color-scheme).
+- **Customer card – Brukertilgang**: «Members» omdøpt til «Brukertilgang» (sidemeny og overskrift).
+- **Announcement add**: Støtte for ?facility=<slug>: kunde-dropdown begrenset til anleggets kunder, redirect til anlegg etter lagring, Cancel og brødsmuler tilbake til anlegg.
+
+#### Portal
+- **Facility – hash og scroll**: Ved innlasting med hash (f.eks. #contacts) settes riktig tab men siden scroller ikke ned; brukeren forblir øverst (admin facility_card + portal facility_detail og fragment).
+- **Facility – serviceavtale-overlay**: Overlay er nå transparent (rgba(0,0,0,0.45)) slik at anleggsbildet/placeholderen er fullt synlig under; ingen «kutting» av bildet.
 
 ---
 

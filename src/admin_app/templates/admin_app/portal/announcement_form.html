@@ -2,9 +2,15 @@
 {% load i18n %}
 
 {% block admin_title %}{% if announcement %}{% trans "Edit announcement" %}{% else %}{% trans "Add announcement" %}{% endif %}{% endblock %}
-{% block breadcrumb_back %}<a href="{% url 'admin_app:admin_announcement_list' %}" class="breadcrumb-back-btn" aria-label="{% trans 'Back to Announcements' %}">← {% trans "Announcements" %}</a>{% endblock %}
+{% block breadcrumb_back %}
+{% if redirect_to_facility %}
+<a href="{% url 'admin_app:admin_facility_detail' redirect_to_facility.slug %}#announcements" class="breadcrumb-back-btn" aria-label="{% trans 'Back to facility' %}">← {{ redirect_to_facility.name }}</a>
+{% else %}
+<a href="{% url 'admin_app:admin_announcement_list' %}" class="breadcrumb-back-btn" aria-label="{% trans 'Back to Announcements' %}">← {% trans "Announcements" %}</a>
+{% endif %}
+{% endblock %}
 {% block breadcrumb_extra %}
-<span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_announcement_list' %}">{% trans "Announcements" %}</a>
+<span class="breadcrumb-sep">→</span> {% if redirect_to_facility %}<a href="{% url 'admin_app:admin_facility_detail' redirect_to_facility.slug %}">{% trans "Anlegg" %}</a><span class="breadcrumb-sep">→</span> <span>{{ redirect_to_facility.name }}</span>{% else %}<a href="{% url 'admin_app:admin_announcement_list' %}">{% trans "Announcements" %}</a>{% endif %}
 <span class="breadcrumb-sep">→</span> <span>{% if announcement %}{% trans "Edit" %}{% else %}{% trans "Add" %}{% endif %}</span>
 {% endblock %}
 
@@ -13,6 +19,7 @@
 
 <form method="post" action="" class="admin-form">
   {% csrf_token %}
+  {% if redirect_to_facility %}<input type="hidden" name="redirect_facility" value="1">{% endif %}
   {% for field in form %}
   <div class="admin-form-field">
     <label for="{{ field.id_for_label }}">{{ field.label }}</label>
@@ -23,7 +30,11 @@
   {% endfor %}
   <div class="admin-form-actions">
     <button type="submit" class="form-btn form-btn-primary">{% trans "Save" %}</button>
+    {% if redirect_to_facility %}
+    <a href="{% url 'admin_app:admin_facility_detail' redirect_to_facility.slug %}#announcements" class="form-btn form-btn-secondary">{% trans "Cancel" %}</a>
+    {% else %}
     <a href="{% url 'admin_app:admin_announcement_list' %}" class="form-btn form-btn-secondary">{% trans "Cancel" %}</a>
+    {% endif %}
   </div>
 </form>
 {% endblock %}

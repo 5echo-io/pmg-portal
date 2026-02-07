@@ -308,7 +308,7 @@
 .facility-overview-description { margin-bottom: 12px; }
 .facility-overview-description p { margin: 0; font-size: 0.875rem; line-height: 1.5; color: var(--text); white-space: pre-wrap; }
 .facility-logo-with-overlay { position: relative; width: 100%; border-radius: 12px; overflow: hidden; }
-.facility-serviceavtale-overlay { position: absolute; bottom: 0; left: 0; right: 0; padding: 8px; display: flex; justify-content: center; align-items: center; background: var(--card); border-radius: 0 0 12px 12px; }
+.facility-serviceavtale-overlay { position: absolute; bottom: 0; left: 0; right: 0; padding: 8px; display: flex; justify-content: center; align-items: center; background: rgba(0,0,0,0.45); border-radius: 0 0 12px 12px; pointer-events: none; }
 .facility-serviceavtale-overlay .facility-serviceavtale-badge { width: 100%; justify-content: center; }
 .facility-overview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
 .facility-overview-item { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; min-height: 64px; padding: 10px 8px; background: var(--card, #fff); border: 1px solid var(--line, #e5e7eb); border-radius: 8px; text-align: center; box-sizing: border-box; }
@@ -382,6 +382,7 @@
   });
   window.addEventListener('hashchange', function() { setActiveTab(getHashTab()); });
   setActiveTab(getHashTab());
+  if (window.location.hash) { window.scrollTo(0, 0); setTimeout(function() { window.scrollTo(0, 0); }, 0); }
   var searchEl = document.getElementById('facility-datasheets-search');
   var listEl = document.getElementById('facility-datasheets-list');
   var countEl = document.getElementById('facility-datasheets-count');
