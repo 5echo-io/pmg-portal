@@ -15,6 +15,13 @@ Chronological log of builds and releases (newest first). Each entry: date, branc
 
 - 2026-02-07 (Europe/Oslo)
   - Branch: dev
+  - Version: 5.0.0-beta.7
+  - Summary:
+    - repair_portal_migrations: management command som oppretter portal_userprofile og marker 0021 applisert ved ute-av-sync; install.sh og update.sh kjører repair før migrate; update.sh retry migrate ved already exists/DuplicateTable; SETUP_GUIDE oppdatert. VERSION 5.0.0-beta.6 → 5.0.0-beta.7.
+  - Version bump: 5.0.0-beta.6 → 5.0.0-beta.7
+
+- 2026-02-07 (Europe/Oslo)
+  - Branch: dev
   - Version: 5.0.0-beta.6
   - Summary:
     - Migrering/recovery: SETUP_GUIDE troubleshooting for «relation portal_userprofile does not exist» (fjern 0021–0023 fra django_migrations, kjør migrate); update.sh viser hint ved slik feil. VERSION 5.0.0-beta.5 → 5.0.0-beta.6.

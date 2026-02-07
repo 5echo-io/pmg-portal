@@ -18,6 +18,21 @@ _(Ingen endringer ennå.)_
 
 ---
 
+## [5.0.0-beta.7] - 2026-02-07
+
+### Added
+
+#### Migrering / Install-wizard
+- **repair_portal_migrations**: Ny management command som retter ute-av-sync tilstand (f.eks. `portal_userprofile` mangler eller 0021 feiler med DuplicateTable). Oppretter tabellen og marker 0021 applisert slik at migrate kan kjøre 0022–0026.
+
+### Changed
+
+#### Install / Oppdatering
+- **install.sh** og **update.sh**: Kjører `repair_portal_migrations` før migrate. Ved migreringsfeil «already exists»/DuplicateTable: kjører repair, deretter retry migrate.
+- **SETUP_GUIDE.md**: Troubleshooting for portal_userprofile/DuplicateTable oppdatert – anbefaler å kjøre update.sh på nytt (repair kjøres automatisk) eller manuelt repair + migrate.
+
+---
+
 ## [5.0.0-beta.6] - 2026-02-07
 
 ### Changed
