@@ -706,20 +706,11 @@ msgstr "Brukere"
 msgid "Roles"
 msgstr "Roller"
 
-msgid "Customers"
-msgstr "Kunder"
-
 msgid "Devices & documentation"
 msgstr "Enheter og dokumentasjon"
 
-msgid "Devices"
-msgstr "Enheter"
-
 msgid "Portal management"
 msgstr "Portalstyring"
-
-msgid "Facilities"
-msgstr "Anlegg"
 
 msgid "Portal links"
 msgstr "Portalenker"
@@ -814,9 +805,6 @@ msgstr "Hovedkontakt"
 msgid "Org. no."
 msgstr "Org.nr."
 
-msgid "Edit"
-msgstr "Rediger"
-
 msgid "Filter"
 msgstr "Filtrer"
 
@@ -870,9 +858,6 @@ msgstr "Gjenoppretting fra denne sikkerhetskopien erstatter gjeldende database o
 
 msgid "Are you sure you want to continue?"
 msgstr "Er du sikker på at du vil fortsette?"
-
-msgid "Confirm restore"
-msgstr "Bekreft gjenoppretting"
 
 msgid "Backup file (.tar.gz)"
 msgstr "Sikkerhetskopifil (.tar.gz)"
@@ -960,17 +945,8 @@ msgid_plural "%(counter)s access records"
 msgstr[0] "%(counter)s tilgangspost"
 msgstr[1] "%(counter)s tilgangsposter"
 
-msgid "Product datasheets"
-msgstr "Produktdatablad"
-
 msgid "Links"
 msgstr "Lenker"
-
-msgid "Warning: This action cannot be undone"
-msgstr "Advarsel: Denne handlingen kan ikke angres"
-
-msgid "This action is irreversible."
-msgstr "Denne handlingen kan ikke angres."
 
 msgid "Back to Announcements"
 msgstr "Tilbake til kunngjøringer"
@@ -1014,12 +990,6 @@ msgstr "Dokumentert beskrivelse"
 msgid "Notes"
 msgstr "Notater"
 
-msgid "Created"
-msgstr "Opprettet"
-
-msgid "by"
-msgstr "av"
-
 msgid "Back to facility"
 msgstr "Tilbake til anlegg"
 
@@ -1034,7 +1004,4 @@ msgstr "Rediger servicelogg"
 
 msgid "Er du sikker på at du vil slette denne serviceloggføringen?"
 msgstr "Er du sikker på at du vil slette denne serviceloggføringen?"
-
-msgid "Ingen serviceloggføringer for dette anlegget."
-msgstr "Ingen serviceloggføringer for dette anlegget."
 

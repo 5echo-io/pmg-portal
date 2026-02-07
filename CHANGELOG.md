@@ -17,6 +17,7 @@ This project follows Semantic Versioning (SemVer).
 Pre-release builds (alpha, beta, rc) are listed here. Only full releases (no build suffix) get a dedicated version section below.
 
 ### Fixed
+- **compilemessages**: Removed 12 duplicate msgid entries in locale nb django.po (Customers, Devices, Facilities, No users found., Edit, Search users, Confirm restore, Product datasheets, Warning/This action, Created, by, and one other); msgfmt succeeds.
 - **Admin E108/E116**: FacilityAdmin uses Facility fields only (list_display: name, slug, customer_count; list_filter: is_active); Facility has customers (M2M) not customer.
 - **Admin E039**: Facility registered in portal admin (FacilityAdmin) so ServiceLogAdmin.autocomplete_fields can reference it; fixes migration/update failure on server.
 - **compilemessages**: Removed duplicate msgid entries in locale nb django.po so msgfmt succeeds on update; update.sh shows clearer error when compilemessages fails.

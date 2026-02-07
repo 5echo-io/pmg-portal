@@ -11,6 +11,13 @@ Last Modified: 2026-02-06
 
 - 2026-02-06 (Europe/Oslo)
   - Branch: dev
+  - Version: 4.8.0-beta.15
+  - Summary:
+    - Locale: remove 12 duplicate msgid in nb django.po so compilemessages (msgfmt) succeeds on server
+    - Version bump: 4.8.0-beta.14 → 4.8.0-beta.15
+
+- 2026-02-06 (Europe/Oslo)
+  - Branch: dev
   - Version: 4.8.0-beta.14
   - Summary:
     - FacilityAdmin: use Facility fields only (name, slug, customer_count; list_filter is_active); fix E108/E116 (no customer field, use customers M2M)
