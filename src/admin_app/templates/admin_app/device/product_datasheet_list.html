@@ -9,10 +9,11 @@
 {% endblock %}
 
 {% block admin_content %}
-<h1 class="admin-page-title">{% trans "Product datasheets" %} (Produktdatablader)</h1>
+<h1 class="admin-page-title">{% trans "Product datasheets" %}</h1>
 <p class="muted">{% trans "Create datasheets with product name, optional manufacturer PDF, and Markdown content. Link to a device type to publish at /datasheet/&lt;product-slug&gt;/." %}</p>
 
 <div class="admin-toolbar admin-toolbar--single-row">
+  <span></span>
   <a href="{% url 'admin_app:admin_product_datasheet_create' %}" class="admin-toolbar-add-btn">{% trans "Create datasheet" %}</a>
 </div>
 
@@ -23,7 +24,7 @@
         <th>{% trans "Title" %}</th>
         <th>{% trans "Device" %}</th>
         <th>{% trans "Updated" %}</th>
-        <th class="admin-table-actions"></th>
+        <th class="admin-table-actions" style="width: 52px;"></th>
       </tr>
     </thead>
     <tbody>
@@ -33,13 +34,20 @@
         <td>{% if ds.device_type %}<a href="{% url 'admin_app:admin_device_type_detail' ds.device_type.slug %}">{{ ds.device_type.name }}</a> <span class="muted">(/datasheet/{{ ds.device_type.slug }}/)</span>{% else %}—{% endif %}</td>
         <td>{{ ds.updated_at|date:"Y-m-d H:i" }}{% if ds.uploaded_by %} <span class="muted">({{ ds.uploaded_by.get_full_name|default:ds.uploaded_by.username }})</span>{% endif %}</td>
         <td class="admin-table-actions">
-          {% if ds.device_type %}<a href="{% url 'datasheet_by_slug' ds.device_type.slug %}" target="_blank" class="admin-btn-sm">{% trans "View" %}</a>{% endif %}
-          <a href="{% url 'admin_app:admin_product_datasheet_edit' ds.pk %}" class="admin-btn-sm">{% trans "Edit" %}</a>
-          {% if ds.file %}<a href="{{ ds.file.url }}" target="_blank" class="admin-btn-sm">{% trans "Download PDF" %}</a>{% endif %}
-          <form method="post" action="{% url 'admin_app:admin_product_datasheet_delete' ds.pk %}" class="admin-inline-form" onsubmit="return confirm('{% trans "Delete this datasheet?" %}');">
-            {% csrf_token %}
-            <button type="submit" class="admin-btn-sm admin-btn-danger">{% trans "Delete" %}</button>
-          </form>
+          <div class="admin-row-actions-dropdown">
+            <button type="button" class="admin-row-actions-trigger" aria-haspopup="true" aria-expanded="false" aria-label="{% trans 'Actions' %}" title="{% trans 'Actions' %}">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="6" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="18" r="1.5"/></svg>
+            </button>
+            <div class="admin-row-actions-menu" role="menu" hidden>
+              {% if ds.device_type %}<a href="{% url 'datasheet_by_slug' ds.device_type.slug %}" target="_blank" rel="noopener" role="menuitem">{% trans "View" %}</a>{% endif %}
+              <a href="{% url 'admin_app:admin_product_datasheet_edit' ds.pk %}" role="menuitem">{% trans "Edit" %}</a>
+              {% if ds.file %}<a href="{{ ds.file.url }}" target="_blank" rel="noopener" role="menuitem">{% trans "Download PDF" %}</a>{% endif %}
+              <form method="post" action="{% url 'admin_app:admin_product_datasheet_delete' ds.pk %}" class="admin-row-actions-form" onsubmit="return confirm('{% trans "Delete this datasheet?" %}');" role="none">
+                {% csrf_token %}
+                <button type="submit" class="admin-row-actions-delete" role="menuitem">{% trans "Delete" %}</button>
+              </form>
+            </div>
+          </div>
         </td>
       </tr>
       {% empty %}
@@ -50,4 +58,89 @@
     </tbody>
   </table>
 </div>
+
+<style>
+.admin-toolbar--single-row > span:first-child { flex: 1; }
+.admin-row-actions-dropdown { position: relative; display: inline-block; }
+.admin-row-actions-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+.admin-row-actions-trigger:hover {
+  background: var(--surface-elevated);
+  border-color: var(--border-hover);
+}
+.admin-row-actions-trigger svg { display: block; }
+.admin-row-actions-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 4px);
+  min-width: 160px;
+  padding: 6px 0;
+  background: var(--surface-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-lg);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+}
+.admin-row-actions-menu[hidden] { display: none !important; }
+.admin-row-actions-menu a,
+.admin-row-actions-form .admin-row-actions-delete {
+  display: block;
+  width: 100%;
+  padding: 8px 14px;
+  font-size: 13px;
+  text-align: left;
+  color: var(--text-primary);
+  text-decoration: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.2s;
+}
+.admin-row-actions-menu a:hover,
+.admin-row-actions-form .admin-row-actions-delete:hover {
+  background: var(--surface);
+  color: var(--text-primary);
+}
+.admin-row-actions-form { margin: 0; padding: 0; }
+.admin-row-actions-form .admin-row-actions-delete { color: var(--danger); }
+.admin-row-actions-form .admin-row-actions-delete:hover { background: rgba(239, 68, 68, 0.15); }
+</style>
+<script>
+(function() {
+  document.querySelectorAll('.admin-row-actions-dropdown').forEach(function(wrap) {
+    var trigger = wrap.querySelector('.admin-row-actions-trigger');
+    var menu = wrap.querySelector('.admin-row-actions-menu');
+    if (!trigger || !menu) return;
+    trigger.addEventListener('click', function(e) {
+      e.stopPropagation();
+      var open = !menu.hidden;
+      document.querySelectorAll('.admin-row-actions-menu').forEach(function(m) { m.hidden = true; });
+      document.querySelectorAll('.admin-row-actions-trigger').forEach(function(t) { t.setAttribute('aria-expanded', 'false'); });
+      if (!open) {
+        menu.hidden = false;
+        trigger.setAttribute('aria-expanded', 'true');
+      }
+    });
+  });
+  document.addEventListener('click', function() {
+    document.querySelectorAll('.admin-row-actions-menu').forEach(function(m) { m.hidden = true; });
+    document.querySelectorAll('.admin-row-actions-trigger').forEach(function(t) { t.setAttribute('aria-expanded', 'false'); });
+  });
+})();
+</script>
 {% endblock %}

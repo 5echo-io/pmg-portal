@@ -26,6 +26,7 @@ Pre-release builds (alpha, beta, rc) are listed here. Only full releases (no bui
 - **compilemessages**: Removed duplicate msgid entries in locale nb django.po so msgfmt succeeds on update; update.sh shows clearer error when compilemessages fails.
 
 ### Changed
+- **Admin & portal**: product_datasheet_list (admin) utvidet; portal facility_service_log_detail og fragment; nye portal-URLer og views (+59).
 - **Document template & nettverksdokumentasjon**: DocumentTemplate-modell (migrasjon 0014); admin document_template list/form; portal facility device detail og facility_network_documentation_pdf; facility_detail og facility_detail_content; requirements +1.
 - **Portal – Produktdatablad**: datasheet_list og datasheet_detail; views; locale +3.
 - **Portal**: datasheet_detail, facility_detail, facility_detail_content, facility_service_log_detail og fragment (justeringer/layout).

@@ -36,6 +36,7 @@ from .models import (
     ServiceType,
     DeviceType,
     ProductDatasheet,
+    DocumentTemplate,
 )
 
 
@@ -458,6 +459,64 @@ def facility_service_log_detail(request, slug, log_id):
         r["HX-Trigger"] = '{"setTitle": {"title": "' + title.replace('"', '\\"') + '"}}'
         return r
     return render(request, "portal/facility_service_log_detail.html", context)
+
+
+@login_required
+def facility_service_log_pdf(request, slug, log_id):
+    """Generate servicerapport PDF using the master document template (WeasyPrint)."""
+    from django.template import Template, Context
+    from io import BytesIO
+
+    facility = get_object_or_404(Facility, slug=slug, is_active=True)
+    active_customer_id = request.session.get("active_customer_id")
+    if not active_customer_id:
+        messages.info(request, "Please select a customer profile to view facilities.")
+        return redirect("portal_home")
+    try:
+        customer = Customer.objects.get(pk=active_customer_id)
+        if customer not in facility.customers.all():
+            messages.error(request, "You do not have access to this facility.")
+            return redirect("facility_list")
+    except Customer.DoesNotExist:
+        messages.error(request, "Customer not found.")
+        return redirect("portal_home")
+
+    service_log = get_object_or_404(
+        ServiceLog.objects.select_related("service_type", "approved_by", "facility").prefetch_related("serviced_devices__device"),
+        pk=log_id,
+        facility=facility,
+    )
+    template = DocumentTemplate.objects.filter(
+        document_type=DocumentTemplate.DOCUMENT_TYPE_SERVICERAPPORT,
+        is_default=True,
+    ).first()
+    if not template:
+        template = DocumentTemplate.objects.filter(document_type=DocumentTemplate.DOCUMENT_TYPE_SERVICERAPPORT).first()
+    if not template:
+        messages.error(request, "No document template for servicerapport. Please contact the administrator.")
+        return redirect("facility_service_log_detail", slug=slug, log_id=log_id)
+    context = {
+        "service_log": service_log,
+        "facility": facility,
+        "customer": customer,
+        "now": timezone.now(),
+    }
+    try:
+        from weasyprint import HTML, CSS
+    except ImportError:
+        messages.error(request, "PDF generation is not available.")
+        return redirect("facility_service_log_detail", slug=slug, log_id=log_id)
+    t = Template(template.html_content)
+    html_str = t.render(Context(context))
+    buf = BytesIO()
+    doc = HTML(string=html_str)
+    stylesheets = [CSS(string=template.css_content)] if template.css_content else []
+    doc.write_pdf(buf, stylesheets=stylesheets)
+    buf.seek(0)
+    filename = f"servicerapport-{service_log.service_id}-{timezone.now().strftime('%Y%m%d')}.pdf"
+    response = HttpResponse(buf.getvalue(), content_type="application/pdf")
+    response["Content-Disposition"] = f'attachment; filename="{filename}"'
+    return response
 
 
 @login_required

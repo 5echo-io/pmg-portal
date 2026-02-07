@@ -11,6 +11,13 @@ Last Modified: 2026-02-06
 
 - 2026-02-07 (Europe/Oslo)
   - Branch: dev
+  - Version: 4.8.0-beta.27
+  - Summary:
+    - Admin: product_datasheet_list expanded; portal: facility_service_log_detail and fragment; portal urls and views +59
+    - Version bump: 4.8.0-beta.26 → 4.8.0-beta.27
+
+- 2026-02-07 (Europe/Oslo)
+  - Branch: dev
   - Version: 4.8.0-beta.26
   - Summary:
     - DocumentTemplate model (migration 0014); admin document_template list/form; portal facility_device_detail, facility_network_documentation_pdf and fragment; facility_detail, facility_detail_content; requirements +1
