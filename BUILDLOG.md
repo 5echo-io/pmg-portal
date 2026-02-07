@@ -11,6 +11,13 @@ Last Modified: 2026-02-07
 
 - 2026-02-07 (Europe/Oslo)
   - Branch: dev
+  - Version: 4.8.0-beta.30
+  - Summary:
+    - WeasyPrint/pydyf: pin pydyf<0.12 in requirements (fix AttributeError 'super' has no attribute transform); portal and admin catch AttributeError and use xhtml2pdf fallback
+    - Version bump: 4.8.0-beta.29 → 4.8.0-beta.30
+
+- 2026-02-07 (Europe/Oslo)
+  - Branch: dev
   - Version: 4.8.0-beta.29
   - Summary:
     - WeasyPrint PDF: portal and admin views catch OSError when Pango/Cairo missing and show friendly message with apt command; install.sh and update.sh add libcairo2 to WeasyPrint deps; docs/WEASYPRINT_PDF.md

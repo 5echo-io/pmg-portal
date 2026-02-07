@@ -2423,7 +2423,7 @@ def _render_pdf_from_template(template, context):
             doc.write_pdf(buf, stylesheets=stylesheets)
             buf.seek(0)
             return buf.getvalue()
-        except OSError:
+        except (OSError, AttributeError):
             pass
     # Fallback: xhtml2pdf (no Pango/Cairo required)
     try:

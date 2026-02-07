@@ -17,6 +17,7 @@ This project follows Semantic Versioning (SemVer).
 Pre-release builds (alpha, beta, rc) are listed here. Only full releases (no build suffix) get a dedicated version section below.
 
 ### Fixed
+- **WeasyPrint / pydyf**: Servicerapport-PDF feilet med AttributeError «'super' object has no attribute 'transform'» pga. inkompatibilitet WeasyPrint 62.3 med pydyf 0.12+. requirements.txt pinner nå pydyf til &lt;0.12; portal og admin fanger dessuten AttributeError og bruker xhtml2pdf-fallback.
 - **WeasyPrint / servicerapport PDF**: Ved manglende Pango/Cairo på serveren (OSError «cannot load library pango-1.0-0») fanger portal- og admin-PDF-visninger nå OSError og viser en tydelig feilmelding med apt-kommando. install.sh og update.sh inkluderer libcairo2 i WeasyPrint-avhengighetene. Ny doc: docs/WEASYPRINT_PDF.md.
 - **WeasyPrint / service log PDF**: Install- og update-skript installerer nå alltid Pango/GdkPixbuf (libpango-1.0-0, libpangocairo-1.0-0, libgdk-pixbuf2.0-0) slik at PDF-eksport for servicelogg ikke feiler med «cannot load library pango-1.0-0». update.sh kjører et eksplisitt apt-get install av disse pakkene ved hver oppdatering.
 - **compilemessages**: Removed 2 more duplicate msgid in nb django.po (Type, All); msgfmt succeeds.

@@ -514,8 +514,8 @@ def facility_service_log_pdf(request, slug, log_id):
         stylesheets = [CSS(string=template.css_content)] if template.css_content else []
         doc.write_pdf(buf, stylesheets=stylesheets)
         buf.seek(0)
-    except OSError as e:
-        # Fallback to xhtml2pdf when WeasyPrint fails (e.g. missing Pango/Cairo on server)
+    except (OSError, AttributeError) as e:
+        # Fallback to xhtml2pdf when WeasyPrint fails (missing Pango/Cairo or pydyf API mismatch)
         from xhtml2pdf import pisa
         doc_html = (
             f'<!DOCTYPE html><html><head><meta charset="utf-8"/>'
@@ -527,7 +527,7 @@ def facility_service_log_pdf(request, slug, log_id):
         buf = BytesIO()
         pisa_status = pisa.CreatePDF(doc_html.encode("utf-8"), dest=buf, encoding="utf-8")
         if pisa_status.err:
-            if "pango" in str(e).lower() or "cairo" in str(e).lower() or "cannot load library" in str(e).lower():
+            if isinstance(e, OSError) and ("pango" in str(e).lower() or "cairo" in str(e).lower() or "cannot load library" in str(e).lower()):
                 messages.error(
                     request,
                     "PDF generation failed: missing system libraries (Pango/Cairo). "
