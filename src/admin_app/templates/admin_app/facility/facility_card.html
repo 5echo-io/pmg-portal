@@ -44,7 +44,7 @@
               <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
             </svg>
           </a>
-          <button type="button" class="customer-card-icon-btn customer-card-icon-btn--delete" data-delete-url="{% url 'admin_app:admin_facility_delete' facility.slug %}" data-delete-message="Are you sure you want to delete the facility '{{ facility.name }}'? This will also delete all racks, network devices, IP addresses, and documents associated with this facility." title="Delete Facility">
+          <button type="button" class="customer-card-icon-btn customer-card-icon-btn--delete" data-delete-url="{% url 'admin_app:admin_facility_delete' facility.slug %}" data-delete-message="Are you sure you want to delete the facility '{{ facility.name }}'? This will also delete all racks, network devices, IP addresses, documents, and contact persons associated with this facility." title="Delete Facility">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M3 6h18"></path>
               <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
@@ -67,6 +67,7 @@
   <div class="facility-card-body">
     <nav class="facility-card-sidemenu" aria-label="{% trans 'Anlegg-seksjoner' %}">
       <button type="button" class="facility-sidemenu-item active" data-tab="customers">{% trans "Kunder" %} ({{ customers|length }})</button>
+      <button type="button" class="facility-sidemenu-item" data-tab="contacts">{% trans "Kontaktpersoner" %} ({{ contacts|length }})</button>
       <button type="button" class="facility-sidemenu-item" data-tab="racks">{% trans "Racks" %} ({{ racks|length }})</button>
       <button type="button" class="facility-sidemenu-item" data-tab="network">{% trans "Nettverksenheter" %} ({{ network_devices|length }})</button>
       <button type="button" class="facility-sidemenu-item" data-tab="ip">{% trans "IP-adresser" %} ({{ ip_addresses|length }})</button>
@@ -272,6 +273,50 @@
       {% endif %}
     </div>
 
+    <!-- Kontaktpersoner Tab -->
+    <div class="customer-tab-panel" id="tab-contacts">
+      <div class="customer-section-header">
+        <h2>{% trans "Kontaktpersoner" %}</h2>
+        <button type="button" class="admin-toolbar-add-btn admin-toolbar-add-btn--fit facility-contact-add-modal-btn">{% trans "Legg til kontakt" %}</button>
+      </div>
+      {% if contacts %}
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>{% trans "Navn" %}</th>
+              <th>{% trans "Rolle" %}</th>
+              <th>{% trans "E-post" %}</th>
+              <th>{% trans "Telefon" %}</th>
+              <th>{% trans "Hovedkontakt" %}</th>
+              <th class="admin-table-actions"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for c in contacts %}
+            <tr>
+              <td><strong>{{ c.name }}</strong></td>
+              <td>{{ c.role|default:"—" }}</td>
+              <td>{% if c.email %}<a href="mailto:{{ c.email }}">{{ c.email }}</a>{% else %}—{% endif %}</td>
+              <td>{% if c.phone %}<a href="tel:{{ c.phone }}">{{ c.phone }}</a>{% else %}—{% endif %}</td>
+              <td>{% if c.is_primary %}{% trans "Ja" %}{% else %}—{% endif %}</td>
+              <td class="admin-table-actions">
+                <button type="button" class="admin-btn-sm facility-contact-edit-modal-btn" data-edit-url="{% url 'admin_app:admin_facility_contact_edit' facility.slug c.pk %}?modal=1&fragment=1">{% trans "Rediger" %}</button>
+                <form method="post" action="{% url 'admin_app:admin_facility_contact_delete' facility.slug c.pk %}" style="display: inline;" onsubmit="return confirm('{% blocktrans with name=c.name %}Er du sikker på at du vil slette kontaktpersonen «{{ name }}»?{% endblocktrans %}');">
+                  {% csrf_token %}
+                  <button type="submit" class="admin-btn-sm admin-btn-danger">{% trans "Slett" %}</button>
+                </form>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <p class="muted">{% trans "Ingen kontaktpersoner lagt til for dette anlegget." %}</p>
+      {% endif %}
+    </div>
+
     <!-- Servicelogg Tab -->
     <div class="customer-tab-panel" id="tab-servicelogg">
       <div class="customer-section-header">
@@ -444,6 +489,17 @@
   </div>
 </div>
 
+<div id="facility-contact-modal" class="rack-modal" aria-hidden="true">
+  <div class="rack-modal-backdrop"></div>
+  <div class="rack-modal-dialog">
+    <div class="rack-modal-header">
+      <h2 class="rack-modal-title" id="facility-contact-modal-title">{% trans "Legg til kontakt" %}</h2>
+      <button type="button" class="rack-modal-close facility-contact-modal-close" aria-label="{% trans 'Lukk' %}">&times;</button>
+    </div>
+    <div class="rack-modal-body" aria-live="polite"></div>
+  </div>
+</div>
+
 <!-- Service log add/edit modal -->
 <div id="facility-servicelogg-modal" class="rack-modal" aria-hidden="true">
   <div class="rack-modal-backdrop"></div>
@@ -528,6 +584,7 @@
   const deviceModal = document.getElementById('facility-device-modal');
   const ipModal = document.getElementById('facility-ip-modal');
   const documentModal = document.getElementById('facility-document-modal');
+  const contactModal = document.getElementById('facility-contact-modal');
   const serviceloggModal = document.getElementById('facility-servicelogg-modal');
   const attachmentModal = document.getElementById('facility-attachment-modal');
   const serviceVisitModal = document.getElementById('facility-service-visit-modal');
@@ -635,6 +692,26 @@
     openModalWithFragment(documentModal, body, "{% url 'admin_app:admin_facility_document_upload' facility.slug %}?modal=1");
   });
 
+  var contactModalTitle = document.getElementById('facility-contact-modal-title');
+  document.querySelector('.facility-contact-add-modal-btn')?.addEventListener('click', function() {
+    var body = contactModal?.querySelector('.rack-modal-body');
+    openModalWithFragment(contactModal, body, "{% url 'admin_app:admin_facility_contact_add' facility.slug %}?modal=1&fragment=1", function() {
+      if (contactModalTitle) contactModalTitle.textContent = "{% trans 'Legg til kontakt' %}";
+    });
+    if (contactModalTitle) contactModalTitle.textContent = "{% trans 'Legg til kontakt' %}";
+  });
+  document.querySelectorAll('.facility-contact-edit-modal-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var url = this.getAttribute('data-edit-url');
+      if (!url) return;
+      var body = contactModal?.querySelector('.rack-modal-body');
+      openModalWithFragment(contactModal, body, url, function() {
+        if (contactModalTitle) contactModalTitle.textContent = "{% trans 'Rediger kontakt' %}";
+      });
+      if (contactModalTitle) contactModalTitle.textContent = "{% trans 'Rediger kontakt' %}";
+    });
+  });
+
   document.querySelectorAll('.facility-servicelogg-attachment-btn').forEach(function(btn) {
     btn.addEventListener('click', function() {
       var url = this.getAttribute('data-upload-url');
@@ -718,6 +795,8 @@
   ipModal?.querySelector('.rack-modal-backdrop')?.addEventListener('click', function() { closeInlineModal(ipModal); });
   documentModal?.querySelector('.rack-modal-close')?.addEventListener('click', function() { closeInlineModal(documentModal); });
   documentModal?.querySelector('.rack-modal-backdrop')?.addEventListener('click', function() { closeInlineModal(documentModal); });
+  contactModal?.querySelector('.rack-modal-close')?.addEventListener('click', function() { closeInlineModal(contactModal); });
+  contactModal?.querySelector('.rack-modal-backdrop')?.addEventListener('click', function() { closeInlineModal(contactModal); });
   serviceloggModal?.querySelector('.rack-modal-close')?.addEventListener('click', function() { closeInlineModal(serviceloggModal); });
   serviceloggModal?.querySelector('.rack-modal-backdrop')?.addEventListener('click', function() { closeInlineModal(serviceloggModal); });
   attachmentModal?.querySelector('.rack-modal-close')?.addEventListener('click', function() { closeInlineModal(attachmentModal); });
@@ -728,7 +807,7 @@
   customersModal?.querySelector('.rack-modal-backdrop')?.addEventListener('click', function() { closeInlineModal(customersModal); });
 
   function closeAllFacilityModals() {
-    [editModal, customersModal, rackModal, deviceModal, ipModal, documentModal, serviceloggModal, attachmentModal, serviceVisitModal].forEach(function(m) {
+    [editModal, customersModal, rackModal, deviceModal, ipModal, documentModal, contactModal, serviceloggModal, attachmentModal, serviceVisitModal].forEach(function(m) {
       if (!m) return;
       m.setAttribute('aria-hidden', 'true');
       m.classList.remove('rack-modal-open');

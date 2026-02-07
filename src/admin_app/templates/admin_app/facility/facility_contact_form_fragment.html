@@ -1,0 +1,16 @@
+{% load i18n %}
+<form method="post" action="{{ form_action }}" class="admin-form admin-form--wide js-facility-modal-form">
+  {% csrf_token %}
+  {% if in_modal %}<input type="hidden" name="modal" value="1">{% endif %}
+  {% for field in form %}
+  <div class="admin-form-field">
+    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+    {{ field }}
+    {% if field.errors %}<p class="form-error">{{ field.errors.0 }}</p>{% endif %}
+  </div>
+  {% endfor %}
+  <div class="admin-form-actions">
+    <button type="submit" class="form-btn form-btn-primary form-btn--narrow">{% trans "Save" %}</button>
+    <button type="button" class="form-btn form-btn-secondary js-facility-modal-cancel">{% trans "Cancel" %}</button>
+  </div>
+</form>

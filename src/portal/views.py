@@ -355,6 +355,7 @@ def facility_detail(request, slug):
     network_devices = facility.network_devices.filter(is_active=True).select_related("product", "rack").order_by("rack", "rack_position", "name")
     ip_addresses = facility.ip_addresses.all().select_related("device").order_by("ip_address")
     documents = facility.documents.all().order_by("-uploaded_at")
+    contacts = facility.contacts.all().order_by("sort_order", "name")
     service_logs = facility.service_logs.all().select_related("service_type").prefetch_related("attachments").order_by("-performed_at")
     service_type_filter = request.GET.get("service_type", "").strip()
     if service_type_filter:
@@ -405,6 +406,7 @@ def facility_detail(request, slug):
         "network_devices": network_devices,
         "ip_addresses": ip_addresses,
         "documents": documents,
+        "contacts": contacts,
         "service_logs": service_logs,
         "service_types": service_types,
         "service_type_filter": service_type_filter,

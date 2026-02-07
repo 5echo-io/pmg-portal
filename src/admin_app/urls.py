@@ -87,6 +87,9 @@ urlpatterns = [
     # Facility Documents
     path("facilities/<slug:facility_slug>/documents/upload/", views.facility_document_upload, name="admin_facility_document_upload"),
     path("facilities/<slug:facility_slug>/documents/<int:doc_id>/delete/", views.facility_document_delete, name="admin_facility_document_delete"),
+    path("facilities/<slug:facility_slug>/contacts/add/", views.facility_contact_add, name="admin_facility_contact_add"),
+    path("facilities/<slug:facility_slug>/contacts/<int:contact_id>/edit/", views.facility_contact_edit, name="admin_facility_contact_edit"),
+    path("facilities/<slug:facility_slug>/contacts/<int:contact_id>/delete/", views.facility_contact_delete, name="admin_facility_contact_delete"),
     # Facility Service Log
     path("facilities/<slug:facility_slug>/service-log/add/", views.facility_service_log_add, name="admin_facility_service_log_add"),
     path("facilities/<slug:facility_slug>/service-log/<int:log_id>/edit/", views.facility_service_log_edit, name="admin_facility_service_log_edit"),
@@ -100,6 +103,7 @@ urlpatterns = [
     path("document-templates/add/", views.document_template_add, name="admin_document_template_add"),
     path("document-templates/load-default/<str:document_type>/", views.document_template_load_default, name="admin_document_template_load_default"),
     path("document-templates/<int:pk>/edit/", views.document_template_edit, name="admin_document_template_edit"),
+    path("document-templates/<int:pk>/preview/", views.document_template_preview, name="admin_document_template_preview"),
     path("document-templates/<int:pk>/delete/", views.document_template_delete, name="admin_document_template_delete"),
     # Service Types
     path("service-types/", views.service_type_list, name="admin_service_type_list"),

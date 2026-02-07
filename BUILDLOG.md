@@ -11,6 +11,17 @@ Last Modified: 2026-02-07
 
 - 2026-02-07 (Europe/Oslo)
   - Branch: dev
+  - Version: 4.8.0-beta.31
+  - Summary:
+    - Portal datasheet: TOC 1/6 width, sticky with topbar offset, padding; removed Download PDF button; manufacturer PDF icon; custom tooltips only; print/PDF page breaks (before headings, no double break); th white text on dark bg in print/PDF
+    - Portal /datasheets/: breadcrumb admin-breadcrumb; Create datasheet right; grid min 3 columns, Created/Updated dates; search with icon; datasheet_items view
+    - Facility detail: Produktdatablader tab (unique datasheets, search, alphabetical); sidemenu URL hash (#racks, #devices, etc.); compact overview boxes
+    - Footer: Knowledge base section with Produktdatablader link
+    - Admin product datasheet list: title without duplicate; Create datasheet right; row actions as dots dropdown (View, Edit, Download PDF, Delete)
+    - Version bump: 4.8.0-beta.30 → 4.8.0-beta.31
+
+- 2026-02-07 (Europe/Oslo)
+  - Branch: dev
   - Version: 4.8.0-beta.30
   - Summary:
     - WeasyPrint/pydyf: pin pydyf<0.12 in requirements (fix AttributeError 'super' has no attribute transform); portal and admin catch AttributeError and use xhtml2pdf fallback

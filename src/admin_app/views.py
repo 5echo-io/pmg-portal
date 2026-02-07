@@ -34,6 +34,7 @@ from portal.models import (
     NetworkDevice,
     IPAddress,
     FacilityDocument,
+    FacilityContact,
     ServiceLog,
     ServiceLogAttachment,
     ServiceLogDevice,
@@ -863,6 +864,7 @@ def facility_detail(request, slug):
     network_devices = facility.network_devices.filter(is_active=True).order_by("rack", "rack_position", "name")
     ip_addresses = facility.ip_addresses.all().order_by("ip_address")
     documents = facility.documents.all().order_by("-uploaded_at")
+    contacts = facility.contacts.all().order_by("sort_order", "name")
     service_logs = facility.service_logs.all().select_related("service_type").prefetch_related("attachments").order_by("-performed_at")
     service_visits = facility.service_visits.all().select_related("service_log").order_by("scheduled_start")
     
@@ -876,6 +878,7 @@ def facility_detail(request, slug):
             "network_devices": network_devices,
             "ip_addresses": ip_addresses,
             "documents": documents,
+            "contacts": contacts,
             "service_logs": service_logs,
             "service_visits": service_visits,
         },
@@ -1858,6 +1861,92 @@ def facility_document_delete(request, facility_slug, doc_id):
     return redirect("admin_app:admin_facility_detail", slug=facility.slug)
 
 
+# ----- Facility Contacts -----
+@staff_required
+def facility_contact_add(request, facility_slug):
+    """Add a contact person to a facility."""
+    from .forms import FacilityContactForm
+    facility = get_object_or_404(Facility, slug=facility_slug)
+    in_modal = request.GET.get("modal") == "1" or request.GET.get("fragment") == "1"
+    detail_url = reverse("admin_app:admin_facility_detail", kwargs={"slug": facility.slug})
+    if request.method == "POST":
+        form = FacilityContactForm(request.POST, facility=facility)
+        if form.is_valid():
+            form.save()
+            messages.success(request, _("Contact '%(name)s' added.") % {"name": form.instance.name})
+            if in_modal or request.POST.get("modal") == "1":
+                return redirect("admin_app:admin_facility_modal_close", facility_slug=facility.slug)
+            return redirect("admin_app:admin_facility_detail", slug=facility.slug)
+    else:
+        form = FacilityContactForm(facility=facility)
+    cancel_url = reverse("admin_app:admin_facility_modal_close", kwargs={"facility_slug": facility.slug}) if in_modal else _get_cancel_url(request, detail_url)
+    if request.GET.get("fragment") == "1":
+        return render(request, "admin_app/facility/facility_contact_form_fragment.html", {
+            "form": form,
+            "facility": facility,
+            "contact": None,
+            "cancel_url": cancel_url,
+            "in_modal": in_modal,
+            "form_action": request.build_absolute_uri(request.path),
+        })
+    return render(request, "admin_app/facility/facility_contact_form.html", {
+        "form": form,
+        "facility": facility,
+        "contact": None,
+        "cancel_url": cancel_url,
+        "in_modal": in_modal,
+    })
+
+
+@staff_required
+def facility_contact_edit(request, facility_slug, contact_id):
+    """Edit a facility contact."""
+    from .forms import FacilityContactForm
+    facility = get_object_or_404(Facility, slug=facility_slug)
+    contact = get_object_or_404(FacilityContact, pk=contact_id, facility=facility)
+    in_modal = request.GET.get("modal") == "1" or request.GET.get("fragment") == "1"
+    detail_url = reverse("admin_app:admin_facility_detail", kwargs={"slug": facility.slug})
+    if request.method == "POST":
+        form = FacilityContactForm(request.POST, instance=contact, facility=facility)
+        if form.is_valid():
+            form.save()
+            messages.success(request, _("Contact '%(name)s' updated.") % {"name": contact.name})
+            if in_modal or request.POST.get("modal") == "1":
+                return redirect("admin_app:admin_facility_modal_close", facility_slug=facility.slug)
+            return redirect("admin_app:admin_facility_detail", slug=facility.slug)
+    else:
+        form = FacilityContactForm(instance=contact, facility=facility)
+    cancel_url = reverse("admin_app:admin_facility_modal_close", kwargs={"facility_slug": facility.slug}) if in_modal else _get_cancel_url(request, detail_url)
+    if request.GET.get("fragment") == "1":
+        return render(request, "admin_app/facility/facility_contact_form_fragment.html", {
+            "form": form,
+            "facility": facility,
+            "contact": contact,
+            "cancel_url": cancel_url,
+            "in_modal": in_modal,
+            "form_action": request.build_absolute_uri(request.path),
+        })
+    return render(request, "admin_app/facility/facility_contact_form.html", {
+        "form": form,
+        "facility": facility,
+        "contact": contact,
+        "cancel_url": cancel_url,
+        "in_modal": in_modal,
+    })
+
+
+@staff_required
+@require_POST
+def facility_contact_delete(request, facility_slug, contact_id):
+    """Delete a facility contact."""
+    facility = get_object_or_404(Facility, slug=facility_slug)
+    contact = get_object_or_404(FacilityContact, pk=contact_id, facility=facility)
+    name = contact.name
+    contact.delete()
+    messages.success(request, _("Contact '%(name)s' deleted.") % {"name": name})
+    return redirect("admin_app:admin_facility_detail", slug=facility.slug)
+
+
 # ----- Facility Service Log / Servicerapport (full page, no modal) -----
 @staff_required
 def facility_service_log_add(request, facility_slug):
@@ -2392,6 +2481,68 @@ def document_template_edit(request, pk):
         messages.success(request, _("Template '%(name)s' updated.") % {"name": template.name})
         return redirect("admin_app:admin_document_template_list")
     return render(request, "admin_app/document_template_form.html", {"template": template})
+
+
+def _document_template_preview_context(document_type):
+    """Build sample context for document template preview (mock data with same attributes as real context)."""
+    from types import SimpleNamespace
+
+    now = timezone.now()
+    facility = SimpleNamespace(name="Eksempel bygg / Preview facility", slug="preview")
+    customer = SimpleNamespace(name="Eksempel kunde AS")
+
+    if document_type == DocumentTemplate.DOCUMENT_TYPE_SERVICERAPPORT:
+        dev1 = SimpleNamespace(device=SimpleNamespace(name="Enhet A"), serviced_at=now, notes="Sjekket")
+        dev2 = SimpleNamespace(device=SimpleNamespace(name="Enhet B"), serviced_at=None, notes="")
+        serviced_devices = SimpleNamespace(all=[dev1, dev2])
+        service_log = SimpleNamespace(
+            service_id="RQ-1234 (PREVIEW)",
+            performed_at=now,
+            asset_name="Eksempel anlegg",
+            asset_id="ID-001",
+            customer_name="Eksempel kunde AS",
+            customer_address="Gate 1, 0123 Oslo",
+            customer_org_numbers="123 456 789 MVA",
+            supplier_name="Leverandør AS",
+            supplier_org_number="987 654 321",
+            contract_number="AVT-2024-001",
+            background="Eksempeltekst for bakgrunn i forhåndsvisning.",
+            summary="Kort oppsummering av arbeidet.",
+            description="Beskrivelse av utført service.",
+            findings_observations="Ingen avvik funnet.",
+            conclusion="Anlegget er i god stand.",
+            recommendations_immediate="Ingen.",
+            recommendations_long_term="Vedlikehold etter plan.",
+            serviced_devices=serviced_devices,
+        )
+        return {"service_log": service_log, "facility": facility, "customer": customer, "now": now}
+
+    network_devices = []
+    ip_addresses = []
+    return {"facility": facility, "network_devices": network_devices, "ip_addresses": ip_addresses, "now": now}
+
+
+@staff_required
+@require_http_methods(["GET"])
+def document_template_preview(request, pk):
+    """Render document template with sample data as HTML for visual preview (iframe or new tab)."""
+    from django.template import Template, Context
+
+    template = get_object_or_404(DocumentTemplate, pk=pk)
+    context = _document_template_preview_context(template.document_type)
+    t = Template(template.html_content)
+    html_body = t.render(Context(context))
+    css = template.css_content or ""
+    full_html = (
+        "<!DOCTYPE html><html><head><meta charset=\"utf-8\"><title>Preview – "
+        + escape(template.name)
+        + "</title><style>"
+        + css
+        + "</style></head><body>"
+        + html_body
+        + "</body></html>"
+    )
+    return HttpResponse(full_html, content_type="text/html; charset=utf-8")
 
 
 @staff_required

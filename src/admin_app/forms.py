@@ -20,6 +20,7 @@ from portal.models import (
     NetworkDevice,
     IPAddress,
     FacilityDocument,
+    FacilityContact,
     ServiceLog,
     ServiceLogAttachment,
     ServiceLogDevice,
@@ -360,6 +361,21 @@ class FacilityDocumentForm(forms.ModelForm):
         fields = ("title", "description", "file", "category")
         widgets = {
             "description": forms.Textarea(attrs={"rows": 2}),
+        }
+
+    def __init__(self, *args, facility=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if facility:
+            self.instance.facility = facility
+
+
+class FacilityContactForm(forms.ModelForm):
+    class Meta:
+        model = FacilityContact
+        fields = ("name", "role", "email", "phone", "is_primary", "sort_order")
+        widgets = {
+            "role": forms.TextInput(attrs={"placeholder": "e.g. Facility manager, IT contact"}),
+            "sort_order": forms.NumberInput(attrs={"min": 0}),
         }
 
     def __init__(self, *args, facility=None, **kwargs):

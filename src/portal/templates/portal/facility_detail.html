@@ -57,42 +57,88 @@
       {% endif %}
       <div class="facility-overview-grid">
         <div class="facility-overview-item">
+          <span class="facility-overview-num">{{ network_devices|length }}</span>
+          <span class="facility-overview-label">{% trans "Enheter" %}</span>
+        </div>
+        <div class="facility-overview-item">
           <span class="facility-overview-num">{{ racks|length }}</span>
           <span class="facility-overview-label">{% trans "Racks" %}</span>
         </div>
         <div class="facility-overview-item">
           <span class="facility-overview-num">{{ ip_addresses|length }}</span>
-          <span class="facility-overview-label">{% trans "Network" %}</span>
+          <span class="facility-overview-label">{% trans "Nettverk" %}</span>
         </div>
         <div class="facility-overview-item">
-          <span class="facility-overview-num">{{ network_devices|length }}</span>
-          <span class="facility-overview-label">{% trans "Devices" %}</span>
-        </div>
-        <div class="facility-overview-item">
-          <span class="facility-overview-num">{{ documents|length }}</span>
-          <span class="facility-overview-label">{% trans "Documents" %}</span>
+          <span class="facility-overview-num">{{ facility_datasheets|length }}</span>
+          <span class="facility-overview-label">{% trans "Product datasheets" %}</span>
         </div>
         <div class="facility-overview-item">
           <span class="facility-overview-num">{{ service_logs|length }}</span>
           <span class="facility-overview-label">{% trans "Servicelogg" %}</span>
         </div>
+        <div class="facility-overview-item">
+          <span class="facility-overview-num">{{ documents|length }}</span>
+          <span class="facility-overview-label">{% trans "Dokumenter" %}</span>
+        </div>
+        <div class="facility-overview-item">
+          <span class="facility-overview-num">{{ contacts|length }}</span>
+          <span class="facility-overview-label">{% trans "Kontaktpersoner" %}</span>
+        </div>
       </div>
     </div>
 
-    <!-- Sidemenu + content (Racks, Nettverk, Enheter, Dokumenter, Servicelogg, Produktdatablader) -->
+    <!-- Sidemenu + content: Enheter, Racks, Nettverk, Produktdatablader, Servicelogg, Dokumenter, Kontaktpersoner -->
     <div class="facility-card-body">
       <nav class="facility-card-sidemenu" aria-label="{% trans 'Facility sections' %}">
-        <a href="{% url 'facility_detail' facility.slug %}#racks" class="facility-sidemenu-item active" data-tab="racks">{% trans "Racks" %} ({{ racks|length }})</a>
+        <a href="{% url 'facility_detail' facility.slug %}#devices" class="facility-sidemenu-item active" data-tab="devices">{% trans "Enheter" %} ({{ network_devices|length }})</a>
+        <a href="{% url 'facility_detail' facility.slug %}#racks" class="facility-sidemenu-item" data-tab="racks">{% trans "Racks" %} ({{ racks|length }})</a>
         <a href="{% url 'facility_detail' facility.slug %}#network" class="facility-sidemenu-item" data-tab="network">{% trans "Nettverk" %} ({{ ip_addresses|length }})</a>
-        <a href="{% url 'facility_detail' facility.slug %}#devices" class="facility-sidemenu-item" data-tab="devices">{% trans "Enheter" %} ({{ network_devices|length }})</a>
         <a href="{% url 'facility_detail' facility.slug %}#produktdatablader" class="facility-sidemenu-item" data-tab="produktdatablader">{% trans "Product datasheets" %} ({{ facility_datasheets|length }})</a>
         <a href="{% url 'facility_detail' facility.slug %}#servicelogg" class="facility-sidemenu-item" data-tab="servicelogg">{% trans "Servicelogg" %} ({{ service_logs|length }})</a>
         <a href="{% url 'facility_detail' facility.slug %}#documents" class="facility-sidemenu-item" data-tab="documents">{% trans "Dokumenter" %} ({{ documents|length }})</a>
+        <a href="{% url 'facility_detail' facility.slug %}#contacts" class="facility-sidemenu-item" data-tab="contacts">{% trans "Kontaktpersoner" %} ({{ contacts|length }})</a>
       </nav>
 
       <div class="facility-card-content">
+        <!-- Enheter -->
+        <div class="customer-tab-panel active" id="tab-devices">
+          <div class="customer-section-header">
+            <h2>{% trans "Enheter" %}</h2>
+          </div>
+          {% if network_devices %}
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>{% trans "Name" %}</th>
+                  <th>{% trans "Type" %}</th>
+                  <th>{% trans "Manufacturer" %}</th>
+                  <th>{% trans "Model" %}</th>
+                  <th>{% trans "SLA" %}</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for device in network_devices %}
+                <tr>
+                  <td><strong>{{ device.name }}</strong></td>
+                  <td>{{ device.get_device_type_display }}</td>
+                  <td>{{ device.manufacturer|default:"—" }}</td>
+                  <td>{{ device.model|default:"—" }}</td>
+                  <td>{% if device.is_sla %}✓{% else %}—{% endif %}</td>
+                  <td><a href="{% url 'facility_device_detail' facility.slug device.pk %}" hx-get="{% url 'facility_device_detail' facility.slug device.pk %}" hx-target="#main-content" hx-push-url="true" class="admin-btn-sm">{% trans "Open" %}</a></td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <p class="muted">{% trans "No network devices configured for this facility." %}</p>
+          {% endif %}
+        </div>
+
         <!-- Racks -->
-        <div class="customer-tab-panel active" id="tab-racks">
+        <div class="customer-tab-panel" id="tab-racks">
           <div class="customer-section-header">
             <h2>{% trans "Racks" %}</h2>
           </div>
@@ -196,43 +242,6 @@
             </div>
             {% else %}<p class="muted">{% trans "No network devices configured for this facility." %}</p>{% endif %}
           </div>
-        </div>
-
-        <!-- Enheter (network devices) -->
-        <div class="customer-tab-panel" id="tab-devices">
-          <div class="customer-section-header">
-            <h2>{% trans "Enheter" %}</h2>
-          </div>
-          {% if network_devices %}
-          <div class="admin-table-wrap">
-            <table class="admin-table">
-              <thead>
-                <tr>
-                  <th>{% trans "Name" %}</th>
-                  <th>{% trans "Type" %}</th>
-                  <th>{% trans "Manufacturer" %}</th>
-                  <th>{% trans "Model" %}</th>
-                  <th>{% trans "SLA" %}</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for device in network_devices %}
-                <tr>
-                  <td><strong>{{ device.name }}</strong></td>
-                  <td>{{ device.get_device_type_display }}</td>
-                  <td>{{ device.manufacturer|default:"—" }}</td>
-                  <td>{{ device.model|default:"—" }}</td>
-                  <td>{% if device.is_sla %}✓{% else %}—{% endif %}</td>
-                  <td><a href="{% url 'facility_device_detail' facility.slug device.pk %}" hx-get="{% url 'facility_device_detail' facility.slug device.pk %}" hx-target="#main-content" hx-push-url="true" class="admin-btn-sm">{% trans "Open" %}</a></td>
-                </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
-          {% else %}
-          <p class="muted">{% trans "No network devices configured for this facility." %}</p>
-          {% endif %}
         </div>
 
         <!-- Produktdatablader -->
@@ -347,6 +356,41 @@
           <p class="muted">{% trans "No documents uploaded for this facility." %}</p>
           {% endif %}
         </div>
+
+        <!-- Kontaktpersoner -->
+        <div class="customer-tab-panel" id="tab-contacts">
+          <div class="customer-section-header">
+            <h2>{% trans "Kontaktpersoner" %}</h2>
+          </div>
+          {% if contacts %}
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>{% trans "Name" %}</th>
+                  <th>{% trans "Role" %}</th>
+                  <th>{% trans "Email" %}</th>
+                  <th>{% trans "Phone" %}</th>
+                  <th>{% trans "Primary" %}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for c in contacts %}
+                <tr>
+                  <td><strong>{{ c.name }}</strong></td>
+                  <td>{{ c.role|default:"—" }}</td>
+                  <td>{% if c.email %}<a href="mailto:{{ c.email }}">{{ c.email }}</a>{% else %}—{% endif %}</td>
+                  <td>{% if c.phone %}<a href="tel:{{ c.phone }}">{{ c.phone }}</a>{% else %}—{% endif %}</td>
+                  <td>{% if c.is_primary %}{% trans "Yes" %}{% else %}—{% endif %}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <p class="muted">{% trans "No contact persons for this facility." %}</p>
+          {% endif %}
+        </div>
       </div>
     </div>
   </div>
@@ -397,10 +441,10 @@
 
 <script>
 (function() {
-  var hashToTab = { racks: 'racks', network: 'network', devices: 'devices', documents: 'documents', servicelogg: 'servicelogg', produktdatablader: 'produktdatablader' };
+  var hashToTab = { racks: 'racks', network: 'network', devices: 'devices', documents: 'documents', servicelogg: 'servicelogg', produktdatablader: 'produktdatablader', contacts: 'contacts' };
   function getHashTab() {
     var h = (window.location.hash || '').replace(/^#/, '');
-    return hashToTab[h] || 'racks';
+    return hashToTab[h] || 'devices';
   }
   function setActiveTab(tabId) {
     var sidemenuItems = document.querySelectorAll('.facility-sidemenu-item');

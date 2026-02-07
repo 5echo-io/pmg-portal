@@ -2,6 +2,8 @@
 
 Servicerapport-PDF og andre dokumenter fra **Document templates** bruker [WeasyPrint](https://weasyprint.org/). WeasyPrint trenger systembiblioteker (Pango, Cairo, GdkPixbuf) som må installeres med apt.
 
+**Install wizard:** Når du kjører `scripts/install.sh` (ny installasjon eller oppdatering), installerer skriptet automatisk disse avhengighetene og riktig pydyf-versjon, slik at dokumentmal-PDF fungerer uten manuelle steg.
+
 ## Feil: «cannot load library 'pango-1.0-0'»
 
 Hvis PDF-nedlasting gir 500-feil og journalctl viser:

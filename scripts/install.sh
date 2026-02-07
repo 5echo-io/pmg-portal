@@ -332,10 +332,9 @@ rm -rf "$TEMP_DIR/pmg-portal" 2>/dev/null || true
 git clone -b "$BRANCH" "$GITHUB_REPO" "$TEMP_DIR/pmg-portal"
 REPO_DIR="$TEMP_DIR/pmg-portal"
 
-# Install OS dependencies
+# Install OS dependencies (Python, Postgres, build tools; WeasyPrint libs for document template PDFs)
 echo ""
-# Install OS dependencies (postgresql-client for Backup & Restore; pkg-config+libcairo2-dev for xhtml2pdf/svglib/pycairo)
-echo "Installing OS dependencies..."
+echo "Installing OS dependencies (Python, Postgres, gettext, WeasyPrint/Pango/Cairo for PDF)..."
 sudo apt-get update -y
 sudo apt-get install -y python3 python3-venv python3-pip postgresql postgresql-client rsync gettext libjpeg-dev libpng-dev zlib1g-dev git pkg-config libcairo2-dev libcairo2 libpango-1.0-0 libpangocairo-1.0-0 libgdk-pixbuf2.0-0
 
@@ -516,13 +515,14 @@ else
 fi
 
 echo ""
-echo "Creating virtual environment..."
+echo "Creating virtual environment and installing Python dependencies..."
 cd "$SRC_DIR"
 if [ ! -d "$SRC_DIR/.venv" ]; then
     sudo python3 -m venv "$SRC_DIR/.venv"
 fi
 sudo "$SRC_DIR/.venv/bin/pip" install --upgrade pip
 sudo "$SRC_DIR/.venv/bin/pip" install -r "$SRC_DIR/requirements.txt"
+echo "  (requirements include WeasyPrint for document templates; pydyf is pinned for PDF compatibility)"
 
 echo ""
 echo "Creating media directory..."

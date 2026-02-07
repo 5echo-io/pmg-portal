@@ -1,0 +1,30 @@
+{% extends "admin_app/base.html" %}
+{% load i18n %}
+
+{% block admin_title %}{% if contact %}{% trans "Edit contact" %}{% else %}{% trans "Add contact" %}{% endif %} – {{ facility.name }}{% endblock %}
+{% block breadcrumb_back %}<a href="{% url 'admin_app:admin_facility_detail' facility.slug %}" class="breadcrumb-back-btn" aria-label="Back to {{ facility.name }}">← {{ facility.name }}</a>{% endblock %}
+{% block breadcrumb_extra %}
+<span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_facility_list' %}">{% trans "Facilities" %}</a>
+<span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_facility_detail' facility.slug %}">{{ facility.name }}</a>
+<span class="breadcrumb-sep">→</span> <span>{% if contact %}{% trans "Edit contact" %}{% else %}{% trans "Add contact" %}{% endif %}</span>
+{% endblock %}
+
+{% block admin_content %}
+<h1 class="admin-page-title">{% if contact %}{% trans "Edit contact" %}{% else %}{% trans "Add contact" %}{% endif %}</h1>
+
+<form method="post" action="" class="admin-form admin-form--wide">
+  {% csrf_token %}
+  {% for field in form %}
+  <div class="admin-form-field">
+    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+    {{ field }}
+    {% if field.help_text %}<p class="admin-form-help">{{ field.help_text }}</p>{% endif %}
+    {% if field.errors %}<p class="form-error">{{ field.errors.0 }}</p>{% endif %}
+  </div>
+  {% endfor %}
+  <div class="admin-form-actions">
+    <button type="submit" class="form-btn form-btn-primary form-btn--narrow">{% trans "Save" %}</button>
+    <a href="{{ cancel_url }}" class="form-btn form-btn-secondary">{% trans "Cancel" %}</a>
+  </div>
+</form>
+{% endblock %}

@@ -68,7 +68,7 @@ echo "Installing WeasyPrint runtime libraries (Pango, Cairo, GdkPixbuf)..."
 sudo apt-get update -y
 sudo apt-get install -y --no-install-recommends libpango-1.0-0 libpangocairo-1.0-0 libgdk-pixbuf2.0-0 libcairo2
 
-echo "Re-installing python deps..."
+echo "Re-installing Python dependencies (includes WeasyPrint for document template PDFs)..."
 cd "$SRC_DIR"
 sudo "$SRC_DIR/.venv/bin/pip" install -r "$SRC_DIR/requirements.txt"
 

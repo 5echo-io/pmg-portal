@@ -63,6 +63,8 @@ This file is the single reference for where important project files are located.
 | Choose device type (fragment) | `src/admin_app/templates/admin_app/facility/facility_device_choose_type_fragment.html` |
 | Document form | `src/admin_app/templates/admin_app/facility/facility_document_form.html` |
 | Document form (fragment) | `src/admin_app/templates/admin_app/facility/facility_document_form_fragment.html` |
+| Contact form | `src/admin_app/templates/admin_app/facility/facility_contact_form.html` |
+| Contact form (fragment) | `src/admin_app/templates/admin_app/facility/facility_contact_form_fragment.html` |
 | Rack detail | `src/admin_app/templates/admin_app/facility/rack_detail.html` |
 | Rack form | `src/admin_app/templates/admin_app/facility/rack_form.html` |
 | Rack form (fragment) | `src/admin_app/templates/admin_app/facility/rack_form_fragment.html` |

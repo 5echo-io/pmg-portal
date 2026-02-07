@@ -614,6 +614,29 @@ class FacilityDocument(models.Model):
         return f"{self.facility.name}: {self.title}"
 
 
+class FacilityContact(models.Model):
+    """
+    Contact person for a facility. Multiple contacts per facility with name, role, email, phone.
+    """
+    facility = models.ForeignKey(Facility, on_delete=models.CASCADE, related_name="contacts")
+    name = models.CharField(max_length=200, help_text="Contact name")
+    role = models.CharField(max_length=200, blank=True, default="", help_text="Role or title (e.g. Facility manager, IT contact)")
+    email = models.EmailField(blank=True, default="")
+    phone = models.CharField(max_length=50, blank=True, default="")
+    is_primary = models.BooleanField(default=False, help_text="Mark as primary contact for this facility")
+    sort_order = models.PositiveIntegerField(default=100, db_index=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["sort_order", "name"]
+        verbose_name = "Facility contact"
+        verbose_name_plural = "Facility contacts"
+
+    def __str__(self) -> str:
+        return f"{self.facility.name}: {self.name}"
+
+
 class Rack(models.Model):
     """
     Rack within a facility for organizing equipment.

@@ -11,6 +11,8 @@
 {% block admin_content %}
 <h1 class="admin-page-title">{% if template %}{% trans "Edit template" %}: {{ template.name }}{% else %}{% trans "Add document template" %}{% endif %}</h1>
 
+<p class="muted" style="margin-bottom: 1rem;">{% trans "Document type links this template to the correct PDF: Servicerapport → service report download; Nettverksdokumentasjon → network documentation. Full CSS is applied when WeasyPrint is available on the server; otherwise a simplified PDF may be generated." %}</p>
+
 <form method="post" action="" class="admin-form admin-form--wide">
   {% csrf_token %}
   <div class="admin-form-field">
@@ -23,6 +25,7 @@
       <option value="servicerapport" {% if template.document_type == 'servicerapport' %}selected{% endif %}>{% trans "Servicerapport" %}</option>
       <option value="nettverksdokumentasjon" {% if template.document_type == 'nettverksdokumentasjon' %}selected{% endif %}>{% trans "Nettverksdokumentasjon" %}</option>
     </select>
+    <span class="muted">{% trans "Determines where this template is used (service report PDF vs network documentation PDF)." %}</span>
   </div>
   <div class="admin-form-field">
     <label><input type="checkbox" name="is_default" {% if template.is_default %}checked{% endif %}> {% trans "Use as default for this document type" %}</label>
@@ -44,4 +47,16 @@
     <a href="{% url 'admin_app:admin_document_template_list' %}" class="form-btn form-btn-secondary">{% trans "Cancel" %}</a>
   </div>
 </form>
+
+{% if template %}
+<hr style="margin: 2rem 0;">
+<h2 class="admin-section-title">{% trans "Preview" %}</h2>
+<p class="muted">{% trans "Preview uses sample data. Save the template to refresh the preview." %}</p>
+<p>
+  <a href="{% url 'admin_app:admin_document_template_preview' template.pk %}" target="_blank" rel="noopener" class="form-btn form-btn-secondary">{% trans "Open preview in new tab" %}</a>
+</p>
+<div style="border: 1px solid #ccc; background: #f9f9f9; min-height: 400px;">
+  <iframe src="{% url 'admin_app:admin_document_template_preview' template.pk %}" title="{% trans 'Document preview' %}" style="width: 100%; height: 600px; border: 0;"></iframe>
+</div>
+{% endif %}
 {% endblock %}

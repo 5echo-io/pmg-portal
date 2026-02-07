@@ -257,6 +257,8 @@
 }
 .markdown-body h2 { page-break-after: avoid; }
 .markdown-body h3 { page-break-after: avoid; }
+.markdown-body p { page-break-inside: avoid; }
+.markdown-body table { page-break-after: avoid; }
 
 /* Scroll margin so TOC targets are not hidden under topbar */
 .markdown-body h1[id], .markdown-body h2[id], .markdown-body h3[id] {
@@ -289,6 +291,13 @@
   .datasheet-meta {
     color: #000 !important;
   }
+  .print-datasheet .markdown-body th {
+    background: #374151 !important;
+    color: #fff !important;
+  }
+  .print-datasheet .markdown-body h2 { page-break-before: always; }
+  .print-datasheet .markdown-body h3 { page-break-before: always; }
+  .print-datasheet .markdown-body h2 + h3 { page-break-before: avoid; }
   .datasheet-meta { opacity: 1; }
   .datasheet-footer.print-only {
     position: fixed;
