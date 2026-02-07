@@ -6,11 +6,11 @@
 <div class="facility-detail-container{% if print_mode %} servicerapport-print-view{% endif %}">
   {% if not print_mode %}
   <div class="breadcrumb-row">
-    <a href="{% url 'facility_detail' facility.slug %}" class="breadcrumb-back-btn" aria-label="{% trans 'Back to facility' %}">← {{ facility.name }}</a>
+    <a href="{% url 'facility_detail' facility.slug %}#servicelogg" class="breadcrumb-back-btn" aria-label="{% trans 'Back to facility' %}">← {{ facility.name }}</a>
     <nav class="breadcrumb admin-breadcrumb" aria-label="Breadcrumb">
       <a href="{% url 'facility_list' %}">{% trans "Facilities" %}</a>
       <span class="breadcrumb-sep">→</span>
-      <a href="{% url 'facility_detail' facility.slug %}">{{ facility.name }}</a>
+      <a href="{% url 'facility_detail' facility.slug %}#servicelogg">{{ facility.name }}</a>
       <span class="breadcrumb-sep">→</span>
       <span>{% trans "Servicerapport" %}: {{ service_log.service_id }}</span>
     </nav>

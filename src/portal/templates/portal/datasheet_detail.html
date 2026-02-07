@@ -36,15 +36,12 @@
           </p>
         </div>
         <div class="datasheet-actions">
-          <a href="{% url 'datasheet_pdf' device_type.slug %}" class="datasheet-action-btn" target="_blank" rel="noopener" data-tooltip="{% trans 'Download PDF' %}" title="{% trans 'Download PDF' %}" aria-label="{% trans 'Download PDF' %}">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M12 18v-6"/><path d="M9 15l3 3 3-3"/></svg>
-          </a>
-          <button type="button" class="datasheet-action-btn" onclick="window.print()" data-tooltip="{% trans 'Print datasheet' %}" title="{% trans 'Print datasheet' %}" aria-label="{% trans 'Print datasheet' %}">
+          <button type="button" class="datasheet-action-btn" onclick="window.print()" data-tooltip="{% trans 'Print datasheet' %}" aria-label="{% trans 'Print datasheet' %}">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/></svg>
           </button>
           {% if datasheet.file %}
-          <a href="{{ datasheet.file.url }}" target="_blank" rel="noopener" class="datasheet-action-btn" data-tooltip="{% trans 'Download manufacturer datasheet' %}" title="{% trans 'Download manufacturer datasheet' %}" aria-label="{% trans 'Download manufacturer datasheet' %}">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <a href="{{ datasheet.file.url }}" target="_blank" rel="noopener" class="datasheet-action-btn" data-tooltip="{% trans 'Download manufacturer datasheet' %}" aria-label="{% trans 'Download manufacturer datasheet' %}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M12 18v-6"/><path d="M9 15l3 3 3-3"/></svg>
           </a>
           {% endif %}
         </div>
@@ -83,9 +80,9 @@
   align-items: flex-start;
 }
 .datasheet-toc-col {
-  flex: 0 0 12.5%;
-  min-width: 140px;
-  max-width: 200px;
+  flex: 0 0 16.666%;
+  min-width: 160px;
+  max-width: 260px;
   position: sticky;
   top: calc(56px + 24px);
   align-self: flex-start;
@@ -148,12 +145,12 @@
 .datasheet-title { font-size: 1.75rem; margin: 0 0 0.5rem 0; }
 .datasheet-meta { color: var(--muted); font-size: 0.9rem; margin: 0; }
 
-/* Action buttons: same height, vertically centered with each other */
+/* Action buttons: equal height, vertically aligned; no browser title (only custom tooltip) */
 .datasheet-actions {
   display: flex;
   gap: 8px;
   flex-shrink: 0;
-  align-items: stretch;
+  align-items: center;
   overflow: visible;
 }
 .datasheet-action-btn {
@@ -162,6 +159,7 @@
   justify-content: center;
   width: 40px;
   height: 40px;
+  min-height: 40px;
   padding: 0;
   border-radius: 8px;
   background: var(--btn);
@@ -175,6 +173,7 @@
   flex-shrink: 0;
   font: inherit;
   line-height: 0;
+  vertical-align: middle;
 }
 .datasheet-action-btn svg {
   stroke: currentColor;

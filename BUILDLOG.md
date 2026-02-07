@@ -11,6 +11,13 @@ Last Modified: 2026-02-06
 
 - 2026-02-07 (Europe/Oslo)
   - Branch: dev
+  - Version: 4.8.0-beta.24
+  - Summary:
+    - Portal: datasheet_detail, facility_detail, facility_detail_content, facility_service_log_detail and fragment (tweaks/layout)
+    - Version bump: 4.8.0-beta.23 → 4.8.0-beta.24
+
+- 2026-02-07 (Europe/Oslo)
+  - Branch: dev
   - Version: 4.8.0-beta.23
   - Summary:
     - Portal: facility_detail, facility_detail_content, facility_service_log_detail and fragment; views; locale +3

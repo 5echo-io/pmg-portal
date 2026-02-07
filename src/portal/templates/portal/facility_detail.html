@@ -85,9 +85,9 @@
         <a href="{% url 'facility_detail' facility.slug %}#racks" class="facility-sidemenu-item active" data-tab="racks">{% trans "Racks" %} ({{ racks|length }})</a>
         <a href="{% url 'facility_detail' facility.slug %}#network" class="facility-sidemenu-item" data-tab="network">{% trans "Nettverk" %} ({{ ip_addresses|length }})</a>
         <a href="{% url 'facility_detail' facility.slug %}#devices" class="facility-sidemenu-item" data-tab="devices">{% trans "Enheter" %} ({{ network_devices|length }})</a>
-        <a href="{% url 'facility_detail' facility.slug %}#documents" class="facility-sidemenu-item" data-tab="documents">{% trans "Dokumenter" %} ({{ documents|length }})</a>
-        <a href="{% url 'facility_detail' facility.slug %}#servicelogg" class="facility-sidemenu-item" data-tab="servicelogg">{% trans "Servicelogg" %} ({{ service_logs|length }})</a>
         <a href="{% url 'facility_detail' facility.slug %}#produktdatablader" class="facility-sidemenu-item" data-tab="produktdatablader">{% trans "Product datasheets" %} ({{ facility_datasheets|length }})</a>
+        <a href="{% url 'facility_detail' facility.slug %}#servicelogg" class="facility-sidemenu-item" data-tab="servicelogg">{% trans "Servicelogg" %} ({{ service_logs|length }})</a>
+        <a href="{% url 'facility_detail' facility.slug %}#documents" class="facility-sidemenu-item" data-tab="documents">{% trans "Dokumenter" %} ({{ documents|length }})</a>
       </nav>
 
       <div class="facility-card-content">
@@ -173,8 +173,6 @@
                   <th>{% trans "Type" %}</th>
                   <th>{% trans "Manufacturer" %}</th>
                   <th>{% trans "Model" %}</th>
-                  <th>{% trans "IP Address" %}</th>
-                  <th>{% trans "Rack" %}</th>
                   <th>{% trans "SLA" %}</th>
                 </tr>
               </thead>
@@ -185,8 +183,6 @@
                   <td>{{ device.get_device_type_display }}</td>
                   <td>{{ device.manufacturer|default:"—" }}</td>
                   <td>{{ device.model|default:"—" }}</td>
-                  <td><code>{{ device.ip_address|default:"—" }}</code></td>
-                  <td>{% if device.rack %}{{ device.rack.name }}{% if device.rack_position %} (U{{ device.rack_position }}){% endif %}{% else %}—{% endif %}</td>
                   <td>{% if device.is_sla %}✓{% else %}—{% endif %}</td>
                 </tr>
                 {% endfor %}
@@ -198,40 +194,31 @@
           {% endif %}
         </div>
 
-        <!-- Dokumenter -->
-        <div class="customer-tab-panel" id="tab-documents">
+        <!-- Produktdatablader -->
+        <div class="customer-tab-panel" id="tab-produktdatablader">
           <div class="customer-section-header">
-            <h2>{% trans "Dokumenter" %}</h2>
+            <h2>{% trans "Product datasheets" %}</h2>
           </div>
-          {% if documents %}
-          <div class="admin-table-wrap">
-            <table class="admin-table">
-              <thead>
-                <tr>
-                  <th>{% trans "Title" %}</th>
-                  <th>{% trans "Category" %}</th>
-                  <th>{% trans "Uploaded" %}</th>
-                  <th>{% trans "Uploaded By" %}</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for doc in documents %}
-                <tr>
-                  <td>{{ doc.title }}</td>
-                  <td>{{ doc.get_category_display }}</td>
-                  <td>{{ doc.uploaded_at|date:"Y-m-d H:i" }}</td>
-                  <td>{% if doc.uploaded_by %}{{ doc.uploaded_by.get_full_name|default:doc.uploaded_by.username }}{% else %}—{% endif %}</td>
-                  <td>
-                    <a href="{{ doc.file.url }}" target="_blank" class="admin-btn-sm">{% trans "Download" %}</a>
-                  </td>
-                </tr>
-                {% endfor %}
-              </tbody>
-            </table>
+          {% if facility_datasheets %}
+          <div class="facility-datasheets-toolbar">
+            <label for="facility-datasheets-search" class="facility-datasheets-search-label">{% trans "Search" %}</label>
+            <input type="search" id="facility-datasheets-search" class="facility-datasheets-search-input" placeholder="{% trans 'Search by product name…' %}" autocomplete="off" aria-label="{% trans 'Search datasheets' %}">
+            <span class="facility-datasheets-count" id="facility-datasheets-count" aria-live="polite"></span>
           </div>
+          <ul class="facility-datasheets-list" id="facility-datasheets-list">
+            {% for ds in facility_datasheets %}
+            <li class="facility-datasheet-row" data-name="{{ ds.title }}">
+              <span class="facility-datasheet-title">{{ ds.title }}</span>
+              <span class="facility-datasheet-actions">
+                <a href="{% url 'datasheet_by_slug' ds.device_type.slug %}" class="facility-datasheet-btn" hx-get="{% url 'datasheet_by_slug' ds.device_type.slug %}" hx-target="#main-content" hx-push-url="true">{% trans "View" %}</a>
+                <a href="{% url 'datasheet_pdf' ds.device_type.slug %}" class="facility-datasheet-btn facility-datasheet-btn--secondary" target="_blank" rel="noopener">{% trans "Download PDF" %}</a>
+              </span>
+            </li>
+            {% endfor %}
+          </ul>
+          <p class="facility-datasheets-empty muted" id="facility-datasheets-empty" hidden>{% trans "No datasheets match your search." %}</p>
           {% else %}
-          <p class="muted">{% trans "No documents uploaded for this facility." %}</p>
+          <p class="muted">{% trans "No product datasheets for devices at this facility." %}</p>
           {% endif %}
         </div>
 
@@ -285,31 +272,38 @@
           {% endif %}
         </div>
 
-        <!-- Produktdatablader -->
-        <div class="customer-tab-panel" id="tab-produktdatablader">
+        <!-- Dokumenter -->
+        <div class="customer-tab-panel" id="tab-documents">
           <div class="customer-section-header">
-            <h2>{% trans "Product datasheets" %}</h2>
+            <h2>{% trans "Dokumenter" %}</h2>
           </div>
-          {% if facility_datasheets %}
-          <div class="facility-datasheets-toolbar">
-            <label for="facility-datasheets-search" class="facility-datasheets-search-label">{% trans "Search" %}</label>
-            <input type="search" id="facility-datasheets-search" class="facility-datasheets-search-input" placeholder="{% trans 'Search by product name…' %}" autocomplete="off" aria-label="{% trans 'Search datasheets' %}">
-            <span class="facility-datasheets-count" id="facility-datasheets-count" aria-live="polite"></span>
+          {% if documents %}
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>{% trans "Title" %}</th>
+                  <th>{% trans "Category" %}</th>
+                  <th>{% trans "Uploaded" %}</th>
+                  <th>{% trans "Uploaded By" %}</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for doc in documents %}
+                <tr>
+                  <td>{{ doc.title }}</td>
+                  <td>{{ doc.get_category_display }}</td>
+                  <td>{{ doc.uploaded_at|date:"Y-m-d H:i" }}</td>
+                  <td>{% if doc.uploaded_by %}{{ doc.uploaded_by.get_full_name|default:doc.uploaded_by.username }}{% else %}—{% endif %}</td>
+                  <td><a href="{{ doc.file.url }}" target="_blank" class="admin-btn-sm">{% trans "Download" %}</a></td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
           </div>
-          <ul class="facility-datasheets-list" id="facility-datasheets-list">
-            {% for ds in facility_datasheets %}
-            <li class="facility-datasheet-row" data-name="{{ ds.title }}">
-              <span class="facility-datasheet-title">{{ ds.title }}</span>
-              <span class="facility-datasheet-actions">
-                <a href="{% url 'datasheet_by_slug' ds.device_type.slug %}" class="facility-datasheet-btn" hx-get="{% url 'datasheet_by_slug' ds.device_type.slug %}" hx-target="#main-content" hx-push-url="true">{% trans "View" %}</a>
-                <a href="{% url 'datasheet_pdf' ds.device_type.slug %}" class="facility-datasheet-btn facility-datasheet-btn--secondary" target="_blank" rel="noopener">{% trans "Download PDF" %}</a>
-              </span>
-            </li>
-            {% endfor %}
-          </ul>
-          <p class="facility-datasheets-empty muted" id="facility-datasheets-empty" hidden>{% trans "No datasheets match your search." %}</p>
           {% else %}
-          <p class="muted">{% trans "No product datasheets for devices at this facility." %}</p>
+          <p class="muted">{% trans "No documents uploaded for this facility." %}</p>
           {% endif %}
         </div>
       </div>
