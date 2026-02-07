@@ -104,6 +104,7 @@ urlpatterns = [
     path("document-templates/load-default/<str:document_type>/", views.document_template_load_default, name="admin_document_template_load_default"),
     path("document-templates/<int:pk>/edit/", views.document_template_edit, name="admin_document_template_edit"),
     path("document-templates/<int:pk>/preview/", views.document_template_preview, name="admin_document_template_preview"),
+    path("document-templates/preview-draft/", views.document_template_preview_draft, name="admin_document_template_preview_draft"),
     path("document-templates/<int:pk>/delete/", views.document_template_delete, name="admin_document_template_delete"),
     # Service Types
     path("service-types/", views.service_type_list, name="admin_service_type_list"),

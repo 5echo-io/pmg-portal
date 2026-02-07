@@ -2547,6 +2547,31 @@ def document_template_preview(request, pk):
 
 @staff_required
 @require_http_methods(["POST"])
+def document_template_preview_draft(request):
+    """Render draft HTML+CSS with sample context (POST html_content, css_content, document_type). For live preview panel."""
+    from django.template import Template, Context
+
+    html_content = request.POST.get("html_content", "")
+    css_content = request.POST.get("css_content", "")
+    document_type = request.POST.get("document_type", DocumentTemplate.DOCUMENT_TYPE_SERVICERAPPORT)
+    if document_type not in (DocumentTemplate.DOCUMENT_TYPE_SERVICERAPPORT, DocumentTemplate.DOCUMENT_TYPE_NETWORK):
+        document_type = DocumentTemplate.DOCUMENT_TYPE_SERVICERAPPORT
+    context = _document_template_preview_context(document_type)
+    t = Template(html_content)
+    html_body = t.render(Context(context))
+    css = css_content or ""
+    full_html = (
+        "<!DOCTYPE html><html><head><meta charset=\"utf-8\"><title>Preview</title><style>"
+        + css
+        + "</style></head><body>"
+        + html_body
+        + "</body></html>"
+    )
+    return HttpResponse(full_html, content_type="text/html; charset=utf-8")
+
+
+@staff_required
+@require_http_methods(["POST"])
 def document_template_delete(request, pk):
     """Delete a document template."""
     template = get_object_or_404(DocumentTemplate, pk=pk)

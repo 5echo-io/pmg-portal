@@ -13,50 +13,140 @@
 
 <p class="muted" style="margin-bottom: 1rem;">{% trans "Document type links this template to the correct PDF: Servicerapport → service report download; Nettverksdokumentasjon → network documentation. Full CSS is applied when WeasyPrint is available on the server; otherwise a simplified PDF may be generated." %}</p>
 
-<form method="post" action="" class="admin-form admin-form--wide">
-  {% csrf_token %}
-  <div class="admin-form-field">
-    <label for="name">{% trans "Name" %}</label>
-    <input type="text" id="name" name="name" value="{{ template.name|default:'' }}" class="form-input" required maxlength="200" placeholder="e.g. Standard servicerapport">
+<style>
+.document-template-edit-layout { display: grid; grid-template-columns: minmax(0, 6fr) minmax(180px, 4fr); gap: 1.5rem; align-items: start; }
+@media (max-width: 900px) {
+  .document-template-edit-layout { grid-template-columns: 1fr; }
+  .document-template-preview-col { position: static !important; }
+}
+</style>
+<div class="document-template-edit-layout">
+  <div class="document-template-form-col">
+    <form method="post" action="" class="admin-form admin-form--wide" id="document-template-form">
+      {% csrf_token %}
+      <div class="admin-form-field">
+        <label for="name">{% trans "Name" %}</label>
+        <input type="text" id="name" name="name" value="{{ template.name|default:'' }}" class="form-input" required maxlength="200" placeholder="e.g. Standard servicerapport">
+      </div>
+      <div class="admin-form-field">
+        <label for="document_type">{% trans "Document type" %}</label>
+        <select id="document_type" name="document_type" class="form-input" required>
+          <option value="servicerapport" {% if template.document_type == 'servicerapport' %}selected{% endif %}>{% trans "Servicerapport" %}</option>
+          <option value="nettverksdokumentasjon" {% if template.document_type == 'nettverksdokumentasjon' %}selected{% endif %}>{% trans "Nettverksdokumentasjon" %}</option>
+        </select>
+        <span class="muted">{% trans "Determines where this template is used (service report PDF vs network documentation PDF)." %}</span>
+      </div>
+      <div class="admin-form-field">
+        <label><input type="checkbox" name="is_default" {% if template.is_default %}checked{% endif %}> {% trans "Use as default for this document type" %}</label>
+      </div>
+      <div class="admin-form-field">
+        <label for="variables_help">{% trans "Variables help (optional)" %}</label>
+        <textarea id="variables_help" name="variables_help" class="form-input" rows="4" placeholder="List of available variables for reference, e.g. service_log.service_id, facility.name, customer.name">{{ template.variables_help|default:'' }}</textarea>
+      </div>
+      <div class="admin-form-field">
+        <label for="html_content">{% trans "HTML content" %} <span class="muted">({% trans "full document, use Django template variables" %})</span></label>
+        <textarea id="html_content" name="html_content" class="form-input doc-preview-source" rows="24" style="font-family: monospace; font-size: 12px;">{{ template.html_content|default:'' }}</textarea>
+      </div>
+      <div class="admin-form-field">
+        <label for="css_content">{% trans "CSS content" %} <span class="muted">({% trans "WeasyPrint: @page, typography, margins" %})</span></label>
+        <textarea id="css_content" name="css_content" class="form-input doc-preview-source" rows="16" style="font-family: monospace; font-size: 12px;">{{ template.css_content|default:'' }}</textarea>
+      </div>
+      <div class="admin-form-actions">
+        <button type="submit" class="form-btn form-btn-primary">{% trans "Save" %}</button>
+        <a href="{% url 'admin_app:admin_document_template_list' %}" class="form-btn form-btn-secondary">{% trans "Cancel" %}</a>
+      </div>
+    </form>
   </div>
-  <div class="admin-form-field">
-    <label for="document_type">{% trans "Document type" %}</label>
-    <select id="document_type" name="document_type" class="form-input" required>
-      <option value="servicerapport" {% if template.document_type == 'servicerapport' %}selected{% endif %}>{% trans "Servicerapport" %}</option>
-      <option value="nettverksdokumentasjon" {% if template.document_type == 'nettverksdokumentasjon' %}selected{% endif %}>{% trans "Nettverksdokumentasjon" %}</option>
-    </select>
-    <span class="muted">{% trans "Determines where this template is used (service report PDF vs network documentation PDF)." %}</span>
-  </div>
-  <div class="admin-form-field">
-    <label><input type="checkbox" name="is_default" {% if template.is_default %}checked{% endif %}> {% trans "Use as default for this document type" %}</label>
-  </div>
-  <div class="admin-form-field">
-    <label for="variables_help">{% trans "Variables help (optional)" %}</label>
-    <textarea id="variables_help" name="variables_help" class="form-input" rows="4" placeholder="List of available variables for reference, e.g. service_log.service_id, facility.name, customer.name">{{ template.variables_help|default:'' }}</textarea>
-  </div>
-  <div class="admin-form-field">
-    <label for="html_content">{% trans "HTML content" %} <span class="muted">({% trans "full document, use Django template variables" %})</span></label>
-    <textarea id="html_content" name="html_content" class="form-input" rows="24" style="font-family: monospace; font-size: 12px;">{{ template.html_content|default:'' }}</textarea>
-  </div>
-  <div class="admin-form-field">
-    <label for="css_content">{% trans "CSS content" %} <span class="muted">({% trans "WeasyPrint: @page, typography, margins" %})</span></label>
-    <textarea id="css_content" name="css_content" class="form-input" rows="16" style="font-family: monospace; font-size: 12px;">{{ template.css_content|default:'' }}</textarea>
-  </div>
-  <div class="admin-form-actions">
-    <button type="submit" class="form-btn form-btn-primary">{% trans "Save" %}</button>
-    <a href="{% url 'admin_app:admin_document_template_list' %}" class="form-btn form-btn-secondary">{% trans "Cancel" %}</a>
-  </div>
-</form>
 
-{% if template %}
-<hr style="margin: 2rem 0;">
-<h2 class="admin-section-title">{% trans "Preview" %}</h2>
-<p class="muted">{% trans "Preview uses sample data. Save the template to refresh the preview." %}</p>
-<p>
-  <a href="{% url 'admin_app:admin_document_template_preview' template.pk %}" target="_blank" rel="noopener" class="form-btn form-btn-secondary">{% trans "Open preview in new tab" %}</a>
-</p>
-<div style="border: 1px solid #ccc; background: #f9f9f9; min-height: 400px;">
-  <iframe src="{% url 'admin_app:admin_document_template_preview' template.pk %}" title="{% trans 'Document preview' %}" style="width: 100%; height: 600px; border: 0;"></iframe>
+  <div class="document-template-preview-col" style="position: sticky; top: 1rem;">
+    <div style="border: 1px solid #ccc; background: #f5f5f5; padding: 0.75rem; border-radius: 4px;">
+      <h2 class="admin-section-title" style="margin: 0 0 0.5rem 0; font-size: 1rem;">{% trans "Preview" %}</h2>
+      <p class="muted" style="margin: 0 0 0.5rem 0; font-size: 0.85rem;">{% trans "Uses sample data. Click Update to refresh." %}</p>
+      <button type="button" id="doc-preview-update-btn" class="form-btn form-btn-secondary" style="width: 100%; margin-bottom: 0.5rem;">{% trans "Update" %}</button>
+      <a href="#" id="doc-preview-newtab-link" target="_blank" rel="noopener" class="form-btn form-btn-secondary" style="display: block; text-align: center; font-size: 0.85rem;">{% trans "Open in new tab" %}</a>
+    </div>
+    <div style="border: 1px solid #ccc; background: #fff; margin-top: 0.5rem; min-height: 300px; overflow: auto;">
+      <iframe id="doc-preview-iframe" title="{% trans 'Document preview' %}" style="width: 100%; height: 70vh; min-height: 400px; border: 0;"></iframe>
+    </div>
+  </div>
 </div>
-{% endif %}
+
+<script>
+(function() {
+  var form = document.getElementById('document-template-form');
+  var iframe = document.getElementById('doc-preview-iframe');
+  var updateBtn = document.getElementById('doc-preview-update-btn');
+  var newTabLink = document.getElementById('doc-preview-newtab-link');
+  var previewDraftUrl = "{% url 'admin_app:admin_document_template_preview_draft' %}";
+  var csrfToken = form.querySelector('input[name="csrfmiddlewaretoken"]').value;
+  var debounceMs = 1200;
+  var debounceTimer = null;
+
+  function getFormData() {
+    return {
+      html_content: (document.getElementById('html_content') || {}).value || '',
+      css_content: (document.getElementById('css_content') || {}).value || '',
+      document_type: (document.getElementById('document_type') || {}).value || 'servicerapport',
+      csrfmiddlewaretoken: csrfToken
+    };
+  }
+
+  function updatePreview() {
+    var data = getFormData();
+    var body = new FormData();
+    body.append('html_content', data.html_content);
+    body.append('css_content', data.css_content);
+    body.append('document_type', data.document_type);
+    body.append('csrfmiddlewaretoken', data.csrfmiddlewaretoken);
+    updateBtn.disabled = true;
+    updateBtn.textContent = "{% trans 'Updating…' %}";
+    fetch(previewDraftUrl, { method: 'POST', body: body, credentials: 'same-origin' })
+      .then(function(r) { return r.text(); })
+      .then(function(html) {
+        iframe.srcdoc = html;
+        updateBtn.disabled = false;
+        updateBtn.textContent = "{% trans 'Update' %}";
+      })
+      .catch(function() {
+        updateBtn.disabled = false;
+        updateBtn.textContent = "{% trans 'Update' %}";
+      });
+  }
+
+  function scheduleAutoUpdate() {
+    if (debounceTimer) clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(updatePreview, debounceMs);
+  }
+
+  updateBtn.addEventListener('click', function() { updatePreview(); });
+  form.querySelectorAll('.doc-preview-source').forEach(function(el) {
+    el.addEventListener('input', scheduleAutoUpdate);
+    el.addEventListener('change', scheduleAutoUpdate);
+  });
+  document.getElementById('document_type').addEventListener('change', scheduleAutoUpdate);
+
+  if (newTabLink) {
+    newTabLink.addEventListener('click', function(e) {
+      e.preventDefault();
+      var data = getFormData();
+      var body = new FormData();
+      body.append('html_content', data.html_content);
+      body.append('css_content', data.css_content);
+      body.append('document_type', data.document_type);
+      body.append('csrfmiddlewaretoken', data.csrfmiddlewaretoken);
+      fetch(previewDraftUrl, { method: 'POST', body: body, credentials: 'same-origin' })
+        .then(function(r) { return r.text(); })
+        .then(function(html) {
+          var w = window.open('', '_blank');
+          w.document.write(html);
+          w.document.close();
+        });
+    });
+  }
+
+  if (iframe && (document.getElementById('html_content').value || document.getElementById('css_content').value)) {
+    updatePreview();
+  }
+})();
+</script>
 {% endblock %}

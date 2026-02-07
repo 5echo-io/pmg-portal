@@ -11,6 +11,18 @@ Last Modified: 2026-02-07
 
 - 2026-02-07 (Europe/Oslo)
   - Branch: dev
+  - Version: 4.8.0-beta.32
+  - Summary:
+    - Admin document template edit: preview panel on the right (4/10 width); Update button and debounced auto-update for live draft preview; preview-draft endpoint (POST).
+    - Portal facility: Søkefelt produktdatablader vertikalt sentrert med «Søk»; Servicelogg Type-dropdown på linje med tittelen; «Vis produktdatablad» åpner i nytt vindu.
+    - Portal facility: Menyrekkefølge endret til Enheter, Racks, Nettverk, Produktdatablader, Servicelogg, Dokumenter, Kontaktpersoner; standard fane Enheter; oversiktsrute oppdatert.
+    - Portal: Enheter kan åpnes (facility_device_detail, /facilities/…/devices/&lt;id&gt;/, Open-knapp); Nettverksdokumentasjon under Nettverk (utstyrsoversikt kun nettverksenheter, Last ned PDF).
+    - Master-maler for PDF: DocumentTemplate (0014); admin Document templates (list/add/edit/delete, load default servicerapport); WeasyPrint; servicerapport-PDF fra mal i admin og portal; utskriftsknapp på servicerapport-siden genererer PDF (facility_service_log_pdf).
+    - Kontaktpersoner: FacilityContact (migrasjon 0015); admin tab Kontaktpersoner på anlegg (CRUD, modal); portal tab og oversiktsboks Kontaktpersoner; facility_contact_form + fragment; FILE_LOCATIONS.
+  - Version bump: 4.8.0-beta.31 → 4.8.0-beta.32
+
+- 2026-02-07 (Europe/Oslo)
+  - Branch: dev
   - Version: 4.8.0-beta.31
   - Summary:
     - Portal datasheet: TOC 1/6 width, sticky with topbar offset, padding; removed Download PDF button; manufacturer PDF icon; custom tooltips only; print/PDF page breaks (before headings, no double break); th white text on dark bg in print/PDF

@@ -17,6 +17,22 @@ This project follows Semantic Versioning (SemVer).
 Pre-release builds (alpha, beta, rc) are listed here. Only full releases (no build suffix) get a dedicated version section below.
 
 ### Fixed
+- **Portal – Produktdatablader**: Søkefelt vertikalt sentrert med teksten «Søk» (align-items, line-height og input-høyde justert).
+- **Portal – Servicelogg**: Nedtrekksmenyen «Type» vertikalt sentrert på samme linje som tittelen «Servicelogg» (header flex, label/select line-height og høyde).
+- **Portal – Produktdatablad**: Knappen «Vis produktdatablad» åpner nå i nytt vindu (target="_blank") i stedet for HTMX-navigasjon.
+
+### Changed
+- **Admin – Document templates**: Redigeringssiden for dokumentmal har nå forhåndsvisning til høyre (4/10 av bredden); «Update»-knapp og debounced auto-oppdatering for live preview av HTML/CSS med eksempeldata; nytt endpoint preview-draft (POST) for utkast-forhåndsvisning.
+- **Portal – Anlegg**: Menyrekkefølge endret til 1) Enheter 2) Racks 3) Nettverk 4) Produktdatablader 5) Servicelogg 6) Dokumenter 7) Kontaktpersoner; standard fane ved åpning er Enheter; oversiktsruten følger samme rekkefølge inkl. Produktdatablader og Kontaktpersoner.
+- **Portal – Servicerapport**: Utskriftsknappen på /facilities/&lt;slug&gt;/service/&lt;id&gt;/ genererer nå PDF med Servicerapport-malen (WeasyPrint) i stedet for HTML utskriftsvisning; ny view facility_service_log_pdf og URL …/service/&lt;id&gt;/pdf/.
+
+### Added
+- **Portal – Enheter**: Enheter på anlegg kan åpnes for mer informasjon; ny side /facilities/&lt;slug&gt;/devices/&lt;id&gt;/ (facility_device_detail) med navn, type, produsent, modell, serienummer, rack, IP, MAC, SLA, beskrivelse og lenke til produktdatablad; «Open»-knapp per rad i enhetstabellen.
+- **Portal – Nettverksdokumentasjon**: Under Nettverk: seksjon «Nettverksdokumentasjon» med utstyrsoversikt (kun nettverksenheter), «Last ned PDF» som genererer PDF med utstyr og IP-adresser; view facility_network_documentation_pdf og mal facility_network_documentation_pdf.html.
+- **Master-maler for PDF**: DocumentTemplate-modell (migrasjon 0014); admin «Document templates» (liste, legg til, rediger, slett, last inn standard servicerapport); HTML + CSS lagres per mal, WeasyPrint brukes ved generering; variabler (f.eks. service_log, facility) i HTML; servicerapport-PDF fra admin (PDF-knapp per rad) og portal bruker valgt standardmal; weasyprint i requirements.
+- **Kontaktpersoner**: FacilityContact-modell (migrasjon 0015); admin-tab «Kontaktpersoner» på anleggskort med tabell (navn, rolle, e-post, telefon, hovedkontakt), Legg til / Rediger (modal), Slett; portal: ny fane og oversiktsboks «Kontaktpersoner» på anleggssiden med tabell (mailto/tel-lenker); facility_contact_form og facility_contact_form_fragment; FILE_LOCATIONS oppdatert.
+
+### Fixed (tidligere registrert)
 - **PDF (xhtml2pdf)**: Removed unsupported `:not(:first-child)` selector in datasheet_pdf.html so PDF generation no longer fails with "Selector Pseudo Function closing ')' not found".
 - **Print / PDF page breaks**: Page break before headings (h2/h3) so content is not cut before titles; `h2 + h3` avoids double consecutive breaks; paragraphs and tables use page-break-inside/after avoid.
 - **Print table header**: Table header (th) text set to white on dark background (#374151) in print and PDF so titles are readable.
