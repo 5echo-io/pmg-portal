@@ -243,6 +243,17 @@
         <div class="customer-tab-panel" id="tab-servicelogg">
           <div class="customer-section-header">
             <h2>{% trans "Servicelogg" %}</h2>
+            {% if service_types %}
+            <form method="get" action="" style="display: flex; gap: 8px; align-items: center;">
+              <label for="filter-service-type" class="muted">{% trans "Type" %}:</label>
+              <select name="service_type" id="filter-service-type" onchange="this.form.submit()">
+                <option value="">{% trans "All" %}</option>
+                {% for st in service_types %}
+                <option value="{{ st.slug }}" {% if service_type_filter == st.slug %}selected{% endif %}>{{ st.name }}</option>
+                {% endfor %}
+              </select>
+            </form>
+            {% endif %}
           </div>
           {% if service_logs %}
           <div class="admin-table-wrap">
@@ -251,6 +262,7 @@
                 <tr>
                   <th>{% trans "Date" %}</th>
                   <th>{% trans "Service ID" %}</th>
+                  <th>{% trans "Type" %}</th>
                   <th>{% trans "Technician (employee no.)" %}</th>
                   <th>{% trans "Description" %}</th>
                   <th></th>
@@ -261,6 +273,7 @@
                 <tr>
                   <td>{{ log.performed_at|date:"Y-m-d H:i" }}</td>
                   <td><strong>{{ log.service_id }}</strong></td>
+                  <td>{% if log.service_type %}{{ log.service_type.name }}{% else %}—{% endif %}</td>
                   <td>{{ log.technician_employee_no|default:"—" }}</td>
                   <td>{{ log.description|truncatewords:15|default:"—" }}</td>
                   <td>

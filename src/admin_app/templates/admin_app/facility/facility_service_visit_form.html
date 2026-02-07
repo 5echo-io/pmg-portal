@@ -1,0 +1,14 @@
+{% extends "admin_app/base.html" %}
+{% load i18n %}
+{% block admin_title %}{% if visit %}{% trans "Edit service visit" %}{% else %}{% trans "Add service visit" %}{% endif %} – {{ facility.name }}{% endblock %}
+{% block admin_content %}
+<h1 class="admin-page-title">{% if visit %}{% trans "Edit service visit" %}{% else %}{% trans "Add service visit" %}{% endif %}</h1>
+<form method="post" action="" class="admin-form admin-form--wide">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <div class="admin-form-actions">
+    <button type="submit" class="form-btn form-btn-primary">{% trans "Save" %}</button>
+    <a href="{{ cancel_url }}" class="form-btn form-btn-secondary">{% trans "Cancel" %}</a>
+  </div>
+</form>
+{% endblock %}

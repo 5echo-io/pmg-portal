@@ -5,7 +5,27 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm as BaseUserCreationForm
 from django.contrib.auth.models import Group
-from portal.models import Customer, CustomerMembership, PortalLink, Announcement, Facility, Rack, RackSeal, DeviceType, DeviceCategory, Manufacturer, ProductDatasheet, NetworkDevice, IPAddress, FacilityDocument, ServiceLog
+from portal.models import (
+    Customer,
+    CustomerMembership,
+    PortalLink,
+    Announcement,
+    Facility,
+    Rack,
+    RackSeal,
+    DeviceType,
+    DeviceCategory,
+    Manufacturer,
+    ProductDatasheet,
+    NetworkDevice,
+    IPAddress,
+    FacilityDocument,
+    ServiceLog,
+    ServiceLogAttachment,
+    ServiceLogDevice,
+    ServiceType,
+    ServiceVisit,
+)
 
 User = get_user_model()
 
@@ -349,12 +369,57 @@ class FacilityDocumentForm(forms.ModelForm):
 
 
 class ServiceLogForm(forms.ModelForm):
+    """Full servicerapport form – all sections from the PDF template."""
     class Meta:
         model = ServiceLog
-        fields = ("service_id", "performed_at", "technician_employee_no", "description", "notes")
+        fields = (
+            # Identifikasjon
+            "service_id",
+            "service_type",
+            "performed_at",
+            "technician_employee_no",
+            "external_id",
+            # Header / omslag
+            "asset_name",
+            "asset_id",
+            "contract_number",
+            "customer_name",
+            "customer_org_numbers",
+            "customer_address",
+            "supplier_name",
+            "supplier_org_number",
+            # Sammendrag
+            "background",
+            "summary",
+            # Rapport
+            "description",
+            # Funn og observasjoner
+            "findings_observations",
+            # Konklusjon
+            "conclusion",
+            # Anbefalinger
+            "recommendations_immediate",
+            "recommendations_long_term",
+            "notes",
+            # SLA / signatur
+            "sla_deadline",
+            "sla_met",
+            "approved_at",
+            "approved_by",
+            "signature_notes",
+        )
         widgets = {
             "performed_at": forms.DateTimeInput(attrs={"type": "datetime-local"}),
-            "description": forms.Textarea(attrs={"rows": 4}),
+            "sla_deadline": forms.DateTimeInput(attrs={"type": "datetime-local"}),
+            "approved_at": forms.DateTimeInput(attrs={"type": "datetime-local"}),
+            "description": forms.Textarea(attrs={"rows": 8}),
+            "background": forms.Textarea(attrs={"rows": 4}),
+            "summary": forms.Textarea(attrs={"rows": 4}),
+            "findings_observations": forms.Textarea(attrs={"rows": 5}),
+            "conclusion": forms.Textarea(attrs={"rows": 4}),
+            "recommendations_immediate": forms.Textarea(attrs={"rows": 3}),
+            "recommendations_long_term": forms.Textarea(attrs={"rows": 3}),
+            "customer_address": forms.Textarea(attrs={"rows": 2}),
             "notes": forms.Textarea(attrs={"rows": 2}),
         }
 
@@ -362,11 +427,79 @@ class ServiceLogForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if facility:
             self.instance.facility = facility
-        self.fields["performed_at"].input_formats = ["%Y-%m-%dT%H:%M", "%Y-%m-%d %H:%M", "%Y-%m-%d"]
-        if self.instance and self.instance.pk and self.instance.performed_at:
+        self.fields["service_type"].queryset = ServiceType.objects.filter(is_active=True)
+        self.fields["service_type"].required = False
+        for name in ("performed_at", "sla_deadline", "approved_at"):
+            if name in self.fields:
+                self.fields[name].input_formats = ["%Y-%m-%dT%H:%M", "%Y-%m-%d %H:%M", "%Y-%m-%d"]
+                self.fields[name].required = name == "performed_at"
+        for name in ("sla_deadline", "approved_at", "approved_by"):
+            if name in self.fields:
+                self.fields[name].required = False
+        if self.instance and self.instance.pk:
             from django.utils import timezone
-            dt = self.instance.performed_at
-            if timezone.is_naive(dt):
-                dt = timezone.make_aware(dt)
-            self.initial.setdefault("performed_at", dt.strftime("%Y-%m-%dT%H:%M"))
+            for field_name, attr in (
+                ("performed_at", "performed_at"),
+                ("sla_deadline", "sla_deadline"),
+                ("approved_at", "approved_at"),
+            ):
+                val = getattr(self.instance, attr, None)
+                if val:
+                    if timezone.is_naive(val):
+                        val = timezone.make_aware(val)
+                    self.initial.setdefault(field_name, val.strftime("%Y-%m-%dT%H:%M"))
+
+
+class ServiceLogDeviceForm(forms.ModelForm):
+    class Meta:
+        model = ServiceLogDevice
+        fields = ("device", "serviced_at", "notes")
+        widgets = {
+            "serviced_at": forms.DateTimeInput(attrs={"type": "datetime-local"}),
+            "notes": forms.Textarea(attrs={"rows": 1}),
+        }
+
+    def __init__(self, *args, service_log=None, facility=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if facility:
+            self.fields["device"].queryset = NetworkDevice.objects.filter(facility=facility, is_active=True).order_by("name")
+        self.fields["serviced_at"].required = False
+        self.fields["serviced_at"].input_formats = ["%Y-%m-%dT%H:%M", "%Y-%m-%d %H:%M"]
+        self.fields["notes"].required = False
+
+
+class ServiceLogAttachmentForm(forms.ModelForm):
+    class Meta:
+        model = ServiceLogAttachment
+        fields = ("title", "file")
+        widgets = {"title": forms.TextInput(attrs={"placeholder": "Valgfri tittel"})}
+
+
+class ServiceTypeForm(forms.ModelForm):
+    class Meta:
+        model = ServiceType
+        fields = ("name", "slug", "sort_order", "is_active")
+
+
+class ServiceVisitForm(forms.ModelForm):
+    class Meta:
+        model = ServiceVisit
+        fields = ("title", "scheduled_start", "scheduled_end", "description", "facility", "service_log")
+        widgets = {
+            "scheduled_start": forms.DateTimeInput(attrs={"type": "datetime-local"}),
+            "scheduled_end": forms.DateTimeInput(attrs={"type": "datetime-local"}),
+            "description": forms.Textarea(attrs={"rows": 2}),
+        }
+
+    def __init__(self, *args, facility=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if facility:
+            self.instance.facility = facility
+            if "facility" in self.fields:
+                self.fields["facility"].initial = facility
+                self.fields["facility"].widget = forms.HiddenInput()
+            self.fields["service_log"].queryset = ServiceLog.objects.filter(facility=facility).order_by("-performed_at")
+        self.fields["scheduled_start"].input_formats = ["%Y-%m-%dT%H:%M", "%Y-%m-%d %H:%M"]
+        self.fields["scheduled_end"].input_formats = ["%Y-%m-%dT%H:%M", "%Y-%m-%d %H:%M"]
+        self.fields["service_log"].required = False
 

@@ -1,0 +1,49 @@
+{% extends "admin_app/base.html" %}
+{% load i18n %}
+{% block admin_title %}{% trans "Planlagte serviceturer" %} – {{ facility.name }}{% endblock %}
+{% block breadcrumb_extra %}
+<span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_facility_detail' facility.slug %}">{{ facility.name }}</a>
+<span class="breadcrumb-sep">→</span> <span>{% trans "Planlagte serviceturer" %}</span>
+{% endblock %}
+{% block admin_content %}
+<div class="admin-section-header">
+  <h1 class="admin-page-title">{% trans "Planlagte serviceturer" %}</h1>
+  <a href="{% url 'admin_app:admin_facility_service_visit_add' facility.slug %}?fragment=1" class="admin-btn admin-btn-primary js-open-visit-add-modal">{% trans "Legg til planlagt tur" %}</a>
+</div>
+<p class="muted">{{ facility.name }}</p>
+{% if visits %}
+<div class="admin-table-wrap">
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th>{% trans "Title" %}</th>
+        <th>{% trans "Scheduled start" %}</th>
+        <th>{% trans "Scheduled end" %}</th>
+        <th>{% trans "Service log" %}</th>
+        <th class="admin-table-actions"></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for v in visits %}
+      <tr>
+        <td>{{ v.title }}</td>
+        <td>{{ v.scheduled_start|date:"d.m.Y H:i" }}</td>
+        <td>{{ v.scheduled_end|date:"d.m.Y H:i"|default:"—" }}</td>
+        <td>{% if v.service_log %}<a href="{% url 'admin_app:admin_facility_detail' facility.slug %}#tab-servicelogg">{{ v.service_log.service_id }}</a>{% else %}—{% endif %}</td>
+        <td class="admin-table-actions">
+          <a href="{% url 'admin_app:admin_facility_service_visit_edit' facility.slug v.pk %}" class="admin-btn-sm">{% trans "Edit" %}</a>
+          <form method="post" action="{% url 'admin_app:admin_facility_service_visit_delete' facility.slug v.pk %}" style="display:inline;" onsubmit="return confirm('{% trans "Delete this visit?" %}');">
+            {% csrf_token %}
+            <button type="submit" class="admin-btn-sm admin-btn-danger">{% trans "Delete" %}</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<p class="muted">{% trans "No planned service visits." %}</p>
+{% endif %}
+<p style="margin-top: 16px;"><a href="{% url 'admin_app:admin_facility_detail' facility.slug %}">← {% trans "Back to facility" %}</a></p>
+{% endblock %}

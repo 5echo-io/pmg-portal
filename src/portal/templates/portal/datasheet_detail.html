@@ -89,7 +89,7 @@
 .datasheet-toc {
   padding: 12px 0;
   border-right: 1px solid var(--line, #d1d5db);
-  padding-right: 24px;
+  padding-right: 40px;
   margin-right: 0;
 }
 .datasheet-main-col {
@@ -133,17 +133,19 @@
   gap: 24px;
   margin-bottom: 24px;
   flex-wrap: wrap;
+  overflow: visible;
 }
 .datasheet-header-main { flex: 1; min-width: 0; }
 .datasheet-title { font-size: 1.75rem; margin: 0 0 0.5rem 0; }
 .datasheet-meta { color: var(--muted); font-size: 0.9rem; margin: 0; }
 
-/* Action buttons: visible icons (border + color), same height, vertically centered */
+/* Action buttons: visible icons, same height, vertically centered */
 .datasheet-actions {
   display: flex;
   gap: 8px;
   flex-shrink: 0;
   align-items: center;
+  overflow: visible;
 }
 .datasheet-action-btn {
   display: inline-flex;
@@ -163,8 +165,10 @@
   transition: background 0.2s, border-color 0.2s, color 0.2s;
   position: relative;
   box-sizing: border-box;
+  line-height: 0;
+  vertical-align: middle;
 }
-.datasheet-action-btn svg { stroke: currentColor; flex-shrink: 0; }
+.datasheet-action-btn svg { stroke: currentColor; flex-shrink: 0; display: block; }
 .datasheet-action-btn:hover {
   background: var(--btnHover);
   border-color: var(--line);
@@ -174,7 +178,7 @@
   outline: 2px solid var(--link);
   outline-offset: 2px;
 }
-/* Tooltip: site design, appears immediately on hover */
+/* Tooltip: site design, high z-index; last button(s) show tooltip left-aligned to avoid right-edge clip */
 .datasheet-action-btn[data-tooltip]:hover::after {
   content: attr(data-tooltip);
   position: absolute;
@@ -189,7 +193,7 @@
   border: 1px solid var(--line);
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  z-index: 100;
+  z-index: 99999;
   pointer-events: none;
 }
 .datasheet-action-btn[data-tooltip]:hover::before {
@@ -200,15 +204,27 @@
   bottom: calc(100% + 2px);
   border: 6px solid transparent;
   border-top-color: var(--line);
-  z-index: 101;
+  z-index: 100000;
   pointer-events: none;
+}
+.datasheet-actions .datasheet-action-btn:last-of-type[data-tooltip]:hover::after {
+  left: auto;
+  right: 0;
+  transform: none;
+}
+.datasheet-actions .datasheet-action-btn:last-of-type[data-tooltip]:hover::before {
+  left: auto;
+  right: 12px;
+  transform: none;
 }
 
 .datasheet-body { margin-top: 0; }
 .markdown-body { line-height: 1.5; font-size: 0.9375rem; }
 .markdown-body h1 { font-size: 1.15rem; margin-top: 1.25rem; }
-.markdown-body h2 { font-size: 1rem; margin-top: 1rem; }
-.markdown-body h3 { font-size: 0.95rem; margin-top: 0.75rem; }
+.markdown-body h2 { font-size: 1rem; margin-top: 1.5rem; }
+.markdown-body h3 { font-size: 0.95rem; margin-top: 1.25rem; }
+.markdown-body h2:first-child { margin-top: 0; }
+.markdown-body h3:first-child { margin-top: 0; }
 .markdown-body table { border-collapse: collapse; width: 100%; margin: 0.75rem 0; }
 .markdown-body th, .markdown-body td { border: 1px solid var(--line, #ddd); padding: 0.5rem 0.75rem; text-align: left; }
 .markdown-body th { background: var(--line); color: var(--text); font-weight: 600; }
@@ -224,6 +240,11 @@
 .markdown-body h2 { page-break-after: avoid; }
 .markdown-body h3 { page-break-after: avoid; }
 
+/* Scroll margin so TOC targets are not hidden under topbar */
+.markdown-body h1[id], .markdown-body h2[id], .markdown-body h3[id] {
+  scroll-margin-top: 80px;
+}
+
 @media print {
   .no-print,
   .datasheet-toc-col,
@@ -232,7 +253,9 @@
   .topbar,
   .site-footer-wrapper,
   .footer,
-  .loading-indicator {
+  .loading-indicator,
+  .toast-container,
+  .toast {
     display: none !important;
   }
   body { padding: 0; background: #fff; color: #000 !important; }
@@ -292,7 +315,10 @@
     a.textContent = h.textContent.trim();
     a.addEventListener('click', function(e) {
       e.preventDefault();
-      document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+      var el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
       if (window.history && window.history.replaceState) {
         window.history.replaceState(null, '', '#' + id);
       }

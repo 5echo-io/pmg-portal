@@ -9,7 +9,7 @@ Last Modified: 2026-02-05
 from django.contrib import admin
 from django.contrib import messages
 from django.db.models import Q
-from .models import Customer, CustomerMembership, PortalLink, Facility, ServiceLog
+from .models import Customer, CustomerMembership, PortalLink, Facility, ServiceLog, ServiceType, ServiceLogAttachment, ServiceLogDevice, ServiceVisit
 from .forms import CustomerMembershipForm
 
 @admin.register(Customer)
@@ -223,12 +223,43 @@ class FacilityAdmin(admin.ModelAdmin):
     customer_count.short_description = "Customers"
 
 
+@admin.register(ServiceType)
+class ServiceTypeAdmin(admin.ModelAdmin):
+    list_display = ("name", "slug", "sort_order", "is_active")
+    list_editable = ("sort_order", "is_active")
+    prepopulated_fields = {"slug": ("name",)}
+
+
 @admin.register(ServiceLog)
 class ServiceLogAdmin(admin.ModelAdmin):
     """Service log entries per facility (also manageable in Admin under each facility)."""
-    list_display = ("facility", "service_id", "performed_at", "technician_employee_no")
-    list_filter = ("facility",)
-    search_fields = ("service_id", "technician_employee_no", "description")
-    autocomplete_fields = ("facility", "created_by")
+    list_display = ("facility", "service_id", "service_type", "performed_at", "technician_employee_no", "sla_met", "external_id")
+    list_filter = ("facility", "service_type", "sla_met")
+    search_fields = ("service_id", "technician_employee_no", "description", "external_id")
+    autocomplete_fields = ("facility", "service_type", "created_by", "approved_by")
     date_hierarchy = "performed_at"
     ordering = ("-performed_at",)
+
+
+@admin.register(ServiceLogAttachment)
+class ServiceLogAttachmentAdmin(admin.ModelAdmin):
+    list_display = ("service_log", "title", "uploaded_at", "uploaded_by")
+    list_filter = ("service_log__facility",)
+    autocomplete_fields = ("service_log", "uploaded_by")
+    date_hierarchy = "uploaded_at"
+
+
+@admin.register(ServiceLogDevice)
+class ServiceLogDeviceAdmin(admin.ModelAdmin):
+    list_display = ("service_log", "device", "serviced_at")
+    list_filter = ("service_log__facility",)
+    autocomplete_fields = ("service_log", "device")
+    date_hierarchy = "serviced_at"
+
+
+@admin.register(ServiceVisit)
+class ServiceVisitAdmin(admin.ModelAdmin):
+    list_display = ("facility", "title", "scheduled_start", "scheduled_end", "service_log")
+    list_filter = ("facility",)
+    autocomplete_fields = ("facility", "service_log", "created_by")
+    date_hierarchy = "scheduled_start"

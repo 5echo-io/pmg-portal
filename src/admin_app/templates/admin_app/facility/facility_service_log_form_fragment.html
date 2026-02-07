@@ -8,6 +8,11 @@
     {% if form.service_id.errors %}<p class="form-error">{{ form.service_id.errors.0 }}</p>{% endif %}
   </div>
   <div class="admin-form-field">
+    <label for="{{ form.service_type.id_for_label }}">{{ form.service_type.label }}</label>
+    {{ form.service_type }}
+    {% if form.service_type.errors %}<p class="form-error">{{ form.service_type.errors.0 }}</p>{% endif %}
+  </div>
+  <div class="admin-form-field">
     <label for="{{ form.performed_at.id_for_label }}">{{ form.performed_at.label }}</label>
     {{ form.performed_at }}
     {% if form.performed_at.errors %}<p class="form-error">{{ form.performed_at.errors.0 }}</p>{% endif %}
@@ -26,6 +31,37 @@
     <label for="{{ form.notes.id_for_label }}">{{ form.notes.label }}</label>
     {{ form.notes }}
     {% if form.notes.errors %}<p class="form-error">{{ form.notes.errors.0 }}</p>{% endif %}
+  </div>
+  <div class="admin-form-field">
+    <label for="{{ form.external_id.id_for_label }}">{{ form.external_id.label }}</label>
+    {{ form.external_id }}
+    <span class="form-help muted">{% trans "E.g. ServiceDesk Plus request ID" %}</span>
+    {% if form.external_id.errors %}<p class="form-error">{{ form.external_id.errors.0 }}</p>{% endif %}
+  </div>
+  <div class="admin-form-field">
+    <label for="{{ form.sla_deadline.id_for_label }}">{{ form.sla_deadline.label }}</label>
+    {{ form.sla_deadline }}
+    {% if form.sla_deadline.errors %}<p class="form-error">{{ form.sla_deadline.errors.0 }}</p>{% endif %}
+  </div>
+  <div class="admin-form-field">
+    <label for="{{ form.sla_met.id_for_label }}">{{ form.sla_met.label }}</label>
+    {{ form.sla_met }}
+    {% if form.sla_met.errors %}<p class="form-error">{{ form.sla_met.errors.0 }}</p>{% endif %}
+  </div>
+  <div class="admin-form-field">
+    <label for="{{ form.approved_at.id_for_label }}">{{ form.approved_at.label }}</label>
+    {{ form.approved_at }}
+    {% if form.approved_at.errors %}<p class="form-error">{{ form.approved_at.errors.0 }}</p>{% endif %}
+  </div>
+  <div class="admin-form-field">
+    <label for="{{ form.approved_by.id_for_label }}">{{ form.approved_by.label }}</label>
+    {{ form.approved_by }}
+    {% if form.approved_by.errors %}<p class="form-error">{{ form.approved_by.errors.0 }}</p>{% endif %}
+  </div>
+  <div class="admin-form-field">
+    <label for="{{ form.signature_notes.id_for_label }}">{{ form.signature_notes.label }}</label>
+    {{ form.signature_notes }}
+    {% if form.signature_notes.errors %}<p class="form-error">{{ form.signature_notes.errors.0 }}</p>{% endif %}
   </div>
   <div class="admin-form-actions">
     <button type="submit" class="form-btn form-btn-primary form-btn--narrow">{% trans "Save" %}</button>

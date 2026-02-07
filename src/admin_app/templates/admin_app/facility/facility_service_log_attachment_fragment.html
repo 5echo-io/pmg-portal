@@ -1,0 +1,19 @@
+{% load i18n %}
+<form method="post" action="{{ form_action }}" enctype="multipart/form-data" class="admin-form admin-form--wide js-facility-modal-form">
+  {% csrf_token %}
+  <input type="hidden" name="modal" value="1">
+  <div class="admin-form-field">
+    <label for="{{ form.title.id_for_label }}">{{ form.title.label }}</label>
+    {{ form.title }}
+    {% if form.title.errors %}<p class="form-error">{{ form.title.errors.0 }}</p>{% endif %}
+  </div>
+  <div class="admin-form-field">
+    <label for="{{ form.file.id_for_label }}">{{ form.file.label }}</label>
+    {{ form.file }}
+    {% if form.file.errors %}<p class="form-error">{{ form.file.errors.0 }}</p>{% endif %}
+  </div>
+  <div class="admin-form-actions">
+    <button type="submit" class="form-btn form-btn-primary form-btn--narrow">{% trans "Upload" %}</button>
+    <button type="button" class="form-btn form-btn-secondary js-facility-modal-cancel">{% trans "Cancel" %}</button>
+  </div>
+</form>

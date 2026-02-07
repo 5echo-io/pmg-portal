@@ -619,6 +619,21 @@ msgstr "Ingen Markdown-innhold. Last ned produsentens PDF ovenfor."
 msgid "Choose a product to view its datasheet."
 msgstr "Velg et produkt for å se databladet."
 
+msgid "Choose a product to view or download its datasheet."
+msgstr "Velg et produkt for å se eller laste ned databladet."
+
+msgid "View datasheet"
+msgstr "Se datablad"
+
+msgid "Search by product name…"
+msgstr "Søk etter produktnavn…"
+
+msgid "Search datasheets"
+msgstr "Søk i datablad"
+
+msgid "No datasheets match your search."
+msgstr "Ingen datablad matcher søket ditt."
+
 msgid "No product datasheets available yet."
 msgstr "Ingen produktdatablad tilgjengelig ennå."
 
@@ -998,4 +1013,142 @@ msgstr "Rediger servicelogg"
 
 msgid "Er du sikker på at du vil slette denne serviceloggføringen?"
 msgstr "Er du sikker på at du vil slette denne serviceloggføringen?"
+
+msgid "Type"
+msgstr "Type"
+
+msgid "All"
+msgstr "Alle"
+
+msgid "SLA deadline"
+msgstr "SLA-frist"
+
+msgid "SLA met"
+msgstr "SLA møtt"
+
+msgid "SLA not met"
+msgstr "SLA ikke møtt"
+
+msgid "Approved"
+msgstr "Godkjent"
+
+msgid "Attachments"
+msgstr "Vedlegg"
+
+msgid "Planlagte turer"
+msgstr "Planlagte turer"
+
+msgid "Planlagte serviceturer"
+msgstr "Planlagte serviceturer"
+
+msgid "Legg til planlagt tur"
+msgstr "Legg til planlagt tur"
+
+msgid "Rediger planlagt tur"
+msgstr "Rediger planlagt tur"
+
+msgid "No planned service visits."
+msgstr "Ingen planlagte serviceturer."
+
+msgid "Vis alle planlagte turer"
+msgstr "Vis alle planlagte turer"
+
+msgid "Scheduled start"
+msgstr "Planlagt start"
+
+msgid "Scheduled end"
+msgstr "Planlagt slutt"
+
+msgid "Add service type"
+msgstr "Legg til service type"
+
+msgid "Edit service type"
+msgstr "Rediger service type"
+
+msgid "Add attachment"
+msgstr "Legg til vedlegg"
+
+msgid "Legg til vedlegg"
+msgstr "Legg til vedlegg"
+
+msgid "Vedlegg"
+msgstr "Vedlegg"
+
+msgid "E.g. ServiceDesk Plus request ID"
+msgstr "F.eks. ServiceDesk Plus-sak-ID"
+
+msgid "Delete this visit?"
+msgstr "Slette denne planlagte turen?"
+
+msgid "Slette denne planlagte turen?"
+msgstr "Slette denne planlagte turen?"
+
+msgid "Servicerapport"
+msgstr "Servicerapport"
+
+msgid "Ny servicerapport"
+msgstr "Ny servicerapport"
+
+msgid "Rediger servicerapport"
+msgstr "Rediger servicerapport"
+
+msgid "Bakgrunn"
+msgstr "Bakgrunn"
+
+msgid "Oppsummering"
+msgstr "Oppsummering"
+
+msgid "Funn og observasjoner"
+msgstr "Funn og observasjoner"
+
+msgid "Konklusjon"
+msgstr "Konklusjon"
+
+msgid "Anbefalinger"
+msgstr "Anbefalinger"
+
+msgid "Umiddelbare tiltak"
+msgstr "Umiddelbare tiltak"
+
+msgid "Langsiktige tiltak"
+msgstr "Langsiktige tiltak"
+
+msgid "Omslag / header"
+msgstr "Omslag / header"
+
+msgid "Enheter som ble servet"
+msgstr "Enheter som ble servet"
+
+msgid "Koble inn enheter som ble servet i denne rapporten. Valgfri: når enheten ble servet og notater."
+msgstr "Koble inn enheter som ble servet i denne rapporten. Valgfri: når enheten ble servet og notater."
+
+msgid "Avtalenummer"
+msgstr "Avtalenummer"
+
+msgid "Asset"
+msgstr "Asset"
+
+msgid "Customer"
+msgstr "Kunde"
+
+msgid "Rapport"
+msgstr "Rapport"
+
+msgid "Documented description of what was performed"
+msgstr "Dokumentert beskrivelse av det som ble utført"
+
+msgid "Identifikasjon"
+msgstr "Identifikasjon"
+
+msgid "SLA og signatur"
+msgstr "SLA og signatur"
+
+msgid "Enhet"
+msgstr "Enhet"
+
+msgid "Servet"
+msgstr "Servet"
+
+msgid "Slett"
+msgstr "Slett"
 

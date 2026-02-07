@@ -33,6 +33,7 @@ from .models import (
     NetworkDevice,
     FacilityDocument,
     ServiceLog,
+    ServiceType,
     DeviceType,
     ProductDatasheet,
 )
@@ -353,7 +354,15 @@ def facility_detail(request, slug):
     network_devices = facility.network_devices.filter(is_active=True).select_related("product", "rack").order_by("rack", "rack_position", "name")
     ip_addresses = facility.ip_addresses.all().select_related("device").order_by("ip_address")
     documents = facility.documents.all().order_by("-uploaded_at")
-    service_logs = facility.service_logs.all().order_by("-performed_at")
+    service_logs = facility.service_logs.all().select_related("service_type").prefetch_related("attachments").order_by("-performed_at")
+    service_type_filter = request.GET.get("service_type", "").strip()
+    if service_type_filter:
+        try:
+            st = ServiceType.objects.get(slug=service_type_filter, is_active=True)
+            service_logs = service_logs.filter(service_type=st)
+        except ServiceType.DoesNotExist:
+            pass
+    service_types = ServiceType.objects.filter(is_active=True).order_by("sort_order", "name")
 
     # Statistics
     stats = {
@@ -373,6 +382,8 @@ def facility_detail(request, slug):
         "ip_addresses": ip_addresses,
         "documents": documents,
         "service_logs": service_logs,
+        "service_types": service_types,
+        "service_type_filter": service_type_filter,
         "stats": stats,
     }
     
@@ -401,7 +412,14 @@ def facility_service_log_detail(request, slug, log_id):
         messages.error(request, "Customer not found.")
         return redirect("portal_home")
 
-    service_log = get_object_or_404(ServiceLog, pk=log_id, facility=facility)
+    service_log = get_object_or_404(
+        ServiceLog.objects.select_related("service_type", "approved_by", "created_by").prefetch_related(
+            "attachments",
+            "serviced_devices__device",
+        ),
+        pk=log_id,
+        facility=facility,
+    )
     context = {
         "facility": facility,
         "customer": customer,

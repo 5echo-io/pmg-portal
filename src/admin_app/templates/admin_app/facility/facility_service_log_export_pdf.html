@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+  <meta charset="utf-8">
+  <title>Servicelogg – {{ facility.name }}</title>
+  <style>
+    body { font-family: Helvetica, Arial, sans-serif; font-size: 10pt; margin: 20px; }
+    h1 { font-size: 14pt; }
+    table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+    th, td { border: 1px solid #333; padding: 6px; text-align: left; }
+    th { background: #eee; }
+    .muted { color: #666; font-size: 9pt; }
+  </style>
+</head>
+<body>
+  <h1>Servicelogg – {{ facility.name }}</h1>
+  {% if date_from or date_to %}
+  <p class="muted">Periode: {{ date_from|default:"—" }} til {{ date_to|default:"—" }}</p>
+  {% endif %}
+  <table>
+    <thead>
+      <tr>
+        <th>Dato</th>
+        <th>Service-ID</th>
+        <th>Type</th>
+        <th>Tekniker</th>
+        <th>Beskrivelse</th>
+        <th>SLA-frist</th>
+        <th>SLA møtt</th>
+        <th>Godkjent</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for log in logs %}
+      <tr>
+        <td>{{ log.performed_at|date:"d.m.Y H:i" }}</td>
+        <td>{{ log.service_id }}</td>
+        <td>{{ log.service_type.name|default:"—" }}</td>
+        <td>{{ log.technician_employee_no|default:"—" }}</td>
+        <td>{{ log.description|truncatewords:20|default:"—" }}</td>
+        <td>{{ log.sla_deadline|date:"d.m.Y H:i"|default:"—" }}</td>
+        <td>{% if log.sla_met is True %}Ja{% elif log.sla_met is False %}Nei{% else %}—{% endif %}</td>
+        <td>{{ log.approved_at|date:"d.m.Y H:i"|default:"—" }}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="8">Ingen poster i valgt periode.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>

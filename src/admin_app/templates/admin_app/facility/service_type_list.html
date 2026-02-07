@@ -1,0 +1,43 @@
+{% extends "admin_app/base.html" %}
+{% load i18n %}
+{% block admin_title %}{% trans "Service types" %}{% endblock %}
+{% block breadcrumb_extra %}
+<span class="breadcrumb-sep">→</span> <span>{% trans "Service types" %}</span>
+{% endblock %}
+{% block admin_content %}
+<div class="admin-section-header">
+  <h1 class="admin-page-title">{% trans "Service types" %}</h1>
+  <a href="{% url 'admin_app:admin_service_type_add' %}" class="admin-btn admin-btn-primary">{% trans "Add service type" %}</a>
+</div>
+<p class="muted">{% trans "Categories for service log entries (e.g. planned service, troubleshooting, upgrade)." %}</p>
+{% if service_types %}
+<div class="admin-table-wrap">
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th>{% trans "Name" %}</th>
+        <th>{% trans "Slug" %}</th>
+        <th>{% trans "Order" %}</th>
+        <th>{% trans "Active" %}</th>
+        <th class="admin-table-actions"></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for st in service_types %}
+      <tr>
+        <td>{{ st.name }}</td>
+        <td><code>{{ st.slug }}</code></td>
+        <td>{{ st.sort_order }}</td>
+        <td>{% if st.is_active %}{% trans "Yes" %}{% else %}{% trans "No" %}{% endif %}</td>
+        <td class="admin-table-actions">
+          <a href="{% url 'admin_app:admin_service_type_edit' st.pk %}" class="admin-btn-sm">{% trans "Edit" %}</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<p class="muted">{% trans "No service types. Add one to categorize service logs." %}</p>
+{% endif %}
+{% endblock %}

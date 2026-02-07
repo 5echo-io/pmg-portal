@@ -24,6 +24,7 @@ Pre-release builds (alpha, beta, rc) are listed here. Only full releases (no bui
 - **compilemessages**: Removed duplicate msgid entries in locale nb django.po so msgfmt succeeds on update; update.sh shows clearer error when compilemessages fails.
 
 ### Changed
+- **Servicelogg utvidelser**: ServiceLog-utvidelser (migrasjon 0012, 0013); ServiceType, ServiceRapport, ServiceVisit, vedlegg, PDF-eksport; admin facility service visit/rapport/attachment/export; portal facility service log detail og datasheet-oppdateringer; locale +153; docs SERVICEDESK_PLUS_INTEGRATION.md; requirements +1
 - **Install/update logging**: install.sh logs full output to /var/log/pmg-portal-install-&lt;timestamp&gt;.log; update.sh logs to &lt;app_dir&gt;/logs/update-&lt;timestamp&gt;.log when run standalone. On failure, scripts print the log path for easier debugging.
 - **compilemessages**: Install/update scripts now run compilemessages with `--locale nb` so only the project Norwegian locale is compiled; avoids processing Django's contrib locales and reduces noise/errors.
 - **Backup & Restore**: UI and logic improvements; admin base layout and footer tweaks
@@ -50,6 +51,7 @@ Pre-release builds (alpha, beta, rc) are listed here. Only full releases (no bui
 - **Service log**: ServiceLog-modell (migrasjon 0011); admin facility service log skjema/fragment; portal facility service log detalj; facility card/list oppdatert; admin/portal templates og locale +421
 
 ### Added
+- **Servicelogg – typer, rapporter, besøk, vedlegg**: ServiceType, ServiceRapport, ServiceVisit; admin service_type list/form; facility_service_visit list/form/fragment; facility_service_rapport_form; facility_service_log attachment upload/fragment og export PDF; migrasjoner 0012, 0013; SERVICEDESK_PLUS_INTEGRATION.md
 - **Service log (servicelogg)**: ServiceLog-modell knyttet til facility; admin facility_service_log form og fragment; portal facility_service_log_detail; migrasjon 0011
 - **Portal – Produktdatablad-oversikt**: /datasheets/ (datasheet_list) lister enheter med datablad; tilbake-lenke fra detail og not_found
 - **Portal – Datablad**: /datasheet/&lt;slug&gt;/ (detail), PDF-visning, datasheet_not_found; migrasjon 0010 (content_md, updated_at, file nullable); admin product_datasheet form/list oppdatert

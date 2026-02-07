@@ -91,6 +91,18 @@ urlpatterns = [
     path("facilities/<slug:facility_slug>/service-log/add/", views.facility_service_log_add, name="admin_facility_service_log_add"),
     path("facilities/<slug:facility_slug>/service-log/<int:log_id>/edit/", views.facility_service_log_edit, name="admin_facility_service_log_edit"),
     path("facilities/<slug:facility_slug>/service-log/<int:log_id>/delete/", views.facility_service_log_delete, name="admin_facility_service_log_delete"),
+    path("facilities/<slug:facility_slug>/service-log/<int:log_id>/attachments/upload/", views.facility_service_log_attachment_upload, name="admin_facility_service_log_attachment_upload"),
+    path("facilities/<slug:facility_slug>/service-log/<int:log_id>/attachments/<int:attachment_id>/delete/", views.facility_service_log_attachment_delete, name="admin_facility_service_log_attachment_delete"),
+    path("facilities/<slug:facility_slug>/service-log/export/", views.facility_service_log_export, name="admin_facility_service_log_export"),
+    # Service Types
+    path("service-types/", views.service_type_list, name="admin_service_type_list"),
+    path("service-types/add/", views.service_type_add, name="admin_service_type_add"),
+    path("service-types/<int:pk>/edit/", views.service_type_edit, name="admin_service_type_edit"),
+    # Service Visits
+    path("facilities/<slug:facility_slug>/service-visits/", views.facility_service_visit_list, name="admin_facility_service_visit_list"),
+    path("facilities/<slug:facility_slug>/service-visits/add/", views.facility_service_visit_add, name="admin_facility_service_visit_add"),
+    path("facilities/<slug:facility_slug>/service-visits/<int:visit_id>/edit/", views.facility_service_visit_edit, name="admin_facility_service_visit_edit"),
+    path("facilities/<slug:facility_slug>/service-visits/<int:visit_id>/delete/", views.facility_service_visit_delete, name="admin_facility_service_visit_delete"),
     # Server management (superuser only)
     path("server/backup-restore/", views.backup_restore, name="admin_backup_restore"),
 ]

@@ -11,6 +11,13 @@ Last Modified: 2026-02-06
 
 - 2026-02-06 (Europe/Oslo)
   - Branch: dev
+  - Version: 4.8.0-beta.18
+  - Summary:
+    - Service log extensions: migrations 0012 (servicelog_extensions), 0013 (servicerapport, servicedevices); ServiceType, ServiceRapport, ServiceVisit; admin service_type list/form; facility_service_visit list/form/fragment; facility_service_rapport_form; attachment upload/fragment; export PDF; portal facility service log detail + datasheet updates; locale +153; SERVICEDESK_PLUS_INTEGRATION.md; requirements +1
+    - Version bump: 4.8.0-beta.17 → 4.8.0-beta.18
+
+- 2026-02-06 (Europe/Oslo)
+  - Branch: dev
   - Version: 4.8.0-beta.17
   - Summary:
     - Locale: remove 2 more duplicate msgid (Search customers…, Inactive) in nb django.po

@@ -1,0 +1,16 @@
+{% extends "admin_app/base.html" %}
+{% load i18n %}
+{% block admin_title %}{% trans "Add attachment" %} – {{ service_log.service_id }}{% endblock %}
+{% block breadcrumb_back %}<a href="{% url 'admin_app:admin_facility_detail' facility.slug %}" class="breadcrumb-back-btn">← {{ facility.name }}</a>{% endblock %}
+{% block admin_content %}
+<h1 class="admin-page-title">{% trans "Add attachment" %}</h1>
+<p class="muted">{% blocktrans with id=service_log.service_id %}Service log: {{ id }}{% endblocktrans %}</p>
+<form method="post" action="" enctype="multipart/form-data" class="admin-form admin-form--wide">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <div class="admin-form-actions">
+    <button type="submit" class="form-btn form-btn-primary">{% trans "Upload" %}</button>
+    <a href="{{ cancel_url }}" class="form-btn form-btn-secondary">{% trans "Cancel" %}</a>
+  </div>
+</form>
+{% endblock %}

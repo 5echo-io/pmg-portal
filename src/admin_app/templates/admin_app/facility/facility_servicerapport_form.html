@@ -1,0 +1,129 @@
+{% extends "admin_app/base.html" %}
+{% load i18n %}
+
+{% block admin_title %}{% if service_log %}{% trans "Rediger servicerapport" %}{% else %}{% trans "Ny servicerapport" %}{% endif %} – {{ facility.name }}{% endblock %}
+{% block breadcrumb_back %}<a href="{% url 'admin_app:admin_facility_detail' facility.slug %}" class="breadcrumb-back-btn">← {{ facility.name }}</a>{% endblock %}
+{% block breadcrumb_extra %}
+<span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_facility_list' %}">{% trans "Anlegg" %}</a>
+<span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_facility_detail' facility.slug %}">{{ facility.name }}</a>
+<span class="breadcrumb-sep">→</span> <span>{% if service_log %}{% trans "Rediger servicerapport" %}{% else %}{% trans "Ny servicerapport" %}{% endif %}</span>
+{% endblock %}
+
+{% block admin_content %}
+<h1 class="admin-page-title">{% if service_log %}{% trans "Rediger servicerapport" %}{% else %}{% trans "Ny servicerapport" %}{% endif %}</h1>
+<p class="muted">{% trans "Servicelogg" %} = oversikt over når service er utført. Servicerapport = selve dokumentet for hver service.</p>
+
+<form method="post" action="" class="admin-form admin-form--wide" id="servicerapport-form">
+  {% csrf_token %}
+
+  <section class="servicerapport-section">
+    <h2 class="servicerapport-section-title">{% trans "Identifikasjon" %}</h2>
+    <div class="servicerapport-fields">
+      <div class="admin-form-field"><label for="{{ form.service_id.id_for_label }}">{{ form.service_id.label }}</label>{{ form.service_id }}{% if form.service_id.errors %}<p class="form-error">{{ form.service_id.errors.0 }}</p>{% endif %}</div>
+      <div class="admin-form-field"><label for="{{ form.service_type.id_for_label }}">{{ form.service_type.label }}</label>{{ form.service_type }}{% if form.service_type.errors %}<p class="form-error">{{ form.service_type.errors.0 }}</p>{% endif %}</div>
+      <div class="admin-form-field"><label for="{{ form.performed_at.id_for_label }}">{{ form.performed_at.label }}</label>{{ form.performed_at }}{% if form.performed_at.errors %}<p class="form-error">{{ form.performed_at.errors.0 }}</p>{% endif %}</div>
+      <div class="admin-form-field"><label for="{{ form.technician_employee_no.id_for_label }}">{{ form.technician_employee_no.label }}</label>{{ form.technician_employee_no }}{% if form.technician_employee_no.errors %}<p class="form-error">{{ form.technician_employee_no.errors.0 }}</p>{% endif %}</div>
+      <div class="admin-form-field"><label for="{{ form.external_id.id_for_label }}">{{ form.external_id.label }}</label>{{ form.external_id }}<span class="form-help muted">{% trans "E.g. ServiceDesk Plus request ID" %}</span>{% if form.external_id.errors %}<p class="form-error">{{ form.external_id.errors.0 }}</p>{% endif %}</div>
+    </div>
+  </section>
+
+  <section class="servicerapport-section">
+    <h2 class="servicerapport-section-title">{% trans "Omslag / header" %}</h2>
+    <div class="servicerapport-fields">
+      <div class="admin-form-field"><label for="{{ form.asset_name.id_for_label }}">{{ form.asset_name.label }}</label>{{ form.asset_name }}{% if form.asset_name.errors %}<p class="form-error">{{ form.asset_name.errors.0 }}</p>{% endif %}</div>
+      <div class="admin-form-field"><label for="{{ form.asset_id.id_for_label }}">{{ form.asset_id.label }}</label>{{ form.asset_id }}{% if form.asset_id.errors %}<p class="form-error">{{ form.asset_id.errors.0 }}</p>{% endif %}</div>
+      <div class="admin-form-field"><label for="{{ form.contract_number.id_for_label }}">{{ form.contract_number.label }}</label>{{ form.contract_number }}{% if form.contract_number.errors %}<p class="form-error">{{ form.contract_number.errors.0 }}</p>{% endif %}</div>
+      <div class="admin-form-field"><label for="{{ form.customer_name.id_for_label }}">{{ form.customer_name.label }}</label>{{ form.customer_name }}{% if form.customer_name.errors %}<p class="form-error">{{ form.customer_name.errors.0 }}</p>{% endif %}</div>
+      <div class="admin-form-field"><label for="{{ form.customer_org_numbers.id_for_label }}">{{ form.customer_org_numbers.label }}</label>{{ form.customer_org_numbers }}{% if form.customer_org_numbers.errors %}<p class="form-error">{{ form.customer_org_numbers.errors.0 }}</p>{% endif %}</div>
+      <div class="admin-form-field"><label for="{{ form.customer_address.id_for_label }}">{{ form.customer_address.label }}</label>{{ form.customer_address }}{% if form.customer_address.errors %}<p class="form-error">{{ form.customer_address.errors.0 }}</p>{% endif %}</div>
+      <div class="admin-form-field"><label for="{{ form.supplier_name.id_for_label }}">{{ form.supplier_name.label }}</label>{{ form.supplier_name }}{% if form.supplier_name.errors %}<p class="form-error">{{ form.supplier_name.errors.0 }}</p>{% endif %}</div>
+      <div class="admin-form-field"><label for="{{ form.supplier_org_number.id_for_label }}">{{ form.supplier_org_number.label }}</label>{{ form.supplier_org_number }}{% if form.supplier_org_number.errors %}<p class="form-error">{{ form.supplier_org_number.errors.0 }}</p>{% endif %}</div>
+    </div>
+  </section>
+
+  <section class="servicerapport-section">
+    <h2 class="servicerapport-section-title">{% trans "Sammendrag" %}</h2>
+    <div class="admin-form-field"><label for="{{ form.background.id_for_label }}">{% trans "Bakgrunn" %}</label>{{ form.background }}{% if form.background.errors %}<p class="form-error">{{ form.background.errors.0 }}</p>{% endif %}</div>
+    <div class="admin-form-field"><label for="{{ form.summary.id_for_label }}">{% trans "Oppsummering" %}</label>{{ form.summary }}{% if form.summary.errors %}<p class="form-error">{{ form.summary.errors.0 }}</p>{% endif %}</div>
+  </section>
+
+  <section class="servicerapport-section">
+    <h2 class="servicerapport-section-title">{% trans "Rapport" %}</h2>
+    <div class="admin-form-field"><label for="{{ form.description.id_for_label }}">{% trans "Rapport" %} – {% trans "Documented description of what was performed" %}</label>{{ form.description }}{% if form.description.errors %}<p class="form-error">{{ form.description.errors.0 }}</p>{% endif %}</div>
+  </section>
+
+  <section class="servicerapport-section">
+    <h2 class="servicerapport-section-title">{% trans "Funn og observasjoner" %}</h2>
+    <div class="admin-form-field"><label for="{{ form.findings_observations.id_for_label }}">{% trans "Funn og observasjoner" %}</label>{{ form.findings_observations }}{% if form.findings_observations.errors %}<p class="form-error">{{ form.findings_observations.errors.0 }}</p>{% endif %}</div>
+  </section>
+
+  <section class="servicerapport-section">
+    <h2 class="servicerapport-section-title">{% trans "Konklusjon" %}</h2>
+    <div class="admin-form-field"><label for="{{ form.conclusion.id_for_label }}">{% trans "Konklusjon" %}</label>{{ form.conclusion }}{% if form.conclusion.errors %}<p class="form-error">{{ form.conclusion.errors.0 }}</p>{% endif %}</div>
+  </section>
+
+  <section class="servicerapport-section">
+    <h2 class="servicerapport-section-title">{% trans "Anbefalinger" %}</h2>
+    <div class="admin-form-field"><label for="{{ form.recommendations_immediate.id_for_label }}">{% trans "Umiddelbare tiltak" %}</label>{{ form.recommendations_immediate }}{% if form.recommendations_immediate.errors %}<p class="form-error">{{ form.recommendations_immediate.errors.0 }}</p>{% endif %}</div>
+    <div class="admin-form-field"><label for="{{ form.recommendations_long_term.id_for_label }}">{% trans "Langsiktige tiltak" %}</label>{{ form.recommendations_long_term }}{% if form.recommendations_long_term.errors %}<p class="form-error">{{ form.recommendations_long_term.errors.0 }}</p>{% endif %}</div>
+    <div class="admin-form-field"><label for="{{ form.notes.id_for_label }}">{{ form.notes.label }}</label>{{ form.notes }}{% if form.notes.errors %}<p class="form-error">{{ form.notes.errors.0 }}</p>{% endif %}</div>
+  </section>
+
+  {% if service_log and device_formset %}
+  <section class="servicerapport-section">
+    <h2 class="servicerapport-section-title">{% trans "Enheter som ble servet" %}</h2>
+    <p class="muted">{% trans "Koble inn enheter som ble servet i denne rapporten. Valgfri: når enheten ble servet og notater." %}</p>
+    {{ device_formset.management_form }}
+    <div class="admin-table-wrap">
+      <table class="admin-table servicerapport-devices-table">
+        <thead>
+          <tr>
+            <th>{% trans "Enhet" %}</th>
+            <th>{% trans "Servet" %}</th>
+            <th>{% trans "Notes" %}</th>
+            <th>{% trans "Slett" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for f in device_formset.forms %}
+          <tr class="{% if f.errors %}form-error-row{% endif %}">
+            <td>{{ f.id }}{{ f.device }}{% if f.device.errors %}<p class="form-error">{{ f.device.errors.0 }}</p>{% endif %}</td>
+            <td>{{ f.serviced_at }}</td>
+            <td>{{ f.notes }}</td>
+            <td>{% if f.instance.pk %}{{ f.DELETE }}{% endif %}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+  {% endif %}
+
+  <section class="servicerapport-section">
+    <h2 class="servicerapport-section-title">{% trans "SLA og signatur" %}</h2>
+    <div class="servicerapport-fields">
+      <div class="admin-form-field"><label for="{{ form.sla_deadline.id_for_label }}">{{ form.sla_deadline.label }}</label>{{ form.sla_deadline }}{% if form.sla_deadline.errors %}<p class="form-error">{{ form.sla_deadline.errors.0 }}</p>{% endif %}</div>
+      <div class="admin-form-field"><label for="{{ form.sla_met.id_for_label }}">{{ form.sla_met.label }}</label>{{ form.sla_met }}{% if form.sla_met.errors %}<p class="form-error">{{ form.sla_met.errors.0 }}</p>{% endif %}</div>
+      <div class="admin-form-field"><label for="{{ form.approved_at.id_for_label }}">{{ form.approved_at.label }}</label>{{ form.approved_at }}{% if form.approved_at.errors %}<p class="form-error">{{ form.approved_at.errors.0 }}</p>{% endif %}</div>
+      <div class="admin-form-field"><label for="{{ form.approved_by.id_for_label }}">{{ form.approved_by.label }}</label>{{ form.approved_by }}{% if form.approved_by.errors %}<p class="form-error">{{ form.approved_by.errors.0 }}</p>{% endif %}</div>
+      <div class="admin-form-field"><label for="{{ form.signature_notes.id_for_label }}">{{ form.signature_notes.label }}</label>{{ form.signature_notes }}{% if form.signature_notes.errors %}<p class="form-error">{{ form.signature_notes.errors.0 }}</p>{% endif %}</div>
+    </div>
+  </section>
+
+  <div class="admin-form-actions" style="margin-top: 24px;">
+    <button type="submit" class="form-btn form-btn-primary">{% trans "Save" %}</button>
+    <a href="{{ cancel_url }}" class="form-btn form-btn-secondary">{% trans "Cancel" %}</a>
+    {% if service_log %}
+    <a href="{% url 'admin_app:admin_facility_detail' facility.slug %}#tab-servicelogg" class="form-btn form-btn-secondary">{% trans "Back to facility" %}</a>
+    {% endif %}
+  </div>
+</form>
+
+<style>
+.servicerapport-section { margin-bottom: 28px; padding-bottom: 20px; border-bottom: 1px solid var(--line, #e5e7eb); }
+.servicerapport-section-title { margin: 0 0 12px 0; font-size: 1.1rem; font-weight: 600; }
+.servicerapport-fields { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px 20px; }
+.servicerapport-devices-table { margin-top: 8px; }
+.form-help { font-size: 0.85em; display: block; margin-top: 4px; }
+</style>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "admin_app/base.html" %}
+{% load i18n %}
+{% block admin_title %}{% if service_type %}{% trans "Edit service type" %}{% else %}{% trans "Add service type" %}{% endif %}{% endblock %}
+{% block admin_content %}
+<h1 class="admin-page-title">{% if service_type %}{% trans "Edit service type" %}{% else %}{% trans "Add service type" %}{% endif %}</h1>
+<form method="post" action="" class="admin-form admin-form--wide">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <div class="admin-form-actions">
+    <button type="submit" class="form-btn form-btn-primary">{% trans "Save" %}</button>
+    <a href="{% url 'admin_app:admin_service_type_list' %}" class="form-btn form-btn-secondary">{% trans "Cancel" %}</a>
+  </div>
+</form>
+{% endblock %}

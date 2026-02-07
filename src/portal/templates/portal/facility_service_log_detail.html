@@ -1,6 +1,6 @@
 {% extends "portal/base.html" %}
 {% load i18n static %}
-{% block title %}{% trans "Servicelogg" %}: {{ service_log.service_id }} | {{ facility.name }} | {% trans "PMG Portal" %}{% endblock %}
+{% block title %}{% trans "Servicerapport" %}: {{ service_log.service_id }} | {{ facility.name }} | {% trans "PMG Portal" %}{% endblock %}
 
 {% block content %}
 <div class="facility-detail-container">
@@ -11,14 +11,14 @@
       <span class="breadcrumb-sep">→</span>
       <a href="{% url 'facility_detail' facility.slug %}">{{ facility.name }}</a>
       <span class="breadcrumb-sep">→</span>
-      <span>{% trans "Servicelogg" %}: {{ service_log.service_id }}</span>
+      <span>{% trans "Servicerapport" %}: {{ service_log.service_id }}</span>
     </nav>
   </div>
 
   <div class="customer-card-container">
     <div class="customer-card-header" style="padding-bottom: 16px;">
       <div class="customer-card-info" style="flex: 1;">
-        <h1 class="customer-card-name" style="margin: 0 0 8px 0;">{% trans "Servicelogg" %}</h1>
+        <h1 class="customer-card-name" style="margin: 0 0 8px 0;">{% trans "Servicerapport" %}</h1>
         <p class="customer-card-slug" style="margin: 0;">{{ facility.name }} — {{ service_log.service_id }}</p>
       </div>
       <div class="customer-card-header-actions">
@@ -29,7 +29,12 @@
     <div class="panel" style="margin-top: 24px;">
       <dl class="service-log-dl">
         <dt>{% trans "Service ID" %}</dt>
-        <dd><strong>{{ service_log.service_id }}</strong></dd>
+        <dd><strong>{{ service_log.service_id }}</strong>{% if service_log.external_id %} <span class="muted">({{ service_log.external_id }})</span>{% endif %}</dd>
+
+        {% if service_log.service_type %}
+        <dt>{% trans "Type" %}</dt>
+        <dd>{{ service_log.service_type.name }}</dd>
+        {% endif %}
 
         <dt>{% trans "Performed at" %}</dt>
         <dd>{{ service_log.performed_at|date:"d.m.Y H:i" }}</dd>
@@ -37,12 +42,78 @@
         <dt>{% trans "Technician (employee no.)" %}</dt>
         <dd>{{ service_log.technician_employee_no|default:"—" }}</dd>
 
-        <dt>{% trans "Documented description" %}</dt>
+        {% if service_log.asset_name or service_log.asset_id %}
+        <dt>{% trans "Asset" %}</dt>
+        <dd>{{ service_log.asset_name|default:"" }}{% if service_log.asset_id %} ({{ service_log.asset_id }}){% endif %}</dd>
+        {% endif %}
+        {% if service_log.customer_name %}
+        <dt>{% trans "Customer" %}</dt>
+        <dd>{{ service_log.customer_name }}{% if service_log.contract_number %} — {% trans "Avtalenummer" %}: {{ service_log.contract_number }}{% endif %}</dd>
+        {% endif %}
+
+        {% if service_log.background %}
+        <dt>{% trans "Bakgrunn" %}</dt>
+        <dd><div style="white-space: pre-wrap;">{{ service_log.background }}</div></dd>
+        {% endif %}
+        {% if service_log.summary %}
+        <dt>{% trans "Oppsummering" %}</dt>
+        <dd><div style="white-space: pre-wrap;">{{ service_log.summary }}</div></dd>
+        {% endif %}
+
+        <dt>{% trans "Rapport" %}</dt>
         <dd>{% if service_log.description %}<div style="white-space: pre-wrap;">{{ service_log.description }}</div>{% else %}—{% endif %}</dd>
+
+        {% if service_log.findings_observations %}
+        <dt>{% trans "Funn og observasjoner" %}</dt>
+        <dd><div style="white-space: pre-wrap;">{{ service_log.findings_observations }}</div></dd>
+        {% endif %}
+        {% if service_log.conclusion %}
+        <dt>{% trans "Konklusjon" %}</dt>
+        <dd><div style="white-space: pre-wrap;">{{ service_log.conclusion }}</div></dd>
+        {% endif %}
+        {% if service_log.recommendations_immediate or service_log.recommendations_long_term %}
+        <dt>{% trans "Anbefalinger" %}</dt>
+        <dd>
+          {% if service_log.recommendations_immediate %}<p><strong>{% trans "Umiddelbare tiltak" %}</strong></p><div style="white-space: pre-wrap;">{{ service_log.recommendations_immediate }}</div>{% endif %}
+          {% if service_log.recommendations_long_term %}<p style="margin-top: 8px;"><strong>{% trans "Langsiktige tiltak" %}</strong></p><div style="white-space: pre-wrap;">{{ service_log.recommendations_long_term }}</div>{% endif %}
+        </dd>
+        {% endif %}
+
+        {% if service_log.serviced_devices.all %}
+        <dt>{% trans "Enheter som ble servet" %}</dt>
+        <dd>
+          <ul style="margin: 0; padding-left: 20px;">
+            {% for sd in service_log.serviced_devices.all %}
+            <li>{{ sd.device.name }}{% if sd.serviced_at %} ({{ sd.serviced_at|date:"d.m.Y H:i" }}){% endif %}{% if sd.notes %} — {{ sd.notes }}{% endif %}</li>
+            {% endfor %}
+          </ul>
+        </dd>
+        {% endif %}
 
         {% if service_log.notes %}
         <dt>{% trans "Notes" %}</dt>
         <dd><div style="white-space: pre-wrap;">{{ service_log.notes }}</div></dd>
+        {% endif %}
+
+        {% if service_log.sla_deadline %}
+        <dt>{% trans "SLA deadline" %}</dt>
+        <dd>{{ service_log.sla_deadline|date:"d.m.Y H:i" }}{% if service_log.sla_met is not None %} — {% if service_log.sla_met %}{% trans "SLA met" %}{% else %}{% trans "SLA not met" %}{% endif %}{% endif %}</dd>
+        {% endif %}
+
+        {% if service_log.approved_at %}
+        <dt>{% trans "Approved" %}</dt>
+        <dd>{{ service_log.approved_at|date:"d.m.Y H:i" }}{% if service_log.approved_by %} {% trans "by" %} {{ service_log.approved_by.get_full_name|default:service_log.approved_by.username }}{% endif %}{% if service_log.signature_notes %} — {{ service_log.signature_notes }}{% endif %}</dd>
+        {% endif %}
+
+        {% if service_log.attachments.all %}
+        <dt>{% trans "Attachments" %}</dt>
+        <dd>
+          <ul class="service-log-attachments" style="margin: 0; padding-left: 20px;">
+            {% for att in service_log.attachments.all %}
+            <li><a href="{{ att.file.url }}" target="_blank" rel="noopener">{{ att.title|default:att.file.name }}</a></li>
+            {% endfor %}
+          </ul>
+        </dd>
         {% endif %}
 
         <dt>{% trans "Created" %}</dt>

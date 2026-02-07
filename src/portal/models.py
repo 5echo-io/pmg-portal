@@ -231,13 +231,41 @@ class Facility(models.Model):
         return self.customers.count()
 
 
+class ServiceType(models.Model):
+    """
+    Category for service log entries (e.g. planned service, troubleshooting, upgrade).
+    """
+    name = models.CharField(max_length=100)
+    slug = models.SlugField(max_length=80, unique=True)
+    sort_order = models.PositiveIntegerField(default=100, db_index=True)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ["sort_order", "name"]
+        verbose_name = "Service type"
+        verbose_name_plural = "Service types"
+
+    def __str__(self) -> str:
+        return self.name
+
+
 class ServiceLog(models.Model):
     """
-    Service log entry for a facility. Records when service was performed,
-    by whom (technician employee number), and a documented description.
+    Servicerapport: full service report document for a facility.
+    Servicelogg is the overview list; each entry is a servicerapport (this model).
+    Structure follows the standard servicerapport: Sammendrag (Bakgrunn, Oppsummering),
+    Rapport, Funn og observasjoner, Konklusjon, Anbefalinger, Vedlegg, signaturer.
     """
     facility = models.ForeignKey(Facility, on_delete=models.CASCADE, related_name="service_logs")
-    service_id = models.CharField(max_length=100, help_text="Service ID / reference number")
+    service_id = models.CharField(max_length=100, help_text="Service ID / reference number (e.g. RQ-2690)")
+    service_type = models.ForeignKey(
+        "ServiceType",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="service_logs",
+        help_text="Category: planned service, troubleshooting, upgrade, etc.",
+    )
     performed_at = models.DateTimeField(help_text="When the service was performed")
     technician_employee_no = models.CharField(
         max_length=50,
@@ -245,12 +273,119 @@ class ServiceLog(models.Model):
         default="",
         help_text="Technician's employee number (ansattnummer)",
     )
+    # --- Servicerapport header (from PDF page 1) ---
+    asset_name = models.CharField(
+        max_length=200,
+        blank=True,
+        default="",
+        help_text="Asset/location name (e.g. WS06 NTK Studio)",
+    )
+    asset_id = models.CharField(
+        max_length=100,
+        blank=True,
+        default="",
+        help_text="Asset ID (e.g. SDODMR0268)",
+    )
+    contract_number = models.CharField(
+        max_length=100,
+        blank=True,
+        default="",
+        help_text="Avtalenummer",
+    )
+    customer_name = models.CharField(
+        max_length=300,
+        blank=True,
+        default="",
+        help_text="Kunden (e.g. KS-Agenda AS / KS-Møteplasser AS)",
+    )
+    customer_org_numbers = models.CharField(
+        max_length=200,
+        blank=True,
+        default="",
+        help_text="Customer org numbers (MVA)",
+    )
+    customer_address = models.TextField(
+        blank=True,
+        default="",
+        help_text="Customer address",
+    )
+    supplier_name = models.CharField(
+        max_length=200,
+        blank=True,
+        default="",
+        help_text="Leverandøren (e.g. Park Media Group AS)",
+    )
+    supplier_org_number = models.CharField(
+        max_length=100,
+        blank=True,
+        default="",
+        help_text="Leverandør org number (MVA)",
+    )
+    # --- Sammendrag ---
+    background = models.TextField(
+        blank=True,
+        default="",
+        help_text="Bakgrunn",
+    )
+    summary = models.TextField(
+        blank=True,
+        default="",
+        help_text="Oppsummering (short summary in Sammendrag)",
+    )
+    # --- Rapport (main work log) ---
     description = models.TextField(
         blank=True,
         default="",
-        help_text="Documented description of what was performed",
+        help_text="Rapport – documented description of what was performed",
+    )
+    # --- Funn og observasjoner ---
+    findings_observations = models.TextField(
+        blank=True,
+        default="",
+        help_text="Funn og observasjoner",
+    )
+    # --- Konklusjon ---
+    conclusion = models.TextField(
+        blank=True,
+        default="",
+        help_text="Konklusjon",
+    )
+    # --- Anbefalinger ---
+    recommendations_immediate = models.TextField(
+        blank=True,
+        default="",
+        help_text="Anbefalinger – umiddelbare tiltak",
+    )
+    recommendations_long_term = models.TextField(
+        blank=True,
+        default="",
+        help_text="Anbefalinger – langsiktige tiltak",
     )
     notes = models.TextField(blank=True, default="", help_text="Additional notes")
+    # SLA tracking (can be linked to ServiceDesk Plus or internal)
+    external_id = models.CharField(
+        max_length=100,
+        blank=True,
+        default="",
+        db_index=True,
+        help_text="External ticket ID (e.g. ServiceDesk Plus request ID) for linking.",
+    )
+    sla_deadline = models.DateTimeField(null=True, blank=True, help_text="SLA deadline for this service")
+    sla_met = models.BooleanField(
+        null=True,
+        blank=True,
+        help_text="Whether SLA was met (null = not evaluated)",
+    )
+    # Approval / signature (optional; full sign-request flow can extend this)
+    approved_at = models.DateTimeField(null=True, blank=True)
+    approved_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="approved_service_logs",
+    )
+    signature_notes = models.CharField(max_length=200, blank=True, default="")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     created_by = models.ForeignKey(
@@ -267,10 +402,187 @@ class ServiceLog(models.Model):
         verbose_name_plural = "Service logs"
         indexes = [
             models.Index(fields=["facility", "-performed_at"]),
+            models.Index(fields=["service_type", "-performed_at"]),
         ]
 
     def __str__(self) -> str:
         return f"{self.facility.name}: {self.service_id} ({self.performed_at.date()})"
+
+
+class ServiceLogDevice(models.Model):
+    """
+    Links a network device to a service report – which devices were serviced in this report.
+    Optionally when each device was serviced and notes per device.
+    """
+    service_log = models.ForeignKey(
+        ServiceLog,
+        on_delete=models.CASCADE,
+        related_name="serviced_devices",
+    )
+    device = models.ForeignKey(
+        "NetworkDevice",
+        on_delete=models.CASCADE,
+        related_name="service_reports",
+    )
+    serviced_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        help_text="When this device was serviced (optional)",
+    )
+    notes = models.TextField(blank=True, default="", help_text="Notes for this device in this service")
+
+    class Meta:
+        ordering = ["serviced_at", "device__name"]
+        unique_together = ("service_log", "device")
+        verbose_name = "Serviced device"
+        verbose_name_plural = "Serviced devices"
+
+    def __str__(self) -> str:
+        return f"{self.service_log.service_id} – {self.device.name}"
+
+
+class ServiceLogAttachment(models.Model):
+    """Attachment (image, PDF, etc.) for a service log entry."""
+    service_log = models.ForeignKey(ServiceLog, on_delete=models.CASCADE, related_name="attachments")
+    title = models.CharField(max_length=200, blank=True, default="")
+    file = models.FileField(upload_to="service_log_attachments/%Y/%m/")
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    uploaded_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="uploaded_service_log_attachments",
+    )
+
+    class Meta:
+        ordering = ["uploaded_at"]
+
+    def __str__(self) -> str:
+        return self.title or self.file.name
+
+
+class ServiceLogSignatureRequest(models.Model):
+    """
+    Tracks a request for customer signature on a service log.
+    Who can sign is configured per request; audit events record opening/signing.
+    """
+    service_log = models.ForeignKey(ServiceLog, on_delete=models.CASCADE, related_name="signature_requests")
+    requested_at = models.DateTimeField(auto_now_add=True)
+    requested_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="requested_service_log_signatures",
+    )
+    # Who can sign: comma-separated email or "customer_contact" etc.; or FK to CustomerMembership
+    allowed_signer_emails = models.TextField(
+        blank=True,
+        default="",
+        help_text="Comma-separated emails of people who may sign, or leave blank for customer admins",
+    )
+    signed_at = models.DateTimeField(null=True, blank=True)
+    signed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="signed_service_logs",
+    )
+    signed_document = models.FileField(
+        upload_to="service_log_signed/%Y/%m/",
+        blank=True,
+        null=True,
+        help_text="Generated document with signature (e.g. PDF) after signing",
+    )
+    status = models.CharField(
+        max_length=20,
+        choices=[
+            ("pending", "Pending"),
+            ("signed", "Signed"),
+            ("expired", "Expired"),
+            ("cancelled", "Cancelled"),
+        ],
+        default="pending",
+        db_index=True,
+    )
+
+    class Meta:
+        ordering = ["-requested_at"]
+
+    def __str__(self) -> str:
+        return f"Signature request for {self.service_log.service_id} ({self.status})"
+
+
+class ServiceLogAuditEvent(models.Model):
+    """Audit log for service log document: opened, signature requested, signed, etc."""
+    service_log = models.ForeignKey(ServiceLog, on_delete=models.CASCADE, related_name="audit_events")
+    event_type = models.CharField(
+        max_length=50,
+        choices=[
+            ("viewed", "Document viewed"),
+            ("signature_requested", "Signature requested"),
+            ("signature_sent", "Signature request sent"),
+            ("signed", "Document signed"),
+            ("downloaded", "Document downloaded"),
+        ],
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="service_log_audit_events",
+    )
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
+    user_agent = models.CharField(max_length=500, blank=True, default="")
+    created_at = models.DateTimeField(auto_now_add=True)
+    extra = models.JSONField(default=dict, blank=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+        indexes = [models.Index(fields=["service_log", "-created_at"])]
+
+    def __str__(self) -> str:
+        return f"{self.service_log.service_id}: {self.event_type} at {self.created_at}"
+
+
+class ServiceVisit(models.Model):
+    """Planned service visit to a facility (for calendar and notifications)."""
+    facility = models.ForeignKey(Facility, on_delete=models.CASCADE, related_name="service_visits")
+    title = models.CharField(max_length=200)
+    scheduled_start = models.DateTimeField()
+    scheduled_end = models.DateTimeField(null=True, blank=True)
+    description = models.TextField(blank=True, default="")
+    service_log = models.ForeignKey(
+        ServiceLog,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="scheduled_visits",
+        help_text="Link to service log after visit is completed",
+    )
+    notified_at = models.DateTimeField(null=True, blank=True, help_text="When notification was sent")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="created_service_visits",
+    )
+
+    class Meta:
+        ordering = ["scheduled_start"]
+        indexes = [
+            models.Index(fields=["facility", "scheduled_start"]),
+        ]
+        verbose_name = "Service visit"
+        verbose_name_plural = "Service visits"
+
+    def __str__(self) -> str:
+        return f"{self.facility.name}: {self.title} ({self.scheduled_start.date()})"
 
 
 class FacilityDocument(models.Model):
