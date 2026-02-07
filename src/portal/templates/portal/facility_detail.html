@@ -158,7 +158,7 @@
               <tbody>
                 {% for c in contacts %}
                 <tr>
-                  <td><strong>{{ c.name }}</strong></td>
+                  <td>{{ c.name }}</td>
                   <td>{{ c.role|default:"—" }}</td>
                   <td>{% if c.email %}<a href="mailto:{{ c.email }}">{{ c.email }}</a>{% else %}—{% endif %}</td>
                   <td>{% if c.phone %}<a href="tel:{{ c.phone }}">{{ c.phone }}</a>{% else %}—{% endif %}</td>

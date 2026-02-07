@@ -4,7 +4,7 @@ Project: PMG Portal
 Purpose: Detailed changelog (SemVer)
 Path: CHANGELOG.md
 Created: 2026-02-05
-Last Modified: 2026-02-09
+Last Modified: 2026-02-10
 -->
 
 # Changelog
@@ -70,6 +70,23 @@ This project follows Semantic Versioning (SemVer).
 #### Portal
 - **Facility – hash og scroll**: Ved innlasting med hash (f.eks. #contacts) settes riktig tab men siden scroller ikke ned; brukeren forblir øverst (admin facility_card + portal facility_detail og fragment).
 - **Facility – serviceavtale-overlay**: Overlay er nå transparent (rgba(0,0,0,0.45)) slik at anleggsbildet/placeholderen er fullt synlig under; ingen «kutting» av bildet.
+
+---
+
+## [4.9.0-beta.4] - 2026-02-09
+
+### Added
+
+#### Kunngjøringer – generell vs. anlegg
+- **Announcement.facility**: Valgfri FK til anlegg. Tom = generell kunngjøring (vises på dashboard); satt = kun vist på det anleggets side. Migrering 0019_announcement_facility.
+- **Skjema**: Felt «Facility» i Legg til/Rediger kunngjøring; validering at anlegg har kunden. Opprett fra anlegg pre-fyller facility.
+- **Lister**: Admin Announcements-liste har kolonne «Facility» (anlegg eller General). Facility-fanen Kunngjøringer har kolonne «Visning» (Dette anlegget / Generell).
+- **Portal**: Dashboard viser kun kunngjøringer med facility=null. Anleggsside får context facility_announcements (generelle + for anlegget).
+
+### Changed
+
+- **Portal /facilities/…/#contacts**: Kontaktnavn i tabellen vises ikke lenger i fet skrift.
+- **Admin /admin/facilities/…/#customers**: Sidemeny og seksjon «Kunder» / «Kunder med tilgang» endret til «Tilgang».
 
 ---
 

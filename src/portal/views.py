@@ -57,11 +57,12 @@ def _portal_home_context(request, customer, links, active_role=None, memberships
     """Build context for portal home (full page or fragment)."""
     now = timezone.now()
     announcements = list(
-        Announcement.objects.filter(customer=customer).filter(
-            Q(valid_from__isnull=True) | Q(valid_from__lte=now)
-        ).filter(
-            Q(valid_until__isnull=True) | Q(valid_until__gte=now)
-        ).select_related("created_by").order_by("-is_pinned", "-created_at")[:10]
+        Announcement.objects.filter(customer=customer)
+        .filter(facility__isnull=True)
+        .filter(Q(valid_from__isnull=True) | Q(valid_from__lte=now))
+        .filter(Q(valid_until__isnull=True) | Q(valid_until__gte=now))
+        .select_related("created_by")
+        .order_by("-is_pinned", "-created_at")[:10]
     )
     facilities = Facility.objects.filter(customers=customer, is_active=True)
     facilities_count = facilities.count()
@@ -409,6 +410,17 @@ def facility_detail(request, slug):
         "service_logs_count": service_logs.count(),
     }
 
+    # Announcements for this facility: general (no facility) + announcements for this facility
+    now = timezone.now()
+    facility_announcements = list(
+        Announcement.objects.filter(customer=customer)
+        .filter(Q(facility__isnull=True) | Q(facility=facility))
+        .filter(Q(valid_from__isnull=True) | Q(valid_from__lte=now))
+        .filter(Q(valid_until__isnull=True) | Q(valid_until__gte=now))
+        .select_related("created_by", "facility")
+        .order_by("-is_pinned", "-created_at")[:20]
+    )
+
     is_htmx = request.headers.get("HX-Request") == "true"
     context = {
         "facility": facility,
@@ -424,6 +436,7 @@ def facility_detail(request, slug):
         "service_types": service_types,
         "service_type_filter": service_type_filter,
         "facility_datasheets": facility_datasheets,
+        "facility_announcements": facility_announcements,
         "stats": stats,
     }
     

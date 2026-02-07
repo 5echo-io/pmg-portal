@@ -90,7 +90,7 @@ class PortalLinkForm(forms.ModelForm):
 class AnnouncementForm(forms.ModelForm):
     class Meta:
         model = Announcement
-        fields = ("customer", "title", "body", "is_pinned", "valid_from", "valid_until")
+        fields = ("customer", "facility", "title", "body", "is_pinned", "valid_from", "valid_until")
         widgets = {
             "body": forms.Textarea(attrs={"rows": 6}),
             "valid_from": forms.DateTimeInput(attrs={"type": "datetime-local"}),
@@ -101,6 +101,23 @@ class AnnouncementForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if "customer" in self.fields:
             self.fields["customer"].queryset = Customer.objects.all().order_by("name")
+        if "facility" in self.fields:
+            self.fields["facility"].queryset = Facility.objects.all().order_by("name")
+            self.fields["facility"].required = False
+            self.fields["facility"].help_text = _(
+                "Optional. Empty = general announcement (dashboard). Set = only shown on that facility's page."
+            )
+
+    def clean(self):
+        data = super().clean()
+        facility = data.get("facility")
+        customer = data.get("customer")
+        if facility and customer and not facility.customers.filter(pk=customer.pk).exists():
+            self.add_error(
+                "facility",
+                forms.ValidationError(_("The selected facility does not have access for this customer.")),
+            )
+        return data
 
 
 class FacilityForm(forms.ModelForm):

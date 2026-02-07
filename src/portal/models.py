@@ -150,9 +150,19 @@ class PortalLink(models.Model):
 
 class Announcement(models.Model):
     """
-    Announcements posted by admins, visible to all members of a customer.
+    Announcements posted by admins, visible to customer members.
+    - facility is None: general announcement (shown on portal dashboard).
+    - facility is set: announcement only shown when viewing that facility.
     """
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name="announcements", db_index=True)
+    facility = models.ForeignKey(
+        "Facility",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="announcements",
+        help_text="Optional: when set, announcement is only shown on this facility's page; when empty, shown on dashboard (general).",
+    )
     title = models.CharField(max_length=200)
     body = models.TextField(help_text="Plain text or HTML content")
     is_pinned = models.BooleanField(default=False, help_text="Pinned announcements appear first")

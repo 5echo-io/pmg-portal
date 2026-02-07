@@ -4,7 +4,7 @@ Project: PMG Portal
 Purpose: Build and release log
 Path: BUILDLOG.md
 Created: 2026-02-05
-Last Modified: 2026-02-09
+Last Modified: 2026-02-10
 -->
 
 # BUILDLOG
@@ -12,6 +12,13 @@ Last Modified: 2026-02-09
 Chronological log of builds and releases (newest first). Each entry: date, branch, version (on bump), short summary.
 
 ---
+
+- 2026-02-10 (Europe/Oslo)
+  - Branch: dev
+  - Version: 4.9.0-beta.4
+  - Summary:
+    - Announcements: optional facility FK (general vs facility-specific); form field and validation; portal dashboard only general, facility_announcements on facility page; admin list/tab columns Facility/Visning. Portal contacts name not bold. Admin facility tab "Kunder" → "Tilgang".
+  - Version bump: 4.9.0-beta.3 → 4.9.0-beta.4
 
 - 2026-02-09 (Europe/Oslo)
   - Branch: dev

@@ -878,6 +878,8 @@ def announcement_add(request):
                 form.fields["customer"].initial = Customer.objects.get(pk=customer_id)
             except Customer.DoesNotExist:
                 pass
+        if redirect_to_facility:
+            form.fields["facility"].initial = redirect_to_facility
     return render(
         request,
         "admin_app/portal/announcement_form.html",
@@ -1024,7 +1026,8 @@ def facility_detail(request, slug):
     service_visits = facility.service_visits.all().select_related("service_log").order_by("scheduled_start")
     announcements = (
         Announcement.objects.filter(customer__in=customers)
-        .select_related("customer", "created_by")
+        .filter(Q(facility__isnull=True) | Q(facility=facility))
+        .select_related("customer", "created_by", "facility")
         .order_by("-created_at")
     )
     return render(

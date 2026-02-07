@@ -30,6 +30,7 @@
     <thead>
       <tr>
         <th>{% trans "Customer" %}</th>
+        <th>{% trans "Facility" %}</th>
         <th>{% trans "Title" %}</th>
         <th>{% trans "Pinned" %}</th>
         <th>{% trans "Created" %}</th>
@@ -40,6 +41,7 @@
       {% for ann in page_obj %}
       <tr>
         <td><a href="{% url 'admin_app:admin_customer_detail' ann.customer.slug %}">{{ ann.customer.name }}</a></td>
+        <td>{% if ann.facility %}<a href="{% url 'admin_app:admin_facility_detail' ann.facility.slug %}">{{ ann.facility.name }}</a>{% else %}<span class="muted">{% trans "General" %}</span>{% endif %}</td>
         <td>{{ ann.title }}</td>
         <td>{% if ann.is_pinned %}{% trans "Yes" %}{% else %}—{% endif %}</td>
         <td>{{ ann.created_at|date:"SHORT_DATETIME_FORMAT" }}{% if ann.created_by %} {% trans "by" %} {{ ann.created_by.get_full_name|default:ann.created_by.username }}{% endif %}</td>
@@ -53,7 +55,7 @@
       </tr>
       {% empty %}
       <tr>
-        <td colspan="5">{% trans "No announcements found." %}</td>
+        <td colspan="6">{% trans "No announcements found." %}</td>
       </tr>
       {% endfor %}
     </tbody>

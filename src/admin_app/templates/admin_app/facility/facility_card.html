@@ -67,7 +67,7 @@
   <!-- Sidebar + Content (under card) -->
   <div class="facility-card-body">
     <nav class="facility-card-sidemenu" aria-label="{% trans 'Anlegg-seksjoner' %}">
-      <a href="#customers" class="facility-sidemenu-item active" data-tab="customers">{% trans "Kunder" %} ({{ customers|length }})</a>
+      <a href="#customers" class="facility-sidemenu-item active" data-tab="customers">{% trans "Tilgang" %} ({{ customers|length }})</a>
       <a href="#contacts" class="facility-sidemenu-item" data-tab="contacts">{% trans "Kontaktpersoner" %} ({{ contacts|length }})</a>
       <a href="#racks" class="facility-sidemenu-item" data-tab="racks">{% trans "Racks" %} ({{ racks|length }})</a>
       <a href="#network" class="facility-sidemenu-item" data-tab="network">{% trans "Nettverksenheter" %} ({{ network_devices|length }})</a>
@@ -82,7 +82,7 @@
     <!-- Customers Tab -->
     <div class="customer-tab-panel active" id="customers">
       <div class="customer-section-header">
-        <h2>{% trans "Kunder med tilgang" %}</h2>
+        <h2>{% trans "Tilgang" %}</h2>
         <button type="button" class="admin-toolbar-add-btn admin-toolbar-add-btn--fit facility-customers-modal-btn">{% trans "Administrer tilgang" %}</button>
       </div>
       {% if customers %}
@@ -421,7 +421,7 @@
         <h2>{% trans "Kunngjøringer" %}</h2>
         <a href="{% url 'admin_app:admin_announcement_add' %}?facility={{ facility.slug }}" class="admin-toolbar-add-btn admin-toolbar-add-btn--fit">{% trans "Opprett kunngjøring" %}</a>
       </div>
-      <p class="muted">{% trans "Kunngjøringer for kunder med tilgang til dette anlegget. Velg kunde når du oppretter." %}</p>
+      <p class="muted">{% trans "Kunngjøringer for kunder med tilgang til dette anlegget. Velg kunde og evt. anlegg (tom = generell/dashboard) når du oppretter." %}</p>
       {% if announcements %}
       <div class="admin-table-wrap">
         <table class="admin-table">
@@ -429,6 +429,7 @@
             <tr>
               <th>{% trans "Tittel" %}</th>
               <th>{% trans "Kunde" %}</th>
+              <th>{% trans "Visning" %}</th>
               <th>{% trans "Opprettet" %}</th>
               <th>{% trans "Gyldig" %}</th>
               <th class="admin-table-actions"></th>
@@ -439,6 +440,7 @@
             <tr>
               <td>{{ ann.title }}</td>
               <td><a href="{% url 'admin_app:admin_customer_detail' ann.customer.slug %}">{{ ann.customer.name }}</a></td>
+              <td>{% if ann.facility %}{% trans "Dette anlegget" %}{% else %}<span class="muted">{% trans "Generell (dashboard)" %}</span>{% endif %}</td>
               <td>{{ ann.created_at|date:"d.m.Y H:i" }}{% if ann.created_by %} ({{ ann.created_by.get_full_name|default:ann.created_by.username }}){% endif %}</td>
               <td>{% if ann.valid_from %}{{ ann.valid_from|date:"d.m.Y" }}{% endif %}{% if ann.valid_until %} – {{ ann.valid_until|date:"d.m.Y" }}{% endif %}{% if not ann.valid_from and not ann.valid_until %}—{% endif %}</td>
               <td class="admin-table-actions">
