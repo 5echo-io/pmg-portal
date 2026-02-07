@@ -24,6 +24,7 @@ Pre-release builds (alpha, beta, rc) are listed here. Only full releases (no bui
 - **Device types & device instances**: Portal models (DeviceType, device instance FK); admin device type list/detail/form, device instance add (choose facility) and form (full + fragment); facility card device-type chooser fragment; forms, views, URLs; locale +12
 - **Devices & catalog**: Admin device categories, manufacturers, product datasheets, device landing; admin notifications and announcements; portal models (announcements, preferences, devices, manufacturer, category, datasheet, SLA); portal base, facility detail, customer home, no-customer; app.css +370
 - **Oppgradering/nedgradering**: Lagret appversjon i DB (SystemInfo), versjonssjekk ved oppstart (503 ved nedgradering uten migrering bakover), set_stored_version etter migrate; BACKWARDS_COMPATIBILITY.md og retningslinjer for filer/funksjoner per versjon
+- **Portal base, footer og styling**: base.html oppdatert; site_footer; app.css +81
 
 ### Added
 - **Versjonering og kompatibilitet**: SystemInfo-modell (migrasjon 0009), versioning.py og version_middleware; install/update kjører set_stored_version; backup-manifest inkluderer app_version; BACKWARDS_COMPATIBILITY.md

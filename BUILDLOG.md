@@ -2,6 +2,13 @@
 
 - 2026-02-06 (Europe/Oslo)
   - Branch: dev
+  - Version: 4.8.0-beta.4
+  - Summary:
+    - Portal base.html updates; site_footer.html; app.css +81
+    - Version bump: 4.8.0-beta.3 → 4.8.0-beta.4
+
+- 2026-02-06 (Europe/Oslo)
+  - Branch: dev
   - Version: 4.8.0-beta.3
   - Summary:
     - Backwards compatibility: SystemInfo (portal), migration 0009_systeminfo; pmg_portal.versioning + version_middleware; set_stored_version management command; install.sh/update.sh run set_stored_version after migrate

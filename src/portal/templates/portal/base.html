@@ -13,12 +13,6 @@
     <div class="topbar-inner">
     <div class="topbar-left">
       <div class="brand">{% trans "PMG Portal" %}</div>
-      {% if active_customer_id %}
-      <div class="topbar-search-wrap" id="topbar-search-wrap">
-        <input type="search" class="topbar-search-input" id="portal-global-search" placeholder="{% trans 'Search facilities, devices, links…' %}" autocomplete="off" aria-label="{% trans 'Search' %}"/>
-        <div class="topbar-search-results" id="portal-search-results" hidden></div>
-      </div>
-      {% endif %}
       <div class="topbar-nav">
         <a class="topbar-btn {% if request.path == '/' %}active{% endif %}" href="/" hx-get="/" hx-target="#main-content" hx-swap="innerHTML" hx-push-url="true">{% trans "Dashboard" %}</a>
         <span class="topbar-btn topbar-btn--disabled topbar-btn--with-tooltip">
@@ -40,6 +34,18 @@
           <span class="tooltip">{% trans "This feature is under development" %}</span>
         </span>
       </div>
+      {% if active_customer_id %}
+      <div class="topbar-search-wrap" id="topbar-search-wrap">
+        <button type="button" class="topbar-btn topbar-search-trigger" id="topbar-search-trigger" onclick="openPortalSearch()" aria-label="{% trans 'Search' %}" title="{% trans 'Search' %} (/)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </button>
+        <div class="topbar-search-inner">
+          <input type="search" class="topbar-search-input" id="portal-global-search" placeholder="{% trans 'Search facilities, devices, links…' %}" autocomplete="off" aria-label="{% trans 'Search' %}"/>
+          <button type="button" class="topbar-search-close" onclick="closePortalSearch()" aria-label="{% trans 'Close search' %}">×</button>
+          <div class="topbar-search-results" id="portal-search-results" hidden></div>
+        </div>
+      </div>
+      {% endif %}
     </div>
     <div class="topbar-right">
       {% if active_customer_id %}
@@ -322,6 +328,21 @@
       }
     })();
 
+    window.openPortalSearch = function() {
+      const wrap = document.getElementById('topbar-search-wrap');
+      const input = document.getElementById('portal-global-search');
+      if (wrap) wrap.classList.add('is-open');
+      if (input) input.focus();
+    };
+    window.closePortalSearch = function() {
+      const wrap = document.getElementById('topbar-search-wrap');
+      const input = document.getElementById('portal-global-search');
+      const resultsEl = document.getElementById('portal-search-results');
+      if (wrap) wrap.classList.remove('is-open');
+      if (input) input.value = '';
+      if (resultsEl) { resultsEl.hidden = true; resultsEl.innerHTML = ''; }
+    };
+
     // Global search: debounced fetch, show results dropdown
     (function() {
       const input = document.getElementById('portal-global-search');
@@ -381,14 +402,16 @@
         if (!e.target.closest('#topbar-search-wrap')) resultsEl.hidden = true;
       });
       input.addEventListener('blur', function() { setTimeout(function() { resultsEl.hidden = true; }, 150); });
+      input.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') { closePortalSearch(); }
+      });
     })();
 
     // Keyboard shortcuts: ? help, / focus search, Escape close modals
     document.addEventListener('keydown', function(e) {
       if (e.key === '/' && !e.ctrlKey && !e.metaKey && document.activeElement && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
         e.preventDefault();
-        var search = document.getElementById('portal-global-search');
-        if (search) { search.focus(); }
+        if (typeof window.openPortalSearch === 'function') window.openPortalSearch();
       }
       if (e.key === '?' && !e.ctrlKey && !e.metaKey) {
         e.preventDefault();
@@ -396,18 +419,42 @@
       }
     });
 
-    // HTMX: show loading indicator during requests; always hide on end or error so it never gets stuck
+    // HTMX: loading indicator only while HTMX requests are in flight; animate in over topbar
+    var htmxPendingRequests = 0;
     var htmxLoadingTimeout;
     function hideHtmxLoadingIndicator() {
+      htmxPendingRequests = Math.max(0, htmxPendingRequests - 1);
+      if (htmxPendingRequests !== 0) return;
       var ind = document.getElementById('htmx-loading-indicator');
-      if (ind) { ind.hidden = true; ind.setAttribute('aria-hidden', 'true'); }
+      if (!ind) return;
       if (htmxLoadingTimeout) { clearTimeout(htmxLoadingTimeout); htmxLoadingTimeout = null; }
+      ind.classList.remove('loading-indicator--visible');
+      ind.addEventListener('transitionend', function onEnd() {
+        ind.removeEventListener('transitionend', onEnd);
+        ind.hidden = true;
+        ind.setAttribute('aria-hidden', 'true');
+      }, { once: true });
     }
     function showHtmxLoadingIndicator() {
+      htmxPendingRequests++;
       var ind = document.getElementById('htmx-loading-indicator');
-      if (ind) { ind.hidden = false; ind.setAttribute('aria-hidden', 'false'); }
-      if (htmxLoadingTimeout) clearTimeout(htmxLoadingTimeout);
-      htmxLoadingTimeout = setTimeout(hideHtmxLoadingIndicator, 15000);
+      if (!ind) return;
+      ind.hidden = false;
+      ind.setAttribute('aria-hidden', 'false');
+      if (htmxPendingRequests === 1) {
+        requestAnimationFrame(function() { ind.classList.add('loading-indicator--visible'); });
+        if (htmxLoadingTimeout) clearTimeout(htmxLoadingTimeout);
+        htmxLoadingTimeout = setTimeout(function() {
+          htmxLoadingTimeout = null;
+          htmxPendingRequests = 0;
+          ind.classList.remove('loading-indicator--visible');
+          ind.addEventListener('transitionend', function onEnd() {
+            ind.removeEventListener('transitionend', onEnd);
+            ind.hidden = true;
+            ind.setAttribute('aria-hidden', 'true');
+          }, { once: true });
+        }, 15000);
+      }
     }
     document.body.addEventListener('htmx:beforeRequest', function() { showHtmxLoadingIndicator(); });
     document.body.addEventListener('htmx:afterRequest', function() { hideHtmxLoadingIndicator(); });

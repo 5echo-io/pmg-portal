@@ -519,17 +519,45 @@ a.link:hover { color: var(--text); }
   margin-left: auto;
 }
 
-/* Global search in topbar */
+/* Global search in topbar: icon opens search field (after menu buttons) */
 .topbar-search-wrap {
   position: relative;
-  margin-left: 16px;
-  flex: 1;
+  margin-left: 8px;
+  display: flex;
+  align-items: center;
+}
+
+.topbar-search-trigger {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.topbar-search-inner {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  min-width: 260px;
   max-width: 320px;
 }
 
+.topbar-search-wrap.is-open .topbar-search-inner {
+  display: flex;
+}
+
+.topbar-search-wrap.is-open .topbar-search-trigger {
+  display: none !important;
+}
+
 .topbar-search-input {
-  width: 100%;
-  padding: 8px 12px 8px 36px;
+  flex: 1;
+  min-width: 0;
+  padding: 8px 12px;
   border-radius: 8px;
   border: 1px solid var(--line);
   background: var(--card);
@@ -544,6 +572,29 @@ a.link:hover { color: var(--text); }
 .topbar-search-input:focus {
   outline: none;
   border-color: var(--muted);
+}
+
+.topbar-search-close {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  margin: 0;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.topbar-search-close:hover {
+  background: var(--btn);
+  color: var(--text);
 }
 
 .topbar-search-results {
@@ -4045,10 +4096,10 @@ button.admin-btn-sm {
   color: #4ade80;
 }
 
-/* Loading indicator (HTMX) – below topbar so it doesn't cover the menu */
+/* Loading indicator (HTMX) – animates in over the topbar only during HTMX requests */
 .loading-indicator {
   position: fixed;
-  top: 56px;
+  top: 0;
   left: 0;
   right: 0;
   padding: 8px 16px;
@@ -4058,9 +4109,16 @@ button.admin-btn-sm {
   align-items: center;
   justify-content: center;
   gap: 10px;
-  z-index: 9998;
+  z-index: 9999;
   font-size: 0.9rem;
   color: var(--muted);
+  transform: translateY(-100%);
+  opacity: 0;
+  transition: transform 0.25s ease-out, opacity 0.2s ease-out;
+}
+.loading-indicator.loading-indicator--visible {
+  transform: translateY(0);
+  opacity: 1;
 }
 
 .loading-indicator-spinner {
@@ -4152,12 +4210,9 @@ button.admin-btn-sm {
     gap: 8px;
   }
 
-  .topbar-search-wrap {
-    order: 3;
-    width: 100%;
+  .topbar-search-wrap.is-open .topbar-search-inner {
     max-width: 100%;
-    margin-left: 0;
-    margin-top: 4px;
+    min-width: 180px;
   }
 
   .topbar-nav .topbar-btn {
