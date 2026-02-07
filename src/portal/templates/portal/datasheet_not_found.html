@@ -7,6 +7,6 @@
   <h1>{% trans "Product datasheet" %}</h1>
   <p class="muted">{% trans "No datasheet is linked to this product yet." %}</p>
   <p>{% trans "Product" %}: <strong>{{ device_type.name }}</strong> ({{ device_type.slug }})</p>
-  <p><a href="/">{% trans "Back to Dashboard" %}</a></p>
+  <p><a href="{% url 'datasheet_list' %}">{% trans "Back to Product datasheets" %}</a></p>
 </div>
 {% endblock %}

@@ -8,12 +8,14 @@ from .views import (
     facility_detail,
     portal_search,
     set_portal_preference,
+    datasheet_list,
     datasheet_by_slug,
     datasheet_pdf,
 )
 
 urlpatterns = [
     path("", portal_home, name="portal_home"),
+    path("datasheets/", datasheet_list, name="datasheet_list"),
     path("switch/<int:customer_id>/", switch_customer, name="switch_customer"),
     path("about/check-updates/", check_updates, name="check_updates"),
     path("i18n/setlang/", set_language_custom, name="set_language_custom"),

@@ -2,7 +2,7 @@
 <html lang="nb">
 <head>
   <meta charset="utf-8"/>
-  <title>{{ datasheet.title }} – Product datasheet</title>
+  <title>{{ datasheet.title }} – {{ pdf_title_suffix|default:"Product datasheet" }}</title>
   <style>
     body { font-family: Helvetica, Arial, sans-serif; font-size: 11pt; line-height: 1.4; color: #333; margin: 0; padding: 20px; }
     h1 { font-size: 18pt; margin: 0 0 8px 0; }
@@ -18,7 +18,7 @@
 </head>
 <body>
   <h1>{{ datasheet.title }}</h1>
-  <p class="meta">Created: {{ datasheet.uploaded_at|date:"Y-m-d H:i" }} · Last updated: {{ datasheet.updated_at|date:"Y-m-d H:i" }}</p>
+  <p class="meta">{{ meta_created_label|default:"Created" }}: {{ datasheet.uploaded_at|date:"Y-m-d H:i" }} · {{ meta_updated_label|default:"Last updated" }}: {{ datasheet.updated_at|date:"Y-m-d H:i" }}</p>
   <div class="content">
     {{ content_html|safe }}
   </div>

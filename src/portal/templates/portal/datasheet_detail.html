@@ -4,65 +4,123 @@
 
 {% block content %}
 <div class="datasheet-page">
-  <!-- Breadcrumb: same structure as facility detail -->
-  <div class="breadcrumb-row">
-    <a href="/" class="breadcrumb-back-btn" aria-label="{% trans 'Back to Dashboard' %}" hx-get="/" hx-target="#main-content" hx-push-url="true">← {% trans "Dashboard" %}</a>
+  <!-- Breadcrumb: back to Product datasheets, not Dashboard -->
+  <div class="breadcrumb-row no-print">
+    <a href="{% url 'datasheet_list' %}" class="breadcrumb-back-btn" aria-label="{% trans 'Back to Product datasheets' %}" hx-get="{% url 'datasheet_list' %}" hx-target="#main-content" hx-push-url="true">← {% trans "Product datasheets" %}</a>
     <nav class="breadcrumb admin-breadcrumb" aria-label="Breadcrumb">
       <a href="/" hx-get="/" hx-target="#main-content" hx-push-url="true">{% trans "Dashboard" %}</a>
       <span class="breadcrumb-sep">→</span>
-      <span>{% trans "Product datasheet" %}</span>
+      <a href="{% url 'datasheet_list' %}" hx-get="{% url 'datasheet_list' %}" hx-target="#main-content" hx-push-url="true">{% trans "Product datasheets" %}</a>
       <span class="breadcrumb-sep">→</span>
       <span>{{ datasheet.title }}</span>
     </nav>
   </div>
 
-  <div class="datasheet-header-row">
-    <div class="datasheet-header-main">
-      <h1 class="datasheet-title">{{ datasheet.title }}</h1>
-      <p class="datasheet-meta">
-        {% trans "Created" %}: {{ datasheet.uploaded_at|date:"Y-m-d H:i" }}
-        &nbsp;·&nbsp;
-        {% trans "Last updated" %}: {{ datasheet.updated_at|date:"Y-m-d H:i" }}
-      </p>
-    </div>
-    <div class="datasheet-actions">
-      <a href="{% url 'datasheet_pdf' device_type.slug %}" class="datasheet-action-btn" title="{% trans 'Last ned .PDF' %}" aria-label="{% trans 'Last ned .PDF' %}">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M12 18v-6"/><path d="M9 15l3 3 3-3"/></svg>
-      </a>
-      <button type="button" class="datasheet-action-btn" onclick="window.print()" title="{% trans 'Print datasheet' %}" aria-label="{% trans 'Print datasheet' %}">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/></svg>
-      </button>
-      {% if datasheet.file %}
-      <a href="{{ datasheet.file.url }}" target="_blank" rel="noopener" class="datasheet-action-btn" title="{% trans 'Last ned produsentens datablad' %}" aria-label="{% trans 'Last ned produsentens datablad' %}">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      </a>
-      {% endif %}
+  <div class="datasheet-layout">
+    <!-- Table of contents: left, ~1/8, hidden in print/PDF -->
+    <aside class="datasheet-toc-col no-print" id="datasheet-toc-wrap" aria-label="{% trans 'Table of contents' %}">
+      <nav class="datasheet-toc" id="datasheet-toc">
+        <div class="datasheet-toc-title">{% trans "Table of contents" %}</div>
+        <ul class="datasheet-toc-list" id="datasheet-toc-list"></ul>
+      </nav>
+    </aside>
+
+    <div class="datasheet-main-col">
+      <div class="datasheet-header-row">
+        <div class="datasheet-header-main">
+          <h1 class="datasheet-title">{{ datasheet.title }}</h1>
+          <p class="datasheet-meta">
+            {% trans "Created" %}: {{ datasheet.uploaded_at|date:"Y-m-d H:i" }}
+            &nbsp;·&nbsp;
+            {% trans "Last updated" %}: {{ datasheet.updated_at|date:"Y-m-d H:i" }}
+          </p>
+        </div>
+        <div class="datasheet-actions">
+          <a href="{% url 'datasheet_pdf' device_type.slug %}" class="datasheet-action-btn" title="{% trans 'Download PDF' %}" aria-label="{% trans 'Download PDF' %}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M12 18v-6"/><path d="M9 15l3 3 3-3"/></svg>
+          </a>
+          <button type="button" class="datasheet-action-btn" onclick="window.print()" title="{% trans 'Print datasheet' %}" aria-label="{% trans 'Print datasheet' %}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/></svg>
+          </button>
+          {% if datasheet.file %}
+          <a href="{{ datasheet.file.url }}" target="_blank" rel="noopener" class="datasheet-action-btn" title="{% trans 'Download manufacturer datasheet' %}" aria-label="{% trans 'Download manufacturer datasheet' %}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          </a>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="datasheet-body print-datasheet">
+        {% if content_html %}
+        <div class="datasheet-content markdown-body" id="datasheet-content">
+          {{ content_html|safe }}
+        </div>
+        {% endif %}
+        {% if datasheet.file and not content_html %}
+        <p class="muted">{% trans "No Markdown content. Download the manufacturer PDF above." %}</p>
+        {% endif %}
+      </div>
+
+      <footer class="datasheet-footer print-only">
+        <p>© {{ datasheet.updated_at|date:"Y" }} Park Media Group AS</p>
+      </footer>
     </div>
   </div>
-
-  <div class="datasheet-body print-datasheet">
-    {% if content_html %}
-    <div class="datasheet-content markdown-body">
-      {{ content_html|safe }}
-    </div>
-    {% endif %}
-    {% if datasheet.file and not content_html %}
-    <p class="muted">{% trans "No Markdown content. Download the manufacturer PDF above." %}</p>
-    {% endif %}
-  </div>
-
-  <footer class="datasheet-footer print-only">
-    <p>© {{ datasheet.updated_at|date:"Y" }} Park Media Group AS</p>
-  </footer>
 </div>
 
 <style>
-/* Full width like portal dashboard – no extra max-width */
 .datasheet-page { width: 100%; padding: 0; }
+
+.datasheet-layout {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+.datasheet-toc-col {
+  flex: 0 0 12.5%;
+  min-width: 140px;
+  max-width: 200px;
+  position: sticky;
+  top: 1rem;
+}
+.datasheet-toc {
+  padding: 12px 0;
+  border-right: 1px solid var(--line, #d1d5db);
+  padding-right: 16px;
+}
+.datasheet-toc-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.datasheet-toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 0.875rem;
+}
+.datasheet-toc-list li { margin: 4px 0; }
+.datasheet-toc-list a {
+  color: var(--text);
+  text-decoration: none;
+  display: block;
+  padding: 2px 0;
+  border-left: 2px solid transparent;
+  padding-left: 8px;
+  margin-left: 0;
+}
+.datasheet-toc-list a:hover { color: var(--link); border-left-color: var(--link); }
+.datasheet-toc-list .toc-h2 { padding-left: 8px; }
+.datasheet-toc-list .toc-h3 { padding-left: 16px; }
+
+.datasheet-main-col { flex: 1; min-width: 0; }
 
 .datasheet-header-row {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 24px;
   margin-bottom: 24px;
@@ -72,7 +130,7 @@
 .datasheet-title { font-size: 1.75rem; margin: 0 0 0.5rem 0; }
 .datasheet-meta { color: var(--muted); font-size: 0.9rem; margin: 0; }
 
-/* Icon buttons: right-aligned, only as wide as icon needs */
+/* Action buttons: visible icons (border + color), vertically centered */
 .datasheet-actions {
   display: flex;
   gap: 8px;
@@ -89,11 +147,12 @@
   border-radius: 8px;
   background: var(--bg-secondary, #f3f4f6);
   border: 1px solid var(--line, #d1d5db);
-  color: var(--text);
+  color: var(--text, #1f2937);
   text-decoration: none;
   cursor: pointer;
   transition: background 0.2s, border-color 0.2s, color 0.2s;
 }
+.datasheet-action-btn svg { stroke: currentColor; }
 .datasheet-action-btn:hover {
   background: var(--line, #e5e7eb);
   border-color: var(--text);
@@ -108,13 +167,13 @@
 .markdown-body { line-height: 1.6; }
 .markdown-body h1 { font-size: 1.5rem; margin-top: 1.5rem; }
 .markdown-body h2 { font-size: 1.25rem; margin-top: 1.25rem; }
+.markdown-body h3 { font-size: 1.1rem; margin-top: 1rem; }
 .markdown-body table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
 .markdown-body th, .markdown-body td { border: 1px solid var(--line, #ddd); padding: 0.5rem 0.75rem; text-align: left; }
 .markdown-body th { background: var(--bg-secondary, #f3f4f6); font-weight: 600; }
 
 .datasheet-footer.print-only { display: none; margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--line); font-size: 0.85rem; color: var(--muted); }
 
-/* Avoid breaking tables/sections across pages (PDF + print) */
 .markdown-body table,
 .markdown-body h1,
 .markdown-body h2,
@@ -125,12 +184,13 @@
 .markdown-body h3 { page-break-after: avoid; }
 
 @media print {
-  /* Hide site chrome – print only the “PDF version” (content + copyright) */
+  .no-print,
+  .datasheet-toc-col,
+  .breadcrumb-row,
+  .datasheet-actions,
   .topbar,
   .site-footer-wrapper,
   .footer,
-  .breadcrumb-row,
-  .datasheet-actions,
   .loading-indicator {
     display: none !important;
   }
@@ -138,6 +198,7 @@
   .main-content { padding: 0; }
   .main-content .container { max-width: none; padding: 16px 24px; }
   .datasheet-page { padding: 0; }
+  .datasheet-layout { display: block; }
   .datasheet-header-row { margin-bottom: 16px; }
   .print-only { display: block !important; }
   .datasheet-footer.print-only {
@@ -153,4 +214,44 @@
   }
 }
 </style>
+
+<script>
+(function() {
+  var content = document.getElementById('datasheet-content');
+  var tocList = document.getElementById('datasheet-toc-list');
+  if (!content || !tocList) return;
+  var headings = content.querySelectorAll('h1, h2, h3');
+  if (headings.length === 0) {
+    document.getElementById('datasheet-toc-wrap').style.display = 'none';
+    return;
+  }
+  function slugify(text) {
+    return text.trim().toLowerCase()
+      .replace(/\s+/g, '-')
+      .replace(/[^\w\u00C0-\u024F\-]/g, '')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '') || 'section';
+  }
+  var seen = {};
+  headings.forEach(function(h, i) {
+    var id = slugify(h.textContent);
+    if (seen[id]) { seen[id]++; id = id + '-' + seen[id]; } else { seen[id] = 1; }
+    h.id = id;
+    var li = document.createElement('li');
+    li.className = 'toc-' + h.tagName.toLowerCase();
+    var a = document.createElement('a');
+    a.href = '#' + id;
+    a.textContent = h.textContent.trim();
+    a.addEventListener('click', function(e) {
+      e.preventDefault();
+      document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+      if (window.history && window.history.replaceState) {
+        window.history.replaceState(null, '', '#' + id);
+      }
+    });
+    li.appendChild(a);
+    tocList.appendChild(li);
+  });
+})();
+</script>
 {% endblock %}

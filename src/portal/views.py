@@ -486,6 +486,19 @@ def set_portal_preference(request):
 # ----- Product datasheet (public-style page at /datasheet/<slug>/) -----
 
 @login_required
+def datasheet_list(request):
+    """List device types that have a product datasheet (portal overview)."""
+    from django.utils.translation import gettext as _
+    device_types_with_datasheet = DeviceType.objects.filter(
+        is_active=True,
+        datasheets__isnull=False,
+    ).distinct().order_by("name")
+    return render(request, "portal/datasheet_list.html", {
+        "device_types": device_types_with_datasheet,
+    })
+
+
+@login_required
 def datasheet_by_slug(request, slug):
     """Show product datasheet at /datasheet/<product-slug>/ (slug = DeviceType.slug)."""
     device_type = get_object_or_404(DeviceType, slug=slug, is_active=True)
@@ -530,12 +543,16 @@ def datasheet_pdf(request, slug):
         )
     from django.template.loader import render_to_string
     from django.utils import timezone
+    from django.utils.translation import gettext as _
     year = timezone.now().year
     html = render_to_string("portal/datasheet_pdf.html", {
         "datasheet": datasheet,
         "device_type": device_type,
         "content_html": content_html,
         "copyright_year": year,
+        "meta_created_label": _("Created"),
+        "meta_updated_label": _("Last updated"),
+        "pdf_title_suffix": _("Product datasheet"),
     })
     try:
         from xhtml2pdf import pisa

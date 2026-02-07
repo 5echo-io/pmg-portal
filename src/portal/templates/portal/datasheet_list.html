@@ -1,0 +1,38 @@
+{% extends "portal/base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Product datasheets" %} | {% trans "PMG Portal" %}{% endblock %}
+
+{% block content %}
+<div class="datasheet-list-page">
+  <div class="breadcrumb-row">
+    <a href="/" class="breadcrumb-back-btn" aria-label="{% trans 'Back to Dashboard' %}" hx-get="/" hx-target="#main-content" hx-push-url="true">← {% trans "Dashboard" %}</a>
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="/" hx-get="/" hx-target="#main-content" hx-push-url="true">{% trans "Dashboard" %}</a>
+      <span class="breadcrumb-sep">→</span>
+      <span>{% trans "Product datasheets" %}</span>
+    </nav>
+  </div>
+
+  <h1 class="page-title">{% trans "Product datasheets" %}</h1>
+  <p class="muted">{% trans "Choose a product to view its datasheet." %}</p>
+
+  {% if device_types %}
+  <ul class="datasheet-list-links">
+    {% for dt in device_types %}
+    <li>
+      <a href="{% url 'datasheet_by_slug' dt.slug %}" hx-get="{% url 'datasheet_by_slug' dt.slug %}" hx-target="#main-content" hx-push-url="true">{{ dt.name }}</a>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="muted">{% trans "No product datasheets available yet." %}</p>
+  {% endif %}
+</div>
+<style>
+.datasheet-list-page .page-title { margin: 0 0 0.5rem 0; }
+.datasheet-list-links { list-style: none; padding: 0; margin: 1rem 0 0 0; }
+.datasheet-list-links li { margin: 0.5rem 0; }
+.datasheet-list-links a { color: var(--link); text-decoration: none; }
+.datasheet-list-links a:hover { text-decoration: underline; }
+</style>
+{% endblock %}

@@ -589,3 +589,33 @@ msgstr "Velg et produkt, deretter fyll ut detaljene for instansen."
 msgid "No devices. Create devices under Devices first."
 msgstr "Ingen enheter. Opprett enheter under Enheter først."
 
+msgid "Product datasheets"
+msgstr "Produktdatablad"
+
+msgid "Back to Product datasheets"
+msgstr "Tilbake til produktdatablad"
+
+msgid "Table of contents"
+msgstr "Innholdsfortegnelse"
+
+msgid "Download PDF"
+msgstr "Last ned PDF"
+
+msgid "Print datasheet"
+msgstr "Skriv ut datablad"
+
+msgid "Download manufacturer datasheet"
+msgstr "Last ned produsentens datablad"
+
+msgid "Last updated"
+msgstr "Sist oppdatert"
+
+msgid "No Markdown content. Download the manufacturer PDF above."
+msgstr "Ingen Markdown-innhold. Last ned produsentens PDF ovenfor."
+
+msgid "Choose a product to view its datasheet."
+msgstr "Velg et produkt for å se databladet."
+
+msgid "No product datasheets available yet."
+msgstr "Ingen produktdatablad tilgjengelig ennå."
+

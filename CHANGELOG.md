@@ -40,8 +40,10 @@ Pre-release builds (alpha, beta, rc) are listed here. Only full releases (no bui
 - **Install/update**: pkg-config og libcairo2-dev lagt til som systemavhengigheter (for xhtml2pdf/svglib/pycairo); update.sh sjekker og installerer dem før pip install
 - **Migrasjon 0010**: AlterModelOptions bruker `name=` i stedet for `model_name=` (Django-kompatibel)
 - **Portal datablad**: datasheet_detail og datasheet_pdf-templates oppdatert
+- **Portal datablad-sider**: Innholdsfortegnelse (TOC) til venstre, knapper vertikalt sentrert og synlige ikoner; tilbake til Produktdatablad; full norsk oversettelse; /datasheets/ oversikt
 
 ### Added
+- **Portal – Produktdatablad-oversikt**: /datasheets/ (datasheet_list) lister enheter med datablad; tilbake-lenke fra detail og not_found
 - **Portal – Datablad**: /datasheet/&lt;slug&gt;/ (detail), PDF-visning, datasheet_not_found; migrasjon 0010 (content_md, updated_at, file nullable); admin product_datasheet form/list oppdatert
 - **FILE_LOCATIONS.md**: Oversikt over malplasseringer etter omstrukturering
 - **Versjonering og kompatibilitet**: SystemInfo-modell (migrasjon 0009), versioning.py og version_middleware; install/update kjører set_stored_version; backup-manifest inkluderer app_version; BACKWARDS_COMPATIBILITY.md

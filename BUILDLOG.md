@@ -11,6 +11,13 @@ Last Modified: 2026-02-06
 
 - 2026-02-06 (Europe/Oslo)
   - Branch: dev
+  - Version: 4.8.0-beta.11
+  - Summary:
+    - Portal datasheet: datasheet_list view + URL /datasheets/; datasheet_detail TOC (left, no-print), actions centered, button visibility; back to Product datasheets; Norwegian strings; datasheet_pdf translated labels; datasheet_list.html
+    - Version bump: 4.8.0-beta.10 → 4.8.0-beta.11
+
+- 2026-02-06 (Europe/Oslo)
+  - Branch: dev
   - Version: 4.8.0-beta.10
   - Summary:
     - Portal: datasheet_detail.html, datasheet_pdf.html template updates
