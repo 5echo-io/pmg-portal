@@ -347,7 +347,7 @@ def facility_detail(request, slug):
     
     # Get related data
     racks = facility.racks.filter(is_active=True).order_by("name")
-    network_devices = facility.network_devices.filter(is_active=True).select_related("device_type", "rack").order_by("rack", "rack_position", "name")
+    network_devices = facility.network_devices.filter(is_active=True).select_related("product", "rack").order_by("rack", "rack_position", "name")
     ip_addresses = facility.ip_addresses.all().select_related("device").order_by("ip_address")
     documents = facility.documents.all().order_by("-uploaded_at")
     

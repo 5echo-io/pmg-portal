@@ -2,6 +2,16 @@
 
 - 2026-02-06 (Europe/Oslo)
   - Branch: dev
+  - Version: 4.8.0-beta.3
+  - Summary:
+    - Backwards compatibility: SystemInfo (portal), migration 0009_systeminfo; pmg_portal.versioning + version_middleware; set_stored_version management command; install.sh/update.sh run set_stored_version after migrate
+    - Backup manifest: app_version in manifest; backup_restore supports versioned format; settings middleware
+    - Portal: base.html, views; models SystemInfo; app.css tweaks
+    - BACKWARDS_COMPATIBILITY.md: upgrade/downgrade, feature and file compatibility guidelines
+    - Version bump: 4.8.0-beta.2 → 4.8.0-beta.3
+
+- 2026-02-06 (Europe/Oslo)
+  - Branch: dev
   - Version: 4.8.0-beta.2
   - Summary:
     - Admin: notifications (list), announcements (list/form); admin_app models.py, migration 0001_add_admin_notifications

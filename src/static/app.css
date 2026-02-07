@@ -4045,10 +4045,10 @@ button.admin-btn-sm {
   color: #4ade80;
 }
 
-/* Loading indicator (HTMX) */
+/* Loading indicator (HTMX) – below topbar so it doesn't cover the menu */
 .loading-indicator {
   position: fixed;
-  top: 0;
+  top: 56px;
   left: 0;
   right: 0;
   padding: 8px 16px;
@@ -4058,7 +4058,7 @@ button.admin-btn-sm {
   align-items: center;
   justify-content: center;
   gap: 10px;
-  z-index: 9999;
+  z-index: 9998;
   font-size: 0.9rem;
   color: var(--muted);
 }

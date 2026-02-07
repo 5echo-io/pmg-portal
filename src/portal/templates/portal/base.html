@@ -396,15 +396,23 @@
       }
     });
 
-    // HTMX: show loading indicator during requests
-    document.body.addEventListener('htmx:beforeRequest', function() {
-      var ind = document.getElementById('htmx-loading-indicator');
-      if (ind) { ind.hidden = false; ind.setAttribute('aria-hidden', 'false'); }
-    });
-    document.body.addEventListener('htmx:afterRequest', function() {
+    // HTMX: show loading indicator during requests; always hide on end or error so it never gets stuck
+    var htmxLoadingTimeout;
+    function hideHtmxLoadingIndicator() {
       var ind = document.getElementById('htmx-loading-indicator');
       if (ind) { ind.hidden = true; ind.setAttribute('aria-hidden', 'true'); }
-    });
+      if (htmxLoadingTimeout) { clearTimeout(htmxLoadingTimeout); htmxLoadingTimeout = null; }
+    }
+    function showHtmxLoadingIndicator() {
+      var ind = document.getElementById('htmx-loading-indicator');
+      if (ind) { ind.hidden = false; ind.setAttribute('aria-hidden', 'false'); }
+      if (htmxLoadingTimeout) clearTimeout(htmxLoadingTimeout);
+      htmxLoadingTimeout = setTimeout(hideHtmxLoadingIndicator, 15000);
+    }
+    document.body.addEventListener('htmx:beforeRequest', function() { showHtmxLoadingIndicator(); });
+    document.body.addEventListener('htmx:afterRequest', function() { hideHtmxLoadingIndicator(); });
+    document.body.addEventListener('htmx:responseError', function() { hideHtmxLoadingIndicator(); });
+    document.body.addEventListener('htmx:sendError', function() { hideHtmxLoadingIndicator(); });
   </script>
 
   <!-- Customer Switch Modal -->

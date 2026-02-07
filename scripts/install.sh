@@ -539,6 +539,8 @@ set +a
 # Create migrations if needed, then apply them
 sudo -E "$SRC_DIR/.venv/bin/python" manage.py makemigrations --noinput || true
 sudo -E "$SRC_DIR/.venv/bin/python" manage.py migrate --noinput
+# Record installed app version for backwards-compatibility checks (upgrade/downgrade)
+sudo -E "$SRC_DIR/.venv/bin/python" manage.py set_stored_version
 sudo -E "$SRC_DIR/.venv/bin/python" manage.py collectstatic --noinput
 sudo -E "$SRC_DIR/.venv/bin/python" manage.py compilemessages --verbosity 0
 

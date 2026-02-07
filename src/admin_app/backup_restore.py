@@ -1,6 +1,8 @@
 """
 Full backup and restore for PMG Portal: database (PostgreSQL) + media files.
 Produces a single .tar.gz that can be restored on a fresh server.
+Backup format is versioned; all formats in SUPPORTED_BACKUP_FORMAT_VERSIONS
+can be restored by any app version that supports them (backwards compatible).
 """
 from __future__ import annotations
 
@@ -18,7 +20,10 @@ from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
-BACKUP_VERSION = "1"
+# Format version of backups we create (manifest "version" field)
+BACKUP_FORMAT_VERSION = "1"
+# All backup format versions this app can restore (for cross-version restore)
+SUPPORTED_BACKUP_FORMAT_VERSIONS = ["1"]
 MANIFEST_FILENAME = "manifest.json"
 DATABASE_FILENAME = "database.sql"
 MEDIA_ARCHIVE_DIR = "media"
@@ -90,11 +95,17 @@ def create_backup_archive() -> bytes:
     """Create full backup (database + media) as .tar.gz bytes. Uses temp file for large archives."""
     db = _get_db_config()
     media_root = Path(settings.MEDIA_ROOT)
+    try:
+        from pmg_portal.versioning import get_current_version
+        app_version = get_current_version() or ""
+    except Exception:
+        app_version = ""
 
     with tempfile.TemporaryDirectory(prefix="pmg_backup_") as tmpdir:
         root = Path(tmpdir)
         manifest = {
-            "version": BACKUP_VERSION,
+            "version": BACKUP_FORMAT_VERSION,
+            "app_version": app_version,
             "created_at": datetime.now(timezone.utc).isoformat(),
             "db_engine": "postgresql",
         }
@@ -164,8 +175,12 @@ def validate_backup_archive(archive_path: Path) -> tuple[bool, str | None]:
     except OSError as e:
         return False, f"Invalid backup: error reading archive ({e})."
 
-    if manifest.get("version") != BACKUP_VERSION:
-        return False, f"Unsupported backup version: {manifest.get('version')}. This installer expects version {BACKUP_VERSION}."
+    format_ver = manifest.get("version")
+    if format_ver not in SUPPORTED_BACKUP_FORMAT_VERSIONS:
+        return False, (
+            f"Unsupported backup format version: {format_ver!r}. "
+            f"This app supports: {', '.join(SUPPORTED_BACKUP_FORMAT_VERSIONS)}."
+        )
     if manifest.get("db_engine") != "postgresql":
         return False, "This backup is for a different database engine. PMG Portal backup/restore requires PostgreSQL."
 
@@ -202,8 +217,11 @@ def restore_from_archive(archive_path: Path) -> None:
         if not manifest_path.exists():
             raise ValueError("Invalid backup: missing manifest.json")
         manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-        if manifest.get("version") != BACKUP_VERSION:
-            raise ValueError(f"Unsupported backup version: {manifest.get('version')}. Expected {BACKUP_VERSION}.")
+        if manifest.get("version") not in SUPPORTED_BACKUP_FORMAT_VERSIONS:
+            raise ValueError(
+                f"Unsupported backup format version: {manifest.get('version')!r}. "
+                f"Supported: {SUPPORTED_BACKUP_FORMAT_VERSIONS}."
+            )
         if manifest.get("db_engine") != "postgresql":
             raise ValueError("This backup is for a different database engine.")
 

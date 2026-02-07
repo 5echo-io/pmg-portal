@@ -44,6 +44,7 @@ MIDDLEWARE = [
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
+    "pmg_portal.version_middleware.VersionCompatibilityMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "portal.middleware.LanguagePreferenceMiddleware",  # Custom language preference (after AuthenticationMiddleware)

@@ -557,3 +557,21 @@ class RackSeal(models.Model):
     def is_active(self):
         """Check if seal is currently active (not removed)."""
         return self.removed_at is None
+
+
+class SystemInfo(models.Model):
+    """
+    Key-value store for app-wide system data (e.g. installed app version).
+    Used for backwards-compatibility checks across upgrades/downgrades.
+    """
+    key = models.CharField(max_length=128, unique=True, db_index=True)
+    value = models.TextField(blank=True, default="")
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "System info"
+        verbose_name_plural = "System info"
+        ordering = ["key"]
+
+    def __str__(self) -> str:
+        return f"{self.key}={self.value}"
