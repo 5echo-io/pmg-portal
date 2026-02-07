@@ -542,7 +542,7 @@ sudo -E "$SRC_DIR/.venv/bin/python" manage.py migrate --noinput
 # Record installed app version for backwards-compatibility checks (upgrade/downgrade)
 sudo -E "$SRC_DIR/.venv/bin/python" manage.py set_stored_version
 sudo -E "$SRC_DIR/.venv/bin/python" manage.py collectstatic --noinput
-sudo -E "$SRC_DIR/.venv/bin/python" manage.py compilemessages --verbosity 0
+sudo -E "$SRC_DIR/.venv/bin/python" manage.py compilemessages --locale nb --verbosity 0
 
 echo ""
 echo "Creating default admin (if missing)..."

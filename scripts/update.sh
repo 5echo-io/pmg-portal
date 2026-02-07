@@ -190,7 +190,7 @@ MIGRATE_OUTPUT=$(sudo -E "$SRC_DIR/.venv/bin/python" manage.py migrate --noinput
 sudo -E "$SRC_DIR/.venv/bin/python" manage.py collectstatic --noinput
 # Record installed app version for backwards-compatibility checks (upgrade/downgrade)
 sudo -E "$SRC_DIR/.venv/bin/python" manage.py set_stored_version
-sudo -E "$SRC_DIR/.venv/bin/python" manage.py compilemessages --verbosity 1 || {
+sudo -E "$SRC_DIR/.venv/bin/python" manage.py compilemessages --locale nb --verbosity 1 || {
     echo "compilemessages failed. Common cause: duplicate msgid in .po (run: msguniq -o django.po django.po in the locale LC_MESSAGES dir to merge duplicates)."
     exit 1
 }

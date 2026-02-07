@@ -106,7 +106,7 @@ else
     
     sudo -E "$PROD_DIR/src/.venv/bin/python" manage.py migrate --noinput
     sudo -E "$PROD_DIR/src/.venv/bin/python" manage.py collectstatic --noinput
-    sudo -E "$PROD_DIR/src/.venv/bin/python" manage.py compilemessages --verbosity 0
+    sudo -E "$PROD_DIR/src/.venv/bin/python" manage.py compilemessages --locale nb --verbosity 0
     
     # Update systemd service
     echo "Updating production systemd service..."
@@ -175,7 +175,7 @@ else
     
     sudo -E "$DEV_DIR/src/.venv/bin/python" manage.py migrate --noinput
     sudo -E "$DEV_DIR/src/.venv/bin/python" manage.py collectstatic --noinput
-    sudo -E "$DEV_DIR/src/.venv/bin/python" manage.py compilemessages --verbosity 0
+    sudo -E "$DEV_DIR/src/.venv/bin/python" manage.py compilemessages --locale nb --verbosity 0
     
     # Create/update systemd service for dev
     echo "Creating/updating development systemd service..."

@@ -11,6 +11,13 @@ Last Modified: 2026-02-06
 
 - 2026-02-06 (Europe/Oslo)
   - Branch: dev
+  - Version: 4.8.0-beta.16
+  - Summary:
+    - Scripts: compilemessages run with --locale nb in update.sh, install.sh, install-dual.sh, merge-dev-to-prod.sh (only project locale compiled)
+    - Version bump: 4.8.0-beta.15 → 4.8.0-beta.16
+
+- 2026-02-06 (Europe/Oslo)
+  - Branch: dev
   - Version: 4.8.0-beta.15
   - Summary:
     - Locale: remove 12 duplicate msgid in nb django.po so compilemessages (msgfmt) succeeds on server

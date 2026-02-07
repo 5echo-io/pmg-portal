@@ -89,7 +89,7 @@ set +a
 
 sudo -E "$PROD_DIR/src/.venv/bin/python" manage.py migrate --noinput
 sudo -E "$PROD_DIR/src/.venv/bin/python" manage.py collectstatic --noinput
-sudo -E "$PROD_DIR/src/.venv/bin/python" manage.py compilemessages --verbosity 0
+sudo -E "$PROD_DIR/src/.venv/bin/python" manage.py compilemessages --locale nb --verbosity 0
 
 # Restart service
 echo "Restarting production service..."

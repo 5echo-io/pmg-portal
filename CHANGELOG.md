@@ -23,6 +23,7 @@ Pre-release builds (alpha, beta, rc) are listed here. Only full releases (no bui
 - **compilemessages**: Removed duplicate msgid entries in locale nb django.po so msgfmt succeeds on update; update.sh shows clearer error when compilemessages fails.
 
 ### Changed
+- **compilemessages**: Install/update scripts now run compilemessages with `--locale nb` so only the project Norwegian locale is compiled; avoids processing Django's contrib locales and reduces noise/errors.
 - **Backup & Restore**: UI and logic improvements; admin base layout and footer tweaks
 - **Facility card & Rack detail**: Layout and template refinements; portal facility list and base template updates
 - **Styling**: app.css and site_footer adjustments
