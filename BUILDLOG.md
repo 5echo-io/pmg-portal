@@ -11,6 +11,14 @@ Last Modified: 2026-02-06
 
 - 2026-02-06 (Europe/Oslo)
   - Branch: dev
+  - Version: 4.8.0-beta.17
+  - Summary:
+    - Locale: remove 2 more duplicate msgid (Search customers…, Inactive) in nb django.po
+    - Install/update: full output logged to /var/log/pmg-portal-install-*.log and APP_DIR/logs/update-*.log; on failure print log path for debugging
+    - Version bump: 4.8.0-beta.16 → 4.8.0-beta.17
+
+- 2026-02-06 (Europe/Oslo)
+  - Branch: dev
   - Version: 4.8.0-beta.16
   - Summary:
     - Scripts: compilemessages run with --locale nb in update.sh, install.sh, install-dual.sh, merge-dev-to-prod.sh (only project locale compiled)

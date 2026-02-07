@@ -21,6 +21,14 @@ fi
 
 SRC_DIR="$APP_DIR/src"
 
+# Update log for debugging when run standalone (when run from install.sh, install log captures output)
+UPDATE_LOG="$APP_DIR/logs/update-$(date +%Y%m%d-%H%M%S).log"
+if [ -d "$APP_DIR" ] && sudo mkdir -p "$APP_DIR/logs" 2>/dev/null && sudo touch "$UPDATE_LOG" 2>/dev/null; then
+  trap 'e=$?; if [ $e -ne 0 ]; then echo ""; echo "---"; echo "Update failed (exit $e). Full log: $UPDATE_LOG"; fi; exit $e' EXIT
+  exec 3>&1
+  exec 1> >(tee -a "$UPDATE_LOG" >&3) 2>&1
+fi
+
 echo "=== Updating $ENV_TYPE environment (branch: $BRANCH) ==="
 
 if [ ! -d "$APP_DIR" ]; then

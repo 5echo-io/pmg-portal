@@ -17,12 +17,14 @@ This project follows Semantic Versioning (SemVer).
 Pre-release builds (alpha, beta, rc) are listed here. Only full releases (no build suffix) get a dedicated version section below.
 
 ### Fixed
+- **compilemessages**: Removed 2 more duplicate msgid in nb django.po (Search customers…, Inactive); msgfmt succeeds.
 - **compilemessages**: Removed 12 duplicate msgid entries in locale nb django.po (Customers, Devices, Facilities, No users found., Edit, Search users, Confirm restore, Product datasheets, Warning/This action, Created, by, and one other); msgfmt succeeds.
 - **Admin E108/E116**: FacilityAdmin uses Facility fields only (list_display: name, slug, customer_count; list_filter: is_active); Facility has customers (M2M) not customer.
 - **Admin E039**: Facility registered in portal admin (FacilityAdmin) so ServiceLogAdmin.autocomplete_fields can reference it; fixes migration/update failure on server.
 - **compilemessages**: Removed duplicate msgid entries in locale nb django.po so msgfmt succeeds on update; update.sh shows clearer error when compilemessages fails.
 
 ### Changed
+- **Install/update logging**: install.sh logs full output to /var/log/pmg-portal-install-&lt;timestamp&gt;.log; update.sh logs to &lt;app_dir&gt;/logs/update-&lt;timestamp&gt;.log when run standalone. On failure, scripts print the log path for easier debugging.
 - **compilemessages**: Install/update scripts now run compilemessages with `--locale nb` so only the project Norwegian locale is compiled; avoids processing Django's contrib locales and reduces noise/errors.
 - **Backup & Restore**: UI and logic improvements; admin base layout and footer tweaks
 - **Facility card & Rack detail**: Layout and template refinements; portal facility list and base template updates

@@ -775,9 +775,6 @@ msgstr "Ingen brukere funnet."
 msgid "Search facilities…"
 msgstr "Søk etter anlegg…"
 
-msgid "Search customers…"
-msgstr "Søk etter kunder…"
-
 msgid "Search users…"
 msgstr "Søk etter brukere…"
 
@@ -792,9 +789,6 @@ msgstr "Kun brukere med tilgang"
 
 msgid "Not staff"
 msgstr "Ikke brukere med tilgang"
-
-msgid "Inactive"
-msgstr "Inaktiv"
 
 msgid "Username"
 msgstr "Brukernavn"

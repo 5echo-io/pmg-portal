@@ -12,6 +12,14 @@ GITHUB_REPO="https://github.com/5echo-io/pmg-portal.git"
 BRANCH="dev"
 SRC_DIR="$APP_DIR/src"
 
+# Install log for debugging (full output is also shown on screen)
+INSTALL_LOG="/var/log/pmg-portal-install-$(date +%Y%m%d-%H%M%S).log"
+if sudo mkdir -p /var/log 2>/dev/null && sudo touch "$INSTALL_LOG" 2>/dev/null; then
+  trap 'e=$?; if [ $e -ne 0 ]; then echo ""; echo "---"; echo "Install/update failed (exit $e). Full log for debugging: $INSTALL_LOG"; fi; exit $e' EXIT
+  exec 3>&1
+  exec 1> >(tee -a "$INSTALL_LOG" >&3) 2>&1
+fi
+
 # Detect branch from script URL or default to dev
 # This allows the script to know which branch it's installing from
 INSTALL_BRANCH="${BRANCH}"
