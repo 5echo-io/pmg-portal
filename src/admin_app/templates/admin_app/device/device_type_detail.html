@@ -35,9 +35,11 @@
     <a href="{% url 'admin_app:admin_device_instance_add' device_type.slug %}" class="admin-toolbar-add-btn">{% trans "Add instance" %}</a>
   </div>
 </div>
-{% if device_type.datasheets.all %}
-<p class="muted">{% trans "Product datasheets" %}: {% for ds in device_type.datasheets.all %}<a href="{{ ds.file.url }}" target="_blank" rel="noopener">{{ ds.title }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</p>
+{% with first_datasheet=device_type.datasheets.first %}
+{% if first_datasheet %}
+<p class="muted">{% trans "Product datasheet" %}: <a href="{% url 'datasheet_by_slug' device_type.slug %}" target="_blank" rel="noopener">{% trans "View" %}</a> · <a href="{% url 'admin_app:admin_product_datasheet_edit' first_datasheet.pk %}">{% trans "Edit" %}</a>{% if first_datasheet.file %} · <a href="{{ first_datasheet.file.url }}" target="_blank" rel="noopener">{% trans "Download PDF" %}</a>{% endif %}</p>
 {% endif %}
+{% endwith %}
 
 <h2 class="admin-page-subtitle">{% trans "Instances" %} ({{ instances|length }})</h2>
 

@@ -32,6 +32,8 @@ from .models import (
     PortalUserPreference,
     NetworkDevice,
     FacilityDocument,
+    DeviceType,
+    ProductDatasheet,
 )
 
 
@@ -479,3 +481,72 @@ def set_portal_preference(request):
         return redirect(request.META.get("HTTP_REFERER", "/"))
 
     return JsonResponse({"ok": False}, status=400)
+
+
+# ----- Product datasheet (public-style page at /datasheet/<slug>/) -----
+
+@login_required
+def datasheet_by_slug(request, slug):
+    """Show product datasheet at /datasheet/<product-slug>/ (slug = DeviceType.slug)."""
+    device_type = get_object_or_404(DeviceType, slug=slug, is_active=True)
+    datasheet = (
+        ProductDatasheet.objects.filter(device_type=device_type)
+        .order_by("-updated_at")
+        .first()
+    )
+    if not datasheet:
+        return render(request, "portal/datasheet_not_found.html", {"device_type": device_type})
+    import markdown
+    content_html = ""
+    if datasheet.content_md:
+        content_html = markdown.markdown(
+            datasheet.content_md,
+            extensions=["tables", "nl2br"],
+        )
+    return render(request, "portal/datasheet_detail.html", {
+        "datasheet": datasheet,
+        "device_type": device_type,
+        "content_html": content_html,
+    })
+
+
+@login_required
+def datasheet_pdf(request, slug):
+    """Download product datasheet as PDF with Park Media Group AS © year."""
+    device_type = get_object_or_404(DeviceType, slug=slug, is_active=True)
+    datasheet = (
+        ProductDatasheet.objects.filter(device_type=device_type)
+        .order_by("-updated_at")
+        .first()
+    )
+    if not datasheet:
+        return redirect("datasheet_by_slug", slug=slug)
+    import markdown
+    content_html = ""
+    if datasheet.content_md:
+        content_html = markdown.markdown(
+            datasheet.content_md,
+            extensions=["tables", "nl2br"],
+        )
+    from django.template.loader import render_to_string
+    from django.utils import timezone
+    year = timezone.now().year
+    html = render_to_string("portal/datasheet_pdf.html", {
+        "datasheet": datasheet,
+        "device_type": device_type,
+        "content_html": content_html,
+        "copyright_year": year,
+    })
+    try:
+        from xhtml2pdf import pisa
+        from io import BytesIO
+        result = BytesIO()
+        pisa.CreatePDF(html.encode("utf-8"), result, encoding="utf-8")
+        result.seek(0)
+        response = HttpResponse(result.getvalue(), content_type="application/pdf")
+        response["Content-Disposition"] = f'inline; filename="datasheet-{slug}.pdf"'
+        return response
+    except Exception as e:
+        from django.contrib import messages
+        messages.error(request, f"PDF generation failed: {e}")
+        return redirect("datasheet_by_slug", slug=slug)

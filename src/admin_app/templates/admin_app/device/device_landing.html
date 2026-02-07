@@ -38,11 +38,11 @@
   </div>
   <div class="panel admin-home-panel device-landing-card">
     <div class="admin-home-panel-heading">{% trans "Product datasheets" %}</div>
-    <p class="muted" style="margin: 8px 0;">{% trans "Upload PDF datasheets and link to devices." %}</p>
+    <p class="muted" style="margin: 8px 0;">{% trans "Create datasheets (Markdown and/or PDF) and link to devices." %}</p>
     <p style="margin: 0;"><strong>{{ datasheet_count }}</strong> {% trans "datasheets" %}</p>
     <ul class="admin-home-links" style="margin-top: 12px;">
       <li><a href="{% url 'admin_app:admin_product_datasheet_list' %}" class="admin-home-link">{% trans "View all" %}</a></li>
-      <li><a href="{% url 'admin_app:admin_product_datasheet_upload' %}" class="admin-home-link">{% trans "Upload datasheet" %}</a></li>
+      <li><a href="{% url 'admin_app:admin_product_datasheet_create' %}" class="admin-home-link">{% trans "Create datasheet" %}</a></li>
     </ul>
   </div>
 </div>

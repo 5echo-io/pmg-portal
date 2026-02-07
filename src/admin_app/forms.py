@@ -221,13 +221,26 @@ class ManufacturerForm(forms.ModelForm):
 class ProductDatasheetForm(forms.ModelForm):
     class Meta:
         model = ProductDatasheet
-        fields = ("title", "file", "device_type")
-        widgets = {"file": forms.FileInput(attrs={"accept": ".pdf,application/pdf"})}
+        fields = ("title", "device_type", "file", "content_md")
+        widgets = {
+            "file": forms.FileInput(attrs={"accept": ".pdf,application/pdf"}),
+            "content_md": forms.Textarea(attrs={"rows": 16, "class": "monospace", "placeholder": "## Specs\n| Parameter | Value |\n|----------|-------|\n| ... | ... |"}),
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["device_type"].queryset = DeviceType.objects.filter(is_active=True).order_by("name")
         self.fields["device_type"].required = False
+        self.fields["file"].required = False
+        self.fields["content_md"].required = False
+
+    def clean(self):
+        data = super().clean()
+        if not data.get("file") and not data.get("content_md") and not (self.instance and self.instance.pk and self.instance.file):
+            raise forms.ValidationError(
+                "Provide at least one: manufacturer PDF (file) or Markdown content."
+            )
+        return data
 
 
 class NetworkDeviceForm(forms.ModelForm):

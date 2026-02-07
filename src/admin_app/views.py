@@ -1481,13 +1481,13 @@ def manufacturer_edit(request, pk):
 @staff_required
 def product_datasheet_list(request):
     """List product datasheets (under Portal Management)."""
-    datasheets = ProductDatasheet.objects.select_related("device_type", "uploaded_by").order_by("-uploaded_at")
+    datasheets = ProductDatasheet.objects.select_related("device_type", "uploaded_by").order_by("-updated_at")
     return render(request, "admin_app/device/product_datasheet_list.html", {"datasheets": datasheets})
 
 
 @staff_required
-def product_datasheet_upload(request):
-    """Upload a product datasheet; optionally link to device type."""
+def product_datasheet_create(request):
+    """Create a product datasheet (Markdown and/or manufacturer PDF)."""
     from .forms import ProductDatasheetForm
     if request.method == "POST":
         form = ProductDatasheetForm(request.POST, request.FILES)
@@ -1495,11 +1495,27 @@ def product_datasheet_upload(request):
             obj = form.save(commit=False)
             obj.uploaded_by = request.user
             obj.save()
-            messages.success(request, _("Datasheet '%(title)s' uploaded.") % {"title": obj.title})
+            messages.success(request, _("Datasheet '%(title)s' created.") % {"title": obj.title})
             return redirect("admin_app:admin_product_datasheet_list")
     else:
         form = ProductDatasheetForm()
-    return render(request, "admin_app/device/product_datasheet_form.html", {"form": form})
+    return render(request, "admin_app/device/product_datasheet_form.html", {"form": form, "is_edit": False})
+
+
+@staff_required
+def product_datasheet_edit(request, pk):
+    """Edit a product datasheet."""
+    from .forms import ProductDatasheetForm
+    datasheet = get_object_or_404(ProductDatasheet, pk=pk)
+    if request.method == "POST":
+        form = ProductDatasheetForm(request.POST, request.FILES, instance=datasheet)
+        if form.is_valid():
+            form.save()
+            messages.success(request, _("Datasheet '%(title)s' updated.") % {"title": datasheet.title})
+            return redirect("admin_app:admin_product_datasheet_list")
+    else:
+        form = ProductDatasheetForm(instance=datasheet)
+    return render(request, "admin_app/device/product_datasheet_form.html", {"form": form, "datasheet": datasheet, "is_edit": True})
 
 
 @staff_required

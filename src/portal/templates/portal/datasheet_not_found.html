@@ -1,0 +1,12 @@
+{% extends "portal/base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Product datasheet" %} | {% trans "PMG Portal" %}{% endblock %}
+
+{% block content %}
+<div class="datasheet-page" style="max-width: 600px; margin: 2rem auto; padding: 1.5rem; text-align: center;">
+  <h1>{% trans "Product datasheet" %}</h1>
+  <p class="muted">{% trans "No datasheet is linked to this product yet." %}</p>
+  <p>{% trans "Product" %}: <strong>{{ device_type.name }}</strong> ({{ device_type.slug }})</p>
+  <p><a href="/">{% trans "Back to Dashboard" %}</a></p>
+</div>
+{% endblock %}

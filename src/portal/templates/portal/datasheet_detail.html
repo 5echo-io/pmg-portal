@@ -1,0 +1,70 @@
+{% extends "portal/base.html" %}
+{% load i18n static %}
+{% block title %}{{ datasheet.title }} | {% trans "Product datasheet" %} | {% trans "PMG Portal" %}{% endblock %}
+
+{% block content %}
+<div class="datasheet-page">
+  <div class="datasheet-header">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="/">{% trans "Dashboard" %}</a>
+      <span class="breadcrumb-sep">→</span>
+      <span>{% trans "Product datasheet" %}</span>
+      <span class="breadcrumb-sep">→</span>
+      <span>{{ datasheet.title }}</span>
+    </nav>
+    <h1 class="datasheet-title">{{ datasheet.title }}</h1>
+    <p class="datasheet-meta">
+      {% trans "Created" %}: {{ datasheet.uploaded_at|date:"Y-m-d H:i" }}
+      &nbsp;·&nbsp;
+      {% trans "Last updated" %}: {{ datasheet.updated_at|date:"Y-m-d H:i" }}
+    </p>
+    <div class="datasheet-actions">
+      <a href="{% url 'datasheet_pdf' device_type.slug %}" class="btn btn-primary">{% trans "Download PDF" %}</a>
+      <button type="button" class="btn btn-secondary" onclick="window.print()">{% trans "Print" %}</button>
+      {% if datasheet.file %}
+      <a href="{{ datasheet.file.url }}" target="_blank" class="btn btn-secondary">{% trans "Manufacturer PDF" %}</a>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="datasheet-body print-datasheet">
+    {% if content_html %}
+    <div class="datasheet-content markdown-body">
+      {{ content_html|safe }}
+    </div>
+    {% endif %}
+    {% if datasheet.file and not content_html %}
+    <p class="muted">{% trans "No Markdown content. Download the manufacturer PDF above." %}</p>
+    {% endif %}
+  </div>
+
+  <footer class="datasheet-footer print-only">
+    <p>© {{ datasheet.updated_at|date:"Y" }} Park Media Group AS</p>
+  </footer>
+</div>
+
+<style>
+.datasheet-page { max-width: 900px; margin: 0 auto; padding: 1.5rem; }
+.datasheet-header { margin-bottom: 2rem; }
+.datasheet-title { font-size: 1.75rem; margin: 0.5rem 0; }
+.datasheet-meta { color: var(--muted-color, #666); font-size: 0.9rem; margin: 0.5rem 0; }
+.datasheet-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 1rem; }
+.datasheet-actions .btn { padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; font-size: 0.9rem; }
+.datasheet-actions .btn-primary { background: var(--primary, #2563eb); color: #fff; border: none; }
+.datasheet-actions .btn-secondary { background: var(--bg-secondary, #e5e7eb); color: var(--text); border: 1px solid #d1d5db; }
+.datasheet-body { margin-top: 1.5rem; }
+.markdown-body { line-height: 1.6; }
+.markdown-body h1 { font-size: 1.5rem; margin-top: 1.5rem; }
+.markdown-body h2 { font-size: 1.25rem; margin-top: 1.25rem; }
+.markdown-body table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+.markdown-body th, .markdown-body td { border: 1px solid #ddd; padding: 0.5rem 0.75rem; text-align: left; }
+.markdown-body th { background: var(--bg-secondary, #f3f4f6); font-weight: 600; }
+.datasheet-footer.print-only { display: none; margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #eee; font-size: 0.85rem; color: #666; }
+@media print {
+  .datasheet-actions { display: none !important; }
+  .breadcrumb { margin-bottom: 0.5rem; }
+  .print-only { display: block !important; }
+  .datasheet-footer.print-only { position: fixed; bottom: 0; left: 0; right: 0; text-align: center; }
+}
+</style>
+{% endblock %}

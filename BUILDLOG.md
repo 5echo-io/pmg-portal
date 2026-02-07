@@ -11,6 +11,14 @@ Last Modified: 2026-02-06
 
 - 2026-02-06 (Europe/Oslo)
   - Branch: dev
+  - Version: 4.8.0-beta.7
+  - Summary:
+    - Product datasheet: content_md, updated_at, file optional; migration 0010_product_datasheet_content_updated; portal views/templates datasheet_detail, datasheet_pdf, datasheet_not_found; portal urls; admin forms/views/device templates updated
+    - requirements.txt: markdown, xhtml2pdf (PDF generation); install wizard unchanged (pip -r + migrate cover new deps and migration)
+    - Version bump: 4.8.0-beta.6 → 4.8.0-beta.7
+
+- 2026-02-06 (Europe/Oslo)
+  - Branch: dev
   - Version: 4.8.0-beta.6
   - Summary:
     - Admin templates restructure: moved to subdirs backup/, customer/, device/, facility/, notifications/, portal/, user/; urls.py and views.py updated for new paths; backup_restore.py template path

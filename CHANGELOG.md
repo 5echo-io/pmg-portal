@@ -36,8 +36,10 @@ Pre-release builds (alpha, beta, rc) are listed here. Only full releases (no bui
 - **Portal base, footer og styling**: base.html oppdatert; site_footer; app.css +81
 - **Admin device-templates**: device category/list/form, device instance add/form, device landing, device type list/detail/form, facility device choose type, home, manufacturer list/form, product datasheet list/form – justeringer og forbedringer
 - **Admin templates omstrukturert**: Alle admin-app-maler flyttet til undermapper (backup/, customer/, device/, facility/, notifications/, portal/, user/); views og urls oppdatert; FILE_LOCATIONS.md; dokumentasjon og install/update-skript oppdatert
+- **Produktdatablad**: content_md og updated_at; valgfri PDF-fil; portal-visning (datasheet detail, PDF, not_found); requirements markdown + xhtml2pdf
 
 ### Added
+- **Portal – Datablad**: /datasheet/&lt;slug&gt;/ (detail), PDF-visning, datasheet_not_found; migrasjon 0010 (content_md, updated_at, file nullable); admin product_datasheet form/list oppdatert
 - **FILE_LOCATIONS.md**: Oversikt over malplasseringer etter omstrukturering
 - **Versjonering og kompatibilitet**: SystemInfo-modell (migrasjon 0009), versioning.py og version_middleware; install/update kjører set_stored_version; backup-manifest inkluderer app_version; BACKWARDS_COMPATIBILITY.md
 - **Admin – Notifications & announcements**: admin_notification_list, announcement_list, announcement_form; admin_app models and migration 0001

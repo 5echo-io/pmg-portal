@@ -1,38 +1,50 @@
 {% extends "admin_app/base.html" %}
 {% load i18n %}
 
-{% block admin_title %}{% trans "Upload product datasheet" %}{% endblock %}
+{% block admin_title %}{% if is_edit %}{% trans "Edit product datasheet" %}{% else %}{% trans "Create product datasheet" %}{% endif %}{% endblock %}
 {% block breadcrumb_back %}<a href="{% url 'admin_app:admin_device_list' %}" class="breadcrumb-back-btn" aria-label="{% trans 'Back to Devices' %}">← {% trans "Devices" %}</a>{% endblock %}
 {% block breadcrumb_extra %}
 <span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_device_list' %}">{% trans "Devices" %}</a>
 <span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_product_datasheet_list' %}">{% trans "Product datasheets" %}</a>
-<span class="breadcrumb-sep">→</span> <span>{% trans "Upload" %}</span>
+<span class="breadcrumb-sep">→</span> <span>{% if is_edit %}{% trans "Edit" %}{% else %}{% trans "Create" %}{% endif %}</span>
 {% endblock %}
 
 {% block admin_content %}
-<h1 class="admin-page-title">{% trans "Upload product datasheet" %}</h1>
-<p class="muted">{% trans "Upload a PDF and optionally link it to a device." %}</p>
+<h1 class="admin-page-title">{% if is_edit %}{% trans "Edit product datasheet" %}{% else %}{% trans "Create product datasheet" %}{% endif %}</h1>
+<p class="muted">{% trans "Enter the product name, optionally link to a device type (for URL /datasheet/&lt;slug&gt;/), optionally upload a manufacturer PDF, and/or write the datasheet in Markdown." %}</p>
 
 <form method="post" action="" enctype="multipart/form-data" class="admin-form admin-form--wide">
   {% csrf_token %}
   <div class="admin-form-field">
     <label for="{{ form.title.id_for_label }}">{{ form.title.label }}</label>
     {{ form.title }}
+    <p class="muted">{% trans "Product name shown on the datasheet page." %}</p>
     {% if form.title.errors %}<p class="form-error">{{ form.title.errors.0 }}</p>{% endif %}
-  </div>
-  <div class="admin-form-field">
-    <label for="{{ form.file.id_for_label }}">{{ form.file.label }}</label>
-    {{ form.file }}
-    {% if form.file.errors %}<p class="form-error">{{ form.file.errors.0 }}</p>{% endif %}
   </div>
   <div class="admin-form-field">
     <label for="{{ form.device_type.id_for_label }}">{{ form.device_type.label }}</label>
     {{ form.device_type }}
-    <p class="muted">{% trans "Optional. Link to a device so it appears on that product's page." %}</p>
+    <p class="muted">{% trans "Link to a device type so the datasheet is available at /datasheet/&lt;product-slug&gt;/ (e.g. /datasheet/udm-se/)." %}</p>
     {% if form.device_type.errors %}<p class="form-error">{{ form.device_type.errors.0 }}</p>{% endif %}
   </div>
+  <div class="admin-form-field">
+    <label for="{{ form.file.id_for_label }}">{{ form.file.label }}</label>
+    {{ form.file }}
+    <p class="muted">{% trans "Optional: PDF from manufacturer. Users can download this on the datasheet page." %}</p>
+    {% if datasheet and datasheet.file %}<p class="muted">{% trans "Current file:" %} <a href="{{ datasheet.file.url }}" target="_blank">{{ datasheet.file.name }}</a></p>{% endif %}
+    {% if form.file.errors %}<p class="form-error">{{ form.file.errors.0 }}</p>{% endif %}
+  </div>
+  <div class="admin-form-field">
+    <label for="{{ form.content_md.id_for_label }}">{{ form.content_md.label }}</label>
+    {{ form.content_md }}
+    <p class="muted">{% trans "Optional: Build the datasheet in Markdown (headings, tables, lists). Example: ## Specs | Parameter | Value |" %}</p>
+    {% if form.content_md.errors %}<p class="form-error">{{ form.content_md.errors.0 }}</p>{% endif %}
+  </div>
+  {% if form.non_field_errors %}
+  <p class="form-error">{{ form.non_field_errors.0 }}</p>
+  {% endif %}
   <div class="admin-form-actions">
-    <button type="submit" class="form-btn form-btn-primary">{% trans "Upload" %}</button>
+    <button type="submit" class="form-btn form-btn-primary">{% if is_edit %}{% trans "Save" %}{% else %}{% trans "Create" %}{% endif %}</button>
     <a href="{% url 'admin_app:admin_product_datasheet_list' %}" class="form-btn form-btn-secondary">{% trans "Cancel" %}</a>
   </div>
 </form>

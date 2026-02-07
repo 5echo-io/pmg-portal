@@ -397,16 +397,26 @@ class DeviceType(models.Model):
 
 
 class ProductDatasheet(models.Model):
-    """Product datasheet (PDF etc.) – can be linked to a device type."""
-    title = models.CharField(max_length=200)
-    file = models.FileField(upload_to="product_datasheets/", help_text="PDF or document file")
+    """Product datasheet – Markdown content and/or manufacturer PDF, linked to a device type for /datasheet/<slug>/."""
+    title = models.CharField(max_length=200, help_text="Product name for this datasheet")
+    file = models.FileField(
+        upload_to="product_datasheets/",
+        help_text="Optional: PDF from manufacturer",
+        blank=True,
+        null=True,
+    )
+    content_md = models.TextField(
+        blank=True,
+        default="",
+        help_text="Optional: Build the datasheet in Markdown (tables, headings, etc.). Shown at /datasheet/<product-slug>/.",
+    )
     device_type = models.ForeignKey(
         DeviceType,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
         related_name="datasheets",
-        help_text="Link to device type (optional).",
+        help_text="Link to device type. When set, datasheet is available at /datasheet/<device-type-slug>/.",
     )
     uploaded_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -416,9 +426,10 @@ class ProductDatasheet(models.Model):
         related_name="uploaded_datasheets",
     )
     uploaded_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ["-uploaded_at"]
+        ordering = ["-updated_at"]
 
     def __str__(self) -> str:
         return self.title
