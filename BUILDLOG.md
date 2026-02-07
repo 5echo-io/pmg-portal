@@ -11,6 +11,13 @@ Last Modified: 2026-02-06
 
 - 2026-02-06 (Europe/Oslo)
   - Branch: dev
+  - Version: 4.8.0-beta.8
+  - Summary:
+    - Install/update: add pkg-config and libcairo2-dev for xhtml2pdf/pycairo; update.sh ensures system deps before pip install
+    - Version bump: 4.8.0-beta.7 → 4.8.0-beta.8
+
+- 2026-02-06 (Europe/Oslo)
+  - Branch: dev
   - Version: 4.8.0-beta.7
   - Summary:
     - Product datasheet: content_md, updated_at, file optional; migration 0010_product_datasheet_content_updated; portal views/templates datasheet_detail, datasheet_pdf, datasheet_not_found; portal urls; admin forms/views/device templates updated

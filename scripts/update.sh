@@ -34,23 +34,27 @@ echo "Note: Code update is handled by install.sh. This script updates dependenci
 
 sudo systemctl stop "$SERVICE_NAME" || true
 
-echo "Re-installing python deps..."
-cd "$SRC_DIR"
-sudo "$SRC_DIR/.venv/bin/pip" install -r "$SRC_DIR/requirements.txt"
-
 echo "Ensuring system dependencies are installed..."
 NEED_UPDATE=false
 if ! command -v msgfmt >/dev/null 2>&1; then
   NEED_UPDATE=true
 fi
-# Check if Pillow build dependencies are installed
+# Pillow build dependencies
 if [ ! -f /usr/include/jpeglib.h ] || [ ! -f /usr/include/png.h ]; then
+  NEED_UPDATE=true
+fi
+# xhtml2pdf/svglib/pycairo (datasheet PDF): need pkg-config and cairo
+if ! command -v pkg-config >/dev/null 2>&1 || ! pkg-config --exists cairo 2>/dev/null; then
   NEED_UPDATE=true
 fi
 if [ "$NEED_UPDATE" = "true" ]; then
   sudo apt-get update -y
-  sudo apt-get install -y gettext libjpeg-dev libpng-dev zlib1g-dev
+  sudo apt-get install -y gettext libjpeg-dev libpng-dev zlib1g-dev pkg-config libcairo2-dev
 fi
+
+echo "Re-installing python deps..."
+cd "$SRC_DIR"
+sudo "$SRC_DIR/.venv/bin/pip" install -r "$SRC_DIR/requirements.txt"
 
 echo "Ensuring media directory exists..."
 MEDIA_DIR="$APP_DIR/media"

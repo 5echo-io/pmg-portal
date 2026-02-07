@@ -326,10 +326,10 @@ REPO_DIR="$TEMP_DIR/pmg-portal"
 
 # Install OS dependencies
 echo ""
-# Install OS dependencies (postgresql-client provides pg_dump/psql for Admin → Backup & Restore)
+# Install OS dependencies (postgresql-client for Backup & Restore; pkg-config+libcairo2-dev for xhtml2pdf/svglib/pycairo)
 echo "Installing OS dependencies..."
 sudo apt-get update -y
-sudo apt-get install -y python3 python3-venv python3-pip postgresql postgresql-client rsync gettext libjpeg-dev libpng-dev zlib1g-dev git
+sudo apt-get install -y python3 python3-venv python3-pip postgresql postgresql-client rsync gettext libjpeg-dev libpng-dev zlib1g-dev git pkg-config libcairo2-dev
 
 # Copy files
 echo ""

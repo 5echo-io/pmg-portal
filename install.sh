@@ -127,10 +127,10 @@ if [ "$MODE" = "update" ] && [ -f "$APP_DIR/.env" ]; then
     sudo cp "$APP_DIR/.env" "$TEMP_DIR/.env.backup"
 fi
 
-# Install OS dependencies (postgresql-client provides pg_dump/psql for Admin → Backup & Restore)
+# Install OS dependencies (postgresql-client for Backup & Restore; pkg-config+libcairo2-dev for xhtml2pdf)
 echo "Installing OS dependencies..."
 sudo apt-get update -y
-sudo apt-get install -y python3 python3-venv python3-pip postgresql postgresql-client rsync curl
+sudo apt-get install -y python3 python3-venv python3-pip postgresql postgresql-client rsync curl gettext pkg-config libcairo2-dev libjpeg-dev libpng-dev zlib1g-dev
 
 # Copy/update application files
 if [ "$MODE" = "update" ]; then
