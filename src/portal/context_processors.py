@@ -117,6 +117,8 @@ def footer_info(request):
         "changelog_full": "",
         "copyright_year": "2026",
         "show_changelog_button": False,
+        "release_notes_body": "",
+        "release_notes_version": "",
     }
     
     # Return defaults if no request
@@ -128,105 +130,150 @@ def footer_info(request):
     cached_result = cache.get(cache_key)
     
     if cached_result is not None:
-        return cached_result
-    
-    version = "Unknown"
-    changelog_section = ""  # Will contain unreleased or current major version section
-    changelog_full = ""
-    show_changelog_button = False
-    
-    try:
-        # Try multiple possible locations for VERSION file
-        possible_paths = [
-            Path(settings.BASE_DIR.parent) / "VERSION",  # /opt/pmg-portal/VERSION
-            Path(settings.BASE_DIR) / ".." / "VERSION",   # Alternative path
-            Path("/opt/pmg-portal/VERSION"),              # Absolute path
-        ]
-        
-        for version_file in possible_paths:
-            try:
-                if version_file.exists() and version_file.is_file():
-                    version = version_file.read_text(encoding='utf-8').strip()
-                    break
-            except (OSError, IOError, UnicodeDecodeError, PermissionError):
-                continue
-        
-        # Try multiple possible locations for CHANGELOG file
-        changelog_paths = [
-            Path(settings.BASE_DIR.parent) / "CHANGELOG.md",
-            Path(settings.BASE_DIR) / ".." / "CHANGELOG.md",
-            Path("/opt/pmg-portal/CHANGELOG.md"),
-        ]
-        
-        for changelog_file in changelog_paths:
-            try:
-                if changelog_file.exists() and changelog_file.is_file():
-                    content = changelog_file.read_text(encoding='utf-8')
-                    changelog_full = content  # Store full changelog for modal
-                    show_changelog_button = True
+        result = cached_result
+    else:
+        version = "Unknown"
+        changelog_section = ""  # Will contain unreleased or current major version section
+        changelog_full = ""
+        show_changelog_button = False
 
-                    # Full release = plain MAJOR.MINOR.PATCH with no build (alpha/beta/rc). Any build suffix → Unreleased
-                    is_full_major = (
-                        "beta" not in version.lower()
-                        and "alpha" not in version.lower()
-                        and "rc" not in version.lower()
-                        and not version.strip().startswith("0.")
-                    )
+        try:
+            # Try multiple possible locations for VERSION file
+            possible_paths = [
+                Path(settings.BASE_DIR.parent) / "VERSION",  # /opt/pmg-portal/VERSION
+                Path(settings.BASE_DIR) / ".." / "VERSION",   # Alternative path
+                Path("/opt/pmg-portal/VERSION"),              # Absolute path
+            ]
 
-                    if is_full_major:
-                        # Full MAJOR release: show all sections for this major (e.g. all ## [1.x.x])
-                        major_num = version.strip().split("-")[0].split(".")[0]
-                        sections = []
-                        rest = content
-                        while "## [" in rest:
-                            i = rest.index("## [")
-                            segment = rest[i:]
-                            j = segment[4:].find("## [")
-                            block = segment[: 4 + j].rstrip() if j != -1 else segment.rstrip()
-                            rest = segment[4 + j:] if j != -1 else ""
-                            title = block[4 : block.index("]") + 1] if "]" in block else ""
-                            if title.startswith(f"{major_num}."):
-                                sections.append(block)
-                        if sections:
-                            changelog_section = "\n\n".join(sections)
-                        elif "## [Unreleased]" in content:
-                            after = content.split("## [Unreleased]", 1)[1]
-                            unreleased = after.split("\n## ")[0].strip()
-                            changelog_section = unreleased or "Ingen endringer listet."
+            for version_file in possible_paths:
+                try:
+                    if version_file.exists() and version_file.is_file():
+                        version = version_file.read_text(encoding='utf-8').strip()
+                        break
+                except (OSError, IOError, UnicodeDecodeError, PermissionError):
+                    continue
+
+            # Try multiple possible locations for CHANGELOG file
+            changelog_paths = [
+                Path(settings.BASE_DIR.parent) / "CHANGELOG.md",
+                Path(settings.BASE_DIR) / ".." / "CHANGELOG.md",
+                Path("/opt/pmg-portal/CHANGELOG.md"),
+            ]
+
+            for changelog_file in changelog_paths:
+                try:
+                    if changelog_file.exists() and changelog_file.is_file():
+                        content = changelog_file.read_text(encoding='utf-8')
+                        changelog_full = content  # Store full changelog for modal
+                        show_changelog_button = True
+
+                        # Full release = plain MAJOR.MINOR.PATCH with no build (alpha/beta/rc). Any build suffix → Unreleased
+                        is_full_major = (
+                            "beta" not in version.lower()
+                            and "alpha" not in version.lower()
+                            and "rc" not in version.lower()
+                            and not version.strip().startswith("0.")
+                        )
+
+                        if is_full_major:
+                            # Full MAJOR release: show all sections for this major (e.g. all ## [1.x.x])
+                            major_num = version.strip().split("-")[0].split(".")[0]
+                            sections = []
+                            rest = content
+                            while "## [" in rest:
+                                i = rest.index("## [")
+                                segment = rest[i:]
+                                j = segment[4:].find("## [")
+                                block = segment[: 4 + j].rstrip() if j != -1 else segment.rstrip()
+                                rest = segment[4 + j:] if j != -1 else ""
+                                title = block[4 : block.index("]") + 1] if "]" in block else ""
+                                if title.startswith(f"{major_num}."):
+                                    sections.append(block)
+                            if sections:
+                                changelog_section = "\n\n".join(sections)
+                            elif "## [Unreleased]" in content:
+                                after = content.split("## [Unreleased]", 1)[1]
+                                unreleased = after.split("\n## ")[0].strip()
+                                changelog_section = unreleased or "Ingen endringer listet."
+                            else:
+                                changelog_section = "Ingen endringer listet."
                         else:
-                            changelog_section = "Ingen endringer listet."
-                    else:
-                        # Non–full MAJOR (0.x, beta, alpha): short view always shows Unreleased (one section only)
-                        if "## [Unreleased]" in content:
-                            after = content.split("## [Unreleased]", 1)[1]
-                            unreleased = after.split("\n## ")[0].strip()
-                            changelog_section = unreleased or "Ingen unreleased endringer."
-                        else:
-                            changelog_section = "Ingen unreleased endringer."
-                    break
-            except (OSError, IOError, UnicodeDecodeError, PermissionError):
-                continue
-    except Exception as e:
-        # Silently fail - footer will show defaults
-        # Log error only if DEBUG is enabled
-        import logging
-        logger = logging.getLogger(__name__)
-        if settings.DEBUG:
-            logger.exception("Error in footer_info context processor")
-        return defaults
-    
-    result = {
-        "app_version": version,
-        "changelog_section": changelog_section,
-        "changelog_full": changelog_full,
-        "show_changelog_button": show_changelog_button,
-        "copyright_year": "2026",
-    }
-    
-    # Cache for 1 hour
-    cache.set(cache_key, result, 3600)
-    
+                            # Non–full MAJOR (0.x, beta, alpha): short view always shows Unreleased (one section only)
+                            if "## [Unreleased]" in content:
+                                after = content.split("## [Unreleased]", 1)[1]
+                                unreleased = after.split("\n## ")[0].strip()
+                                changelog_section = unreleased or "Ingen unreleased endringer."
+                            else:
+                                changelog_section = "Ingen unreleased endringer."
+                        break
+                except (OSError, IOError, UnicodeDecodeError, PermissionError):
+                    continue
+        except Exception as e:
+            # Silently fail - footer will show defaults
+            import logging
+            logger = logging.getLogger(__name__)
+            if settings.DEBUG:
+                logger.exception("Error in footer_info context processor")
+            return defaults
+
+        result = {
+            "app_version": version,
+            "changelog_section": changelog_section,
+            "changelog_full": changelog_full,
+            "show_changelog_button": show_changelog_button,
+            "copyright_year": "2026",
+            "release_notes_body": "",
+            "release_notes_version": "",
+        }
+        cache.set(cache_key, result, 3600)
+
+    # Augment with release notes (language-dependent, so not cached)
+    _get_release_notes_for_request(request, result)
     return result
+
+
+def _get_release_notes_for_request(request, footer_result):
+    """
+    Augment footer result with release notes for the current version and language.
+    Only for final releases (no -beta, -alpha, -rc). Not cached (language-dependent).
+    """
+    version = (footer_result.get("app_version") or "").strip()
+    if not version:
+        return
+    if "beta" in version.lower() or "alpha" in version.lower() or "rc" in version.lower():
+        return
+    if version.startswith("0."):
+        return
+    # Normalize to MAJOR.MINOR.PATCH for lookup (e.g. 4.8.0)
+    release_key = version.split("-")[0].strip()
+    lang = (translation.get_language() or getattr(request, "LANGUAGE_CODE", None) or "en").split("-")[0]
+    if lang not in ("nb", "no", "en"):
+        lang = "en"
+    if lang == "no":
+        lang = "nb"
+    notes_paths = [
+        Path(settings.BASE_DIR.parent) / "RELEASE_NOTES.json",
+        Path(settings.BASE_DIR) / ".." / "RELEASE_NOTES.json",
+        Path("/opt/pmg-portal/RELEASE_NOTES.json"),
+    ]
+    for path in notes_paths:
+        try:
+            if path.exists() and path.is_file():
+                data = json.loads(path.read_text(encoding="utf-8"))
+                if isinstance(data, dict) and release_key in data:
+                    entry = data[release_key]
+                    if isinstance(entry, dict):
+                        body = entry.get(lang) or entry.get("nb") or entry.get("en") or ""
+                    elif isinstance(entry, str):
+                        body = entry
+                    else:
+                        body = ""
+                    if body:
+                        footer_result["release_notes_body"] = body
+                        footer_result["release_notes_version"] = release_key
+                break
+        except (OSError, IOError, UnicodeDecodeError, json.JSONDecodeError):
+            continue
 
 
 def about_info(request):

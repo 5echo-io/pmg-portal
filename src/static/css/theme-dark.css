@@ -1,0 +1,72 @@
+/**
+ * PMG Portal – Mørk modus (dark theme)
+ * Alle farger for mørk modus. Endre verdiene her for å justere utseendet.
+ * Lastes som standard ( :root ); theme-light.css overstyrer ved html.theme-light.
+ *
+ * Variabler som brukes som rgba(): *-rgb er komma-separert (f.eks. 59, 130, 246)
+ * for bruk: rgba(var(--accent-rgb), 0.2)
+ */
+:root {
+  /* Bakgrunner */
+  --bg: #0b1220;
+  --card: #121b2d;
+  --topbar-bg: #0c1426;
+  --footer-bg: #0c1426;
+  --input-bg: #0e1626;
+
+  /* Tekst */
+  --text: #e9eef8;
+  --muted: #a9b4c7;
+
+  /* Linjer, rammer, kanter */
+  --line: #22304b;
+
+  /* Knapper (nøytrale) */
+  --btn: #1e2a44;
+  --btnHover: #2a3a5c;
+
+  /* Primær/accent (lenker, aktiv knapp, fokus) */
+  --accent: #3b82f6;
+  --accent-hover: #2563eb;
+  --accent-light: #60a5fa;
+  --accent-rgb: 59, 130, 246;
+  --on-accent: #ffffff;
+
+  /* Fare (Slett, feil, advarsel) */
+  --danger: #e63939;
+  --danger-hover: #c53030;
+  --danger-rgb: 230, 57, 57;
+  --on-danger: #ffffff;
+
+  /* Suksess (bekreftelse, status) */
+  --success: #16a34a;
+  --success-light: #4ade80;
+  --success-rgb: 22, 163, 74;
+
+  /* Advarsel (warning/toast) */
+  --warning-rgb: 245, 158, 11;
+
+  /* Skygger */
+  --shadow: rgba(0, 0, 0, 0.25);
+  --shadow-strong: rgba(0, 0, 0, 0.4);
+
+  /* Overlay (modaler, bakdrop) */
+  --overlay: rgba(0, 0, 0, 0.7);
+
+  /* Fokus-ring (tastaturnavigasjon) */
+  --focus-ring: rgba(59, 130, 246, 0.4);
+
+  /* Avatar gradient */
+  --avatar-gradient-start: #3b82f6;
+  --avatar-gradient-end: #8b5cf6;
+
+  /* Toast/status-bokser (kan bruke rgba(var(--success-rgb), 0.1) osv.) */
+  --toast-success-border: rgba(22, 163, 74, 0.4);
+  --toast-success-bg: rgba(22, 163, 74, 0.12);
+  --toast-error-border: rgba(239, 68, 68, 0.4);
+  --toast-error-bg: rgba(239, 68, 68, 0.12);
+  --toast-warning-border: rgba(245, 158, 11, 0.4);
+  --toast-warning-bg: rgba(245, 158, 11, 0.12);
+  --toast-info-border: rgba(59, 130, 246, 0.4);
+  --toast-info-bg: rgba(59, 130, 246, 0.12);
+}

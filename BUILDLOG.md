@@ -9,39 +9,75 @@ Last Modified: 2026-02-08
 
 # BUILDLOG
 
-Kronologisk logg over bygg og utgivelser (nyeste først). Hver post: dato, branch, versjon (ved bump), kort oppsummering.
+Chronological log of builds and releases (newest first). Each entry: date, branch, version (on bump), short summary.
 
 ---
+
+- 2026-02-07 (Europe/Oslo)
+  - Branch: dev
+  - Version: 4.8.0-beta.35
+  - Summary:
+    - Release: All local/agent changes from [Unreleased] promoted to 4.8.0-beta.35. Theme (theme-dark/theme-light.css, THEME_COLORS.md, no flash); facility overlay/badges/overview/address/contacts/menu; buttons/modals/delete styling; document template preview; release notes popup; important info, technical support, devices, network PDF, FacilityContact; WeasyPrint service report PDF. CHANGELOG and BUILDLOG updated; VERSION 4.8.0-beta.34 → 4.8.0-beta.35.
+  - Version bump: 4.8.0-beta.34 → 4.8.0-beta.35
+
+- 2026-02-08 (Europe/Oslo)
+  - Branch: dev
+  - Summary:
+    - Theme: Standardized colors – theme-dark.css and theme-light.css as single source; app.css uses var() throughout; docs/THEME_COLORS.md; theme flash removed (meta + script in head). Theme button between Service desk and Avatar, icon centered; red/green/primary adjusted.
+  - (No version bump)
+
+- 2026-02-08 (Europe/Oslo)
+  - Branch: dev
+  - Summary:
+    - Portal facility: Service agreement status as overlay at bottom of facility image (gradient, centered badge); dot removed from badge; red text lighter (#fca5a5) for readability.
+    - Portal facility: Overview boxes same size (min-height 64px, centered), labels with 2-line clamp and word-break against overflow.
+    - Portal /facilities/: Street address shown under facility title; fallback to city/country.
+    - Admin facility: important_info in FacilityForm and facility_form.html – section "Important info / Announcement (portal)" so announcement is edited from Edit Details.
+  - (No version bump)
+
+- 2026-02-08 (Europe/Oslo)
+  - Branch: dev
+  - Summary:
+    - Portal: Release notes popup on first visit after final release – modal "New update" with descriptive text from RELEASE_NOTES.json, "View changelog" button, localStorage per version; context footer_info with release_notes_body/release_notes_version; RELEASE_NOTES.json (nb/en) and FILE_LOCATIONS updated.
+  - (No version bump)
+
+- 2026-02-08 (Europe/Oslo)
+  - Branch: dev
+  - Summary:
+    - Design: Buttons in modals/forms with same height on one line (line-height, max-height 36px, vertical-align, inline-flex).
+    - Design: Delete/danger buttons more visible red (#dc2626), not too dark; form-btn-danger, admin-btn-danger, admin-btn-sm.admin-btn-danger and backup-panel updated.
+    - Modals: Inner border removed – modal-content, admin-modal-content, customer-switch-modal-content, rack-modal-dialog without border; box-shadow only (app.css, facility_card.html).
+  - (No version bump)
 
 - 2026-02-08 (Europe/Oslo)
   - Branch: dev
   - Version: 4.8.0-beta.34
   - Summary:
-    - CHANGELOG: Reorganisert for lesbarhet – [Unreleased] gruppert med #### (Portal, Admin, Design, Dokumentmal, Kontaktpersoner); tidligere endringer under «Tidligere endringer (4.8.x)» med Rettelser/Endringer/Tillegg og kategorier (PDF, Admin, compilemessages, Portal, Install, Servicelogg).
-    - BUILDLOG: Intro lagt til; konsistent «Version» på poster; korte oppsummeringer der det manglet.
+    - CHANGELOG: Reorganized for readability – [Unreleased] grouped with #### (Portal, Admin, Design, Document template, Contacts); previous changes under "Previous changes (4.8.x)" with Fixes/Changes/Added and categories (PDF, Admin, compilemessages, Portal, Install, Service log).
+    - BUILDLOG: Intro added; consistent "Version" on entries; short summaries where missing.
   - Version bump: 4.8.0-beta.33 → 4.8.0-beta.34
 
 - 2026-02-07 (Europe/Oslo)
   - Branch: dev
   - Version: 4.8.0-beta.33
   - Summary:
-    - Portal facility: Kontaktpersoner øverst i sidemenyen og som standard fane ved åpning; oversiktsrute med Kontaktpersoner først; default hash #contacts.
-    - Portal facility: Viktig informasjon på anleggskortet – Facility.important_info (migrasjon 0016), admin «Portal – viktig informasjon», portal-blokk «Viktig informasjon» under oversikten.
-    - Portal facility: Serviceavtale-status i venstre kolonne – grønn «Serviceavtale» / rød «Ingen serviceavtale» basert på om minst én enhet har SLA (is_sla).
-    - Portal facility: Teknisk support / nøkkelperson – TechnicalSupportContact (migrasjon 0017), admin Technical support contacts; portal-boks «Teknisk support» under serviceavtale-badge med e-post/telefon og support_info.
+    - Portal facility: Contacts at top of side menu and as default tab on open; overview route with Contacts first; default hash #contacts.
+    - Portal facility: Important info on facility card – Facility.important_info (migration 0016), admin "Portal – important info", portal block "Important info" under overview.
+    - Portal facility: Service agreement status in left column – green "Service agreement" / red "No service agreement" based on whether at least one device has SLA (is_sla).
+    - Portal facility: Technical support / key contact – TechnicalSupportContact (migration 0017), admin Technical support contacts; portal box "Technical support" under service agreement badge with email/phone and support_info.
   - Version bump: 4.8.0-beta.32 → 4.8.0-beta.33
 
 - 2026-02-07 (Europe/Oslo)
   - Branch: dev
-  - Version: (ingen bump)
+  - Version: (no bump)
   - Summary:
-    - Knapper og modaler: Se datablad / Last ned PDF som app-standard (primær/sekundær); form-btn, modal-btn m.m. justert; .modal-actions og .admin-form-actions standardisert (app.css, backup_restore.html).
+    - Buttons and modals: View datasheet / Download PDF as app standard (primary/secondary); form-btn, modal-btn etc. adjusted; .modal-actions and .admin-form-actions standardized (app.css, backup_restore.html).
 
 - 2026-02-07 (Europe/Oslo)
   - Branch: dev
-  - Version: (ingen bump)
+  - Version: (no bump)
   - Summary:
-    - Portal light/dark-tema: CSS-variabler, forbedret light mode, tema-veksler (sol/måne) ved avatar (ikke pushet).
+    - Portal light/dark theme: CSS variables, improved light mode, theme toggle (sun/moon) at avatar (not pushed).
 
 - 2026-02-07 (Europe/Oslo)
   - Branch: dev
@@ -49,11 +85,11 @@ Kronologisk logg over bygg og utgivelser (nyeste først). Hver post: dato, branc
   - Summary:
     - Admin document template preview: white background in preview content; scrollbar styled to match admin; toolbar with icon buttons (Update, Open in new tab) on the right; preview box aligned with form start.
     - Admin document template edit: preview panel on the right (4/10 width); Update button and debounced auto-update for live draft preview; preview-draft endpoint (POST).
-    - Portal facility: Søkefelt produktdatablader vertikalt sentrert med «Søk»; Servicelogg Type-dropdown på linje med tittelen; «Vis produktdatablad» åpner i nytt vindu.
-    - Portal facility: Menyrekkefølge endret til Enheter, Racks, Nettverk, Produktdatablader, Servicelogg, Dokumenter, Kontaktpersoner; standard fane Enheter; oversiktsrute oppdatert.
-    - Portal: Enheter kan åpnes (facility_device_detail, /facilities/…/devices/&lt;id&gt;/, Open-knapp); Nettverksdokumentasjon under Nettverk (utstyrsoversikt kun nettverksenheter, Last ned PDF).
-    - Master-maler for PDF: DocumentTemplate (0014); admin Document templates (list/add/edit/delete, load default servicerapport); WeasyPrint; servicerapport-PDF fra mal i admin og portal; utskriftsknapp på servicerapport-siden genererer PDF (facility_service_log_pdf).
-    - Kontaktpersoner: FacilityContact (migrasjon 0015); admin tab Kontaktpersoner på anlegg (CRUD, modal); portal tab og oversiktsboks Kontaktpersoner; facility_contact_form + fragment; FILE_LOCATIONS.
+    - Portal facility: Product datasheets search field vertically centered with "Search"; Service log Type dropdown on same line as title; "View product datasheet" opens in new window.
+    - Portal facility: Menu order changed to Devices, Racks, Network, Product datasheets, Service log, Documents, Contacts; default tab Devices; overview route updated.
+    - Portal: Devices can be opened (facility_device_detail, /facilities/…/devices/&lt;id&gt;/, Open button); Network documentation under Network (equipment overview network devices only, Download PDF).
+    - Master templates for PDF: DocumentTemplate (0014); admin Document templates (list/add/edit/delete, load default service report); WeasyPrint; service report PDF from template in admin and portal; print button on service report page generates PDF (facility_service_log_pdf).
+    - Contacts: FacilityContact (migration 0015); admin tab Contacts on facility (CRUD, modal); portal tab and overview box Contacts; facility_contact_form + fragment; FILE_LOCATIONS.
   - Version bump: 4.8.0-beta.31 → 4.8.0-beta.32
 
 - 2026-02-07 (Europe/Oslo)

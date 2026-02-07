@@ -1,0 +1,6 @@
+{
+  "4.8.0": {
+    "nb": "Vi har gjort store forbedringer i PMG Portal. Nå kan du velge lys og mørk modus – temaet lagres og følger deg på tvers av enheter. På anleggssiden finner du nå servicelogg med oversikt over besøk og rapporter, og du kan laste ned servicerapport som PDF. Det er lagt inn en egen database for produktdatablader slik at du raskt finner og åpner datablad for utstyr. Du kan også se enheter, nettverksdokumentasjon, kontaktpersoner og teknisk support direkte på anlegg. Vi har strømlinjeformet design og knapper i hele portalen for en bedre opplevelse.",
+    "en": "We've made major improvements to PMG Portal. You can now switch between light and dark mode – your theme is saved and follows you across devices. On each facility you'll find a service log with visits and reports, and you can download service reports as PDF. We've added a dedicated product datasheet database so you can quickly find and open datasheets for your equipment. You can also view devices, network documentation, contacts and technical support directly on each facility. We've streamlined design and buttons across the portal for a better experience."
+  }
+}

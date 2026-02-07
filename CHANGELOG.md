@@ -4,7 +4,7 @@ Project: PMG Portal
 Purpose: Detailed changelog (SemVer)
 Path: CHANGELOG.md
 Created: 2026-02-05
-Last Modified: 2026-02-08
+Last Modified: 2026-02-07
 -->
 
 # Changelog
@@ -12,58 +12,75 @@ Last Modified: 2026-02-08
 All notable changes to this project will be documented in this file.
 This project follows Semantic Versioning (SemVer).
 
-## [Unreleased]
-
-Pre-release builds (alpha, beta, rc) vises her. Kun fulle utgivelser (uten build-suffiks) får egen versjonsseksjon under.
+## [4.8.0-beta.35] - 2026-02-07
 
 ### Fixed
 
 #### Portal
-- **Produktdatablader**: Søkefelt vertikalt sentrert med teksten «Søk» (align-items, line-height og input-høyde justert).
-- **Servicelogg**: Nedtrekksmenyen «Type» vertikalt sentrert på samme linje som tittelen «Servicelogg» (header flex, label/select line-height og høyde).
-- **Produktdatablad**: Knappen «Vis produktdatablad» åpner nå i nytt vindu (target="_blank") i stedet for HTMX-navigasjon.
+- **Facility – Service agreement (red)**: Lighter text (#fca5a5) on "No service agreement" badge for better readability on dark background; dot removed from badge.
+- **Product datasheets**: Search field vertically centered with "Search" text (align-items, line-height and input height adjusted).
+- **Service log**: "Type" dropdown vertically centered on same line as "Service log" title (header flex, label/select line-height and height).
+- **Product datasheet**: "View product datasheet" button now opens in new window (target="_blank") instead of HTMX navigation.
 
 ### Changed
 
-#### Design og knapper
-- **Knapper – design og layout**: Knappene på /datasheets/ («Se datablad» / «Last ned PDF») er gjort til standard for hele appen: primær (fylt) og sekundær (outline). form-btn, admin-btn-sm, modal-btn m.m. følger dette; Slett/fare-knapper, footer, avatar-meny og breadcrumb unntatt. Modaler/skjemaer: knapper width: auto, 36px høyde, til høyre; .modal-actions og .admin-form-actions standardisert.
+#### Design and buttons
+- **Theme – standardized colors**: All colors are now sourced from two dedicated files: `src/static/css/theme-dark.css` (dark) and `src/static/css/theme-light.css` (light). Color changes are made only in these; `app.css` uses `var(--variablename)` throughout. Documentation in `docs/THEME_COLORS.md`; FILE_LOCATIONS updated. Theme flash on navigation removed (meta + script in head set `html.theme-*` before first paint).
+- **Theme – light/dark**: Theme button moved between "Service desk" and Avatar; icon centered in button. Red (Delete/danger) and green (success) adjusted; primary buttons lighter gray in light mode. Variables for accent, danger, success, overlay, toast etc. in theme files.
+- **Buttons – design and layout**: Buttons on /datasheets/ ("View datasheet" / "Download PDF") set as app standard: primary (filled) and secondary (outline). form-btn, admin-btn-sm, modal-btn etc. follow this; Delete/danger buttons, footer, avatar menu and breadcrumb excluded. Modals/forms: buttons width: auto, 36px height, right-aligned; .modal-actions and .admin-form-actions standardized.
+- **Buttons in modals and forms**: Same height on one line – line-height, max-height 36px, vertical-align and inline-flex align so Save/Cancel etc. sit on the same line side by side.
+- **Delete/danger buttons**: More visible red (#dc2626), not too dark against background; form-btn-danger, admin-btn-danger and admin-btn-sm.admin-btn-danger updated; backup-panel danger same color.
+- **Modals**: Inner border removed – .modal-content, .admin-modal-content, .customer-switch-modal-content and .rack-modal-dialog without border; box-shadow only for separation from background (app.css, facility_card.html).
 
 #### Portal
-- **Anlegg**: Kontaktpersoner øverst i sidemenyen og standard fane ved åpning; oversiktsrute viser Kontaktpersoner først; hash #contacts som standard.
-- **Light/Dark-tema**: Light mode med tema-variabler (--topbar-bg, --footer-bg, --input-bg); sterkere kontrast; én tema-veksler (sol/måne) til venstre for avatar; lagres via /api/preferences/.
-- **Anlegg – menyrekkefølge**: Kontaktpersoner først, deretter Enheter, Racks, Nettverk, Produktdatablader, Servicelogg, Dokumenter.
-- **Servicerapport**: Utskriftsknappen genererer PDF med Servicerapport-malen (WeasyPrint); view facility_service_log_pdf og URL …/service/&lt;id&gt;/pdf/.
+- **Facility – Service agreement**: Status shown as overlay at bottom of facility image (gradient background, centered badge) instead of below the image.
+- **Facility – Overview**: Boxes same size (min-height 64px, centered content); labels with 2-line clamp and word-break so text does not overflow.
+- **Facility list (/facilities/)**: Street address (address) shown under facility title; fallback to city and country when address missing.
+- **Facility**: Contacts at top of side menu and default tab on open; overview route shows Contacts first; hash #contacts as default.
+- **Light/Dark theme**: Light mode with theme variables (--topbar-bg, --footer-bg, --input-bg); stronger contrast; single theme toggle (sun/moon) to the left of avatar; saved via /api/preferences/.
+- **Facility – menu order**: Contacts first, then Devices, Racks, Network, Product datasheets, Service log, Documents.
+- **Service report**: Print button generates PDF with service report template (WeasyPrint); view facility_service_log_pdf and URL …/service/&lt;id&gt;/pdf/.
 
 #### Admin
-- **Document templates**: Forhåndsvisning med hvit bakgrunn, scrollbar i admin-design, toolbar med Update og Open in new tab; preview til høyre (4/10), debounced auto-oppdatering, endpoint preview-draft (POST).
+- **Document templates**: Preview with white background, scrollbar in admin design, toolbar with Update and Open in new tab; preview on right (4/10), debounced auto-update, preview-draft endpoint (POST).
 
-#### Dokumentasjon
-- **CHANGELOG og BUILDLOG**: Omorganisert og gruppert for bedre sortering og lesbarhet; [Unreleased] med kategorier (Portal, Admin, Design); tidligere 4.8.x under egen seksjon med Rettelser/Endringer/Tillegg; BUILDLOG med intro og konsistent format.
+#### Documentation
+- **CHANGELOG and BUILDLOG**: Reorganized and grouped for better sorting and readability; [Unreleased] with categories (Portal, Admin, Design); previous 4.8.x under own section with Fixes/Changes/Added; BUILDLOG with intro and consistent format.
 
 ### Added
 
-#### Portal – Anlegg
-- **Viktig informasjon**: Facility.important_info (migrasjon 0016); admin-felt «Portal – viktig informasjon»; portal-blokk «Viktig informasjon» under oversikten.
-- **Serviceavtale-status**: Grønn «Serviceavtale» / rød «Ingen serviceavtale» i venstre kolonne (basert på is_sla); aria-label.
-- **Teknisk support**: TechnicalSupportContact (migrasjon 0017); admin «Technical support contacts»; portal-boks «Teknisk support» med mailto/tel og support_info.
-- **Enheter**: /facilities/…/devices/&lt;id&gt;/ (facility_device_detail) med navn, type, produsent, modell, serienummer, rack, IP, MAC, SLA, beskrivelse og lenke til datablad; «Open» per rad.
-- **Nettverksdokumentasjon**: Under Nettverk: utstyrsoversikt (nettverksenheter), «Last ned PDF»; facility_network_documentation_pdf.
+#### Portal – Facility
+- **Important info / announcement (admin)**: important_info in FacilityForm and facility_form.html; editing from Admin → Facility → [facility] → Edit Details with clear section "Important info / Announcement (portal)" and help text.
+- **Important info**: Facility.important_info (migration 0016); admin field "Portal – important info"; portal block "Important info" under overview.
+- **Service agreement status**: Green "Service agreement" / red "No service agreement" in left column (based on is_sla); aria-label.
+- **Technical support**: TechnicalSupportContact (migration 0017); admin "Technical support contacts"; portal box "Technical support" with mailto/tel and support_info.
+- **Devices**: /facilities/…/devices/&lt;id&gt;/ (facility_device_detail) with name, type, manufacturer, model, serial number, rack, IP, MAC, SLA, description and link to datasheet; "Open" per row.
+- **Network documentation**: Under Network: equipment overview (network devices), "Download PDF"; facility_network_documentation_pdf.
 
-#### Dokumentmal og PDF
-- **Master-maler for PDF**: DocumentTemplate (migrasjon 0014); admin Document templates (liste, CRUD, last inn standard servicerapport); WeasyPrint; variabler i HTML; servicerapport-PDF i admin og portal; weasyprint i requirements.
+#### Document template and PDF
+- **Master templates for PDF**: DocumentTemplate (migration 0014); admin Document templates (list, CRUD, load default service report); WeasyPrint; variables in HTML; service report PDF in admin and portal; weasyprint in requirements.
 
-#### Kontaktpersoner
-- **FacilityContact** (migrasjon 0015): admin-tab Kontaktpersoner på anlegg (tabell, Legg til/Rediger modal, Slett); portal: fane og boks «Kontaktpersoner» med mailto/tel; facility_contact_form + fragment.
+#### Contacts
+- **FacilityContact** (migration 0015): admin tab Contacts on facility (table, Add/Edit modal, Delete); portal: tab and box "Contacts" with mailto/tel; facility_contact_form + fragment.
+
+#### Portal – User experience
+- **Release notes popup**: On first login/visit after a final release (no -beta/-alpha/-rc) a modal "New update" is shown with short, readable text about important new features and fixes; "View changelog" button opens changelog modal; visibility stored per version in localStorage. RELEASE_NOTES.json in project root with text per version and language (nb/en); footer_info extended with release_notes_body and release_notes_version; locale "New update" → "Ny oppdatering"; FILE_LOCATIONS updated.
 
 ---
 
-## Tidligere endringer (4.8.x pre-release)
+## [Unreleased]
 
-*Rettelser, endringer og tillegg fra tidligere 4.8.0-beta-bygg; gruppert for enklere oversikt.*
+Pre-release builds (alpha, beta, rc) are listed here. Only full releases (without build suffix) get their own version section below.
 
-### Rettelser (tidligere)
+---
 
-#### PDF og utskrift
+## Previous changes (4.8.x pre-release)
+
+*Fixes, changes and additions from earlier 4.8.0-beta builds; grouped for easier overview.*
+
+### Fixes (previous)
+
+#### PDF and print
 - **xhtml2pdf**: Fjernet `:not(:first-child)` i datasheet_pdf.html (Selector Pseudo Function-feil).
 - **Print/PDF sidebrudd**: Sidebrudd før h2/h3; unngå dobbelt brudd; page-break-inside/after på avsnitt og tabeller.
 - **Print table header**: th hvit tekst på mørk bakgrunn (#374151) i print/PDF.
@@ -76,9 +93,9 @@ Pre-release builds (alpha, beta, rc) vises her. Kun fulle utgivelser (uten build
 - **E108/E116**: FacilityAdmin bruker kun Facility-felter (list_display: name, slug, customer_count; list_filter: is_active); customers M2M.
 
 #### compilemessages
-- Duplicate msgid fjernet i nb django.po (Type, All; Search customers…, Inactive; 12 stk: Customers, Devices, Facilities, osv.); msgfmt lykkes; update.sh viser tydeligere feil ved compilemessages-feil.
+- Duplicate msgid removed in nb django.po (Type, All; Search customers…, Inactive; 12 items: Customers, Devices, Facilities, etc.); msgfmt succeeds; update.sh shows clearer errors on compilemessages failure.
 
-### Endringer (tidligere)
+### Changes (previous)
 
 #### Portal
 - **Produktdatablad**: TOC 1/6 bredde, sticky under topbar; fjernet «Last ned PDF»-knapp; produsent-PDF med dokumentikon; egendefinert tooltip; utskrift/PDF sidebrudd og th hvit på mørk bakgrunn.
@@ -107,35 +124,35 @@ Pre-release builds (alpha, beta, rc) vises her. Kun fulle utgivelser (uten build
 - **Admin device-templates**: device category/list/form, device_instance, device_landing, device_type, manufacturer, product_datasheet – justeringer.
 - **Admin templates**: Maler flyttet til undermapper (backup/, customer/, device/, facility/, notifications/, portal/, user/); FILE_LOCATIONS.md.
 
-#### Install og DevOps
+#### Install and DevOps
 - **run_manage.sh**: Laster .env og kjører manage.py (POSTGRES_DB m.m.); update.sh viser run_manage.sh ved migrasjonsfeil; SETUP_GUIDE og FILE_LOCATIONS.
 - **Install/update logging**: install.sh → /var/log/pmg-portal-install-*.log; update.sh → APP_DIR/logs/update-*.log; ved feil vises loggsti.
 - **compilemessages**: --locale nb (kun prosjektets nb); mindre støy.
 - **Install/update**: pkg-config og libcairo2-dev for xhtml2pdf/pycairo; update.sh sjekker systemavhengigheter før pip.
 
-#### Versjonering og modeller
-- **Oppgradering/nedgradering**: SystemInfo, versjonssjekk (503 ved nedgradering), set_stored_version; BACKWARDS_COMPATIBILITY.md.
+#### Versioning and models
+- **Upgrade/downgrade**: SystemInfo, version check (503 on downgrade), set_stored_version; BACKWARDS_COMPATIBILITY.md.
 - **Produktdatablad**: content_md, updated_at, valgfri PDF-fil; requirements markdown + xhtml2pdf.
 - **Migrasjon 0010**: AlterModelOptions name= (Django-kompatibel).
 - **Portal datablad**: datasheet_detail og datasheet_pdf-templates.
 
-### Tillegg (tidligere)
+### Added (previous)
 
-#### Dokumentmal og portal
+#### Document template and portal
 - **Document template**: DocumentTemplate (0014); document_template_list, document_template_form; facility_device_detail, facility_network_documentation_pdf og fragment.
 - **run_manage.sh**: Wrapper for manage.py med .env; SETUP_GUIDE og BUILDLOG.
 - **FILE_LOCATIONS.md**: Malplasseringer etter omstrukturering.
 
-#### Servicelogg
-- **Servicelogg**: ServiceType, ServiceRapport, ServiceVisit; service_type list/form; facility_service_visit list/form/fragment; facility_service_rapport_form; attachment upload/fragment og export PDF; migrasjoner 0012, 0013; SERVICEDESK_PLUS_INTEGRATION.md.
+#### Service log
+- **Service log**: ServiceType, ServiceRapport, ServiceVisit; service_type list/form; facility_service_visit list/form/fragment; facility_service_rapport_form; attachment upload/fragment og export PDF; migrasjoner 0012, 0013; SERVICEDESK_PLUS_INTEGRATION.md.
 - **Service log**: ServiceLog (0011) knyttet til facility; admin form og fragment; portal facility_service_log_detail.
 
 #### Portal – Produktdatablad
 - **Datablad-oversikt**: /datasheets/ (datasheet_list); tilbake-lenke fra detail og not_found.
 - **Datablad**: /datasheet/&lt;slug&gt;/ (detail), PDF, datasheet_not_found; migrasjon 0010 (content_md, updated_at, file nullable); admin product_datasheet oppdatert.
 
-#### Versjonering og admin
-- **Versjonering**: SystemInfo (0009), versioning.py, version_middleware; set_stored_version; backup-manifest app_version; BACKWARDS_COMPATIBILITY.md.
+#### Versioning and admin
+- **Versioning**: SystemInfo (0009), versioning.py, version_middleware; set_stored_version; backup-manifest app_version; BACKWARDS_COMPATIBILITY.md.
 - **Admin – Notifications & announcements**: admin_notification_list, announcement_list, announcement_form; migration 0001.
 - **Admin – Device catalog**: device_category_list/form, manufacturer_list/form, product_datasheet_list/form; device_landing.
 - **Portal**: Announcements, user preferences; migrations 0007, 0008; facility_detail og fragments refactor.

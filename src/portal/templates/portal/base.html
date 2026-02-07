@@ -4,7 +4,16 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="theme" content="{{ portal_theme|default:'system' }}"/>
   <title>{% block title %}{% trans "PMG Portal" %}{% endblock %}</title>
+  <script>
+  (function(){
+    var meta = document.querySelector('meta[name="theme"]');
+    var theme = (meta && meta.getAttribute('content')) || 'system';
+    if (theme === 'system') theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    document.documentElement.classList.add('theme-' + theme);
+  })();
+  </script>
   <link rel="stylesheet" href="{% static 'app.css' %}">
   <script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg7tCRwA0TfVH/t7q6ZcdP2U6Fb2G6FOhDWWktNp4SZM" crossorigin="anonymous"></script>
 </head>
@@ -57,12 +66,6 @@
       {% if active_customer_id %}
       <span class="topbar-customer-name">{% for m in user_customers %}{% if m.customer.id == active_customer_id %}{{ m.customer.name }}{% endif %}{% endfor %}</span>
       {% endif %}
-      <div class="topbar-theme-toggle" role="group" aria-label="{% trans 'Theme' %}">
-        <button type="button" class="topbar-btn topbar-theme-btn" id="theme-toggle-btn" title="{% trans 'Switch theme' %}" aria-label="{% trans 'Switch theme' %}">
-          <span class="theme-icon-sun" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></span>
-          <span class="theme-icon-moon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></span>
-        </button>
-      </div>
       <span class="topbar-btn topbar-btn--disabled topbar-btn--with-tooltip">
         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
@@ -70,6 +73,12 @@
         {% trans "Service desk" %}
         <span class="tooltip">{% trans "This feature is under development" %}</span>
       </span>
+      <div class="topbar-theme-toggle" role="group" aria-label="{% trans 'Theme' %}">
+        <button type="button" class="topbar-btn topbar-theme-btn" id="theme-toggle-btn" title="{% trans 'Switch theme' %}" aria-label="{% trans 'Switch theme' %}">
+          <span class="theme-icon-sun" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></span>
+          <span class="theme-icon-moon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></span>
+        </button>
+      </div>
       <div class="user-avatar-wrapper">
         <button class="user-avatar-btn" onclick="toggleUserMenu(event)" aria-label="User menu">
           <div class="user-avatar">
@@ -297,7 +306,9 @@
         return data;
       }
       function applyTheme(theme) {
+        document.documentElement.classList.remove('theme-light', 'theme-dark');
         document.body.classList.remove('theme-light', 'theme-dark');
+        document.documentElement.classList.add('theme-' + theme);
         document.body.classList.add('theme-' + theme);
       }
       function setSavedTheme(theme) {
@@ -316,7 +327,7 @@
           fetch('/api/preferences/', { method: 'POST', body: formData });
         });
       }
-      // Initial apply from data-theme (from server); system uses effective theme for display
+      // Sync theme class to body (html already set in head to avoid flash); system uses effective theme for display
       var saved = document.body.getAttribute('data-theme') || 'system';
       applyTheme(saved === 'system' ? getEffectiveTheme() : saved);
       if (window.matchMedia) {
@@ -608,6 +619,27 @@
   </div>
   {% endif %}
 
+  <!-- Release notes (first visit after a final release) -->
+  {% if release_notes_body and release_notes_version %}
+  <div id="releaseNotesModal" class="modal release-notes-modal" onclick="closeReleaseNotesModal(event)" data-release-notes-version="{{ release_notes_version|escape }}" style="display: none;">
+    <div class="modal-content modal-content-sm" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h2>{% trans "New update" %}</h2>
+        <button type="button" class="modal-close" onclick="closeReleaseNotesModal(event)" aria-label="{% trans 'Close' %}">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="release-notes-body">{{ release_notes_body|escape }}</p>
+        <div class="modal-actions release-notes-actions">
+          {% if show_changelog_button %}
+          <button type="button" class="modal-btn form-btn form-btn-primary" onclick="openChangelogFromReleaseNotes()">{% trans "View Changelog" %}</button>
+          {% endif %}
+          <button type="button" class="form-btn form-btn-secondary" onclick="closeReleaseNotesModal(event)">{% trans "Got it" %}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
   <!-- Onboarding (first visit) -->
   <div id="onboardingModal" class="modal onboarding-modal" onclick="closeOnboardingModal(event)" data-show-once="true">
     <div class="modal-content modal-content-sm" onclick="event.stopPropagation()">
@@ -790,8 +822,40 @@
           document.body.style.overflow = '';
           try { localStorage.setItem('pmg_portal_onboarding_done', '1'); } catch (e) {}
         }
+        try { maybeShowReleaseNotesModal(); } catch (e) {}
       }
     };
+    function maybeShowReleaseNotesModal() {
+      var modal = document.getElementById('releaseNotesModal');
+      if (!modal) return;
+      var version = modal.getAttribute('data-release-notes-version');
+      if (!version) return;
+      try {
+        if (localStorage.getItem('pmg_portal_release_seen_' + version)) return;
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+      } catch (e) {}
+    }
+    window.closeReleaseNotesModal = function(event) {
+      if (!event || event.target.classList.contains('modal') || event.target.classList.contains('modal-close') || event.target.tagName === 'BUTTON') {
+        var modal = document.getElementById('releaseNotesModal');
+        if (modal) {
+          modal.style.display = 'none';
+          document.body.style.overflow = '';
+          var version = modal.getAttribute('data-release-notes-version');
+          if (version) try { localStorage.setItem('pmg_portal_release_seen_' + version, '1'); } catch (e) {}
+        }
+      }
+    };
+    window.openChangelogFromReleaseNotes = function() {
+      closeReleaseNotesModal({ target: { classList: { contains: function() { return true; } } } });
+      if (typeof window.openChangelogModal === 'function') window.openChangelogModal();
+    };
+    (function() {
+      try {
+        if (localStorage.getItem('pmg_portal_onboarding_done')) maybeShowReleaseNotesModal();
+      } catch (e) {}
+    })();
     window.closeHelpModal = function(event) {
       if (!event || event.target.classList.contains('modal') || event.target.classList.contains('modal-close')) {
         var modal = document.getElementById('helpModal');
@@ -870,6 +934,10 @@
         var onboardingModal = document.getElementById('onboardingModal');
         if (onboardingModal && onboardingModal.style.display === 'flex') {
           closeOnboardingModal(event);
+        }
+        var releaseNotesModal = document.getElementById('releaseNotesModal');
+        if (releaseNotesModal && releaseNotesModal.style.display === 'flex') {
+          closeReleaseNotesModal(event);
         }
         document.querySelectorAll('.user-menu').forEach(m => m.classList.remove('open'));
       }

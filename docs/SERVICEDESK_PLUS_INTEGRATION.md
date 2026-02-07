@@ -1,21 +1,21 @@
-# ServiceDesk Plus (ManageEngine) – integrasjon
+# ServiceDesk Plus (ManageEngine) – integration
 
-PMG-portalen har felt for å koble servicelogg til eksterne saker:
+The PMG portal has fields to link the service log to external tickets:
 
-- **external_id** på hver servicelogg: bruk her sak-ID fra ServiceDesk Plus (eller annet system).
-- **SLA-felt**: `sla_deadline`, `sla_met` for enkel sporing av SLA.
+- **external_id** on each service log: use the ticket ID from ServiceDesk Plus (or another system) here.
+- **SLA fields**: `sla_deadline`, `sla_met` for simple SLA tracking.
 
-## Fremtidig API-integrasjon
+## Future API integration
 
-ManageEngine tilbyr REST API for [ServiceDesk Plus Cloud](https://www.manageengine.com/products/service-desk/sdpod-v3-api/SDPOD-V3-API.html). Mulige utvidelser:
+ManageEngine provides a REST API for [ServiceDesk Plus Cloud](https://www.manageengine.com/products/service-desk/sdpod-v3-api/SDPOD-V3-API.html). Possible extensions:
 
-1. **Synkronisering**: Hente saker (Requests) fra API og vise/oppdatere status i portalen.
-2. **Opprette saker**: Når en planlagt tur opprettes, opprette en Request i ServiceDesk Plus og lagre ID i `external_id`.
-3. **SLA-henting**: Bruke API for å hente SLA-status og oppdatere `sla_met` / `sla_deadline`.
+1. **Synchronization**: Fetch tickets (Requests) from the API and display/update status in the portal.
+2. **Create tickets**: When a planned visit is created, create a Request in ServiceDesk Plus and store the ID in `external_id`.
+3. **SLA fetching**: Use the API to fetch SLA status and update `sla_met` / `sla_deadline`.
 
-API-dokumentasjon og hjelp:
+API documentation and help:
 
 - [SDPOD V3 API](https://www.manageengine.com/products/service-desk/sdpod-v3-api/SDPOD-V3-API.html)
 - [ServiceDesk Plus Cloud Help](https://help.sdpondemand.com/home)
 
-For OAuth 2.0 og API-nøkler, se ManageEngine-dokumentasjonen. Konfigurasjon (base URL, client id/secret) bør lagres i miljøvariabler eller settings, ikke i kode.
+For OAuth 2.0 and API keys, see the ManageEngine documentation. Configuration (base URL, client id/secret) should be stored in environment variables or settings, not in code.

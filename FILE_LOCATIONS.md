@@ -174,7 +174,10 @@ This file is the single reference for where important project files are located.
 | File | Path |
 |------|------|
 | Main CSS (portal + admin) | `src/static/app.css` |
+| Theme – dark mode (all color variables) | `src/static/css/theme-dark.css` |
+| Theme – light mode (all color variables) | `src/static/css/theme-light.css` |
 | Admin custom CSS | `src/static/admin_custom.css` |
+| Theme documentation (variables and usage) | `docs/THEME_COLORS.md` |
 
 ---
 
@@ -204,6 +207,9 @@ This file is the single reference for where important project files are located.
 | Install script | `scripts/install.sh` |
 | Run manage.py with .env loaded | `scripts/run_manage.sh` |
 | Version file | `VERSION` |
+| Release notes (popup text for final releases) | `RELEASE_NOTES.json` |
+
+`RELEASE_NOTES.json` is used for the "New update" popup shown on first visit after a final release (no -beta/-alpha/-rc). Add an entry per version, e.g. `"4.8.0": { "nb": "...", "en": "..." }`, with short, readable text about the most important new features and fixes.
 
 ---
 

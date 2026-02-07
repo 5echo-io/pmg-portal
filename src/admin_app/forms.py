@@ -104,10 +104,13 @@ class FacilityForm(forms.ModelForm):
         model = Facility
         fields = (
             "name", "slug", "description", "address", "city", "postal_code", "country",
-            "contact_person", "contact_email", "contact_phone", "is_active", "customers"
+            "contact_person", "contact_email", "contact_phone",
+            "important_info",
+            "is_active", "customers"
         )
         widgets = {
             "description": forms.Textarea(attrs={"rows": 4}),
+            "important_info": forms.Textarea(attrs={"rows": 5, "placeholder": "F.eks. åpningstider, adkomst, nedetid eller andre kunngjøringer som vises på anleggssiden i portalen."}),
             "customers": forms.CheckboxSelectMultiple(),
         }
 

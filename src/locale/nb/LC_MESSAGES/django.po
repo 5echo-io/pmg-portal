@@ -274,6 +274,9 @@ msgstr "Skjul full endringslogg"
 msgid "View Changelog"
 msgstr "Vis endringslogg"
 
+msgid "New update"
+msgstr "Ny oppdatering"
+
 msgid "Login"
 msgstr "Logg inn"
 

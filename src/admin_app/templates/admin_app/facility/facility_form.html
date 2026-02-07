@@ -1,4 +1,5 @@
 {% extends "admin_app/base.html" %}
+{% load i18n %}
 
 {% block admin_title %}{% if facility %}Edit facility{% else %}Add facility{% endif %}{% endblock %}
 {% block breadcrumb_back %}<a href="{% url 'admin_app:admin_facility_list' %}" class="breadcrumb-back-btn" aria-label="Back to Facilities">← Facilities</a>{% endblock %}
@@ -82,6 +83,12 @@
       {% if form.is_active.help_text %}<p class="admin-form-help">{{ form.is_active.help_text|escape }}</p>{% endif %}
       {% if form.is_active.errors %}<p class="form-error">{{ form.is_active.errors.0 }}</p>{% endif %}
     </div>
+  </div>
+  <div class="admin-form-field full-width admin-form-section admin-form-section--highlight">
+    <label for="{{ form.important_info.id_for_label }}">{% trans "Viktig informasjon / Kunngjøring (portal)" %}</label>
+    {{ form.important_info }}
+    <p class="admin-form-help">{% trans "Tekst som vises på anleggssiden i portalen under oversikten (f.eks. åpningstider, adkomst, nedetid). Linjebrytninger beholdes." %}</p>
+    {% if form.important_info.errors %}<p class="form-error">{{ form.important_info.errors.0 }}</p>{% endif %}
   </div>
   <div class="admin-form-field full-width">
     <label for="{{ form.customers.id_for_label }}">{{ form.customers.label }}</label>

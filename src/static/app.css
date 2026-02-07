@@ -1,62 +1,32 @@
-:root {
-  --bg: #0b1220;
-  --card: #121b2d;
-  --text: #e9eef8;
-  --muted: #a9b4c7;
-  --line: #22304b;
-  --btn: #1e2a44;
-  --btnHover: #2a3a5c;
-  --danger: #ff4d4d;
-  --topbar-bg: #0c1426;
-  --footer-bg: #0c1426;
-  --input-bg: #0e1626;
-  --shadow: rgba(0, 0, 0, 0.25);
-  --shadow-strong: rgba(0, 0, 0, 0.4);
-}
+/* Tema-farger: lastes fra egne filer (én for mørk, én for lys). Se docs/THEME_COLORS.md. */
+@import url('css/theme-dark.css');
+@import url('css/theme-light.css');
 
-/* Light theme – full coverage for topbar, footer, buttons, text */
-body.theme-light {
-  --bg: #f1f5f9;
-  --card: #ffffff;
-  --text: #0f172a;
-  --muted: #475569;
-  --line: #cbd5e1;
-  --btn: #e2e8f0;
-  --btnHover: #cbd5e1;
-  --topbar-bg: #ffffff;
-  --footer-bg: #f8fafc;
-  --input-bg: #ffffff;
-  --shadow: rgba(0, 0, 0, 0.08);
-  --shadow-strong: rgba(0, 0, 0, 0.12);
-  --accent: #2563eb;
-  --accent-hover: #1d4ed8;
-}
-
-/* Light mode: stronger primary buttons and links */
-body.theme-light .btn-primary,
-body.theme-light .btn.btn-primary {
+/* Lys modus: primærknapper og aktiv topbar-knapp bruker accent fra tema */
+html.theme-light .btn-primary,
+html.theme-light .btn.btn-primary {
   background: var(--accent);
   border-color: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
 }
-body.theme-light .btn-primary:hover,
-body.theme-light .btn.btn-primary:hover {
+html.theme-light .btn-primary:hover,
+html.theme-light .btn.btn-primary:hover {
   background: var(--accent-hover);
   border-color: var(--accent-hover);
-  color: #fff;
+  color: var(--on-accent);
 }
-body.theme-light .form-btn-primary {
+html.theme-light .form-btn-primary {
   background: var(--accent);
   border-color: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
 }
-body.theme-light .form-btn-primary:hover {
+html.theme-light .form-btn-primary:hover {
   background: var(--accent-hover);
   border-color: var(--accent-hover);
-  color: #fff;
+  color: var(--on-accent);
 }
-body.theme-light .topbar-btn.active {
-  background: rgba(37, 99, 235, 0.12);
+html.theme-light .topbar-btn.active {
+  background: rgba(var(--accent-rgb), 0.12);
   border-color: var(--accent);
   color: var(--accent);
 }
@@ -202,8 +172,8 @@ input {
 
 .form-input:focus {
   outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--focus-ring);
 }
 
 button {
@@ -224,7 +194,7 @@ button:hover { background: var(--btnHover); }
   border-radius: 10px;
   border: 1px solid var(--danger);
   color: var(--text);
-  background: rgba(255,77,77,0.08);
+  background: rgba(var(--danger-rgb), 0.08);
 }
 
 .row {
@@ -722,6 +692,7 @@ a.link:hover { color: var(--text); }
   color: var(--muted);
   cursor: pointer;
   transition: color 0.2s, background 0.2s, border-color 0.2s;
+  line-height: 0;
 }
 
 .topbar-theme-btn:hover {
@@ -730,22 +701,29 @@ a.link:hover { color: var(--text); }
   border-color: var(--line);
 }
 
-.topbar-theme-btn svg {
+.topbar-theme-btn .theme-icon-sun,
+.topbar-theme-btn .theme-icon-moon {
+  display: none;
+  align-items: center;
+  justify-content: center;
   width: 18px;
   height: 18px;
 }
 
-.topbar-theme-btn .theme-icon-sun,
-.topbar-theme-btn .theme-icon-moon {
-  display: none;
+.topbar-theme-btn .theme-icon-sun svg,
+.topbar-theme-btn .theme-icon-moon svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+  flex-shrink: 0;
 }
 
-body.theme-light .topbar-theme-btn .theme-icon-sun {
-  display: block;
+html.theme-light .topbar-theme-btn .theme-icon-sun {
+  display: flex;
 }
 
-body.theme-dark .topbar-theme-btn .theme-icon-moon {
-  display: block;
+html.theme-dark .topbar-theme-btn .theme-icon-moon {
+  display: flex;
 }
 
 .topbar-right .topbar-customer-name {
@@ -791,11 +769,11 @@ body.theme-dark .topbar-theme-btn .theme-icon-moon {
 }
 
 .topbar-btn.active {
-  background: rgba(59, 130, 246, 0.15);
-  border-color: #3b82f6;
-  color: #3b82f6;
+  background: rgba(var(--accent-rgb), 0.15);
+  border-color: var(--accent);
+  color: var(--accent);
   font-weight: 600;
-  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.2);
+  box-shadow: 0 0 0 1px var(--focus-ring);
 }
 
 .topbar-btn--disabled {
@@ -956,7 +934,7 @@ body.theme-dark .topbar-theme-btn .theme-icon-moon {
 
 .customer-menu-search-input:focus {
   outline: none;
-  border-color: #3b82f6;
+  border-color: var(--accent);
 }
 
 .customer-menu-list {
@@ -1002,7 +980,7 @@ body.theme-dark .topbar-theme-btn .theme-icon-moon {
 
 .customer-menu-item-check {
   flex-shrink: 0;
-  color: #22c55e;
+  color: var(--success);
 }
 
 .customer-menu-item--active {
@@ -1081,8 +1059,8 @@ body.theme-dark .topbar-theme-btn .theme-icon-moon {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
-  color: white;
+  background: linear-gradient(135deg, var(--avatar-gradient-start) 0%, var(--avatar-gradient-end) 100%);
+  color: var(--on-accent);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1262,7 +1240,7 @@ body.theme-dark .topbar-theme-btn .theme-icon-moon {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #22c55e;
+  background: var(--success);
   margin-left: auto;
   flex-shrink: 0;
   animation: about-pulse 2s ease-in-out infinite;
@@ -1297,7 +1275,7 @@ body.theme-dark .topbar-theme-btn .theme-icon-moon {
 .about-update-indicator {
   display: inline-block;
   margin-left: 12px;
-  color: #22c55e;
+  color: var(--success);
   font-weight: 500;
 }
 
@@ -1588,32 +1566,33 @@ body.theme-dark .topbar-theme-btn .theme-icon-moon {
 }
 
 .toast-success {
-  border-color: rgba(16, 185, 129, 0.3);
-  background: rgba(16, 185, 129, 0.1);
+  border-color: var(--toast-success-border);
+  background: var(--toast-success-bg);
 }
 
 .toast-error {
-  border-color: rgba(239, 68, 68, 0.3);
-  background: rgba(239, 68, 68, 0.1);
+  border-color: var(--toast-error-border);
+  background: var(--toast-error-bg);
 }
 
 .toast-warning {
-  border-color: rgba(245, 158, 11, 0.3);
-  background: rgba(245, 158, 11, 0.1);
+  border-color: var(--toast-warning-border);
+  background: var(--toast-warning-bg);
 }
 
 .toast-info {
-  border-color: rgba(59, 130, 246, 0.3);
-  background: rgba(59, 130, 246, 0.1);
+  border-color: var(--toast-info-border);
+  background: var(--toast-info-bg);
 }
 
-/* Form Buttons – compact, vertically centered, width by content */
+/* Form Buttons – compact, same height on one line, width by content */
 .form-btn {
   padding: 8px 16px;
   border-radius: 8px;
   border: 1px solid var(--line);
   font-size: 13px;
   font-weight: 500;
+  line-height: 1.2;
   cursor: pointer;
   transition: all 0.2s;
   text-decoration: none;
@@ -1627,6 +1606,7 @@ body.theme-dark .topbar-theme-btn .theme-icon-moon {
   width: auto;
   min-width: 0;
   flex-shrink: 0;
+  vertical-align: middle;
 }
 
 .form-btn-primary {
@@ -1728,7 +1708,7 @@ button.btn { width: auto; margin: 0; -webkit-appearance: none; appearance: none;
   top: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.7);
+  background: var(--overlay);
   backdrop-filter: blur(4px);
   align-items: center;
   justify-content: center;
@@ -1737,7 +1717,7 @@ button.btn { width: auto; margin: 0; -webkit-appearance: none; appearance: none;
 
 .admin-modal-content {
   background: var(--card);
-  border: 1px solid var(--line);
+  border: none;
   border-radius: 16px;
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5);
   max-width: 700px;
@@ -1822,9 +1802,9 @@ button.btn { width: auto; margin: 0; -webkit-appearance: none; appearance: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(59, 130, 246, 0.1);
+  background: rgba(var(--accent-rgb), 0.1);
   border-radius: 8px;
-  color: #3b82f6;
+  color: var(--accent);
 }
 
 .recent-action-icon svg {
@@ -1845,7 +1825,7 @@ button.btn { width: auto; margin: 0; -webkit-appearance: none; appearance: none;
 }
 
 .recent-action-text a {
-  color: #3b82f6;
+  color: var(--accent);
   text-decoration: none;
 }
 
@@ -2007,7 +1987,7 @@ button.btn { width: auto; margin: 0; -webkit-appearance: none; appearance: none;
   top: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: var(--overlay);
   align-items: center;
   justify-content: center;
   padding: 20px;
@@ -2015,7 +1995,7 @@ button.btn { width: auto; margin: 0; -webkit-appearance: none; appearance: none;
 
 .modal-content {
   background: var(--card);
-  border: 1px solid var(--line);
+  border: none;
   border-radius: 14px;
   max-width: 800px;
   width: 100%;
@@ -2103,6 +2083,29 @@ button.btn { width: auto; margin: 0; -webkit-appearance: none; appearance: none;
   margin: 0;
 }
 
+/* Release notes popup (first visit after final release) */
+.release-notes-modal .modal-content {
+  max-width: 520px;
+}
+.release-notes-body {
+  white-space: pre-line;
+  line-height: 1.6;
+  color: var(--text);
+  margin: 0 0 20px 0;
+}
+.release-notes-actions {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  gap: 10px;
+}
+.release-notes-actions .form-btn-primary {
+  order: 1;
+}
+.release-notes-actions .form-btn-secondary {
+  order: 2;
+}
+
 .modal-actions {
   flex-shrink: 0;
   display: flex;
@@ -2119,6 +2122,12 @@ button.btn { width: auto; margin: 0; -webkit-appearance: none; appearance: none;
   width: auto;
   min-width: 0;
   flex-shrink: 0;
+  min-height: 36px;
+  height: 36px;
+  line-height: 1.2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .modal-btn {
@@ -2130,6 +2139,8 @@ button.btn { width: auto; margin: 0; -webkit-appearance: none; appearance: none;
   color: var(--text);
   cursor: pointer;
   transition: background 0.2s, color 0.2s, border-color 0.2s;
+  box-sizing: border-box;
+  vertical-align: middle;
 }
 
 .modal-btn:hover {
@@ -2184,20 +2195,20 @@ button.btn { width: auto; margin: 0; -webkit-appearance: none; appearance: none;
 }
 
 .profile-nav-item.active {
-  background: rgba(59, 130, 246, 0.15);
-  border-color: #3b82f6;
-  color: #3b82f6;
+  background: rgba(var(--accent-rgb), 0.15);
+  border-color: var(--accent);
+  color: var(--accent);
   font-weight: 500;
 }
 
 .profile-nav-item-danger {
-  color: #ef4444;
+  color: var(--danger);
 }
 
 .profile-nav-item-danger:hover {
-  background: rgba(239, 68, 68, 0.1);
-  border-color: #ef4444;
-  color: #ef4444;
+  background: rgba(var(--danger-rgb), 0.1);
+  border-color: var(--danger);
+  color: var(--danger);
 }
 
 .profile-nav-item svg {
@@ -2314,12 +2325,12 @@ button.btn { width: auto; margin: 0; -webkit-appearance: none; appearance: none;
 
 /* Danger Zone Styling */
 .modal-content-danger {
-  border-color: #ef4444;
+  box-shadow: 0 4px 20px var(--shadow-strong), 0 0 0 1px rgba(var(--danger-rgb), 0.4);
 }
 
 .modal-header-danger {
-  border-bottom-color: #ef4444;
-  background: rgba(239, 68, 68, 0.1);
+  border-bottom-color: var(--danger);
+  background: rgba(var(--danger-rgb), 0.12);
 }
 
 .danger-zone {
@@ -2331,11 +2342,11 @@ button.btn { width: auto; margin: 0; -webkit-appearance: none; appearance: none;
   display: flex;
   justify-content: center;
   margin-bottom: 16px;
-  color: #ef4444;
+  color: var(--danger);
 }
 
 .danger-zone h3 {
-  color: #ef4444;
+  color: var(--danger);
   margin-bottom: 16px;
   font-size: 18px;
 }
@@ -2358,38 +2369,38 @@ button.btn { width: auto; margin: 0; -webkit-appearance: none; appearance: none;
 }
 
 .form-btn-danger {
-  background: #ef4444;
-  border-color: #ef4444;
-  color: white;
+  background: var(--danger);
+  border-color: var(--danger);
+  color: var(--on-danger);
 }
 
 .form-btn-danger:hover:not(:disabled) {
-  background: rgba(239, 68, 68, 0.85);
-  border-color: rgba(239, 68, 68, 0.9);
-  color: white;
+  background: var(--danger-hover);
+  border-color: var(--danger-hover);
+  color: var(--on-danger);
 }
 
 .form-btn-danger:disabled {
-  background: #7f1d1d;
-  border-color: #7f1d1d;
-  color: rgba(255, 255, 255, 0.5);
+  background: var(--danger-hover);
+  border-color: var(--danger-hover);
+  color: rgba(255, 255, 255, 0.7);
   cursor: not-allowed;
-  opacity: 0.6;
+  opacity: 0.8;
 }
 
 .admin-btn-danger {
-  background: #991b1b;
-  border-color: #991b1b;
-  color: white;
+  background: var(--danger);
+  border-color: var(--danger);
+  color: var(--on-danger);
   padding: 8px 12px;
   min-width: auto;
   width: auto;
 }
 
 .admin-btn-danger:hover {
-  background: rgba(239, 68, 68, 0.4);
-  border-color: rgba(239, 68, 68, 0.6);
-  color: #fca5a5;
+  background: var(--danger-hover);
+  border-color: var(--danger-hover);
+  color: var(--on-danger);
 }
 
 
@@ -2527,7 +2538,7 @@ button.btn { width: auto; margin: 0; -webkit-appearance: none; appearance: none;
 }
 
 .admin-home-link:hover {
-  color: #3b82f6;
+  color: var(--accent);
 }
 
 /* Backup & Restore page */
@@ -2581,7 +2592,7 @@ button.btn { width: auto; margin: 0; -webkit-appearance: none; appearance: none;
   justify-content: center;
   width: 32px;
   height: 32px;
-  background: rgba(59, 130, 246, 0.15);
+  background: rgba(var(--accent-rgb), 0.15);
   border-radius: 8px;
   font-size: 18px;
 }
@@ -2603,27 +2614,27 @@ button.btn { width: auto; margin: 0; -webkit-appearance: none; appearance: none;
 
 /* Softer, diffuse button colors on backup page only */
 .admin-backup-panel .form-btn-primary {
-  background: rgba(59, 130, 246, 0.45);
-  border-color: rgba(59, 130, 246, 0.55);
+  background: rgba(var(--accent-rgb), 0.45);
+  border-color: rgba(var(--accent-rgb), 0.55);
   color: rgba(255, 255, 255, 0.95);
 }
 
 .admin-backup-panel .form-btn-primary:hover {
-  background: rgba(59, 130, 246, 0.6);
-  border-color: rgba(59, 130, 246, 0.7);
-  color: #fff;
+  background: rgba(var(--accent-rgb), 0.6);
+  border-color: rgba(var(--accent-rgb), 0.7);
+  color: var(--on-accent);
 }
 
 .admin-backup-panel .form-btn-danger {
-  background: rgba(185, 28, 28, 0.5);
-  border-color: rgba(185, 28, 28, 0.6);
-  color: rgba(255, 255, 255, 0.95);
+  background: var(--danger);
+  border-color: var(--danger);
+  color: var(--on-danger);
 }
 
 .admin-backup-panel .form-btn-danger:hover {
-  background: rgba(185, 28, 28, 0.65);
-  border-color: rgba(185, 28, 28, 0.75);
-  color: #fff;
+  background: var(--danger-hover);
+  border-color: var(--danger-hover);
+  color: var(--on-danger);
 }
 
 .admin-backup-restore-modal-actions {
@@ -2641,6 +2652,12 @@ button.btn { width: auto; margin: 0; -webkit-appearance: none; appearance: none;
   flex-shrink: 0;
   min-height: 36px;
   height: 36px;
+  max-height: 36px;
+  line-height: 1.2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
 }
 
 .admin-backup-file-wrap {
@@ -2693,14 +2710,14 @@ button.btn { width: auto; margin: 0; -webkit-appearance: none; appearance: none;
   border-radius: 8px;
   margin-bottom: 8px;
   font-size: 12px;
-  background: rgba(59, 130, 246, 0.1);
-  border: 1px solid rgba(59, 130, 246, 0.3);
+  background: rgba(var(--accent-rgb), 0.1);
+  border: 1px solid rgba(var(--accent-rgb), 0.3);
   color: var(--text);
 }
 
 .admin-message-success {
-  background: rgba(16, 185, 129, 0.1);
-  border-color: rgba(16, 185, 129, 0.3);
+  background: rgba(var(--success-rgb), 0.1);
+  border-color: rgba(var(--success-rgb), 0.3);
 }
 
 .admin-toolbar {
@@ -2917,7 +2934,7 @@ button.btn { width: auto; margin: 0; -webkit-appearance: none; appearance: none;
 }
 
 .admin-table a:hover {
-  color: #3b82f6;
+  color: var(--accent);
 }
 
 .admin-table a.admin-btn-sm:not(.admin-btn-danger):hover {
@@ -2927,7 +2944,7 @@ button.btn { width: auto; margin: 0; -webkit-appearance: none; appearance: none;
 }
 
 .admin-notification-unread td {
-  background: rgba(59, 130, 246, 0.06);
+  background: rgba(var(--accent-rgb), 0.06);
 }
 
 .admin-badge {
@@ -2937,8 +2954,8 @@ button.btn { width: auto; margin: 0; -webkit-appearance: none; appearance: none;
   font-size: 0.75rem;
   font-weight: 600;
   border-radius: 999px;
-  background: rgba(59, 130, 246, 0.2);
-  color: #60a5fa;
+  background: rgba(var(--accent-rgb), 0.2);
+  color: var(--accent-light);
   margin-left: 8px;
 }
 
@@ -2979,15 +2996,15 @@ button.admin-btn-sm {
   padding: 0 12px;
   min-width: auto;
   width: auto;
-  border-color: rgba(239, 68, 68, 0.5);
-  background: rgba(239, 68, 68, 0.12);
-  color: #f87171;
+  border-color: var(--danger);
+  background: var(--danger);
+  color: var(--on-danger);
 }
 
 .admin-btn-sm.admin-btn-danger:hover {
-  background: rgba(239, 68, 68, 0.25);
-  border-color: rgba(239, 68, 68, 0.5);
-  color: #fca5a5;
+  background: var(--danger-hover);
+  border-color: var(--danger-hover);
+  color: var(--on-danger);
 }
 
 .admin-btn-sm:not(.admin-btn-danger):hover {
@@ -3041,7 +3058,7 @@ button.admin-btn-sm {
 }
 
 .form-error {
-  color: #ef4444;
+  color: var(--danger);
   font-size: 12px;
   margin-top: 4px;
 }
@@ -3112,8 +3129,8 @@ button.admin-btn-sm {
 .admin-form-field select:focus,
 .admin-form-field textarea:focus {
   outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(var(--accent-rgb), 0.15);
 }
 
 .admin-form-help {
@@ -3141,10 +3158,13 @@ button.admin-btn-sm {
   justify-content: center;
   min-height: 36px;
   height: 36px;
+  max-height: 36px;
+  line-height: 1.2;
   box-sizing: border-box;
   width: auto;
   min-width: 0;
   flex-shrink: 0;
+  vertical-align: middle;
 }
 
 .admin-form-actions--modal {
@@ -3186,7 +3206,7 @@ button.admin-btn-sm {
   height: 18px;
   margin: 0;
   cursor: pointer;
-  accent-color: #3b82f6;
+  accent-color: var(--accent);
 }
 
 .admin-form-field--checkbox .admin-form-help,
@@ -3283,8 +3303,8 @@ button.admin-btn-sm {
 }
 
 .customer-logo-upload-area:hover {
-  border-color: #3b82f6;
-  background: rgba(59, 130, 246, 0.05);
+  border-color: var(--accent);
+  background: rgba(var(--accent-rgb), 0.05);
 }
 
 .customer-logo-preview-wrapper {
@@ -3312,8 +3332,8 @@ button.admin-btn-sm {
   height: 32px;
   border-radius: 6px;
   border: none;
-  background: rgba(255, 77, 77, 0.9);
-  color: white;
+  background: rgba(var(--danger-rgb), 0.9);
+  color: var(--on-danger);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -3473,20 +3493,20 @@ button.admin-btn-sm {
 }
 
 .customer-card-icon-btn--edit:hover {
-  background: rgba(59, 130, 246, 0.1);
-  border-color: #3b82f6;
-  color: #3b82f6;
+  background: rgba(var(--accent-rgb), 0.1);
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 .customer-card-icon-btn--delete {
-  color: #ef4444;
-  border-color: rgba(239, 68, 68, 0.3);
+  color: var(--danger);
+  border-color: rgba(var(--danger-rgb), 0.3);
 }
 
 .customer-card-icon-btn--delete:hover {
-  background: #ef4444;
-  border-color: #ef4444;
-  color: white;
+  background: var(--danger);
+  border-color: var(--danger);
+  color: var(--on-danger);
 }
 
 .customer-card-org,
@@ -3547,13 +3567,13 @@ button.admin-btn-sm {
 
 .customer-tab:hover {
   color: var(--text);
-  background: rgba(59, 130, 246, 0.05);
+  background: rgba(var(--accent-rgb), 0.05);
 }
 
 .customer-tab.active {
-  color: #3b82f6;
-  border-bottom-color: #3b82f6;
-  background: rgba(59, 130, 246, 0.08);
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+  background: rgba(var(--accent-rgb), 0.08);
   font-weight: 600;
 }
 
@@ -3620,7 +3640,7 @@ button.admin-btn-sm {
   padding: 4px 8px;
   border-radius: 4px;
   font-size: 13px;
-  color: #3b82f6;
+  color: var(--accent);
 }
 
 .role-badge {
@@ -3773,7 +3793,7 @@ button.admin-btn-sm {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: var(--overlay);
   backdrop-filter: blur(4px);
   z-index: 2000;
   display: flex;
@@ -3792,7 +3812,7 @@ button.admin-btn-sm {
 
 .customer-switch-modal-content {
   background: var(--card);
-  border: 1px solid var(--line);
+  border: none;
   border-radius: 16px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   max-width: 600px;
@@ -4052,9 +4072,9 @@ button.admin-btn-sm {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(59, 130, 246, 0.1);
+  background: rgba(var(--accent-rgb), 0.1);
   border-radius: 10px;
-  color: #3b82f6;
+  color: var(--accent);
 }
 
 .facility-card-content {
@@ -4131,9 +4151,9 @@ button.admin-btn-sm {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(59, 130, 246, 0.1);
+  background: rgba(var(--accent-rgb), 0.1);
   border-radius: 12px;
-  color: #3b82f6;
+  color: var(--accent);
 }
 
 .facility-detail-info {
@@ -4187,7 +4207,7 @@ button.admin-btn-sm {
 
 .facility-tab.active {
   color: var(--text);
-  border-bottom-color: #3b82f6;
+  border-bottom-color: var(--accent);
 }
 
 .facility-detail-content {
@@ -4230,13 +4250,13 @@ button.admin-btn-sm {
 }
 
 .role-badge--member {
-  background: rgba(59, 130, 246, 0.2);
-  color: #60a5fa;
+  background: rgba(var(--accent-rgb), 0.2);
+  color: var(--accent-light);
 }
 
 .role-badge--admin {
   background: rgba(34, 197, 94, 0.2);
-  color: #4ade80;
+  color: var(--success-light);
 }
 
 /* Loading indicator (HTMX) – animates in over the topbar only during HTMX requests */

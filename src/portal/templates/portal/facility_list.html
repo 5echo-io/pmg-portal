@@ -23,7 +23,9 @@
         </div>
         <div class="facility-card-content">
           <h3 class="facility-card-name">{{ facility.name }}</h3>
-          {% if facility.city %}
+          {% if facility.address %}
+          <p class="facility-card-location">{{ facility.address }}</p>
+          {% elif facility.city %}
           <p class="facility-card-location">{{ facility.city }}{% if facility.country %}, {{ facility.country }}{% endif %}</p>
           {% endif %}
           {% if facility.description %}

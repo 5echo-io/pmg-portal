@@ -1,0 +1,72 @@
+/**
+ * PMG Portal – Lys modus (light theme)
+ * Alle farger for lys modus. Endre verdiene her for å justere utseendet.
+ * Aktiveres når <html> har class="theme-light".
+ *
+ * Variabler som brukes som rgba(): *-rgb er komma-separert
+ * for bruk: rgba(var(--accent-rgb), 0.2)
+ */
+html.theme-light {
+  /* Bakgrunner */
+  --bg: #f1f5f9;
+  --card: #ffffff;
+  --topbar-bg: #ffffff;
+  --footer-bg: #f8fafc;
+  --input-bg: #ffffff;
+
+  /* Tekst */
+  --text: #0f172a;
+  --muted: #475569;
+
+  /* Linjer, rammer, kanter */
+  --line: #cbd5e1;
+
+  /* Knapper (nøytrale) */
+  --btn: #f1f5f9;
+  --btnHover: #e2e8f0;
+
+  /* Primær/accent (lenker, aktiv knapp, fokus) */
+  --accent: #2563eb;
+  --accent-hover: #1d4ed8;
+  --accent-light: #3b82f6;
+  --accent-rgb: 37, 99, 235;
+  --on-accent: #ffffff;
+
+  /* Fare (Slett, feil, advarsel) */
+  --danger: #dc2626;
+  --danger-hover: #b91c1c;
+  --danger-rgb: 220, 38, 38;
+  --on-danger: #ffffff;
+
+  /* Suksess (bekreftelse, status) */
+  --success: #15803d;
+  --success-light: #22c55e;
+  --success-rgb: 21, 128, 61;
+
+  /* Advarsel (warning/toast) */
+  --warning-rgb: 245, 158, 11;
+
+  /* Skygger */
+  --shadow: rgba(0, 0, 0, 0.08);
+  --shadow-strong: rgba(0, 0, 0, 0.12);
+
+  /* Overlay (modaler, bakdrop) */
+  --overlay: rgba(0, 0, 0, 0.5);
+
+  /* Fokus-ring (tastaturnavigasjon) */
+  --focus-ring: rgba(37, 99, 235, 0.4);
+
+  /* Avatar gradient */
+  --avatar-gradient-start: #3b82f6;
+  --avatar-gradient-end: #8b5cf6;
+
+  /* Toast/status-bokser */
+  --toast-success-border: rgba(21, 128, 61, 0.4);
+  --toast-success-bg: rgba(21, 128, 61, 0.1);
+  --toast-error-border: rgba(220, 38, 38, 0.4);
+  --toast-error-bg: rgba(220, 38, 38, 0.1);
+  --toast-warning-border: rgba(245, 158, 11, 0.4);
+  --toast-warning-bg: rgba(245, 158, 11, 0.1);
+  --toast-info-border: rgba(37, 99, 235, 0.4);
+  --toast-info-bg: rgba(37, 99, 235, 0.1);
+}

@@ -1,22 +1,22 @@
-# WeasyPrint / PDF (servicerapport)
+# WeasyPrint / PDF (service report)
 
-Servicerapport-PDF og andre dokumenter fra **Document templates** bruker [WeasyPrint](https://weasyprint.org/). WeasyPrint trenger systembiblioteker (Pango, Cairo, GdkPixbuf) som må installeres med apt.
+Service report PDF and other documents from **Document templates** use [WeasyPrint](https://weasyprint.org/). WeasyPrint requires system libraries (Pango, Cairo, GdkPixbuf) that must be installed with apt.
 
-**Install wizard:** Når du kjører `scripts/install.sh` (ny installasjon eller oppdatering), installerer skriptet automatisk disse avhengighetene og riktig pydyf-versjon, slik at dokumentmal-PDF fungerer uten manuelle steg.
+**Install wizard:** When you run `scripts/install.sh` (new installation or update), the script automatically installs these dependencies and the correct weasyprint version, so that document template PDFs work without manual steps.
 
-## Feil: «cannot load library 'pango-1.0-0'»
+## Error: "cannot load library 'pango-1.0-0'"
 
-Hvis PDF-nedlasting gir 500-feil og journalctl viser:
+If PDF download returns a 500 error and journalctl shows:
 
 ```text
 OSError: cannot load library 'pango-1.0-0': ... No such file or directory
 ```
 
-mangler WeasyPrint sine systemavhengigheter på serveren.
+WeasyPrint's system dependencies are missing on the server.
 
-### Løsning
+### Solution
 
-Kjør på serveren (Ubuntu/Debian):
+On the server (Ubuntu/Debian), run:
 
 ```bash
 sudo apt-get update
@@ -24,14 +24,14 @@ sudo apt-get install -y libpango-1.0-0 libpangocairo-1.0-0 libgdk-pixbuf2.0-0 li
 sudo systemctl restart pmg-portal
 ```
 
-Eller kjør en full oppdatering slik at `scripts/update.sh` installerer avhengighetene:
+Or run a full update so that `scripts/update.sh` installs the dependencies:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/5echo-io/pmg-portal/dev/scripts/install.sh | sudo bash
 ```
 
-(Velg «Update Production» hvis installasjonen allerede finnes.)
+(Choose "Update Production" if the installation already exists.)
 
 ## Document templates
 
-Malene administreres under **Admin → Document templates**. Standard mal for servicerapport kan lastes inn med «Load default servicerapport». HTML og CSS redigeres der; variabler som `service_log`, `facility` og `customer` er tilgjengelige i malen.
+Templates are managed under **Admin → Document templates**. The default service report template can be loaded with "Load default service report". HTML and CSS are edited there; variables such as `service_log`, `facility` and `customer` are available in the template.
