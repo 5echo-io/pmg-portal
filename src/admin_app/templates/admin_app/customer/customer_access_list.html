@@ -21,8 +21,9 @@
         </select>
         <select name="role" id="id_filter_role" class="form-input admin-filter-select">
           <option value="">{% trans "All roles" %}</option>
-          <option value="member" {% if request.GET.role == "member" %}selected{% endif %}>{% trans "Member" %}</option>
-          <option value="admin" {% if request.GET.role == "admin" %}selected{% endif %}>{% trans "Customer Admin" %}</option>
+          <option value="owner" {% if request.GET.role == "owner" %}selected{% endif %}>{% trans "Owner" %}</option>
+          <option value="administrator" {% if request.GET.role == "administrator" %}selected{% endif %}>{% trans "Administrator" %}</option>
+          <option value="user" {% if request.GET.role == "user" %}selected{% endif %}>{% trans "User" %}</option>
         </select>
         <button type="submit" class="form-btn form-btn-secondary admin-search-btn">{% trans "Search" %}</button>
       </div>

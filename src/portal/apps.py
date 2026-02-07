@@ -18,7 +18,20 @@ class PortalConfig(AppConfig):
         """Register signals when app is ready."""
         from django.db.models.signals import post_save, post_delete
         from .models import Customer, CustomerMembership
-        
+
+        def sync_is_staff_on_membership_change(sender, instance, **kwargs):
+            """Keep user.is_staff in sync with roles (Administrator or higher = staff)."""
+            from portal.roles import sync_user_is_staff
+            from django.contrib.auth import get_user_model
+            User = get_user_model()
+            user_id = getattr(instance, "user_id", None)
+            if user_id:
+                try:
+                    u = User.objects.get(pk=user_id)
+                    sync_user_is_staff(u)
+                except User.DoesNotExist:
+                    pass
+
         def invalidate_user_customers_cache(sender, instance, **kwargs):
             """Invalidate user_customers cache when Customer or CustomerMembership changes."""
             # If it's a CustomerMembership, invalidate cache for that user
@@ -42,5 +55,7 @@ class PortalConfig(AppConfig):
         # Connect signals
         post_save.connect(invalidate_user_customers_cache, sender=Customer)
         post_save.connect(invalidate_user_customers_cache, sender=CustomerMembership)
+        post_save.connect(sync_is_staff_on_membership_change, sender=CustomerMembership)
         post_delete.connect(invalidate_user_customers_cache, sender=Customer)
         post_delete.connect(invalidate_user_customers_cache, sender=CustomerMembership)
+        post_delete.connect(sync_is_staff_on_membership_change, sender=CustomerMembership)

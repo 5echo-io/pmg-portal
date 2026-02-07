@@ -1350,6 +1350,19 @@ html.theme-dark .topbar-theme-btn .theme-icon-moon {
   margin-top: 14px;
 }
 
+/* Systemmeldinger panel (top of customer card / dashboard) */
+.systemmeldinger-panel {
+  margin-bottom: 20px;
+}
+.systemmeldinger-panel-title {
+  margin: 0 0 12px 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+.systemmeldinger-panel--facility {
+  margin-bottom: 16px;
+}
+
 /* Dashboard widgets grid */
 .dashboard-widgets {
   display: grid;
@@ -3090,6 +3103,105 @@ html.theme-light .admin-customize-panel-icon-light {
   margin-left: 0;
 }
 
+/* Global table row actions dropdown (avatar-style, top layer, click-outside close) */
+.admin-row-actions-dropdown {
+  position: relative;
+  display: inline-block;
+}
+.admin-row-actions-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm, 8px);
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+.admin-row-actions-trigger:hover {
+  background: var(--btn);
+  border-color: var(--muted);
+}
+.admin-row-actions-trigger svg {
+  display: block;
+}
+.admin-row-actions-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 4px);
+  min-width: 200px;
+  padding: 6px 0;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  box-shadow: 0 8px 24px var(--shadow-strong);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-6px);
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+}
+.admin-row-actions-menu.open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+.admin-row-actions-menu[hidden] {
+  display: none !important;
+}
+.admin-row-actions-menu a,
+.admin-row-actions-form .admin-row-actions-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 13px;
+  text-align: left;
+  color: var(--text);
+  text-decoration: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.2s;
+}
+.admin-row-actions-menu a:hover,
+.admin-row-actions-form .admin-row-actions-item:hover {
+  background: var(--btnHover);
+  color: var(--text);
+}
+.admin-row-actions-menu a.admin-row-actions-item--danger:hover,
+.admin-row-actions-form .admin-row-actions-item--danger:hover {
+  background: rgba(239, 68, 68, 0.2);
+  color: var(--danger);
+}
+.admin-row-actions-menu .admin-row-actions-icon,
+.admin-row-actions-form .admin-row-actions-item .admin-row-actions-icon {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.admin-row-actions-form {
+  margin: 0;
+  padding: 0;
+}
+.admin-row-actions-form .admin-row-actions-item {
+  color: var(--text);
+}
+.admin-row-actions-form .admin-row-actions-item--danger {
+  color: var(--danger);
+}
+
 .admin-table tr:last-child td {
   border-bottom: none;
 }
@@ -4221,6 +4333,7 @@ button.admin-btn-sm {
 .facility-card {
   background: var(--card);
   border: 1px solid var(--line);
+  border-left-width: 4px;
   border-radius: 12px;
   padding: 20px;
   display: flex;
@@ -4230,6 +4343,20 @@ button.admin-btn-sm {
   color: var(--text);
   transition: all 0.2s ease;
   cursor: pointer;
+}
+.facility-card--status-ok {
+  border-left-color: #16a34a;
+}
+.facility-card--status-custom {
+  border-left-color: var(--facility-status-color, #16a34a);
+}
+.facility-card-status-badge {
+  display: inline-block;
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  border-radius: 6px;
+  margin-bottom: 6px;
+  font-weight: 500;
 }
 
 .facility-card:hover {

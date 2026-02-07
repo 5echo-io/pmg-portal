@@ -103,18 +103,57 @@ class Customer(models.Model):
                     pass
 
 
+class UserProfile(models.Model):
+    """
+    Extended user data. OneToOne with User.
+    system_role: 'super_admin' = Super admin (platform-level, below is_superuser).
+    Platform admin is User.is_superuser and is not stored here.
+    """
+    SYSTEM_ROLE_SUPER_ADMIN = "super_admin"
+    SYSTEM_ROLE_CHOICES = [
+        ("", "—"),
+        (SYSTEM_ROLE_SUPER_ADMIN, "Super Admin"),
+    ]
+
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="portal_profile",
+        primary_key=True,
+    )
+    system_role = models.CharField(
+        max_length=20,
+        choices=SYSTEM_ROLE_CHOICES,
+        blank=True,
+        default="",
+        db_index=True,
+    )
+
+    def __str__(self):
+        return f"Profile({self.user.username}, {self.system_role or '—'})"
+
+
 class CustomerMembership(models.Model):
+    """User's membership in a customer (tenant) with a tenant-level role."""
+
+    ROLE_OWNER = "owner"
+    ROLE_ADMINISTRATOR = "administrator"
+    ROLE_USER = "user"
+    # Legacy (kept for migration/compat; map to new roles in logic)
     ROLE_MEMBER = "member"
     ROLE_ADMIN = "admin"
 
     ROLE_CHOICES = [
-        (ROLE_MEMBER, "Member"),
-        (ROLE_ADMIN, "Customer Admin"),
+        (ROLE_OWNER, "Owner"),
+        (ROLE_ADMINISTRATOR, "Administrator"),
+        (ROLE_USER, "User"),
+        (ROLE_MEMBER, "Member (legacy)"),
+        (ROLE_ADMIN, "Customer Admin (legacy)"),
     ]
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, db_index=True)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, db_index=True)
-    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default=ROLE_MEMBER, db_index=True)
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default=ROLE_USER, db_index=True)
 
     class Meta:
         unique_together = ("user", "customer")
@@ -237,6 +276,26 @@ class PortalUserPreference(models.Model):
         return f"{self.user} / {self.customer or 'default'}"
 
 
+class FacilityStatusLabel(models.Model):
+    """
+    Predefined status labels for facilities (e.g. "Under utbygging", "Kontrollert").
+    Each label has a color used in the facility overview (left border / status indicator).
+    Can override system status color when set on a facility.
+    """
+    code = models.CharField(max_length=20, unique=True, help_text="E.g. 01, 02")
+    name = models.CharField(max_length=120, help_text="E.g. Under utbygging, Kontrollert (årstall)")
+    color = models.CharField(max_length=20, default="#16a34a", help_text="Hex color for status indicator, e.g. #16a34a")
+    sort_order = models.PositiveIntegerField(default=100, db_index=True)
+
+    class Meta:
+        ordering = ["sort_order", "code"]
+        verbose_name = "Facility status label"
+        verbose_name_plural = "Facility status labels"
+
+    def __str__(self) -> str:
+        return f"{self.code} {self.name}"
+
+
 class Facility(models.Model):
     """
     Facility (Anlegg) - Physical locations/sites that customers can have access to.
@@ -258,6 +317,14 @@ class Facility(models.Model):
         help_text="Viktig informasjon eller kunngjøring som vises på anleggskortet i portalen (f.eks. åpningstider, adkomst, nedetid).",
     )
     is_active = models.BooleanField(default=True, help_text="Whether this facility is currently active")
+    status_label = models.ForeignKey(
+        "FacilityStatusLabel",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="facilities",
+        help_text="Status label (e.g. Kontrollert, Ute av drift). Overstyrer statusfarge i anleggsoversikten.",
+    )
     customers = models.ManyToManyField(Customer, related_name="facilities", blank=True, help_text="Customers that have access to this facility")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

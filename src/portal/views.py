@@ -315,8 +315,8 @@ def facility_list(request):
         messages.error(request, "Customer not found.")
         return redirect("portal_home")
     
-    # Get facilities for this customer
-    facilities = Facility.objects.filter(customers=customer, is_active=True).order_by("name")
+    # Get facilities for this customer (with status_label for left-border color)
+    facilities = Facility.objects.filter(customers=customer, is_active=True).select_related("status_label").order_by("name")
     
     is_htmx = request.headers.get("HX-Request") == "true"
     context = {

@@ -11,6 +11,28 @@
   {% endfor %}
 </div>
 {% endif %}
+
+<div class="systemmeldinger-panel panel">
+  <h2 class="systemmeldinger-panel-title">{% trans "Systemmeldinger" %}</h2>
+  {% if announcements %}
+  <ul class="announcement-list">
+    {% for ann in announcements %}
+    <li class="announcement-item {% if ann.is_pinned %}announcement-item--pinned{% endif %}">
+      <div class="announcement-title">{{ ann.title }}</div>
+      <div class="announcement-meta muted">
+        {% if ann.created_by %}{{ ann.created_by.get_full_name|default:ann.created_by.username }}{% endif %}
+        · {{ ann.created_at|date:"SHORT_DATE_FORMAT" }}
+        {% if ann.is_pinned %}<span class="announcement-pin-badge">{% trans "Pinned" %}</span>{% endif %}
+      </div>
+      <div class="announcement-body">{{ ann.body|safe|linebreaks }}</div>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="muted">{% trans "Ingen systemmeldinger." %}</p>
+  {% endif %}
+</div>
+
 <div class="customer-header">
   {% if customer.logo_url %}
   <img src="{{ customer.logo_url }}" alt="{{ customer.name }} logo" class="customer-logo {% if customer.logo_url_dark %}logo-light{% endif %}" onerror="this.style.display='none';" />
@@ -25,25 +47,6 @@
 </div>
 
 <div class="dashboard-widgets" data-widgets="{{ dashboard_widgets|join:',' }}">
-  {% if "announcements" in dashboard_widgets and announcements %}
-  <div class="dashboard-widget dashboard-widget-announcements panel">
-    <h2>{% trans "Announcements" %}</h2>
-    <ul class="announcement-list">
-      {% for ann in announcements %}
-      <li class="announcement-item {% if ann.is_pinned %}announcement-item--pinned{% endif %}">
-        <div class="announcement-title">{{ ann.title }}</div>
-        <div class="announcement-meta muted">
-          {% if ann.created_by %}{{ ann.created_by.get_full_name|default:ann.created_by.username }}{% endif %}
-          · {{ ann.created_at|date:"SHORT_DATE_FORMAT" }}
-          {% if ann.is_pinned %}<span class="announcement-pin-badge">{% trans "Pinned" %}</span>{% endif %}
-        </div>
-        <div class="announcement-body">{{ ann.body|safe|linebreaks }}</div>
-      </li>
-      {% endfor %}
-    </ul>
-  </div>
-  {% endif %}
-
   {% if "quick_stats" in dashboard_widgets and quick_stats %}
   <div class="dashboard-widget dashboard-widget-stats panel">
     <h2>{% trans "Quick stats" %}</h2>

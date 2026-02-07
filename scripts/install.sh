@@ -553,7 +553,7 @@ sudo -E "$SRC_DIR/.venv/bin/python" manage.py collectstatic --noinput
 sudo -E "$SRC_DIR/.venv/bin/python" manage.py compilemessages --locale nb --verbosity 0
 
 echo ""
-echo "Creating default admin (if missing)..."
+echo "Creating first user as Owner (if no users exist)..."
 sudo -E "$SRC_DIR/.venv/bin/python" - <<'PY'
 import os
 import django
@@ -562,17 +562,25 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "pmg_portal.settings")
 django.setup()
 
 from django.contrib.auth import get_user_model  # noqa: E402
+from portal.models import Customer, CustomerMembership  # noqa: E402
+from portal.roles import sync_user_is_staff  # noqa: E402
 
 User = get_user_model()
 email = (os.getenv("DEFAULT_ADMIN_EMAIL") or "admin@example.com").strip()
 username = email[:150]  # Email-as-primary: username must equal email for login
 password = os.getenv("DEFAULT_ADMIN_PASSWORD", "admin")
 
-if not User.objects.filter(is_superuser=True).exists():
-    u = User.objects.create_superuser(username=username, email=email, password=password)
-    print(f"Created superuser: {email}")
+# First user is Owner of first tenant (not Platform admin). Platform admin is for SaaS setup only.
+if not User.objects.exists():
+    customer = Customer.objects.first()
+    if not customer:
+        customer = Customer.objects.create(name="Default", slug="default")
+    u = User.objects.create_user(username=username, email=email, password=password, is_active=True)
+    CustomerMembership.objects.create(user=u, customer=customer, role="owner")
+    sync_user_is_staff(u)
+    print(f"Created first user (Owner): {email}")
 else:
-    print("Superuser already exists, skipping.")
+    print("Users already exist, skipping first-user creation.")
 PY
 
 echo ""

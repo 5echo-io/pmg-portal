@@ -9,7 +9,7 @@ Last Modified: 2026-02-05
 from django.contrib import admin
 from django.contrib import messages
 from django.db.models import Q
-from .models import Customer, CustomerMembership, PortalLink, Facility, TechnicalSupportContact, ServiceLog, ServiceType, ServiceLogAttachment, ServiceLogDevice, ServiceVisit, NetworkDevice
+from .models import Customer, CustomerMembership, PortalLink, Facility, FacilityStatusLabel, TechnicalSupportContact, ServiceLog, ServiceType, ServiceLogAttachment, ServiceLogDevice, ServiceVisit, NetworkDevice, UserProfile
 from .forms import CustomerMembershipForm
 
 @admin.register(Customer)
@@ -68,6 +68,16 @@ class CustomerAdmin(admin.ModelAdmin):
             return "-"
     link_count.short_description = "Links"
 
+
+@admin.register(UserProfile)
+class UserProfileAdmin(admin.ModelAdmin):
+    """System-level role: Super Admin. Platform admin is User.is_superuser (set in user edit)."""
+    list_display = ("user", "system_role")
+    list_filter = ("system_role",)
+    search_fields = ("user__username", "user__email")
+    autocomplete_fields = ("user",)
+
+
 @admin.register(CustomerMembership)
 class CustomerMembershipAdmin(admin.ModelAdmin):
     """
@@ -115,10 +125,10 @@ class CustomerMembershipAdmin(admin.ModelAdmin):
             # PMG admins see all memberships
             return qs
         else:
-            # Customer admins only see memberships for their customer
+            # Owners and administrators see memberships for their customer(s)
             admin_customers = Customer.objects.filter(
                 customermembership__user=request.user,
-                customermembership__role=CustomerMembership.ROLE_ADMIN
+                customermembership__role__in=[CustomerMembership.ROLE_OWNER, CustomerMembership.ROLE_ADMINISTRATOR]
             )
             return qs.filter(customer__in=admin_customers)
     
@@ -126,10 +136,10 @@ class CustomerMembershipAdmin(admin.ModelAdmin):
         """Allow customer admins to add memberships for their customer."""
         if request.user.is_superuser:
             return True
-        # Check if user is a customer admin
+        # Check if user is owner or administrator for at least one customer
         return CustomerMembership.objects.filter(
             user=request.user,
-            role=CustomerMembership.ROLE_ADMIN
+            role__in=[CustomerMembership.ROLE_OWNER, CustomerMembership.ROLE_ADMINISTRATOR]
         ).exists()
     
     def has_change_permission(self, request, obj=None):
@@ -138,24 +148,23 @@ class CustomerMembershipAdmin(admin.ModelAdmin):
             return True
         if obj is None:
             return self.has_add_permission(request)
-        # Check if user is admin for this customer
+        # Check if user is owner or administrator for this customer
         return CustomerMembership.objects.filter(
             user=request.user,
             customer=obj.customer,
-            role=CustomerMembership.ROLE_ADMIN
+            role__in=[CustomerMembership.ROLE_OWNER, CustomerMembership.ROLE_ADMINISTRATOR]
         ).exists()
     
     def has_delete_permission(self, request, obj=None):
-        """Allow customer admins to delete memberships for their customer."""
+        """Allow owners/administrators to delete memberships for their customer (subject to role hierarchy)."""
         if request.user.is_superuser:
             return True
         if obj is None:
             return self.has_add_permission(request)
-        # Check if user is admin for this customer
         return CustomerMembership.objects.filter(
             user=request.user,
             customer=obj.customer,
-            role=CustomerMembership.ROLE_ADMIN
+            role__in=[CustomerMembership.ROLE_OWNER, CustomerMembership.ROLE_ADMINISTRATOR]
         ).exists()
     
     def save_model(self, request, obj, form, change):
@@ -209,14 +218,22 @@ class PortalLinkAdmin(admin.ModelAdmin):
     list_editable = ("sort_order",)
 
 
+@admin.register(FacilityStatusLabel)
+class FacilityStatusLabelAdmin(admin.ModelAdmin):
+    """Status labels for facilities (e.g. Under utbygging, Kontrollert). Colors used in facility overview."""
+    list_display = ("code", "name", "color", "sort_order")
+    list_editable = ("name", "color", "sort_order")
+    ordering = ("sort_order", "code")
+
+
 @admin.register(Facility)
 class FacilityAdmin(admin.ModelAdmin):
     """Minimal admin so ServiceLogAdmin can use autocomplete_fields on facility."""
-    list_display = ("name", "slug", "customer_count")
+    list_display = ("name", "slug", "status_label", "customer_count")
     search_fields = ("name", "slug", "customers__name")
-    list_filter = ("is_active",)
+    list_filter = ("is_active", "status_label")
     fieldsets = (
-        (None, {"fields": ("name", "slug", "description", "is_active")}),
+        (None, {"fields": ("name", "slug", "description", "is_active", "status_label")}),
         ("Adresse", {"fields": ("address", "city", "postal_code", "country")}),
         ("Kontakt (generelt)", {"fields": ("contact_person", "contact_email", "contact_phone")}),
         ("Portal – viktig informasjon", {"fields": ("important_info",), "description": "Tekst som vises på anleggskortet i portalen (f.eks. åpningstider, adkomst, kunngjøringer)."}),

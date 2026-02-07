@@ -34,10 +34,10 @@ class CustomerMembershipForm(forms.ModelForm):
                 # PMG admins can see all customers
                 available_customers = Customer.objects.all()
             else:
-                # Customer admins can only see their own customer
+                # Owners and administrators see their own customer(s)
                 available_customers = Customer.objects.filter(
                     customermembership__user=user,
-                    customermembership__role=CustomerMembership.ROLE_ADMIN
+                    customermembership__role__in=[CustomerMembership.ROLE_OWNER, CustomerMembership.ROLE_ADMINISTRATOR]
                 )
         else:
             available_customers = Customer.objects.all()

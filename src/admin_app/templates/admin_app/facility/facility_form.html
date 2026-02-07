@@ -84,6 +84,12 @@
       {% if form.is_active.errors %}<p class="form-error">{{ form.is_active.errors.0 }}</p>{% endif %}
     </div>
   </div>
+  <div class="admin-form-field full-width">
+    <label for="{{ form.status_label.id_for_label }}">{{ form.status_label.label }}</label>
+    {{ form.status_label }}
+    {% if form.status_label.help_text %}<p class="admin-form-help">{{ form.status_label.help_text|escape }}</p>{% endif %}
+    {% if form.status_label.errors %}<p class="form-error">{{ form.status_label.errors.0 }}</p>{% endif %}
+  </div>
   <div class="admin-form-field full-width admin-form-section admin-form-section--highlight">
     <label for="{{ form.important_info.id_for_label }}">{% trans "Viktig informasjon / Kunngjøring (portal)" %}</label>
     {{ form.important_info }}

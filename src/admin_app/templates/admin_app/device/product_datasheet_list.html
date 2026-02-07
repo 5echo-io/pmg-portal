@@ -39,12 +39,12 @@
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="6" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="18" r="1.5"/></svg>
             </button>
             <div class="admin-row-actions-menu" role="menu" hidden>
-              {% if ds.device_type %}<a href="{% url 'datasheet_by_slug' ds.device_type.slug %}" target="_blank" rel="noopener" role="menuitem">{% trans "View" %}</a>{% endif %}
-              <a href="{% url 'admin_app:admin_product_datasheet_edit' ds.pk %}" role="menuitem">{% trans "Edit" %}</a>
-              {% if ds.file %}<a href="{{ ds.file.url }}" target="_blank" rel="noopener" role="menuitem">{% trans "Download PDF" %}</a>{% endif %}
+              {% if ds.device_type %}<a href="{% url 'datasheet_by_slug' ds.device_type.slug %}" target="_blank" rel="noopener" role="menuitem"><span class="admin-row-actions-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span>{% trans "View" %}</a>{% endif %}
+              <a href="{% url 'admin_app:admin_product_datasheet_edit' ds.pk %}" role="menuitem"><span class="admin-row-actions-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></span>{% trans "Edit" %}</a>
+              {% if ds.file %}<a href="{{ ds.file.url }}" target="_blank" rel="noopener" role="menuitem"><span class="admin-row-actions-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span>{% trans "Download PDF" %}</a>{% endif %}
               <form method="post" action="{% url 'admin_app:admin_product_datasheet_delete' ds.pk %}" class="admin-row-actions-form" onsubmit="return confirm('{% trans "Delete this datasheet?" %}');" role="none">
                 {% csrf_token %}
-                <button type="submit" class="admin-row-actions-delete" role="menuitem">{% trans "Delete" %}</button>
+                <button type="submit" class="admin-row-actions-item admin-row-actions-item--danger" role="menuitem"><span class="admin-row-actions-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></span>{% trans "Delete" %}</button>
               </form>
             </div>
           </div>
@@ -58,89 +58,5 @@
     </tbody>
   </table>
 </div>
-
-<style>
-.admin-toolbar--single-row > span:first-child { flex: 1; }
-.admin-row-actions-dropdown { position: relative; display: inline-block; }
-.admin-row-actions-trigger {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  padding: 0;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  background: transparent;
-  color: var(--text-primary);
-  cursor: pointer;
-  transition: background 0.2s, border-color 0.2s;
-}
-.admin-row-actions-trigger:hover {
-  background: var(--surface-elevated);
-  border-color: var(--border-hover);
-}
-.admin-row-actions-trigger svg { display: block; }
-.admin-row-actions-menu {
-  position: absolute;
-  right: 0;
-  top: calc(100% + 4px);
-  min-width: 160px;
-  padding: 6px 0;
-  background: var(--surface-elevated);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  box-shadow: var(--shadow-lg);
-  z-index: 100;
-  display: flex;
-  flex-direction: column;
-}
-.admin-row-actions-menu[hidden] { display: none !important; }
-.admin-row-actions-menu a,
-.admin-row-actions-form .admin-row-actions-delete {
-  display: block;
-  width: 100%;
-  padding: 8px 14px;
-  font-size: 13px;
-  text-align: left;
-  color: var(--text-primary);
-  text-decoration: none;
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-family: inherit;
-  transition: background 0.2s;
-}
-.admin-row-actions-menu a:hover,
-.admin-row-actions-form .admin-row-actions-delete:hover {
-  background: var(--surface);
-  color: var(--text-primary);
-}
-.admin-row-actions-form { margin: 0; padding: 0; }
-.admin-row-actions-form .admin-row-actions-delete { color: var(--danger); }
-.admin-row-actions-form .admin-row-actions-delete:hover { background: rgba(239, 68, 68, 0.15); }
-</style>
-<script>
-(function() {
-  document.querySelectorAll('.admin-row-actions-dropdown').forEach(function(wrap) {
-    var trigger = wrap.querySelector('.admin-row-actions-trigger');
-    var menu = wrap.querySelector('.admin-row-actions-menu');
-    if (!trigger || !menu) return;
-    trigger.addEventListener('click', function(e) {
-      e.stopPropagation();
-      var open = !menu.hidden;
-      document.querySelectorAll('.admin-row-actions-menu').forEach(function(m) { m.hidden = true; });
-      document.querySelectorAll('.admin-row-actions-trigger').forEach(function(t) { t.setAttribute('aria-expanded', 'false'); });
-      if (!open) {
-        menu.hidden = false;
-        trigger.setAttribute('aria-expanded', 'true');
-      }
-    });
-  });
-  document.addEventListener('click', function() {
-    document.querySelectorAll('.admin-row-actions-menu').forEach(function(m) { m.hidden = true; });
-    document.querySelectorAll('.admin-row-actions-trigger').forEach(function(t) { t.setAttribute('aria-expanded', 'false'); });
-  });
-})();
-</script>
+<p class="muted" style="margin-top: 0.5rem;"><em>{% trans "Tables with more than two actions use the dropdown (⋯) in the actions column." %}</em></p>
 {% endblock %}

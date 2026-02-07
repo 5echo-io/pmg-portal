@@ -6,6 +6,7 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm as BaseUserCreationForm
 from django.contrib.auth.models import Group
+from portal import roles as role_helpers
 from portal.models import (
     Customer,
     CustomerMembership,
@@ -40,15 +41,42 @@ class RoleForm(forms.ModelForm):
 
 
 class UserCreationForm(BaseUserCreationForm):
+    """is_staff is derived from role (Administrator or higher); not shown."""
     class Meta:
         model = User
-        fields = ("username", "email", "first_name", "last_name", "is_staff", "is_active")
+        fields = ("username", "email", "first_name", "last_name", "is_active")
+
+    def save(self, commit=True):
+        instance = super().save(commit=commit)
+        if commit:
+            role_helpers.sync_user_is_staff(instance)
+        return instance
 
 
 class UserEditForm(forms.ModelForm):
+    """is_staff is derived from role (Administrator or higher); not shown."""
     class Meta:
         model = User
-        fields = ("username", "email", "first_name", "last_name", "is_staff", "is_active", "is_superuser")
+        fields = ("username", "email", "first_name", "last_name", "is_active", "is_superuser")
+
+    def __init__(self, *args, request=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._request = request
+        # Only platform admin can change is_superuser (cannot grant platform admin as super admin)
+        if request and not request.user.is_superuser:
+            if "is_superuser" in self.fields:
+                self.fields["is_superuser"].disabled = True
+                self.fields["is_superuser"].help_text = _("Only platform administrators can change this.")
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        # Ensure non-platform-admins cannot set is_superuser
+        if self._request and not self._request.user.is_superuser and hasattr(instance, "is_superuser"):
+            instance.is_superuser = User.objects.filter(pk=instance.pk).values_list("is_superuser", flat=True).first() or False
+        if commit:
+            instance.save()
+            role_helpers.sync_user_is_staff(instance)
+        return instance
 
 
 class CustomerForm(forms.ModelForm):
@@ -76,6 +104,21 @@ class CustomerMembershipForm(forms.ModelForm):
     class Meta:
         model = CustomerMembership
         fields = ("user", "customer", "role")
+
+    def __init__(self, *args, request=None, customer=None, membership=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._request = request
+        cust = customer or (membership.customer if membership else None)
+        if request and "role" in self.fields:
+            choices = role_helpers.get_assignable_tenant_roles(request.user, cust)
+            if choices:
+                self.fields["role"].choices = choices
+            # If editing and current role not in assignable (e.g. owner when actor is administrator), keep current as option
+            if membership and membership.role:
+                current_choices = list(self.fields["role"].choices or [])
+                if not any(c[0] == membership.role for c in current_choices):
+                    label = getattr(membership, "get_role_display", lambda: membership.role)() if hasattr(membership, "get_role_display") else membership.role
+                    self.fields["role"].choices = current_choices + [(membership.role, label)]
 
 
 class PortalLinkForm(forms.ModelForm):
@@ -105,7 +148,7 @@ class AnnouncementForm(forms.ModelForm):
             self.fields["facility"].queryset = Facility.objects.all().order_by("name")
             self.fields["facility"].required = False
             self.fields["facility"].help_text = _(
-                "Optional. Empty = general announcement (dashboard). Set = only shown on that facility's page."
+                "Velg anlegg: kunngjøringen vises på anleggssiden for alle med tilgang. La stå tom: kunngjøringen vises på dashboard for valgt kunde."
             )
 
     def clean(self):
@@ -127,7 +170,7 @@ class FacilityForm(forms.ModelForm):
             "name", "slug", "description", "address", "city", "postal_code", "country",
             "contact_person", "contact_email", "contact_phone",
             "important_info",
-            "is_active", "customers"
+            "is_active", "status_label", "customers"
         )
         widgets = {
             "description": forms.Textarea(attrs={"rows": 4}),

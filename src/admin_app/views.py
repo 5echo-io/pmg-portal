@@ -45,6 +45,7 @@ from portal.models import (
 from admin_app.models import AdminNotification
 from django.utils import timezone
 from django.utils.translation import gettext as _
+from portal import roles as role_helpers
 
 
 def _get_cancel_url(request, default):
@@ -73,8 +74,23 @@ def staff_required(view_func):
 
 
 def superuser_required(view_func):
-    """Require user to be superuser (for User/Role management)."""
+    """Require user to be superuser (for critical system actions)."""
     return login_required(user_passes_test(lambda u: u.is_superuser)(view_func))
+
+
+def _is_platform_or_super_admin(user):
+    """True if user is platform admin (is_superuser) or super admin (portal_profile.system_role)."""
+    if not user or not user.is_authenticated or not user.is_staff:
+        return False
+    if user.is_superuser:
+        return True
+    profile = getattr(user, "portal_profile", None)
+    return profile is not None and getattr(profile, "system_role", None) == "super_admin"
+
+
+def platform_or_super_admin_required(view_func):
+    """Require platform admin or super admin (for user/role management)."""
+    return login_required(user_passes_test(_is_platform_or_super_admin)(view_func))
 
 
 @staff_required
@@ -83,10 +99,13 @@ def admin_home(request):
     return render(request, "admin_app/home.html")
 
 
-# ----- Users (superuser only) -----
-@superuser_required
+# ----- Users (platform admin or super admin) -----
+@platform_or_super_admin_required
 def user_list(request):
     qs = User.objects.all().order_by("username")
+    # Platform admins are invisible to non-platform-admins
+    if not role_helpers.is_platform_admin(request.user):
+        qs = qs.exclude(is_superuser=True)
     search = request.GET.get("q", "").strip()
     if search:
         qs = qs.filter(
@@ -115,7 +134,7 @@ def user_list(request):
     )
 
 
-@superuser_required
+@platform_or_super_admin_required
 def user_add(request):
     from .forms import UserCreationForm
     if request.method == "POST":
@@ -129,12 +148,14 @@ def user_add(request):
     return render(request, "admin_app/user/user_form.html", {"form": form, "user_obj": None})
 
 
-@superuser_required
+@platform_or_super_admin_required
 def user_detail(request, pk):
     """Modern user card view showing all user information."""
     user_obj = get_object_or_404(User, pk=pk)
+    if not role_helpers.can_see_user(request.user, user_obj):
+        messages.error(request, _("You do not have permission to view this user."))
+        return redirect("admin_app:admin_user_list")
     memberships = CustomerMembership.objects.filter(user=user_obj).select_related("customer").order_by("customer__name")
-    
     return render(
         request,
         "admin_app/user/user_card.html",
@@ -145,43 +166,40 @@ def user_detail(request, pk):
     )
 
 
-@superuser_required
+@platform_or_super_admin_required
 def user_edit(request, pk):
     from .forms import UserEditForm
     user_obj = get_object_or_404(User, pk=pk)
+    if not role_helpers.can_edit_user(request.user, user_obj):
+        messages.error(request, _("You do not have permission to edit this user."))
+        return redirect("admin_app:admin_user_list")
     if request.method == "POST":
-        form = UserEditForm(request.POST, instance=user_obj)
+        form = UserEditForm(request.POST, instance=user_obj, request=request)
         if form.is_valid():
             form.save()
             messages.success(request, "User updated.")
             return redirect("admin_app:admin_user_detail", pk=user_obj.pk)
     else:
-        form = UserEditForm(instance=user_obj)
+        form = UserEditForm(instance=user_obj, request=request)
     return render(request, "admin_app/user/user_form.html", {"form": form, "user_obj": user_obj})
 
 
-@superuser_required
+@platform_or_super_admin_required
 @require_POST
 def user_delete(request, pk):
-    """Delete a user and all related data."""
+    """Delete a user and all related data. Hierarchy: cannot delete self or users above you."""
     user_obj = get_object_or_404(User, pk=pk)
-    
-    # Prevent deleting yourself
-    if user_obj == request.user:
-        messages.error(request, "You cannot delete your own account.")
+    if not role_helpers.can_delete_user(request.user, user_obj):
+        messages.error(request, _("You cannot delete this user (insufficient permission or cannot delete yourself)."))
         return redirect("admin_app:admin_user_list")
-    
     username = user_obj.username
-    
-    # Delete user (this will cascade delete CustomerMembership)
     user_obj.delete()
-    
     messages.success(request, f"User '{username}' has been deleted.")
     return redirect("admin_app:admin_user_list")
 
 
-# ----- Roles (Groups, superuser only) -----
-@superuser_required
+# ----- Roles (Groups, platform/super admin) -----
+@platform_or_super_admin_required
 def role_list(request):
     qs = Group.objects.all().order_by("name")
     search = request.GET.get("q", "").strip()
@@ -194,7 +212,7 @@ def role_list(request):
     return render(request, "admin_app/user/role_list.html", {"roles": roles, "search": search})
 
 
-@superuser_required
+@platform_or_super_admin_required
 def role_add(request):
     from .forms import RoleForm
     if request.method == "POST":
@@ -208,7 +226,7 @@ def role_add(request):
     return render(request, "admin_app/user/role_form.html", {"form": form, "role": None})
 
 
-@superuser_required
+@platform_or_super_admin_required
 def role_edit(request, pk):
     from .forms import RoleForm
     role = get_object_or_404(Group, pk=pk)
@@ -244,6 +262,9 @@ def customer_list(request):
 
 @staff_required
 def customer_add(request):
+    if not role_helpers.can_create_delete_tenants(request.user):
+        messages.error(request, _("Only platform administrators can create tenants (customers)."))
+        return redirect("admin_app:admin_customer_list")
     from .forms import CustomerForm
     if request.method == "POST":
         form = CustomerForm(request.POST, request.FILES)
@@ -646,14 +667,13 @@ def customer_edit(request, slug):
 @staff_required
 @require_POST
 def customer_delete(request, slug):
-    """Delete a customer and all related data."""
+    """Delete a customer (tenant). Only platform administrators can delete tenants."""
+    if not role_helpers.can_create_delete_tenants(request.user):
+        messages.error(request, _("Only platform administrators can delete tenants (customers)."))
+        return redirect("admin_app:admin_customer_list")
     customer = get_object_or_404(Customer, slug=slug)
     customer_name = customer.name
-    
-    # Delete customer (this will cascade delete CustomerMembership and PortalLink)
-    # The model's delete() method will also handle logo file deletion
     customer.delete()
-    
     messages.success(request, f"Customer '{customer_name}' has been deleted.")
     return redirect("admin_app:admin_customer_list")
 
@@ -696,29 +716,24 @@ def customer_access_add(request):
     from .forms import CustomerMembershipForm
     customer_id = request.GET.get("customer")
     redirect_to = request.GET.get("redirect_to", "admin_app:admin_customer_access_list")
-    
+    customer = None
+    if customer_id:
+        try:
+            customer = Customer.objects.get(pk=customer_id)
+        except Customer.DoesNotExist:
+            pass
     if request.method == "POST":
-        form = CustomerMembershipForm(request.POST)
+        form = CustomerMembershipForm(request.POST, request=request, customer=customer)
         if form.is_valid():
             membership = form.save()
             messages.success(request, "Access added.")
-            # If customer_id was provided, redirect to customer card
-            if customer_id:
-                try:
-                    c = Customer.objects.get(pk=customer_id)
-                    return redirect("admin_app:admin_customer_detail", slug=c.slug)
-                except Customer.DoesNotExist:
-                    pass
+            if customer_id and customer:
+                return redirect("admin_app:admin_customer_detail", slug=customer.slug)
             return redirect(redirect_to)
     else:
-        form = CustomerMembershipForm()
-        # Pre-select customer if provided
-        if customer_id:
-            try:
-                customer = Customer.objects.get(pk=customer_id)
-                form.fields["customer"].initial = customer
-            except Customer.DoesNotExist:
-                pass
+        form = CustomerMembershipForm(request=request, customer=customer)
+        if customer:
+            form.fields["customer"].initial = customer
     return render(request, "admin_app/customer/customer_access_form.html", {"form": form, "membership": None})
 
 
@@ -726,15 +741,16 @@ def customer_access_add(request):
 def customer_access_edit(request, pk):
     from .forms import CustomerMembershipForm
     membership = get_object_or_404(CustomerMembership, pk=pk)
+    if not role_helpers.can_edit_owner_membership(request.user, membership):
+        messages.error(request, _("You do not have permission to edit this access."))
+        return redirect("admin_app:admin_customer_access_list")
     customer_id = request.GET.get("customer")
     redirect_to = request.GET.get("redirect_to", "admin_app:admin_customer_access_list")
-    
     if request.method == "POST":
-        form = CustomerMembershipForm(request.POST, instance=membership)
+        form = CustomerMembershipForm(request.POST, instance=membership, request=request, membership=membership)
         if form.is_valid():
             form.save()
             messages.success(request, "Access updated.")
-            # If customer_id was provided, redirect to customer card
             if customer_id:
                 try:
                     c = Customer.objects.get(pk=customer_id)
@@ -743,7 +759,7 @@ def customer_access_edit(request, pk):
                     pass
             return redirect(redirect_to)
     else:
-        form = CustomerMembershipForm(instance=membership)
+        form = CustomerMembershipForm(instance=membership, request=request, membership=membership)
     return render(request, "admin_app/customer/customer_access_form.html", {"form": form, "membership": membership})
 
 

@@ -17,6 +17,10 @@
 {% block admin_content %}
 <h1 class="admin-page-title">{% if announcement %}{% trans "Edit announcement" %}{% else %}{% trans "Add announcement" %}{% endif %}</h1>
 
+<p class="admin-form-intro muted">
+  {% trans "Først velg hvor kunngjøringen skal vises: Anlegg – velg anlegg under, da vises meldingen på anleggssiden for alle med tilgang. Dashboard – la anlegg stå tomt og velg kunde, da vises meldingen på dashboard for den kunden." %}
+</p>
+
 <form method="post" action="" class="admin-form">
   {% csrf_token %}
   {% if redirect_to_facility %}<input type="hidden" name="redirect_facility" value="1">{% endif %}

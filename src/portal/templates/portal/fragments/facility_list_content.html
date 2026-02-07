@@ -10,7 +10,7 @@
   {% if facilities %}
   <div class="facility-grid">
     {% for facility in facilities %}
-    <a href="{% url 'facility_detail' facility.slug %}" class="facility-card" hx-get="{% url 'facility_detail' facility.slug %}" hx-target="#main-content" hx-push-url="true">
+    <a href="{% url 'facility_detail' facility.slug %}" class="facility-card facility-card--status-{% if facility.status_label %}custom{% else %}ok{% endif %}" {% if facility.status_label %}style="--facility-status-color: {{ facility.status_label.color }};"{% endif %} hx-get="{% url 'facility_detail' facility.slug %}" hx-target="#main-content" hx-push-url="true">
       <div class="facility-card-icon">
         <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
@@ -19,6 +19,9 @@
       </div>
       <div class="facility-card-content">
         <h3 class="facility-card-name">{{ facility.name }}</h3>
+        {% if facility.status_label %}
+        <span class="facility-card-status-badge" style="background: {{ facility.status_label.color }}20; color: {{ facility.status_label.color }};">{{ facility.status_label.code }} {{ facility.status_label.name }}</span>
+        {% endif %}
         {% if facility.address %}
         <p class="facility-card-location">{{ facility.address }}</p>
         {% elif facility.city %}
