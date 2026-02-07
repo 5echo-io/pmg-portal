@@ -1,32 +1,33 @@
 {% extends "admin_app/base.html" %}
+{% load i18n %}
 
-{% block admin_title %}Roles{% endblock %}
-{% block breadcrumb_extra %}<span class="breadcrumb-sep">→</span> <span>Roles</span>{% endblock %}
+{% block admin_title %}{% trans "Roles" %}{% endblock %}
+{% block breadcrumb_extra %}<span class="breadcrumb-sep">→</span> <span>{% trans "Roles" %}</span>{% endblock %}
 
 {% block admin_content %}
-<h1 class="admin-page-title">Roles</h1>
+<h1 class="admin-page-title">{% trans "Roles" %}</h1>
 
 <div class="admin-toolbar admin-toolbar--single-row">
   <form method="get" action="" class="admin-toolbar-form">
     <div class="admin-search-wrap">
       <div class="admin-search-group">
-        <label class="admin-search-label" for="id_q_roles">SEARCH</label>
-        <input type="text" name="q" id="id_q_roles" value="{{ search }}" placeholder="Search roles…" class="form-input admin-search-input">
+        <label class="admin-search-label" for="id_q_roles">{% trans "Search" %}</label>
+        <input type="text" name="q" id="id_q_roles" value="{{ search }}" placeholder="{% trans 'Search roles…' %}" class="form-input admin-search-input">
       </div>
-      <button type="submit" class="form-btn form-btn-secondary admin-search-btn">Search</button>
+      <button type="submit" class="form-btn form-btn-secondary admin-search-btn">{% trans "Search" %}</button>
     </div>
   </form>
-  <a href="{% url 'admin_app:admin_role_add' %}" class="admin-toolbar-add-btn">Add role</a>
+  <a href="{% url 'admin_app:admin_role_add' %}" class="admin-toolbar-add-btn">{% trans "Add role" %}</a>
 </div>
 
-<p class="muted">{{ roles|length }} role{{ roles|length|pluralize }}</p>
+<p class="muted">{% blocktrans count counter=roles|length %}{{ counter }} role{% plural %}{{ counter }} roles{% endblocktrans %}</p>
 
 <div class="admin-table-wrap">
   <table class="admin-table">
     <thead>
       <tr>
-        <th>Role name</th>
-        <th>Users</th>
+        <th>{% trans "Role name" %}</th>
+        <th>{% trans "Users" %}</th>
         <th class="admin-table-actions"></th>
       </tr>
     </thead>
@@ -35,11 +36,11 @@
       <tr>
         <td><a href="{% url 'admin_app:admin_role_edit' r.group.pk %}">{{ r.group.name }}</a></td>
         <td>{{ r.user_count }}</td>
-        <td class="admin-table-actions"><a href="{% url 'admin_app:admin_role_edit' r.group.pk %}" class="admin-btn-sm">Edit</a></td>
+        <td class="admin-table-actions"><a href="{% url 'admin_app:admin_role_edit' r.group.pk %}" class="admin-btn-sm">{% trans "Edit" %}</a></td>
       </tr>
       {% empty %}
       <tr>
-        <td colspan="3">No roles found.</td>
+        <td colspan="3">{% trans "No roles found." %}</td>
       </tr>
       {% endfor %}
     </tbody>

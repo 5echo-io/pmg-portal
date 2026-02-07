@@ -589,8 +589,11 @@ msgstr "Velg et produkt, deretter fyll ut detaljene for instansen."
 msgid "No devices. Create devices under Devices first."
 msgstr "Ingen enheter. Opprett enheter under Enheter først."
 
+msgid "Knowledge base"
+msgstr "Kunnskapsbase"
+
 msgid "Product datasheets"
-msgstr "Produktdatablad"
+msgstr "Produktdatablader"
 
 msgid "Back to Product datasheets"
 msgstr "Tilbake til produktdatablad"
@@ -618,4 +621,420 @@ msgstr "Velg et produkt for å se databladet."
 
 msgid "No product datasheets available yet."
 msgstr "Ingen produktdatablad tilgjengelig ennå."
+
+# Help (footer and modal)
+msgid "Help"
+msgstr "Hjelp"
+
+msgid "Help &amp; Keyboard Shortcuts"
+msgstr "Hjelp og tastatursnarveier"
+
+msgid "Keyboard shortcuts"
+msgstr "Tastatursnarveier"
+
+msgid "Focus global search"
+msgstr "Fokuser globalt søk"
+
+msgid "Open this help"
+msgstr "Åpne denne hjelpen"
+
+msgid "Close modals and menus"
+msgstr "Lukk modaler og menyer"
+
+msgid "Getting started"
+msgstr "Kom i gang"
+
+msgid "Documentation"
+msgstr "Dokumentasjon"
+
+msgid "PMG Portal on GitHub"
+msgstr "PMG Portal på GitHub"
+
+msgid "Select a customer profile from the header or user menu to see your dashboard, facilities, and links. Use the search bar to find facilities, devices, and links quickly."
+msgstr "Velg en kundeprofil fra topplinjen eller brukermenyen for å se dashboard, anlegg og lenker. Bruk søkefeltet for å finne anlegg, enheter og lenker raskt."
+
+msgid "Welcome to PMG Portal"
+msgstr "Velkommen til PMG Portal"
+
+msgid "Select a customer profile from the header or user menu to see your dashboard."
+msgstr "Velg en kundeprofil fra topplinjen eller brukermenyen for å se dashboardet ditt."
+
+msgid "Use the search bar to find facilities, devices, and links quickly."
+msgstr "Bruk søkefeltet for å finne anlegg, enheter og lenker raskt."
+
+msgid "Press <kbd>?</kbd> anytime for help and keyboard shortcuts."
+msgstr "Trykk <kbd>?</kbd> når som helst for hjelp og tastatursnarveier."
+
+msgid "Got it"
+msgstr "Forstått"
+
+# Main menu search
+msgid "Search"
+msgstr "Søk"
+
+msgid "Search facilities, devices, links…"
+msgstr "Søk etter anlegg, enheter, lenker…"
+
+msgid "Close search"
+msgstr "Lukk søk"
+
+msgid "No results"
+msgstr "Ingen treff"
+
+msgid "Search failed"
+msgstr "Søket feilet"
+
+# Admin – base and common
+msgid "Admin"
+msgstr "Admin"
+
+msgid "Back to Admin"
+msgstr "Tilbake til Admin"
+
+msgid "Confirm Deletion"
+msgstr "Bekreft sletting"
+
+msgid "Administration"
+msgstr "Administrasjon"
+
+msgid "User & Access management"
+msgstr "Bruker- og tilgangsstyring"
+
+msgid "Users"
+msgstr "Brukere"
+
+msgid "Roles"
+msgstr "Roller"
+
+msgid "Customers"
+msgstr "Kunder"
+
+msgid "Devices & documentation"
+msgstr "Enheter og dokumentasjon"
+
+msgid "Devices"
+msgstr "Enheter"
+
+msgid "Portal management"
+msgstr "Portalstyring"
+
+msgid "Facilities"
+msgstr "Anlegg"
+
+msgid "Portal links"
+msgstr "Portalenker"
+
+msgid "Announcements"
+msgstr "Kunngjøringer"
+
+msgid "Notifications"
+msgstr "Varsler"
+
+msgid "Server management"
+msgstr "Serverstyring"
+
+msgid "Backup & Restore"
+msgstr "Sikkerhetskopi og gjenoppretting"
+
+msgid "Add facility"
+msgstr "Legg til anlegg"
+
+msgid "Add customer"
+msgstr "Legg til kunde"
+
+msgid "Add user"
+msgstr "Legg til bruker"
+
+msgid "All"
+msgstr "Alle"
+
+msgid "Previous"
+msgstr "Forrige"
+
+msgid "Next"
+msgstr "Neste"
+
+msgid "Page %(number)s of %(total)s"
+msgstr "Side %(number)s av %(total)s"
+
+msgid "%(counter)s facility"
+msgid_plural "%(counter)s facilities"
+msgstr[0] "%(counter)s anlegg"
+msgstr[1] "%(counter)s anlegg"
+
+msgid "No facilities found."
+msgstr "Ingen anlegg funnet."
+
+msgid "%(counter)s customer"
+msgid_plural "%(counter)s customers"
+msgstr[0] "%(counter)s kunde"
+msgstr[1] "%(counter)s kunder"
+
+msgid "No customers found."
+msgstr "Ingen kunder funnet."
+
+msgid "%(counter)s user"
+msgid_plural "%(counter)s users"
+msgstr[0] "%(counter)s bruker"
+msgstr[1] "%(counter)s brukere"
+
+msgid "No users found."
+msgstr "Ingen brukere funnet."
+
+msgid "Search facilities…"
+msgstr "Søk etter anlegg…"
+
+msgid "Search customers…"
+msgstr "Søk etter kunder…"
+
+msgid "Search users…"
+msgstr "Søk etter brukere…"
+
+msgid "Search users"
+msgstr "Søk etter brukere"
+
+msgid "Staff"
+msgstr "Brukere med tilgang"
+
+msgid "Staff only"
+msgstr "Kun brukere med tilgang"
+
+msgid "Not staff"
+msgstr "Ikke brukere med tilgang"
+
+msgid "Inactive"
+msgstr "Inaktiv"
+
+msgid "Username"
+msgstr "Brukernavn"
+
+msgid "Primary contact"
+msgstr "Hovedkontakt"
+
+msgid "Org. no."
+msgstr "Org.nr."
+
+msgid "Edit"
+msgstr "Rediger"
+
+msgid "Filter"
+msgstr "Filtrer"
+
+msgid "Search…"
+msgstr "Søk…"
+
+msgid "All customers"
+msgstr "Alle kunder"
+
+msgid "Add announcement"
+msgstr "Legg til kunngjøring"
+
+msgid "Edit announcement"
+msgstr "Rediger kunngjøring"
+
+msgid "No announcements found."
+msgstr "Ingen kunngjøringer funnet."
+
+msgid "Delete this announcement?"
+msgstr "Slette denne kunngjøringen?"
+
+msgid "Pinned"
+msgstr "Festet"
+
+msgid "Search roles…"
+msgstr "Søk etter roller…"
+
+msgid "Add role"
+msgstr "Legg til rolle"
+
+msgid "No roles found."
+msgstr "Ingen roller funnet."
+
+msgid "Filter by name..."
+msgstr "Filtrer på navn..."
+
+msgid "Download backup"
+msgstr "Last ned sikkerhetskopi"
+
+msgid "Restore from backup"
+msgstr "Gjenopprett fra sikkerhetskopi"
+
+msgid "Confirm restore"
+msgstr "Bekreft gjenoppretting"
+
+msgid "Warning: This will overwrite all data"
+msgstr "Advarsel: Dette overskriver alle data"
+
+msgid "Restoring from this backup will replace the current database and all uploaded files. This action cannot be undone."
+msgstr "Gjenoppretting fra denne sikkerhetskopien erstatter gjeldende database og alle opplastede filer. Denne handlingen kan ikke angres."
+
+msgid "Are you sure you want to continue?"
+msgstr "Er du sikker på at du vil fortsette?"
+
+msgid "Confirm restore"
+msgstr "Bekreft gjenoppretting"
+
+msgid "Backup file (.tar.gz)"
+msgstr "Sikkerhetskopifil (.tar.gz)"
+
+msgid "View all"
+msgstr "Vis alle"
+
+msgid "Add category"
+msgstr "Legg til kategori"
+
+msgid "Add manufacturer"
+msgstr "Legg til produsent"
+
+msgid "Edit category"
+msgstr "Rediger kategori"
+
+msgid "Edit manufacturer"
+msgstr "Rediger produsent"
+
+msgid "No categories yet. Add a category or subcategory."
+msgstr "Ingen kategorier ennå. Legg til en kategori eller underkategori."
+
+msgid "No devices. Add a device to get started."
+msgstr "Ingen enheter. Legg til en enhet for å komme i gang."
+
+msgid "Edit instance"
+msgstr "Rediger instans"
+
+msgid "No instances yet. Add an instance to register physical units of this type."
+msgstr "Ingen instanser ennå. Legg til en instans for å registrere fysiske enheter av denne typen."
+
+msgid "Delete this datasheet?"
+msgstr "Slette dette databladet?"
+
+msgid "Produktdatablader"
+msgstr "Produktdatablad"
+
+msgid "Role name"
+msgstr "Rollenavn"
+
+msgid "Add link"
+msgstr "Legg til lenke"
+
+msgid "Add access"
+msgstr "Legg til tilgang"
+
+msgid "All roles"
+msgstr "Alle roller"
+
+msgid "Member"
+msgstr "Medlem"
+
+msgid "Customer Admin"
+msgstr "Kundeadministrator"
+
+msgid "No portal links found."
+msgstr "Ingen portalenker funnet."
+
+msgid "No access records found."
+msgstr "Ingen tilgangsposter funnet."
+
+msgid "Order"
+msgstr "Rekkefølge"
+
+msgid "by"
+msgstr "av"
+
+msgid "%(counter)s role"
+msgid_plural "%(counter)s roles"
+msgstr[0] "%(counter)s rolle"
+msgstr[1] "%(counter)s roller"
+
+msgid "%(counter)s announcement"
+msgid_plural "%(counter)s announcements"
+msgstr[0] "%(counter)s kunngjøring"
+msgstr[1] "%(counter)s kunngjøringer"
+
+msgid "%(counter)s link"
+msgid_plural "%(counter)s links"
+msgstr[0] "%(counter)s lenke"
+msgstr[1] "%(counter)s lenker"
+
+msgid "%(counter)s access record"
+msgid_plural "%(counter)s access records"
+msgstr[0] "%(counter)s tilgangspost"
+msgstr[1] "%(counter)s tilgangsposter"
+
+msgid "Product datasheets"
+msgstr "Produktdatablad"
+
+msgid "Links"
+msgstr "Lenker"
+
+msgid "Warning: This action cannot be undone"
+msgstr "Advarsel: Denne handlingen kan ikke angres"
+
+msgid "This action is irreversible."
+msgstr "Denne handlingen kan ikke angres."
+
+msgid "Back to Announcements"
+msgstr "Tilbake til kunngjøringer"
+
+msgid "Create backup"
+msgstr "Opprett sikkerhetskopi"
+
+msgid "Download a complete snapshot: PostgreSQL database plus all media files. The file can be restored on this server or a new installation."
+msgstr "Last ned en full snapshot: PostgreSQL-database og alle mediafiler. Filen kan gjenopprettes på denne serveren eller en ny installasjon."
+
+msgid "Upload a .tar.gz backup file to replace the current database and media with the backup contents. This overwrites all existing data."
+msgstr "Last opp en .tar.gz sikkerhetskopifil for å erstatte gjeldende database og media med innholdet i sikkerhetskopien. Dette overskriver alle eksisterende data."
+
+msgid "Create a full backup of the database and all uploaded files (logos, documents), or restore from a previous backup. Use this when migrating to a new server or recovering from failure. Backups use a versioned format and can be restored on this installation or another PMG Portal server (same or newer app version)."
+msgstr "Opprett en full sikkerhetskopi av databasen og alle opplastede filer (logoer, dokumenter), eller gjenopprett fra en tidligere sikkerhetskopi. Bruk dette ved migrering til en ny server eller gjenoppretting etter feil. Sikkerhetskopier bruker et versjonert format og kan gjenopprettes på denne installasjonen eller en annen PMG Portal-server (samme eller nyere appversjon)."
+
+msgid "Servicelogg"
+msgstr "Servicelogg"
+
+msgid "Service log entries"
+msgstr "Serviceloggføringer"
+
+msgid "Service ID"
+msgstr "Service-ID"
+
+msgid "Technician (employee no.)"
+msgstr "Tekniker (ansattnr.)"
+
+msgid "Open"
+msgstr "Åpne"
+
+msgid "No service log entries for this facility."
+msgstr "Ingen serviceloggføringer for dette anlegget."
+
+msgid "Performed at"
+msgstr "Utført"
+
+msgid "Documented description"
+msgstr "Dokumentert beskrivelse"
+
+msgid "Notes"
+msgstr "Notater"
+
+msgid "Created"
+msgstr "Opprettet"
+
+msgid "by"
+msgstr "av"
+
+msgid "Back to facility"
+msgstr "Tilbake til anlegg"
+
+msgid "Date"
+msgstr "Dato"
+
+msgid "Legg til servicelogg"
+msgstr "Legg til servicelogg"
+
+msgid "Rediger servicelogg"
+msgstr "Rediger servicelogg"
+
+msgid "Er du sikker på at du vil slette denne serviceloggføringen?"
+msgstr "Er du sikker på at du vil slette denne serviceloggføringen?"
+
+msgid "Ingen serviceloggføringer for dette anlegget."
+msgstr "Ingen serviceloggføringer for dette anlegget."
 

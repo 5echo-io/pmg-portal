@@ -1,44 +1,44 @@
 {% extends "admin_app/base.html" %}
-{% load static %}
+{% load static i18n %}
 
-{% block admin_title %}Administration{% endblock %}
+{% block admin_title %}{% trans "Administration" %}{% endblock %}
 {% block admin_breadcrumb %}{% endblock %}
 
 {% block admin_content %}
-<h1 class="admin-home-h1">Administration</h1>
+<h1 class="admin-home-h1">{% trans "Administration" %}</h1>
 
 <div class="admin-home-grid admin-home-grid-three">
   <div class="panel admin-home-panel">
-    <div class="admin-home-panel-heading">User & Access management</div>
+    <div class="admin-home-panel-heading">{% trans "User & Access management" %}</div>
     <ul class="admin-home-links">
       {% if request.user.is_superuser %}
-      <li><a href="{% url 'admin_app:admin_user_list' %}" class="admin-home-link">Users</a></li>
-      <li><a href="{% url 'admin_app:admin_role_list' %}" class="admin-home-link">Roles</a></li>
+      <li><a href="{% url 'admin_app:admin_user_list' %}" class="admin-home-link">{% trans "Users" %}</a></li>
+      <li><a href="{% url 'admin_app:admin_role_list' %}" class="admin-home-link">{% trans "Roles" %}</a></li>
       {% endif %}
-      <li><a href="{% url 'admin_app:admin_customer_list' %}" class="admin-home-link">Customers</a></li>
+      <li><a href="{% url 'admin_app:admin_customer_list' %}" class="admin-home-link">{% trans "Customers" %}</a></li>
     </ul>
   </div>
   <div class="panel admin-home-panel">
-    <div class="admin-home-panel-heading">Devices & documentation</div>
+    <div class="admin-home-panel-heading">{% trans "Devices & documentation" %}</div>
     <ul class="admin-home-links">
-      <li><a href="{% url 'admin_app:admin_device_list' %}" class="admin-home-link">Devices</a></li>
-      <li><a href="{% url 'admin_app:admin_product_datasheet_list' %}" class="admin-home-link">Produktdatablader</a></li>
+      <li><a href="{% url 'admin_app:admin_device_list' %}" class="admin-home-link">{% trans "Devices" %}</a></li>
+      <li><a href="{% url 'admin_app:admin_product_datasheet_list' %}" class="admin-home-link">{% trans "Product datasheets" %}</a></li>
     </ul>
   </div>
   <div class="panel admin-home-panel">
-    <div class="admin-home-panel-heading">Portal management</div>
+    <div class="admin-home-panel-heading">{% trans "Portal management" %}</div>
     <ul class="admin-home-links">
-      <li><a href="{% url 'admin_app:admin_facility_list' %}" class="admin-home-link">Facilities</a></li>
-      <li><a href="{% url 'admin_app:admin_portal_link_list' %}" class="admin-home-link">Portal links</a></li>
-      <li><a href="{% url 'admin_app:admin_announcement_list' %}" class="admin-home-link">Announcements</a></li>
-      <li><a href="{% url 'admin_app:admin_notification_list' %}" class="admin-home-link">Notifications</a></li>
+      <li><a href="{% url 'admin_app:admin_facility_list' %}" class="admin-home-link">{% trans "Facilities" %}</a></li>
+      <li><a href="{% url 'admin_app:admin_portal_link_list' %}" class="admin-home-link">{% trans "Portal links" %}</a></li>
+      <li><a href="{% url 'admin_app:admin_announcement_list' %}" class="admin-home-link">{% trans "Announcements" %}</a></li>
+      <li><a href="{% url 'admin_app:admin_notification_list' %}" class="admin-home-link">{% trans "Notifications" %}</a></li>
     </ul>
   </div>
   {% if request.user.is_superuser %}
   <div class="panel admin-home-panel">
-    <div class="admin-home-panel-heading">Server management</div>
+    <div class="admin-home-panel-heading">{% trans "Server management" %}</div>
     <ul class="admin-home-links">
-      <li><a href="{% url 'admin_app:admin_backup_restore' %}" class="admin-home-link">Backup & Restore</a></li>
+      <li><a href="{% url 'admin_app:admin_backup_restore' %}" class="admin-home-link">{% trans "Backup & Restore" %}</a></li>
     </ul>
   </div>
   {% endif %}

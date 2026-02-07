@@ -1,46 +1,46 @@
 {% extends "admin_app/base.html" %}
-{% load static %}
+{% load static i18n %}
 
-{% block admin_title %}Backup & Restore{% endblock %}
-{% block breadcrumb_extra %}<span class="breadcrumb-sep">→</span> <span>Server management</span><span class="breadcrumb-sep">→</span> <span>Backup & Restore</span>{% endblock %}
+{% block admin_title %}{% trans "Backup & Restore" %}{% endblock %}
+{% block breadcrumb_extra %}<span class="breadcrumb-sep">→</span> <span>{% trans "Server management" %}</span><span class="breadcrumb-sep">→</span> <span>{% trans "Backup & Restore" %}</span>{% endblock %}
 
 {% block admin_content %}
-<h1 class="admin-page-title">Backup & Restore</h1>
+<h1 class="admin-page-title">{% trans "Backup & Restore" %}</h1>
 
-<p class="admin-backup-intro">Create a full backup of the database and all uploaded files (logos, documents), or restore from a previous backup. Use this when migrating to a new server or recovering from failure. Backups use a versioned format and can be restored on this installation or another PMG Portal server (same or newer app version).</p>
+<p class="admin-backup-intro">{% trans "Create a full backup of the database and all uploaded files (logos, documents), or restore from a previous backup. Use this when migrating to a new server or recovering from failure. Backups use a versioned format and can be restored on this installation or another PMG Portal server (same or newer app version)." %}</p>
 
 <div class="admin-backup-grid">
   <div class="panel admin-backup-panel">
     <div class="admin-backup-panel-heading">
       <span class="admin-backup-panel-icon" aria-hidden="true">↓</span>
-      Create backup
+      {% trans "Create backup" %}
     </div>
-    <p class="admin-backup-panel-desc">Download a complete snapshot: PostgreSQL database plus all media files. The file can be restored on this server or a new installation.</p>
+    <p class="admin-backup-panel-desc">{% trans "Download a complete snapshot: PostgreSQL database plus all media files. The file can be restored on this server or a new installation." %}</p>
     <div class="admin-backup-panel-spacer"></div>
     <form method="post" action="{% url 'admin_app:admin_backup_restore' %}" class="admin-backup-form">
       {% csrf_token %}
       <input type="hidden" name="action" value="backup">
-      <button type="submit" class="form-btn form-btn-primary admin-backup-btn">Download backup</button>
+      <button type="submit" class="form-btn form-btn-primary admin-backup-btn">{% trans "Download backup" %}</button>
     </form>
   </div>
 
   <div class="panel admin-backup-panel">
     <div class="admin-backup-panel-heading">
       <span class="admin-backup-panel-icon" aria-hidden="true">↑</span>
-      Restore from backup
+      {% trans "Restore from backup" %}
     </div>
-    <p class="admin-backup-panel-desc">Upload a .tar.gz backup file to replace the current database and media with the backup contents. <strong>This overwrites all existing data.</strong></p>
+    <p class="admin-backup-panel-desc">{% trans "Upload a .tar.gz backup file to replace the current database and media with the backup contents. This overwrites all existing data." %}</p>
     <form method="post" action="{% url 'admin_app:admin_backup_restore' %}" id="admin-restore-form" enctype="multipart/form-data" class="admin-backup-form admin-backup-form-inline">
       {% csrf_token %}
       <input type="hidden" name="action" value="restore">
       <div class="admin-backup-file-wrap">
-        <label for="id_backup_file" class="admin-backup-file-label">Backup file (.tar.gz)</label>
+        <label for="id_backup_file" class="admin-backup-file-label">{% trans "Backup file (.tar.gz)" %}</label>
         <input type="file" name="backup_file" id="id_backup_file" accept=".tar.gz,application/gzip" required class="form-input admin-backup-file-input">
       </div>
     </form>
     <div class="admin-backup-panel-spacer"></div>
     <div class="admin-backup-form">
-      <button type="button" class="form-btn form-btn-danger admin-backup-btn" id="restore-backup-trigger">Restore from backup</button>
+      <button type="button" class="form-btn form-btn-danger admin-backup-btn" id="restore-backup-trigger">{% trans "Restore from backup" %}</button>
     </div>
   </div>
 </div>
@@ -49,8 +49,8 @@
 <div id="restore-confirm-modal" class="modal" style="display: none;" role="dialog" aria-labelledby="restore-modal-title" aria-modal="true">
   <div class="modal-content modal-content-danger" onclick="event.stopPropagation()">
     <div class="modal-header modal-header-danger">
-      <h2 id="restore-modal-title">Confirm restore</h2>
-      <button type="button" class="modal-close" id="restore-modal-cancel" aria-label="Close">&times;</button>
+      <h2 id="restore-modal-title">{% trans "Confirm restore" %}</h2>
+      <button type="button" class="modal-close" id="restore-modal-cancel" aria-label="{% trans 'Close' %}">&times;</button>
     </div>
     <div class="modal-body">
       <div class="danger-zone">
@@ -59,12 +59,12 @@
             <path d="M12 9v2m0 4v.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
           </svg>
         </div>
-        <h3>Warning: This will overwrite all data</h3>
-        <p>Restoring from this backup will replace the current database and all uploaded files. This action cannot be undone.</p>
-        <p><strong>Are you sure you want to continue?</strong></p>
+        <h3>{% trans "Warning: This will overwrite all data" %}</h3>
+        <p>{% trans "Restoring from this backup will replace the current database and all uploaded files. This action cannot be undone." %}</p>
+        <p><strong>{% trans "Are you sure you want to continue?" %}</strong></p>
         <div class="admin-backup-restore-modal-actions">
-          <button type="button" class="form-btn form-btn-secondary" id="restore-modal-cancel-btn">Cancel</button>
-          <button type="button" class="form-btn form-btn-danger admin-backup-btn" id="restore-modal-confirm">Confirm restore</button>
+          <button type="button" class="form-btn form-btn-secondary" id="restore-modal-cancel-btn">{% trans "Cancel" %}</button>
+          <button type="button" class="form-btn form-btn-danger admin-backup-btn" id="restore-modal-confirm">{% trans "Confirm restore" %}</button>
         </div>
       </div>
     </div>

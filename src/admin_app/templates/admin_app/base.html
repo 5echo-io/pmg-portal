@@ -1,16 +1,16 @@
 {% extends "portal/base.html" %}
-{% load static %}
+{% load static i18n %}
 
-{% block title %}{% block admin_title %}Admin{% endblock %} | PMG Portal{% endblock %}
+{% block title %}{% block admin_title %}{% trans "Admin" %}{% endblock %} | {% trans "PMG Portal" %}{% endblock %}
 
 {% block content %}
 {% block admin_breadcrumb %}
 <div class="breadcrumb-row">
   {% block breadcrumb_back %}
-  <a href="{% url 'admin_app:admin_home' %}" class="breadcrumb-back-btn" aria-label="Back to Admin">← Admin</a>
+  <a href="{% url 'admin_app:admin_home' %}" class="breadcrumb-back-btn" aria-label="{% trans 'Back to Admin' %}">← {% trans "Admin" %}</a>
   {% endblock %}
   <nav class="breadcrumb admin-breadcrumb" aria-label="Breadcrumb">
-    <a href="{% url 'admin_app:admin_home' %}">Admin</a>
+    <a href="{% url 'admin_app:admin_home' %}">{% trans "Admin" %}</a>
     {% block breadcrumb_extra %}{% endblock %}
   </nav>
 </div>
@@ -28,7 +28,7 @@
 <div id="delete-confirm-modal" class="modal" style="display: none;" onclick="closeDeleteConfirmModal(event)">
   <div class="modal-content modal-content-danger" onclick="event.stopPropagation()">
     <div class="modal-header modal-header-danger">
-      <h2>Confirm Deletion</h2>
+      <h2>{% trans "Confirm Deletion" %}</h2>
       <button class="modal-close" onclick="closeDeleteConfirmModal(event)">&times;</button>
     </div>
     <div class="modal-body">
@@ -40,14 +40,14 @@
             <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
           </svg>
         </div>
-        <h3>Warning: This action cannot be undone</h3>
+        <h3>{% trans "Warning: This action cannot be undone" %}</h3>
         <p class="delete-confirm-modal-message"></p>
-        <p><strong>This action is irreversible.</strong></p>
+        <p><strong>{% trans "This action is irreversible." %}</strong></p>
         <form method="post" action="" class="delete-confirm-form" style="margin-top: 24px;">
           {% csrf_token %}
           <div style="display: flex; gap: 12px; margin-top: 20px; justify-content: flex-end;">
-            <button type="button" class="form-btn form-btn-secondary delete-confirm-cancel">Cancel</button>
-            <button type="submit" class="form-btn form-btn-danger delete-confirm-submit" disabled>
+            <button type="button" class="form-btn form-btn-secondary delete-confirm-cancel">{% trans "Cancel" %}</button>
+            <button type="submit" class="form-btn form-btn-danger delete-confirm-submit" disabled data-delete-label="{% trans 'Delete' %}">
               <span class="delete-confirm-countdown"></span>
             </button>
           </div>
@@ -89,14 +89,15 @@
       if (countdownSeconds <= 0) {
         clearInterval(countdownInterval);
         submitBtn.disabled = false;
-        countdownEl.textContent = 'Delete';
+        countdownEl.textContent = submitBtn.dataset.deleteLabel || 'Delete';
       }
     }, 1000);
   }
   
   function updateCountdown() {
     if (countdownSeconds > 0) {
-      countdownEl.textContent = 'Delete (' + countdownSeconds + 's)';
+      var deleteLabel = submitBtn.dataset.deleteLabel || 'Delete';
+    countdownEl.textContent = deleteLabel + ' (' + countdownSeconds + 's)';
     }
   }
   

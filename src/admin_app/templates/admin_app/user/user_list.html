@@ -1,51 +1,52 @@
 {% extends "admin_app/base.html" %}
+{% load i18n %}
 
-{% block admin_title %}Users{% endblock %}
-{% block breadcrumb_extra %}<span class="breadcrumb-sep">→</span> <span>Users</span>{% endblock %}
+{% block admin_title %}{% trans "Users" %}{% endblock %}
+{% block breadcrumb_extra %}<span class="breadcrumb-sep">→</span> <span>{% trans "Users" %}</span>{% endblock %}
 
 {% block admin_content %}
-<h1 class="admin-page-title">Users</h1>
+<h1 class="admin-page-title">{% trans "Users" %}</h1>
 
 <div class="admin-toolbar admin-toolbar--single-row">
   <form method="get" action="" class="admin-toolbar-form">
     <div class="admin-search-wrap">
       <div class="admin-search-group">
-        <label class="admin-search-label" for="id_q_users">SEARCH</label>
-        <input type="text" name="q" id="id_q_users" value="{{ search }}" placeholder="Search users…" class="form-input admin-search-input" aria-label="Search users">
+        <label class="admin-search-label" for="id_q_users">{% trans "Search" %}</label>
+        <input type="text" name="q" id="id_q_users" value="{{ search }}" placeholder="{% trans 'Search users…' %}" class="form-input admin-search-input" aria-label="{% trans 'Search users' %}">
       </div>
       <div class="admin-filter-group">
-        <label class="admin-filter-label" for="id_filter_staff">Staff</label>
+        <label class="admin-filter-label" for="id_filter_staff">{% trans "Staff" %}</label>
         <select name="staff" id="id_filter_staff" class="form-input">
-          <option value="">All</option>
-          <option value="1" {% if request.GET.staff == "1" %}selected{% endif %}>Staff only</option>
-          <option value="0" {% if request.GET.staff == "0" %}selected{% endif %}>Not staff</option>
+          <option value="">{% trans "All" %}</option>
+          <option value="1" {% if request.GET.staff == "1" %}selected{% endif %}>{% trans "Staff only" %}</option>
+          <option value="0" {% if request.GET.staff == "0" %}selected{% endif %}>{% trans "Not staff" %}</option>
         </select>
       </div>
       <div class="admin-filter-group">
-        <label class="admin-filter-label" for="id_filter_active">Active</label>
+        <label class="admin-filter-label" for="id_filter_active">{% trans "Active" %}</label>
         <select name="active" id="id_filter_active" class="form-input">
-          <option value="">All</option>
-          <option value="1" {% if request.GET.active == "1" %}selected{% endif %}>Active</option>
-          <option value="0" {% if request.GET.active == "0" %}selected{% endif %}>Inactive</option>
+          <option value="">{% trans "All" %}</option>
+          <option value="1" {% if request.GET.active == "1" %}selected{% endif %}>{% trans "Active" %}</option>
+          <option value="0" {% if request.GET.active == "0" %}selected{% endif %}>{% trans "Inactive" %}</option>
         </select>
       </div>
-      <button type="submit" class="form-btn form-btn-secondary admin-search-btn">Search</button>
+      <button type="submit" class="form-btn form-btn-secondary admin-search-btn">{% trans "Search" %}</button>
     </div>
   </form>
-  <a href="{% url 'admin_app:admin_user_add' %}" class="admin-toolbar-add-btn">Add user</a>
+  <a href="{% url 'admin_app:admin_user_add' %}" class="admin-toolbar-add-btn">{% trans "Add user" %}</a>
 </div>
 
-<p class="muted admin-count">{{ total_count }} user{{ total_count|pluralize }}</p>
+<p class="muted admin-count">{% blocktrans count counter=total_count %}{{ counter }} user{% plural %}{{ counter }} users{% endblocktrans %}</p>
 
 <div class="admin-table-wrap">
   <table class="admin-table">
     <thead>
       <tr>
-        <th>Username</th>
-        <th>Email</th>
-        <th>Name</th>
-        <th>Staff</th>
-        <th>Active</th>
+        <th>{% trans "Username" %}</th>
+        <th>{% trans "Email" %}</th>
+        <th>{% trans "Name" %}</th>
+        <th>{% trans "Staff" %}</th>
+        <th>{% trans "Active" %}</th>
         <th class="admin-table-actions"></th>
       </tr>
     </thead>
@@ -55,18 +56,18 @@
         <td><a href="{% url 'admin_app:admin_user_detail' u.pk %}">{{ u.username }}</a></td>
         <td>{{ u.email|default:"—" }}</td>
         <td>{{ u.get_full_name|default:"—" }}</td>
-        <td>{% if u.is_staff %}Yes{% else %}No{% endif %}</td>
-        <td>{% if u.is_active %}Yes{% else %}No{% endif %}</td>
+        <td>{% if u.is_staff %}{% trans "Yes" %}{% else %}{% trans "No" %}{% endif %}</td>
+        <td>{% if u.is_active %}{% trans "Yes" %}{% else %}{% trans "No" %}{% endif %}</td>
         <td class="admin-table-actions">
-          <a href="{% url 'admin_app:admin_user_edit' u.pk %}" class="admin-btn-sm">Edit</a>
+          <a href="{% url 'admin_app:admin_user_edit' u.pk %}" class="admin-btn-sm">{% trans "Edit" %}</a>
           {% if u.pk != request.user.pk %}
-          <button type="button" class="admin-btn-sm admin-btn-danger" data-delete-url="{% url 'admin_app:admin_user_delete' u.pk %}" data-delete-message="Are you sure you want to delete the user '{{ u.username }}'? This will also remove all customer memberships for this user.">Delete</button>
+          <button type="button" class="admin-btn-sm admin-btn-danger" data-delete-url="{% url 'admin_app:admin_user_delete' u.pk %}" data-delete-message="{% blocktrans with username=u.username %}Are you sure you want to delete the user '{{ username }}'? This will also remove all customer memberships for this user.{% endblocktrans %}">{% trans "Delete" %}</button>
           {% endif %}
         </td>
       </tr>
       {% empty %}
       <tr>
-        <td colspan="6">No users found.</td>
+        <td colspan="6">{% trans "No users found." %}</td>
       </tr>
       {% endfor %}
     </tbody>
@@ -76,11 +77,11 @@
 {% if page_obj.has_other_pages %}
 <nav class="admin-pagination">
   {% if page_obj.has_previous %}
-  <a href="?page={{ page_obj.previous_page_number }}{% if search %}&q={{ search }}{% endif %}">Previous</a>
+  <a href="?page={{ page_obj.previous_page_number }}{% if search %}&q={{ search }}{% endif %}">{% trans "Previous" %}</a>
   {% endif %}
-  <span class="current">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+  <span class="current">{% blocktrans with number=page_obj.number total=page_obj.paginator.num_pages %}Page {{ number }} of {{ total }}{% endblocktrans %}</span>
   {% if page_obj.has_next %}
-  <a href="?page={{ page_obj.next_page_number }}{% if search %}&q={{ search }}{% endif %}">Next</a>
+  <a href="?page={{ page_obj.next_page_number }}{% if search %}&q={{ search }}{% endif %}">{% trans "Next" %}</a>
   {% endif %}
 </nav>
 {% endif %}

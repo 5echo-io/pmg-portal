@@ -32,6 +32,7 @@ from .models import (
     PortalUserPreference,
     NetworkDevice,
     FacilityDocument,
+    ServiceLog,
     DeviceType,
     ProductDatasheet,
 )
@@ -352,15 +353,17 @@ def facility_detail(request, slug):
     network_devices = facility.network_devices.filter(is_active=True).select_related("product", "rack").order_by("rack", "rack_position", "name")
     ip_addresses = facility.ip_addresses.all().select_related("device").order_by("ip_address")
     documents = facility.documents.all().order_by("-uploaded_at")
-    
+    service_logs = facility.service_logs.all().order_by("-performed_at")
+
     # Statistics
     stats = {
         "racks_count": racks.count(),
         "network_devices_count": network_devices.count(),
         "ip_addresses_count": ip_addresses.count(),
         "documents_count": documents.count(),
+        "service_logs_count": service_logs.count(),
     }
-    
+
     is_htmx = request.headers.get("HX-Request") == "true"
     context = {
         "facility": facility,
@@ -369,6 +372,7 @@ def facility_detail(request, slug):
         "network_devices": network_devices,
         "ip_addresses": ip_addresses,
         "documents": documents,
+        "service_logs": service_logs,
         "stats": stats,
     }
     
@@ -378,6 +382,38 @@ def facility_detail(request, slug):
         return r
     
     return render(request, "portal/facility_detail.html", context)
+
+
+@login_required
+def facility_service_log_detail(request, slug, log_id):
+    """Show a single service log entry for a facility."""
+    facility = get_object_or_404(Facility, slug=slug, is_active=True)
+    active_customer_id = request.session.get("active_customer_id")
+    if not active_customer_id:
+        messages.info(request, "Please select a customer profile to view facilities.")
+        return redirect("portal_home")
+    try:
+        customer = Customer.objects.get(pk=active_customer_id)
+        if customer not in facility.customers.all():
+            messages.error(request, "You do not have access to this facility.")
+            return redirect("facility_list")
+    except Customer.DoesNotExist:
+        messages.error(request, "Customer not found.")
+        return redirect("portal_home")
+
+    service_log = get_object_or_404(ServiceLog, pk=log_id, facility=facility)
+    context = {
+        "facility": facility,
+        "customer": customer,
+        "service_log": service_log,
+    }
+    is_htmx = request.headers.get("HX-Request") == "true"
+    if is_htmx:
+        r = render(request, "portal/fragments/facility_service_log_detail.html", context)
+        title = f"Servicelogg: {service_log.service_id} | {facility.name} | PMG Portal"
+        r["HX-Trigger"] = '{"setTitle": {"title": "' + title.replace('"', '\\"') + '"}}'
+        return r
+    return render(request, "portal/facility_service_log_detail.html", context)
 
 
 @login_required

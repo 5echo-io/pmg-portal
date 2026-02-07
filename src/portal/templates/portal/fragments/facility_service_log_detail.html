@@ -1,0 +1,56 @@
+{% load i18n static %}
+<div class="facility-detail-container">
+  <div class="breadcrumb-row">
+    <a href="{% url 'facility_list' %}" class="breadcrumb-back-btn" aria-label="{% trans 'Back to Facilities' %}" hx-get="{% url 'facility_list' %}" hx-target="#main-content" hx-push-url="true">← {% trans "Facilities" %}</a>
+    <nav class="breadcrumb admin-breadcrumb" aria-label="Breadcrumb">
+      <a href="{% url 'facility_list' %}" hx-get="{% url 'facility_list' %}" hx-target="#main-content" hx-push-url="true">{% trans "Facilities" %}</a>
+      <span class="breadcrumb-sep">→</span>
+      <a href="{% url 'facility_detail' facility.slug %}" hx-get="{% url 'facility_detail' facility.slug %}" hx-target="#main-content" hx-push-url="true">{{ facility.name }}</a>
+      <span class="breadcrumb-sep">→</span>
+      <span>{% trans "Servicelogg" %}: {{ service_log.service_id }}</span>
+    </nav>
+  </div>
+
+  <div class="customer-card-container">
+    <div class="customer-card-header" style="padding-bottom: 16px;">
+      <div class="customer-card-info" style="flex: 1;">
+        <h1 class="customer-card-name" style="margin: 0 0 8px 0;">{% trans "Servicelogg" %}</h1>
+        <p class="customer-card-slug" style="margin: 0;">{{ facility.name }} — {{ service_log.service_id }}</p>
+      </div>
+      <div class="customer-card-header-actions">
+        <a href="{% url 'facility_detail' facility.slug %}" hx-get="{% url 'facility_detail' facility.slug %}" hx-target="#main-content" hx-push-url="true" class="admin-btn admin-btn-secondary">← {% trans "Back to facility" %}</a>
+      </div>
+    </div>
+
+    <div class="panel" style="margin-top: 24px;">
+      <dl class="service-log-dl">
+        <dt>{% trans "Service ID" %}</dt>
+        <dd><strong>{{ service_log.service_id }}</strong></dd>
+
+        <dt>{% trans "Performed at" %}</dt>
+        <dd>{{ service_log.performed_at|date:"d.m.Y H:i" }}</dd>
+
+        <dt>{% trans "Technician (employee no.)" %}</dt>
+        <dd>{{ service_log.technician_employee_no|default:"—" }}</dd>
+
+        <dt>{% trans "Documented description" %}</dt>
+        <dd>{% if service_log.description %}<div style="white-space: pre-wrap;">{{ service_log.description }}</div>{% else %}—{% endif %}</dd>
+
+        {% if service_log.notes %}
+        <dt>{% trans "Notes" %}</dt>
+        <dd><div style="white-space: pre-wrap;">{{ service_log.notes }}</div></dd>
+        {% endif %}
+
+        <dt>{% trans "Created" %}</dt>
+        <dd>{{ service_log.created_at|date:"d.m.Y H:i" }}{% if service_log.created_by %} {% trans "by" %} {{ service_log.created_by.get_full_name|default:service_log.created_by.username }}{% endif %}</dd>
+      </dl>
+    </div>
+  </div>
+</div>
+
+<style>
+.service-log-dl { display: grid; grid-template-columns: 180px 1fr; gap: 12px 24px; margin: 0; }
+.service-log-dl dt { font-weight: 600; color: var(--muted, #6b7280); }
+.service-log-dl dd { margin: 0; }
+@media (max-width: 640px) { .service-log-dl { grid-template-columns: 1fr; } }
+</style>

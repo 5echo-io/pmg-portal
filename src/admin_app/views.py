@@ -34,6 +34,7 @@ from portal.models import (
     NetworkDevice,
     IPAddress,
     FacilityDocument,
+    ServiceLog,
 )
 from admin_app.models import AdminNotification
 from django.utils import timezone
@@ -857,6 +858,7 @@ def facility_detail(request, slug):
     network_devices = facility.network_devices.filter(is_active=True).order_by("rack", "rack_position", "name")
     ip_addresses = facility.ip_addresses.all().order_by("ip_address")
     documents = facility.documents.all().order_by("-uploaded_at")
+    service_logs = facility.service_logs.all().order_by("-performed_at")
     
     return render(
         request,
@@ -868,6 +870,7 @@ def facility_detail(request, slug):
             "network_devices": network_devices,
             "ip_addresses": ip_addresses,
             "documents": documents,
+            "service_logs": service_logs,
         },
     )
 
@@ -1845,6 +1848,100 @@ def facility_document_delete(request, facility_slug, doc_id):
     title = doc.title
     doc.delete()
     messages.success(request, f"Document '{title}' has been deleted.")
+    return redirect("admin_app:admin_facility_detail", slug=facility.slug)
+
+
+# ----- Facility Service Log -----
+@staff_required
+def facility_service_log_add(request, facility_slug):
+    """Add a service log entry to a facility."""
+    from .forms import ServiceLogForm
+    facility = get_object_or_404(Facility, slug=facility_slug)
+    in_modal = request.GET.get("modal") == "1" or request.GET.get("fragment") == "1"
+    detail_url = reverse("admin_app:admin_facility_detail", kwargs={"slug": facility.slug})
+
+    if request.method == "POST":
+        form = ServiceLogForm(request.POST, facility=facility)
+        if form.is_valid():
+            log = form.save(commit=False)
+            log.facility = facility
+            log.created_by = request.user
+            log.save()
+            messages.success(request, _("Service log '%(id)s' added.") % {"id": log.service_id})
+            if in_modal or request.POST.get("modal") == "1":
+                return redirect("admin_app:admin_facility_modal_close", facility_slug=facility.slug)
+            return redirect("admin_app:admin_facility_detail", slug=facility.slug)
+    else:
+        form = ServiceLogForm(facility=facility)
+        from django.utils import timezone
+        now = timezone.now()
+        form.initial.setdefault("performed_at", now.strftime("%Y-%m-%dT%H:%M"))
+
+    cancel_url = reverse("admin_app:admin_facility_modal_close", kwargs={"facility_slug": facility.slug}) if in_modal else _get_cancel_url(request, detail_url)
+    if request.GET.get("fragment") == "1":
+        return render(request, "admin_app/facility/facility_service_log_form_fragment.html", {
+            "form": form,
+            "facility": facility,
+            "cancel_url": cancel_url,
+            "in_modal": in_modal,
+            "form_action": request.build_absolute_uri(request.path),
+        })
+    return render(request, "admin_app/facility/facility_service_log_form.html", {
+        "form": form,
+        "facility": facility,
+        "cancel_url": cancel_url,
+        "in_modal": in_modal,
+    })
+
+
+@staff_required
+def facility_service_log_edit(request, facility_slug, log_id):
+    """Edit a service log entry."""
+    from .forms import ServiceLogForm
+    facility = get_object_or_404(Facility, slug=facility_slug)
+    service_log = get_object_or_404(ServiceLog, pk=log_id, facility=facility)
+    in_modal = request.GET.get("modal") == "1" or request.GET.get("fragment") == "1"
+    detail_url = reverse("admin_app:admin_facility_detail", kwargs={"slug": facility.slug})
+
+    if request.method == "POST":
+        form = ServiceLogForm(request.POST, instance=service_log, facility=facility)
+        if form.is_valid():
+            form.save()
+            messages.success(request, _("Service log '%(id)s' updated.") % {"id": service_log.service_id})
+            if in_modal or request.POST.get("modal") == "1":
+                return redirect("admin_app:admin_facility_modal_close", facility_slug=facility.slug)
+            return redirect("admin_app:admin_facility_detail", slug=facility.slug)
+    else:
+        form = ServiceLogForm(instance=service_log, facility=facility)
+
+    cancel_url = reverse("admin_app:admin_facility_modal_close", kwargs={"facility_slug": facility.slug}) if in_modal else _get_cancel_url(request, detail_url)
+    if request.GET.get("fragment") == "1":
+        return render(request, "admin_app/facility/facility_service_log_form_fragment.html", {
+            "form": form,
+            "facility": facility,
+            "service_log": service_log,
+            "cancel_url": cancel_url,
+            "in_modal": in_modal,
+            "form_action": request.build_absolute_uri(request.path),
+        })
+    return render(request, "admin_app/facility/facility_service_log_form.html", {
+        "form": form,
+        "facility": facility,
+        "service_log": service_log,
+        "cancel_url": cancel_url,
+        "in_modal": in_modal,
+    })
+
+
+@staff_required
+@require_POST
+def facility_service_log_delete(request, facility_slug, log_id):
+    """Delete a service log entry."""
+    facility = get_object_or_404(Facility, slug=facility_slug)
+    service_log = get_object_or_404(ServiceLog, pk=log_id, facility=facility)
+    service_id = service_log.service_id
+    service_log.delete()
+    messages.success(request, _("Service log '%(id)s' has been deleted.") % {"id": service_id})
     return redirect("admin_app:admin_facility_detail", slug=facility.slug)
 
 

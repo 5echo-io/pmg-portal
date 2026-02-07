@@ -1,0 +1,47 @@
+{% extends "admin_app/base.html" %}
+{% load i18n %}
+
+{% block admin_title %}{% if service_log %}{% trans "Rediger servicelogg" %}{% else %}{% trans "Legg til servicelogg" %}{% endif %} – {{ facility.name }}{% endblock %}
+{% block breadcrumb_back %}<a href="{% url 'admin_app:admin_facility_detail' facility.slug %}" class="breadcrumb-back-btn" aria-label="Back to {{ facility.name }}">← {{ facility.name }}</a>{% endblock %}
+{% block breadcrumb_extra %}
+<span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_facility_list' %}">{% trans "Anlegg" %}</a>
+<span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_facility_detail' facility.slug %}">{{ facility.name }}</a>
+<span class="breadcrumb-sep">→</span> <span>{% if service_log %}{% trans "Rediger servicelogg" %}{% else %}{% trans "Legg til servicelogg" %}{% endif %}</span>
+{% endblock %}
+
+{% block admin_content %}
+<h1 class="admin-page-title">{% if service_log %}{% trans "Rediger servicelogg" %}{% else %}{% trans "Legg til servicelogg" %}{% endif %}</h1>
+
+<form method="post" action="" class="admin-form admin-form--wide">
+  {% csrf_token %}
+  <div class="admin-form-field">
+    <label for="{{ form.service_id.id_for_label }}">{{ form.service_id.label }}</label>
+    {{ form.service_id }}
+    {% if form.service_id.errors %}<p class="form-error">{{ form.service_id.errors.0 }}</p>{% endif %}
+  </div>
+  <div class="admin-form-field">
+    <label for="{{ form.performed_at.id_for_label }}">{{ form.performed_at.label }}</label>
+    {{ form.performed_at }}
+    {% if form.performed_at.errors %}<p class="form-error">{{ form.performed_at.errors.0 }}</p>{% endif %}
+  </div>
+  <div class="admin-form-field">
+    <label for="{{ form.technician_employee_no.id_for_label }}">{{ form.technician_employee_no.label }}</label>
+    {{ form.technician_employee_no }}
+    {% if form.technician_employee_no.errors %}<p class="form-error">{{ form.technician_employee_no.errors.0 }}</p>{% endif %}
+  </div>
+  <div class="admin-form-field">
+    <label for="{{ form.description.id_for_label }}">{{ form.description.label }}</label>
+    {{ form.description }}
+    {% if form.description.errors %}<p class="form-error">{{ form.description.errors.0 }}</p>{% endif %}
+  </div>
+  <div class="admin-form-field">
+    <label for="{{ form.notes.id_for_label }}">{{ form.notes.label }}</label>
+    {{ form.notes }}
+    {% if form.notes.errors %}<p class="form-error">{{ form.notes.errors.0 }}</p>{% endif %}
+  </div>
+  <div class="admin-form-actions">
+    <button type="submit" class="form-btn form-btn-primary form-btn--narrow">{% trans "Save" %}</button>
+    <a href="{{ cancel_url }}" class="form-btn form-btn-secondary">{% trans "Cancel" %}</a>
+  </div>
+</form>
+{% endblock %}

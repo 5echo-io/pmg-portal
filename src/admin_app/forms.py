@@ -5,7 +5,7 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm as BaseUserCreationForm
 from django.contrib.auth.models import Group
-from portal.models import Customer, CustomerMembership, PortalLink, Announcement, Facility, Rack, RackSeal, DeviceType, DeviceCategory, Manufacturer, ProductDatasheet, NetworkDevice, IPAddress, FacilityDocument
+from portal.models import Customer, CustomerMembership, PortalLink, Announcement, Facility, Rack, RackSeal, DeviceType, DeviceCategory, Manufacturer, ProductDatasheet, NetworkDevice, IPAddress, FacilityDocument, ServiceLog
 
 User = get_user_model()
 
@@ -346,4 +346,27 @@ class FacilityDocumentForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if facility:
             self.instance.facility = facility
+
+
+class ServiceLogForm(forms.ModelForm):
+    class Meta:
+        model = ServiceLog
+        fields = ("service_id", "performed_at", "technician_employee_no", "description", "notes")
+        widgets = {
+            "performed_at": forms.DateTimeInput(attrs={"type": "datetime-local"}),
+            "description": forms.Textarea(attrs={"rows": 4}),
+            "notes": forms.Textarea(attrs={"rows": 2}),
+        }
+
+    def __init__(self, *args, facility=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if facility:
+            self.instance.facility = facility
+        self.fields["performed_at"].input_formats = ["%Y-%m-%dT%H:%M", "%Y-%m-%d %H:%M", "%Y-%m-%d"]
+        if self.instance and self.instance.pk and self.instance.performed_at:
+            from django.utils import timezone
+            dt = self.instance.performed_at
+            if timezone.is_naive(dt):
+                dt = timezone.make_aware(dt)
+            self.initial.setdefault("performed_at", dt.strftime("%Y-%m-%dT%H:%M"))
 

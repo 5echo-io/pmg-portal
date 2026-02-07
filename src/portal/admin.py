@@ -9,7 +9,7 @@ Last Modified: 2026-02-05
 from django.contrib import admin
 from django.contrib import messages
 from django.db.models import Q
-from .models import Customer, CustomerMembership, PortalLink
+from .models import Customer, CustomerMembership, PortalLink, Facility, ServiceLog
 from .forms import CustomerMembershipForm
 
 @admin.register(Customer)
@@ -207,3 +207,14 @@ class PortalLinkAdmin(admin.ModelAdmin):
     search_fields = ("title", "url", "customer__name")
     autocomplete_fields = ("customer",)
     list_editable = ("sort_order",)
+
+
+@admin.register(ServiceLog)
+class ServiceLogAdmin(admin.ModelAdmin):
+    """Service log entries per facility (also manageable in Admin under each facility)."""
+    list_display = ("facility", "service_id", "performed_at", "technician_employee_no")
+    list_filter = ("facility",)
+    search_fields = ("service_id", "technician_employee_no", "description")
+    autocomplete_fields = ("facility", "created_by")
+    date_hierarchy = "performed_at"
+    ordering = ("-performed_at",)

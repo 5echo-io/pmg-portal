@@ -71,6 +71,7 @@
       <button type="button" class="facility-sidemenu-item" data-tab="network">{% trans "Nettverksenheter" %} ({{ network_devices|length }})</button>
       <button type="button" class="facility-sidemenu-item" data-tab="ip">{% trans "IP-adresser" %} ({{ ip_addresses|length }})</button>
       <button type="button" class="facility-sidemenu-item" data-tab="documents">{% trans "Dokumenter" %} ({{ documents|length }})</button>
+      <button type="button" class="facility-sidemenu-item" data-tab="servicelogg">{% trans "Servicelogg" %} ({{ service_logs|length }})</button>
     </nav>
 
     <div class="facility-card-content">
@@ -270,6 +271,48 @@
       {% endif %}
     </div>
 
+    <!-- Servicelogg Tab -->
+    <div class="customer-tab-panel" id="tab-servicelogg">
+      <div class="customer-section-header">
+        <h2>{% trans "Servicelogg" %}</h2>
+        <button type="button" class="admin-toolbar-add-btn admin-toolbar-add-btn--fit facility-servicelogg-add-modal-btn">{% trans "Legg til servicelogg" %}</button>
+      </div>
+      {% if service_logs %}
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>{% trans "Dato" %}</th>
+              <th>{% trans "Service ID" %}</th>
+              <th>{% trans "Tekniker (ansattnr.)" %}</th>
+              <th>{% trans "Beskrivelse" %}</th>
+              <th class="admin-table-actions"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for log in service_logs %}
+            <tr>
+              <td>{{ log.performed_at|date:"d.m.Y H:i" }}</td>
+              <td><strong>{{ log.service_id }}</strong></td>
+              <td>{{ log.technician_employee_no|default:"—" }}</td>
+              <td>{{ log.description|truncatewords:12|default:"—" }}</td>
+              <td class="admin-table-actions">
+                <button type="button" class="admin-btn-sm facility-servicelogg-edit-modal-btn" data-edit-url="{% url 'admin_app:admin_facility_service_log_edit' facility.slug log.pk %}">{% trans "Rediger" %}</button>
+                <form method="post" action="{% url 'admin_app:admin_facility_service_log_delete' facility.slug log.pk %}" style="display: inline;" onsubmit="return confirm('{% trans "Er du sikker på at du vil slette denne serviceloggføringen?" %}');">
+                  {% csrf_token %}
+                  <button type="submit" class="admin-btn-sm admin-btn-danger">{% trans "Slett" %}</button>
+                </form>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <p class="muted">{% trans "Ingen serviceloggføringer for dette anlegget." %}</p>
+      {% endif %}
+    </div>
+
     </div>
   </div>
 </div>
@@ -346,6 +389,18 @@
   </div>
 </div>
 
+<!-- Service log add/edit modal -->
+<div id="facility-servicelogg-modal" class="rack-modal" aria-hidden="true">
+  <div class="rack-modal-backdrop"></div>
+  <div class="rack-modal-dialog">
+    <div class="rack-modal-header">
+      <h2 class="rack-modal-title" id="facility-servicelogg-modal-title">{% trans "Legg til servicelogg" %}</h2>
+      <button type="button" class="rack-modal-close facility-servicelogg-modal-close" aria-label="{% trans 'Lukk' %}">&times;</button>
+    </div>
+    <div class="rack-modal-body" aria-live="polite"></div>
+  </div>
+</div>
+
 <style>
 .customer-card-header-actions--align { align-items: center; }
 .rack-modal { position: fixed; inset: 0; z-index: 10000; display: flex; align-items: center; justify-content: center; padding: 24px; opacity: 0; visibility: hidden; transition: opacity 0.2s, visibility 0.2s; }
@@ -394,6 +449,7 @@
   const deviceModal = document.getElementById('facility-device-modal');
   const ipModal = document.getElementById('facility-ip-modal');
   const documentModal = document.getElementById('facility-document-modal');
+  const serviceloggModal = document.getElementById('facility-servicelogg-modal');
 
   document.querySelector('.facility-edit-modal-btn')?.addEventListener('click', function(e) {
     e.preventDefault();
@@ -498,6 +554,27 @@
     openModalWithFragment(documentModal, body, "{% url 'admin_app:admin_facility_document_upload' facility.slug %}?modal=1");
   });
 
+  const serviceloggModalTitle = document.getElementById('facility-servicelogg-modal-title');
+  document.querySelector('.facility-servicelogg-add-modal-btn')?.addEventListener('click', function() {
+    var body = serviceloggModal?.querySelector('.rack-modal-body');
+    openModalWithFragment(serviceloggModal, body, "{% url 'admin_app:admin_facility_service_log_add' facility.slug %}?modal=1&fragment=1", function() {
+      if (serviceloggModalTitle) serviceloggModalTitle.textContent = "{% trans 'Legg til servicelogg' %}";
+    });
+    if (serviceloggModalTitle) serviceloggModalTitle.textContent = "{% trans 'Legg til servicelogg' %}";
+  });
+  document.querySelectorAll('.facility-servicelogg-edit-modal-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var url = this.getAttribute('data-edit-url');
+      if (!url) return;
+      url += (url.indexOf('?') !== -1 ? '&' : '?') + 'modal=1&fragment=1';
+      var body = serviceloggModal?.querySelector('.rack-modal-body');
+      openModalWithFragment(serviceloggModal, body, url, function() {
+        if (serviceloggModalTitle) serviceloggModalTitle.textContent = "{% trans 'Rediger servicelogg' %}";
+      });
+      if (serviceloggModalTitle) serviceloggModalTitle.textContent = "{% trans 'Rediger servicelogg' %}";
+    });
+  });
+
   document.body.addEventListener('submit', function(e) {
     var form = e.target;
     if (!form || !form.classList.contains('js-facility-modal-form')) return;
@@ -552,11 +629,13 @@
   ipModal?.querySelector('.rack-modal-backdrop')?.addEventListener('click', function() { closeInlineModal(ipModal); });
   documentModal?.querySelector('.rack-modal-close')?.addEventListener('click', function() { closeInlineModal(documentModal); });
   documentModal?.querySelector('.rack-modal-backdrop')?.addEventListener('click', function() { closeInlineModal(documentModal); });
+  serviceloggModal?.querySelector('.rack-modal-close')?.addEventListener('click', function() { closeInlineModal(serviceloggModal); });
+  serviceloggModal?.querySelector('.rack-modal-backdrop')?.addEventListener('click', function() { closeInlineModal(serviceloggModal); });
   customersModal?.querySelector('.rack-modal-close')?.addEventListener('click', function() { closeInlineModal(customersModal); });
   customersModal?.querySelector('.rack-modal-backdrop')?.addEventListener('click', function() { closeInlineModal(customersModal); });
 
   function closeAllFacilityModals() {
-    [editModal, customersModal, rackModal, deviceModal, ipModal, documentModal].forEach(function(m) {
+    [editModal, customersModal, rackModal, deviceModal, ipModal, documentModal, serviceloggModal].forEach(function(m) {
       if (!m) return;
       m.setAttribute('aria-hidden', 'true');
       m.classList.remove('rack-modal-open');

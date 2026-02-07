@@ -11,6 +11,14 @@ Last Modified: 2026-02-06
 
 - 2026-02-06 (Europe/Oslo)
   - Branch: dev
+  - Version: 4.8.0-beta.12
+  - Summary:
+    - ServiceLog model (portal); migration 0011_servicelog; admin facility_service_log_form + fragment; portal facility_service_log_detail + fragment; facility_card, facility_list, facility_detail updates
+    - Admin: backup_restore, base, customer_*, portal (announcement, portal_link), user (role, user list); forms, views, urls; site_footer; portal admin, models, base, datasheet_detail/datasheet_pdf; locale nb +421
+    - Version bump: 4.8.0-beta.11 → 4.8.0-beta.12
+
+- 2026-02-06 (Europe/Oslo)
+  - Branch: dev
   - Version: 4.8.0-beta.11
   - Summary:
     - Portal datasheet: datasheet_list view + URL /datasheets/; datasheet_detail TOC (left, no-print), actions centered, button visibility; back to Product datasheets; Norwegian strings; datasheet_pdf translated labels; datasheet_list.html

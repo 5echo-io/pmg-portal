@@ -1,14 +1,15 @@
 {% extends "admin_app/base.html" %}
+{% load i18n %}
 
-{% block admin_title %}{% if announcement %}Edit announcement{% else %}Add announcement{% endif %}{% endblock %}
-{% block breadcrumb_back %}<a href="{% url 'admin_app:admin_announcement_list' %}" class="breadcrumb-back-btn" aria-label="Back to Announcements">← Announcements</a>{% endblock %}
+{% block admin_title %}{% if announcement %}{% trans "Edit announcement" %}{% else %}{% trans "Add announcement" %}{% endif %}{% endblock %}
+{% block breadcrumb_back %}<a href="{% url 'admin_app:admin_announcement_list' %}" class="breadcrumb-back-btn" aria-label="{% trans 'Back to Announcements' %}">← {% trans "Announcements" %}</a>{% endblock %}
 {% block breadcrumb_extra %}
-<span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_announcement_list' %}">Announcements</a>
-<span class="breadcrumb-sep">→</span> <span>{% if announcement %}Edit{% else %}Add{% endif %}</span>
+<span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_announcement_list' %}">{% trans "Announcements" %}</a>
+<span class="breadcrumb-sep">→</span> <span>{% if announcement %}{% trans "Edit" %}{% else %}{% trans "Add" %}{% endif %}</span>
 {% endblock %}
 
 {% block admin_content %}
-<h1 class="admin-page-title">{% if announcement %}Edit announcement{% else %}Add announcement{% endif %}</h1>
+<h1 class="admin-page-title">{% if announcement %}{% trans "Edit announcement" %}{% else %}{% trans "Add announcement" %}{% endif %}</h1>
 
 <form method="post" action="" class="admin-form">
   {% csrf_token %}
@@ -21,8 +22,8 @@
   </div>
   {% endfor %}
   <div class="admin-form-actions">
-    <button type="submit" class="form-btn form-btn-primary">Save</button>
-    <a href="{% url 'admin_app:admin_announcement_list' %}" class="form-btn form-btn-secondary">Cancel</a>
+    <button type="submit" class="form-btn form-btn-primary">{% trans "Save" %}</button>
+    <a href="{% url 'admin_app:admin_announcement_list' %}" class="form-btn form-btn-secondary">{% trans "Cancel" %}</a>
   </div>
 </form>
 {% endblock %}

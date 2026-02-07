@@ -5,14 +5,19 @@
   <title>{{ datasheet.title }} – {{ pdf_title_suffix|default:"Product datasheet" }}</title>
   <style>
     body { font-family: Helvetica, Arial, sans-serif; font-size: 11pt; line-height: 1.4; color: #333; margin: 0; padding: 20px; }
-    h1 { font-size: 18pt; margin: 0 0 8px 0; }
-    .meta { font-size: 9pt; color: #666; margin-bottom: 20px; }
+    h1 { font-size: 18pt; margin: 0 0 4px 0; }
+    .meta { font-size: 9pt; color: #666; margin: 0 0 16px 0; }
     .content { margin-bottom: 40px; }
-    .content h2 { font-size: 13pt; margin: 16px 0 8px 0; }
-    .content table { border-collapse: collapse; width: 100%; margin: 10px 0; page-break-inside: avoid; }
+    .content h2 { font-size: 13pt; margin: 12px 0 4px 0; page-break-after: avoid; }
+    .content h3 { font-size: 11pt; margin: 10px 0 4px 0; page-break-after: avoid; }
+    .content h2:not(:first-child), .content h3:not(:first-child) { page-break-before: always; }
+    .content p { margin: 4px 0 8px 0; }
+    .content ul, .content ol { margin: 4px 0 8px 0; padding-left: 1.2em; }
+    .content li { margin: 2px 0; page-break-inside: avoid; }
+    .content table { border-collapse: collapse; width: 100%; margin: 8px 0; page-break-inside: avoid; }
     .content th, .content td { border: 1px solid #ccc; padding: 6px 10px; text-align: left; font-size: 10pt; }
-    .content th { background: #f5f5f5; font-weight: bold; }
-    .content h1, .content h2, .content h3 { page-break-inside: avoid; page-break-after: avoid; }
+    .content th { background: #e8ecf0; color: #111; font-weight: bold; }
+    .content h1, .content h2, .content h3 { page-break-inside: avoid; }
     .footer { position: fixed; bottom: 0; left: 0; right: 0; text-align: center; font-size: 9pt; color: #666; padding: 8px 0; }
   </style>
 </head>

@@ -87,6 +87,10 @@ urlpatterns = [
     # Facility Documents
     path("facilities/<slug:facility_slug>/documents/upload/", views.facility_document_upload, name="admin_facility_document_upload"),
     path("facilities/<slug:facility_slug>/documents/<int:doc_id>/delete/", views.facility_document_delete, name="admin_facility_document_delete"),
+    # Facility Service Log
+    path("facilities/<slug:facility_slug>/service-log/add/", views.facility_service_log_add, name="admin_facility_service_log_add"),
+    path("facilities/<slug:facility_slug>/service-log/<int:log_id>/edit/", views.facility_service_log_edit, name="admin_facility_service_log_edit"),
+    path("facilities/<slug:facility_slug>/service-log/<int:log_id>/delete/", views.facility_service_log_delete, name="admin_facility_service_log_delete"),
     # Server management (superuser only)
     path("server/backup-restore/", views.backup_restore, name="admin_backup_restore"),
 ]

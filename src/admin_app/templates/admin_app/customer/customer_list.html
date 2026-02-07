@@ -1,34 +1,35 @@
 {% extends "admin_app/base.html" %}
+{% load i18n %}
 
-{% block admin_title %}Customers{% endblock %}
-{% block breadcrumb_extra %}<span class="breadcrumb-sep">→</span> <span>Customers</span>{% endblock %}
+{% block admin_title %}{% trans "Customers" %}{% endblock %}
+{% block breadcrumb_extra %}<span class="breadcrumb-sep">→</span> <span>{% trans "Customers" %}</span>{% endblock %}
 
 {% block admin_content %}
-<h1 class="admin-page-title">Customers</h1>
+<h1 class="admin-page-title">{% trans "Customers" %}</h1>
 
 <div class="admin-toolbar admin-toolbar--single-row">
   <form method="get" action="" class="admin-toolbar-form">
     <div class="admin-search-wrap">
       <div class="admin-search-group">
-        <label class="admin-search-label" for="id_q_customers">SEARCH</label>
-        <input type="text" name="q" id="id_q_customers" value="{{ search }}" placeholder="Search customers…" class="form-input admin-search-input">
+        <label class="admin-search-label" for="id_q_customers">{% trans "Search" %}</label>
+        <input type="text" name="q" id="id_q_customers" value="{{ search }}" placeholder="{% trans 'Search customers…' %}" class="form-input admin-search-input">
       </div>
-      <button type="submit" class="form-btn form-btn-secondary admin-search-btn">Search</button>
+      <button type="submit" class="form-btn form-btn-secondary admin-search-btn">{% trans "Search" %}</button>
     </div>
   </form>
-  <a href="{% url 'admin_app:admin_customer_add' %}" class="admin-toolbar-add-btn">Add customer</a>
+  <a href="{% url 'admin_app:admin_customer_add' %}" class="admin-toolbar-add-btn">{% trans "Add customer" %}</a>
 </div>
 
-<p class="muted">{{ total_count }} customer{{ total_count|pluralize }}</p>
+<p class="muted">{% blocktrans count counter=total_count %}{{ counter }} customer{% plural %}{{ counter }} customers{% endblocktrans %}</p>
 
 <div class="admin-table-wrap">
   <table class="admin-table">
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Slug</th>
-        <th>Org. no.</th>
-        <th>Primary contact</th>
+        <th>{% trans "Name" %}</th>
+        <th>{% trans "Slug" %}</th>
+        <th>{% trans "Org. no." %}</th>
+        <th>{% trans "Primary contact" %}</th>
         <th class="admin-table-actions"></th>
       </tr>
     </thead>
@@ -40,13 +41,13 @@
         <td>{{ c.org_number|default:"—" }}</td>
         <td>{% if c.primary_contact %}{{ c.primary_contact.get_full_name|default:c.primary_contact.username }}{% else %}—{% endif %}</td>
         <td class="admin-table-actions">
-          <a href="{% url 'admin_app:admin_customer_detail' c.pk %}" class="admin-btn-sm">View</a>
-          <button type="button" class="admin-btn-sm admin-btn-danger" data-delete-url="{% url 'admin_app:admin_customer_delete' c.pk %}" data-delete-message="Are you sure you want to delete the customer '{{ c.name }}'? This will also delete all memberships and portal links associated with this customer.">Delete</button>
+          <a href="{% url 'admin_app:admin_customer_detail' c.pk %}" class="admin-btn-sm">{% trans "View" %}</a>
+          <button type="button" class="admin-btn-sm admin-btn-danger" data-delete-url="{% url 'admin_app:admin_customer_delete' c.pk %}" data-delete-message="{% blocktrans with name=c.name %}Are you sure you want to delete the customer '{{ name }}'? This will also delete all memberships and portal links associated with this customer.{% endblocktrans %}">{% trans "Delete" %}</button>
         </td>
       </tr>
       {% empty %}
       <tr>
-        <td colspan="5">No customers found.</td>
+        <td colspan="5">{% trans "No customers found." %}</td>
       </tr>
       {% endfor %}
     </tbody>
@@ -56,11 +57,11 @@
 {% if page_obj.has_other_pages %}
 <nav class="admin-pagination">
   {% if page_obj.has_previous %}
-  <a href="?page={{ page_obj.previous_page_number }}{% if search %}&q={{ search }}{% endif %}">Previous</a>
+  <a href="?page={{ page_obj.previous_page_number }}{% if search %}&q={{ search }}{% endif %}">{% trans "Previous" %}</a>
   {% endif %}
-  <span class="current">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+  <span class="current">{% blocktrans with number=page_obj.number total=page_obj.paginator.num_pages %}Page {{ number }} of {{ total }}{% endblocktrans %}</span>
   {% if page_obj.has_next %}
-  <a href="?page={{ page_obj.next_page_number }}{% if search %}&q={{ search }}{% endif %}">Next</a>
+  <a href="?page={{ page_obj.next_page_number }}{% if search %}&q={{ search }}{% endif %}">{% trans "Next" %}</a>
   {% endif %}
 </nav>
 {% endif %}

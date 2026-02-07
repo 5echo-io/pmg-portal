@@ -231,6 +231,48 @@ class Facility(models.Model):
         return self.customers.count()
 
 
+class ServiceLog(models.Model):
+    """
+    Service log entry for a facility. Records when service was performed,
+    by whom (technician employee number), and a documented description.
+    """
+    facility = models.ForeignKey(Facility, on_delete=models.CASCADE, related_name="service_logs")
+    service_id = models.CharField(max_length=100, help_text="Service ID / reference number")
+    performed_at = models.DateTimeField(help_text="When the service was performed")
+    technician_employee_no = models.CharField(
+        max_length=50,
+        blank=True,
+        default="",
+        help_text="Technician's employee number (ansattnummer)",
+    )
+    description = models.TextField(
+        blank=True,
+        default="",
+        help_text="Documented description of what was performed",
+    )
+    notes = models.TextField(blank=True, default="", help_text="Additional notes")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="created_service_logs",
+    )
+
+    class Meta:
+        ordering = ["-performed_at"]
+        verbose_name = "Service log"
+        verbose_name_plural = "Service logs"
+        indexes = [
+            models.Index(fields=["facility", "-performed_at"]),
+        ]
+
+    def __str__(self) -> str:
+        return f"{self.facility.name}: {self.service_id} ({self.performed_at.date()})"
+
+
 class FacilityDocument(models.Model):
     """
     Documents uploaded to a facility (manuals, diagrams, certificates, etc.)

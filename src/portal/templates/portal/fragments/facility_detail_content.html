@@ -46,6 +46,7 @@
         <div class="panel"><h3>{% trans "Network" %}</h3><p class="facility-stat-number">{{ ip_addresses|length }}</p><p class="muted">{% trans "IP addresses" %}</p></div>
         <div class="panel"><h3>{% trans "Devices" %}</h3><p class="facility-stat-number">{{ network_devices|length }}</p><p class="muted">{% trans "Enheter" %}</p></div>
         <div class="panel"><h3>{% trans "Documents" %}</h3><p class="facility-stat-number">{{ documents|length }}</p><p class="muted">{% trans "Uploaded documents" %}</p></div>
+        <div class="panel"><h3>{% trans "Servicelogg" %}</h3><p class="facility-stat-number">{{ service_logs|length }}</p><p class="muted">{% trans "Service log entries" %}</p></div>
       </div>
     </div>
 
@@ -55,6 +56,7 @@
         <button type="button" class="facility-sidemenu-item" data-tab="network">{% trans "Nettverk" %} ({{ ip_addresses|length }})</button>
         <button type="button" class="facility-sidemenu-item" data-tab="devices">{% trans "Enheter" %} ({{ network_devices|length }})</button>
         <button type="button" class="facility-sidemenu-item" data-tab="documents">{% trans "Dokumenter" %} ({{ documents|length }})</button>
+        <button type="button" class="facility-sidemenu-item" data-tab="servicelogg">{% trans "Servicelogg" %} ({{ service_logs|length }})</button>
       </nav>
       <div class="facility-card-content">
         <div class="customer-tab-panel active" id="tab-racks">
@@ -141,6 +143,27 @@
             </table>
           </div>
           {% else %}<p class="muted">{% trans "No documents uploaded for this facility." %}</p>{% endif %}
+        </div>
+        <div class="customer-tab-panel" id="tab-servicelogg">
+          <div class="customer-section-header"><h2>{% trans "Servicelogg" %}</h2></div>
+          {% if service_logs %}
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead><tr><th>{% trans "Date" %}</th><th>{% trans "Service ID" %}</th><th>{% trans "Technician (employee no.)" %}</th><th>{% trans "Description" %}</th><th></th></tr></thead>
+              <tbody>
+                {% for log in service_logs %}
+                <tr>
+                  <td>{{ log.performed_at|date:"Y-m-d H:i" }}</td>
+                  <td><strong>{{ log.service_id }}</strong></td>
+                  <td>{{ log.technician_employee_no|default:"—" }}</td>
+                  <td>{{ log.description|truncatewords:15|default:"—" }}</td>
+                  <td><a href="{% url 'facility_service_log_detail' facility.slug log.pk %}" hx-get="{% url 'facility_service_log_detail' facility.slug log.pk %}" hx-target="#main-content" hx-push-url="true" class="admin-btn-sm">{% trans "Open" %}</a></td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}<p class="muted">{% trans "No service log entries for this facility." %}</p>{% endif %}
         </div>
       </div>
     </div>

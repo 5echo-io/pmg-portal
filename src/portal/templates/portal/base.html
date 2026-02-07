@@ -42,7 +42,13 @@
         <div class="topbar-search-inner">
           <input type="search" class="topbar-search-input" id="portal-global-search" placeholder="{% trans 'Search facilities, devices, links…' %}" autocomplete="off" aria-label="{% trans 'Search' %}"/>
           <button type="button" class="topbar-search-close" onclick="closePortalSearch()" aria-label="{% trans 'Close search' %}">×</button>
-          <div class="topbar-search-results" id="portal-search-results" hidden></div>
+          <div class="topbar-search-results" id="portal-search-results" hidden
+               data-label-facilities="{% trans 'Facilities' %}"
+               data-label-devices="{% trans 'Devices' %}"
+               data-label-links="{% trans 'Links' %}"
+               data-label-documents="{% trans 'Documents' %}"
+               data-label-no-results="{% trans 'No results' %}"
+               data-label-search-failed="{% trans 'Search failed' %}"></div>
         </div>
       </div>
       {% endif %}
@@ -357,40 +363,47 @@
           fetch('/api/search/?q=' + encodeURIComponent(q), { headers: { 'Accept': 'application/json' } })
             .then(function(r) { return r.json(); })
             .then(function(data) {
+              var labels = resultsEl.dataset;
+              var lFac = labels.labelFacilities || 'Facilities';
+              var lDev = labels.labelDevices || 'Devices';
+              var lLink = labels.labelLinks || 'Links';
+              var lDoc = labels.labelDocuments || 'Documents';
+              var lEmpty = labels.labelNoResults || 'No results';
+              var lFail = labels.labelSearchFailed || 'Search failed';
               const parts = [];
               if (data.facilities && data.facilities.length) {
-                parts.push('<div class="search-result-group"><strong>Facilities</strong><ul>');
+                parts.push('<div class="search-result-group"><strong>' + escapeHtml(lFac) + '</strong><ul>');
                 data.facilities.forEach(function(f) {
                   parts.push('<li><a href="' + (f.url || '#') + '">' + escapeHtml(f.name) + '</a></li>');
                 });
                 parts.push('</ul></div>');
               }
               if (data.devices && data.devices.length) {
-                parts.push('<div class="search-result-group"><strong>Devices</strong><ul>');
+                parts.push('<div class="search-result-group"><strong>' + escapeHtml(lDev) + '</strong><ul>');
                 data.devices.forEach(function(d) {
                   parts.push('<li><a href="' + (d.url || '#') + '">' + escapeHtml(d.name) + ' <span class="muted">(' + escapeHtml(d.facility) + ')</span></a></li>');
                 });
                 parts.push('</ul></div>');
               }
               if (data.links && data.links.length) {
-                parts.push('<div class="search-result-group"><strong>Links</strong><ul>');
+                parts.push('<div class="search-result-group"><strong>' + escapeHtml(lLink) + '</strong><ul>');
                 data.links.forEach(function(l) {
                   parts.push('<li><a href="' + escapeHtml(l.url) + '" target="_blank" rel="noreferrer">' + escapeHtml(l.title) + '</a></li>');
                 });
                 parts.push('</ul></div>');
               }
               if (data.documents && data.documents.length) {
-                parts.push('<div class="search-result-group"><strong>Documents</strong><ul>');
+                parts.push('<div class="search-result-group"><strong>' + escapeHtml(lDoc) + '</strong><ul>');
                 data.documents.forEach(function(d) {
                   parts.push('<li><a href="' + (d.url || '#') + '">' + escapeHtml(d.title) + ' <span class="muted">(' + escapeHtml(d.facility) + ')</span></a></li>');
                 });
                 parts.push('</ul></div>');
               }
-              if (parts.length === 0) resultsEl.innerHTML = '<div class="search-result-empty">No results</div>';
+              if (parts.length === 0) resultsEl.innerHTML = '<div class="search-result-empty">' + escapeHtml(lEmpty) + '</div>';
               else resultsEl.innerHTML = parts.join('');
               resultsEl.hidden = false;
             })
-            .catch(function() { resultsEl.innerHTML = '<div class="search-result-empty">Search failed</div>'; resultsEl.hidden = false; });
+            .catch(function() { var lFail = resultsEl.dataset.labelSearchFailed || 'Search failed'; resultsEl.innerHTML = '<div class="search-result-empty">' + escapeHtml(lFail) + '</div>'; resultsEl.hidden = false; });
         }, 200);
       });
       function escapeHtml(s) {
