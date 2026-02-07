@@ -1,8 +1,8 @@
 {% load i18n %}
-<p class="muted">{{ device_type.name }} · {{ facility.name }}</p>
+<p class="muted">{{ device_type.name }}{% if facility %} · {{ facility.name }}{% endif %}</p>
 <form method="post" action="{{ form_action }}" class="admin-form admin-form--wide js-facility-modal-form">
   {% csrf_token %}
-  <input type="hidden" name="facility" value="{{ facility.slug }}">
+  {% if facility %}<input type="hidden" name="facility" value="{{ facility.slug }}">{% else %}<input type="hidden" name="facility" value="none">{% endif %}
   <input type="hidden" name="in_modal" value="1">
   <div class="admin-form-row">
     <div class="admin-form-field">
@@ -49,6 +49,14 @@
     <label for="{{ form.description.id_for_label }}">{{ form.description.label }}</label>
     {{ form.description }}
     {% if form.description.errors %}<p class="form-error">{{ form.description.errors.0 }}</p>{% endif %}
+  </div>
+  <div class="admin-form-field">
+    <label for="{{ form.is_sla.id_for_label }}">{{ form.is_sla.label }}</label>
+    {{ form.is_sla }}
+  </div>
+  <div class="admin-form-field">
+    <label for="{{ form.is_active.id_for_label }}">{{ form.is_active.label }}</label>
+    {{ form.is_active }}
   </div>
   <div class="admin-form-actions">
     <button type="submit" class="form-btn form-btn-primary">{% trans "Save" %}</button>

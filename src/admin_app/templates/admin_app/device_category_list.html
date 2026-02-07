@@ -1,0 +1,46 @@
+{% extends "admin_app/base.html" %}
+{% load i18n %}
+
+{% block admin_title %}{% trans "Device categories" %}{% endblock %}
+{% block breadcrumb_extra %}
+<span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_device_list' %}">{% trans "Devices" %}</a>
+<span class="breadcrumb-sep">→</span> <span>{% trans "Categories" %}</span>
+{% endblock %}
+
+{% block admin_content %}
+<h1 class="admin-page-title">{% trans "Device categories" %}</h1>
+<p class="muted">{% trans "Categories and subcategories for device types (used in dropdowns)." %}</p>
+
+<div class="admin-toolbar admin-toolbar--single-row">
+  <a href="{% url 'admin_app:admin_device_category_add' %}" class="admin-toolbar-add-btn">{% trans "Add category" %}</a>
+</div>
+
+<div class="admin-table-wrap">
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th>{% trans "Name" %}</th>
+        <th>{% trans "Slug" %}</th>
+        <th>{% trans "Parent" %}</th>
+        <th class="admin-table-actions"></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for cat in categories %}
+      <tr>
+        <td><strong>{{ cat.name }}</strong></td>
+        <td><code>{{ cat.slug }}</code></td>
+        <td>{% if cat.parent %}{{ cat.parent.name }}{% else %}—{% endif %}</td>
+        <td class="admin-table-actions">
+          <a href="{% url 'admin_app:admin_device_category_edit' cat.pk %}" class="admin-btn-sm">{% trans "Edit" %}</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="4" class="muted">{% trans "No categories yet. Add a category or subcategory." %}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

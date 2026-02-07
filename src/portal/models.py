@@ -120,6 +120,85 @@ class PortalLink(models.Model):
         return f"{self.customer}: {self.title}"
 
 
+class Announcement(models.Model):
+    """
+    Announcements posted by admins, visible to all members of a customer.
+    """
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name="announcements", db_index=True)
+    title = models.CharField(max_length=200)
+    body = models.TextField(help_text="Plain text or HTML content")
+    is_pinned = models.BooleanField(default=False, help_text="Pinned announcements appear first")
+    valid_from = models.DateTimeField(null=True, blank=True, help_text="Optional: show only after this time")
+    valid_until = models.DateTimeField(null=True, blank=True, help_text="Optional: hide after this time")
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="created_announcements",
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-is_pinned", "-created_at"]
+        indexes = [
+            models.Index(fields=["customer", "-created_at"]),
+        ]
+
+    def __str__(self) -> str:
+        return f"{self.customer}: {self.title}"
+
+
+class PortalUserPreference(models.Model):
+    """
+    Per-user (and optionally per-customer) preferences: theme, dashboard widgets.
+    """
+    THEME_LIGHT = "light"
+    THEME_DARK = "dark"
+    THEME_SYSTEM = "system"
+    THEME_CHOICES = [
+        (THEME_LIGHT, "Light"),
+        (THEME_DARK, "Dark"),
+        (THEME_SYSTEM, "System"),
+    ]
+    WIDGET_ANNOUNCEMENTS = "announcements"
+    WIDGET_QUICK_STATS = "quick_stats"
+    WIDGET_RECENT_LINKS = "recent_links"
+    WIDGET_QUICK_LINKS = "quick_links"
+    DEFAULT_WIDGETS = [WIDGET_ANNOUNCEMENTS, WIDGET_QUICK_STATS, WIDGET_RECENT_LINKS, WIDGET_QUICK_LINKS]
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="portal_preferences",
+        db_index=True,
+    )
+    customer = models.ForeignKey(
+        Customer,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="portal_preferences",
+        help_text="If set, preferences apply when this customer is active; otherwise default for all.",
+    )
+    theme = models.CharField(max_length=20, choices=THEME_CHOICES, default=THEME_SYSTEM)
+    dashboard_widgets = models.JSONField(
+        default=list,
+        blank=True,
+        help_text="List of widget ids to show, e.g. ['announcements', 'quick_stats', 'recent_links', 'quick_links']. Empty = use defaults.",
+    )
+
+    class Meta:
+        unique_together = [("user", "customer")]
+        indexes = [
+            models.Index(fields=["user", "customer"]),
+        ]
+
+    def __str__(self) -> str:
+        return f"{self.user} / {self.customer or 'default'}"
+
+
 class Facility(models.Model):
     """
     Facility (Anlegg) - Physical locations/sites that customers can have access to.
@@ -211,6 +290,40 @@ class Rack(models.Model):
         return self.devices.filter(is_active=True).order_by("rack_position")
 
 
+class Manufacturer(models.Model):
+    """Manufacturer/brand for devices (selectable, not free text)."""
+    name = models.CharField(max_length=200)
+    slug = models.SlugField(max_length=120, unique=True)
+
+    class Meta:
+        ordering = ["name"]
+
+    def __str__(self) -> str:
+        return self.name
+
+
+class DeviceCategory(models.Model):
+    """Category or subcategory for device types. parent=None = top-level category."""
+    name = models.CharField(max_length=100)
+    slug = models.SlugField(max_length=80, unique=True)
+    parent = models.ForeignKey(
+        "self",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="children",
+    )
+
+    class Meta:
+        ordering = ["parent__name", "name"]
+        verbose_name_plural = "Device categories"
+
+    def __str__(self) -> str:
+        if self.parent:
+            return f"{self.parent.name} / {self.name}"
+        return self.name
+
+
 class DeviceType(models.Model):
     """
     Device product/template (e.g. a PC model, a gateway model). Defines the "product";
@@ -228,10 +341,35 @@ class DeviceType(models.Model):
     slug = models.SlugField(max_length=120, unique=True)
     category = models.CharField(max_length=30, choices=CATEGORY_CHOICES, default=CATEGORY_OTHER)
     subcategory = models.CharField(max_length=100, blank=True, default="")
+    category_fk = models.ForeignKey(
+        DeviceCategory,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="device_types",
+        help_text="Category (optional; overrides legacy category if set).",
+    )
+    subcategory_fk = models.ForeignKey(
+        DeviceCategory,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="device_types_sub",
+        help_text="Subcategory (optional; must be child of category).",
+    )
+    manufacturer_fk = models.ForeignKey(
+        Manufacturer,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="device_types",
+        help_text="Manufacturer (optional; overrides legacy manufacturer if set).",
+    )
     manufacturer = models.CharField(max_length=100, blank=True, default="")
     model = models.CharField(max_length=100, blank=True, default="")
     description = models.TextField(blank=True, default="")
     spec = models.JSONField(default=dict, blank=True, help_text="Type-specific specs: ports, PoE, components, etc.")
+    product_image = models.ImageField(upload_to="device_type_images/", blank=True, null=True)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -245,10 +383,51 @@ class DeviceType(models.Model):
     def instance_count(self):
         return self.instances.filter(is_active=True).count()
 
+    def get_manufacturer_display(self):
+        if self.manufacturer_fk:
+            return self.manufacturer_fk.name
+        return self.manufacturer or ""
+
+    def get_category_display_full(self):
+        if self.category_fk:
+            if self.subcategory_fk:
+                return f"{self.category_fk.name} / {self.subcategory_fk.name}"
+            return self.category_fk.name
+        return self.get_category_display()
+
+
+class ProductDatasheet(models.Model):
+    """Product datasheet (PDF etc.) – can be linked to a device type."""
+    title = models.CharField(max_length=200)
+    file = models.FileField(upload_to="product_datasheets/", help_text="PDF or document file")
+    device_type = models.ForeignKey(
+        DeviceType,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="datasheets",
+        help_text="Link to device type (optional).",
+    )
+    uploaded_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="uploaded_datasheets",
+    )
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-uploaded_at"]
+
+    def __str__(self) -> str:
+        return self.title
+
 
 class NetworkDevice(models.Model):
     """
     A physical device instance (serial number, placement). Can be linked to a DeviceType (product).
+    Facility is optional (instance may not be assigned to an facility yet).
     """
     product = models.ForeignKey(
         DeviceType,
@@ -258,8 +437,19 @@ class NetworkDevice(models.Model):
         related_name="instances",
         help_text="Device type/product this instance is of (optional).",
     )
-    facility = models.ForeignKey(Facility, on_delete=models.CASCADE, related_name="network_devices")
+    facility = models.ForeignKey(
+        Facility,
+        on_delete=models.CASCADE,
+        related_name="network_devices",
+        null=True,
+        blank=True,
+        help_text="Facility this instance is installed at (optional if not yet deployed).",
+    )
     rack = models.ForeignKey(Rack, on_delete=models.SET_NULL, null=True, blank=True, related_name="devices")
+    is_sla = models.BooleanField(
+        default=False,
+        help_text="Part of Service Level Agreement / FDV (included in SLA reports).",
+    )
     name = models.CharField(max_length=200)
     device_type = models.CharField(
         max_length=50,
@@ -288,7 +478,9 @@ class NetworkDevice(models.Model):
         ordering = ["facility", "rack", "rack_position", "name"]
 
     def __str__(self) -> str:
-        return f"{self.facility.name} - {self.name}"
+        if self.facility:
+            return f"{self.facility.name} - {self.name}"
+        return self.name
 
 
 class IPAddress(models.Model):

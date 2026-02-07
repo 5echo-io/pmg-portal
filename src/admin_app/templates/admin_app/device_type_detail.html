@@ -8,18 +8,34 @@
 {% endblock %}
 
 {% block admin_content %}
-<h1 class="admin-page-title">{{ device_type.name }}</h1>
-
-<div class="admin-toolbar admin-toolbar--single-row">
-  <p class="muted" style="margin: 0;">
-    {{ device_type.get_category_display }}{% if device_type.subcategory %} / {{ device_type.subcategory }}{% endif %}
-    {% if device_type.manufacturer or device_type.model %} · {{ device_type.manufacturer|default:"" }}{% if device_type.manufacturer and device_type.model %} {{ device_type.model }}{% elif device_type.model %}{{ device_type.model }}{% endif %}{% endif %}
-  </p>
-  <a href="{% url 'admin_app:admin_device_instance_add' device_type.pk %}" class="admin-toolbar-add-btn">{% trans "Add instance" %}</a>
+<div class="facility-card-body" style="margin-bottom: 24px;">
+  <div class="customer-logo-upload-area" style="cursor: default; flex-shrink: 0;">
+    {% if device_type.product_image %}
+    <img src="{{ device_type.product_image.url }}" alt="{{ device_type.name }}" style="max-width: 120px; max-height: 120px; object-fit: contain;">
+    {% else %}
+    <div class="customer-logo-placeholder">
+      <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="2"/><path d="M16 2v20M8 2v20M2 12h20"/></svg>
+      <span>{% trans "Product" %}</span>
+    </div>
+    {% endif %}
+  </div>
+  <div style="flex: 1; min-width: 0;">
+    <h1 class="admin-page-title" style="margin-top: 0;">{{ device_type.name }}</h1>
+    <p class="muted" style="margin: 0;">
+      {{ device_type.get_category_display_full }}
+      {% if device_type.get_manufacturer_display or device_type.model %} · {{ device_type.get_manufacturer_display|default:"" }}{% if device_type.model %} {{ device_type.model }}{% endif %}{% endif %}
+    </p>
+    {% if device_type.description %}
+    <p class="muted" style="margin-top: 8px;">{{ device_type.description }}</p>
+    {% endif %}
+    <div style="margin-top: 12px;">
+      <a href="{% url 'admin_app:admin_device_type_edit' device_type.pk %}" class="admin-btn-sm form-btn-secondary">{% trans "Edit device type" %}</a>
+      <a href="{% url 'admin_app:admin_device_instance_add' device_type.pk %}" class="admin-toolbar-add-btn" style="margin-left: 8px;">{% trans "Add instance" %}</a>
+    </div>
+  </div>
 </div>
-
-{% if device_type.description %}
-<p class="muted">{{ device_type.description }}</p>
+{% if device_type.datasheets.all %}
+<p class="muted">{% trans "Product datasheets" %}: {% for ds in device_type.datasheets.all %}<a href="{{ ds.file.url }}" target="_blank" rel="noopener">{{ ds.title }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</p>
 {% endif %}
 
 <h2 class="admin-page-subtitle">{% trans "Instances" %} ({{ instances|length }})</h2>
@@ -33,6 +49,7 @@
         <th>{% trans "IP address" %}</th>
         <th>{% trans "Facility" %}</th>
         <th>{% trans "Rack" %}</th>
+        <th>{% trans "SLA" %}</th>
         <th class="admin-table-actions"></th>
       </tr>
     </thead>
@@ -42,8 +59,9 @@
         <td><strong>{{ inst.name }}</strong></td>
         <td>{{ inst.serial_number|default:"—" }}</td>
         <td><code>{{ inst.ip_address|default:"—" }}</code></td>
-        <td><a href="{% url 'admin_app:admin_facility_detail' inst.facility.slug %}">{{ inst.facility.name }}</a></td>
-        <td>{% if inst.rack %}<a href="{% url 'admin_app:admin_rack_detail' inst.facility.slug inst.rack.pk %}">{{ inst.rack.name }}</a>{% if inst.rack_position %} (U{{ inst.rack_position }}){% endif %}{% else %}—{% endif %}</td>
+        <td>{% if inst.facility %}<a href="{% url 'admin_app:admin_facility_detail' inst.facility.slug %}">{{ inst.facility.name }}</a>{% else %}—{% endif %}</td>
+        <td>{% if inst.rack and inst.facility %}<a href="{% url 'admin_app:admin_rack_detail' inst.facility.slug inst.rack.pk %}">{{ inst.rack.name }}</a>{% if inst.rack_position %} (U{{ inst.rack_position }}){% endif %}{% else %}—{% endif %}</td>
+        <td>{% if inst.is_sla %}<span title="{% trans 'Part of service agreement (FDV)' %}">✓</span>{% else %}—{% endif %}</td>
         <td class="admin-table-actions">
           <a href="{% url 'admin_app:admin_device_instance_edit' device_type.pk inst.pk %}" class="admin-btn-sm">{% trans "Edit" %}</a>
           <form method="post" action="{% url 'admin_app:admin_device_instance_delete' device_type.pk inst.pk %}" style="display:inline;" onsubmit="return confirm('{% trans "Remove this instance?" %}');">
@@ -54,7 +72,7 @@
       </tr>
       {% empty %}
       <tr>
-        <td colspan="6">{% trans "No instances yet. Add an instance to register physical units of this type." %}</td>
+        <td colspan="7">{% trans "No instances yet. Add an instance to register physical units of this type." %}</td>
       </tr>
       {% endfor %}
     </tbody>

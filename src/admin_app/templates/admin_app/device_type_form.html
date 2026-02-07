@@ -1,17 +1,18 @@
 {% extends "admin_app/base.html" %}
 {% load i18n %}
 
-{% block admin_title %}{% trans "Add device" %}{% endblock %}
+{% block admin_title %}{% if device_type %}{% trans "Edit device type" %}{% else %}{% trans "Add device type" %}{% endif %}{% endblock %}
 {% block breadcrumb_extra %}
 <span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_device_list' %}">{% trans "Devices" %}</a>
-<span class="breadcrumb-sep">→</span> <span>{% trans "Add device" %}</span>
+<span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_device_type_list' %}">{% trans "Device types" %}</a>
+<span class="breadcrumb-sep">→</span> <span>{% if device_type %}{% trans "Edit" %}{% else %}{% trans "Add" %}{% endif %}</span>
 {% endblock %}
 
 {% block admin_content %}
-<h1 class="admin-page-title">{% trans "Add device type" %}</h1>
-<p class="muted">{% trans "Create a product/template. You can then add instances (physical units) under it." %}</p>
+<h1 class="admin-page-title">{% if device_type %}{% trans "Edit device type" %}{% else %}{% trans "Add device type" %}{% endif %}</h1>
+<p class="muted">{% if device_type %}{% trans "Update product/template." %}{% else %}{% trans "Create a product/template. You can then add instances (physical units) under it." %}{% endif %}</p>
 
-<form method="post" action="" class="admin-form admin-form--wide">
+<form method="post" action="" enctype="multipart/form-data" class="admin-form admin-form--wide">
   {% csrf_token %}
   <div class="admin-form-row">
     <div class="admin-form-field">
@@ -27,27 +28,38 @@
   </div>
   <div class="admin-form-row">
     <div class="admin-form-field">
-      <label for="{{ form.category.id_for_label }}">{{ form.category.label }}</label>
-      {{ form.category }}
-      {% if form.category.errors %}<p class="form-error">{{ form.category.errors.0 }}</p>{% endif %}
+      <label for="{{ form.category_fk.id_for_label }}">{% trans "Category" %}</label>
+      {{ form.category_fk }}
+      {% if form.category_fk.errors %}<p class="form-error">{{ form.category_fk.errors.0 }}</p>{% endif %}
     </div>
     <div class="admin-form-field">
-      <label for="{{ form.subcategory.id_for_label }}">{{ form.subcategory.label }}</label>
-      {{ form.subcategory }}
-      {% if form.subcategory.errors %}<p class="form-error">{{ form.subcategory.errors.0 }}</p>{% endif %}
+      <label for="{{ form.subcategory_fk.id_for_label }}">{% trans "Subcategory" %}</label>
+      {{ form.subcategory_fk }}
+      {% if form.subcategory_fk.errors %}<p class="form-error">{{ form.subcategory_fk.errors.0 }}</p>{% endif %}
     </div>
   </div>
   <div class="admin-form-row">
     <div class="admin-form-field">
-      <label for="{{ form.manufacturer.id_for_label }}">{{ form.manufacturer.label }}</label>
-      {{ form.manufacturer }}
-      {% if form.manufacturer.errors %}<p class="form-error">{{ form.manufacturer.errors.0 }}</p>{% endif %}
+      <label for="{{ form.manufacturer_fk.id_for_label }}">{% trans "Manufacturer" %}</label>
+      {{ form.manufacturer_fk }}
+      {% if form.manufacturer_fk.errors %}<p class="form-error">{{ form.manufacturer_fk.errors.0 }}</p>{% endif %}
     </div>
     <div class="admin-form-field">
       <label for="{{ form.model.id_for_label }}">{{ form.model.label }}</label>
       {{ form.model }}
       {% if form.model.errors %}<p class="form-error">{{ form.model.errors.0 }}</p>{% endif %}
     </div>
+  </div>
+  <div class="admin-form-field">
+    <label for="{{ form.manufacturer.id_for_label }}">{% trans "Manufacturer (free text, if not in list)" %}</label>
+    {{ form.manufacturer }}
+    {% if form.manufacturer.errors %}<p class="form-error">{{ form.manufacturer.errors.0 }}</p>{% endif %}
+  </div>
+  <div class="admin-form-field">
+    <label for="{{ form.product_image.id_for_label }}">{% trans "Product image" %}</label>
+    {{ form.product_image }}
+    {% if device_type and device_type.product_image %}<p class="muted">{% trans "Current" %}: <img src="{{ device_type.product_image.url }}" alt="" style="max-height: 48px;"></p>{% endif %}
+    {% if form.product_image.errors %}<p class="form-error">{{ form.product_image.errors.0 }}</p>{% endif %}
   </div>
   <div class="admin-form-field">
     <label for="{{ form.description.id_for_label }}">{{ form.description.label }}</label>
@@ -59,8 +71,12 @@
     {{ form.is_active }}
   </div>
   <div class="admin-form-actions">
-    <button type="submit" class="form-btn form-btn-primary">{% trans "Create" %}</button>
-    <a href="{% url 'admin_app:admin_device_list' %}" class="form-btn form-btn-secondary">{% trans "Cancel" %}</a>
+    <button type="submit" class="form-btn form-btn-primary">{% if device_type %}{% trans "Save" %}{% else %}{% trans "Create" %}{% endif %}</button>
+    {% if device_type %}
+    <a href="{% url 'admin_app:admin_device_type_detail' device_type.pk %}" class="form-btn form-btn-secondary">{% trans "Cancel" %}</a>
+    {% else %}
+    <a href="{% url 'admin_app:admin_device_type_list' %}" class="form-btn form-btn-secondary">{% trans "Cancel" %}</a>
+    {% endif %}
   </div>
 </form>
 {% endblock %}

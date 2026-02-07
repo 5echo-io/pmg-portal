@@ -5,7 +5,7 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm as BaseUserCreationForm
 from django.contrib.auth.models import Group
-from portal.models import Customer, CustomerMembership, PortalLink, Facility, Rack, RackSeal, DeviceType, NetworkDevice, IPAddress, FacilityDocument
+from portal.models import Customer, CustomerMembership, PortalLink, Announcement, Facility, Rack, RackSeal, DeviceType, DeviceCategory, Manufacturer, ProductDatasheet, NetworkDevice, IPAddress, FacilityDocument
 
 User = get_user_model()
 
@@ -60,6 +60,22 @@ class PortalLinkForm(forms.ModelForm):
         widgets = {
             "description": forms.Textarea(attrs={"rows": 2}),
         }
+
+
+class AnnouncementForm(forms.ModelForm):
+    class Meta:
+        model = Announcement
+        fields = ("customer", "title", "body", "is_pinned", "valid_from", "valid_until")
+        widgets = {
+            "body": forms.Textarea(attrs={"rows": 6}),
+            "valid_from": forms.DateTimeInput(attrs={"type": "datetime-local"}),
+            "valid_until": forms.DateTimeInput(attrs={"type": "datetime-local"}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if "customer" in self.fields:
+            self.fields["customer"].queryset = Customer.objects.all().order_by("name")
 
 
 class FacilityForm(forms.ModelForm):
@@ -166,10 +182,52 @@ class DeviceTypeForm(forms.ModelForm):
     """Form for creating/editing a device type (product)."""
     class Meta:
         model = DeviceType
-        fields = ("name", "slug", "category", "subcategory", "manufacturer", "model", "description", "is_active")
+        fields = (
+            "name", "slug", "category_fk", "subcategory_fk", "manufacturer_fk",
+            "manufacturer", "model", "description", "product_image", "is_active"
+        )
         widgets = {
             "description": forms.Textarea(attrs={"rows": 4}),
+            "product_image": forms.FileInput(attrs={"accept": "image/*"}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["category_fk"].required = False
+        self.fields["subcategory_fk"].required = False
+        self.fields["manufacturer_fk"].required = False
+        self.fields["manufacturer"].required = False
+        if "subcategory_fk" in self.fields:
+            self.fields["subcategory_fk"].queryset = DeviceCategory.objects.filter(parent__isnull=False).select_related("parent")
+
+
+class DeviceCategoryForm(forms.ModelForm):
+    class Meta:
+        model = DeviceCategory
+        fields = ("name", "slug", "parent")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["parent"].queryset = DeviceCategory.objects.filter(parent__isnull=True).order_by("name")
+        self.fields["parent"].required = False
+
+
+class ManufacturerForm(forms.ModelForm):
+    class Meta:
+        model = Manufacturer
+        fields = ("name", "slug")
+
+
+class ProductDatasheetForm(forms.ModelForm):
+    class Meta:
+        model = ProductDatasheet
+        fields = ("title", "file", "device_type")
+        widgets = {"file": forms.FileInput(attrs={"accept": ".pdf,application/pdf"})}
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["device_type"].queryset = DeviceType.objects.filter(is_active=True).order_by("name")
+        self.fields["device_type"].required = False
 
 
 class NetworkDeviceForm(forms.ModelForm):
@@ -177,7 +235,7 @@ class NetworkDeviceForm(forms.ModelForm):
         model = NetworkDevice
         fields = (
             "name", "device_type", "manufacturer", "model", "serial_number",
-            "ip_address", "mac_address", "rack", "rack_position", "description", "is_active"
+            "ip_address", "mac_address", "rack", "rack_position", "description", "is_active", "is_sla"
         )
         widgets = {
             "description": forms.Textarea(attrs={"rows": 3}),
@@ -191,10 +249,13 @@ class NetworkDeviceForm(forms.ModelForm):
         
         if self.facility:
             self.instance.facility = self.facility
-            # Filter racks to only show racks from this facility
             if "rack" in self.fields:
                 self.fields["rack"].queryset = Rack.objects.filter(facility=self.facility, is_active=True).order_by("name")
                 self.fields["rack"].required = False
+        else:
+            if "rack" in self.fields:
+                self.fields["rack"].queryset = Rack.objects.none()
+                self.fields["rack"].widget = forms.HiddenInput()
         
         # Pre-select rack and position if provided
         if self.rack:

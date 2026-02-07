@@ -1,0 +1,44 @@
+{% extends "admin_app/base.html" %}
+{% load i18n %}
+
+{% block admin_title %}{% trans "Manufacturers" %}{% endblock %}
+{% block breadcrumb_extra %}
+<span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_device_list' %}">{% trans "Devices" %}</a>
+<span class="breadcrumb-sep">→</span> <span>{% trans "Manufacturers" %}</span>
+{% endblock %}
+
+{% block admin_content %}
+<h1 class="admin-page-title">{% trans "Manufacturers" %}</h1>
+<p class="muted">{% trans "Manufacturers for device types (selectable in device type form)." %}</p>
+
+<div class="admin-toolbar admin-toolbar--single-row">
+  <a href="{% url 'admin_app:admin_manufacturer_add' %}" class="admin-toolbar-add-btn">{% trans "Add manufacturer" %}</a>
+</div>
+
+<div class="admin-table-wrap">
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th>{% trans "Name" %}</th>
+        <th>{% trans "Slug" %}</th>
+        <th class="admin-table-actions"></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for m in manufacturers %}
+      <tr>
+        <td><strong>{{ m.name }}</strong></td>
+        <td><code>{{ m.slug }}</code></td>
+        <td class="admin-table-actions">
+          <a href="{% url 'admin_app:admin_manufacturer_edit' m.pk %}" class="admin-btn-sm">{% trans "Edit" %}</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="3" class="muted">{% trans "No manufacturers yet." %}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

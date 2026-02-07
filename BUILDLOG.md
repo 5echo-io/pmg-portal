@@ -2,6 +2,17 @@
 
 - 2026-02-06 (Europe/Oslo)
   - Branch: dev
+  - Version: 4.8.0-beta.2
+  - Summary:
+    - Admin: notifications (list), announcements (list/form); admin_app models.py, migration 0001_add_admin_notifications
+    - Admin: device categories, manufacturers, product datasheets (list/form each); device_landing; device type/instance templates and views updates; urls +30
+    - Portal models: announcements, preferences; devices, manufacturer, category, datasheet, SLA; migrations 0007, 0008
+    - Portal: base.html +238, facility_detail + fragments refactor; customer_home_content, no_customer; urls, views, context_processors
+    - app.css +370; site_footer; forms.py, views.py major updates
+    - Version bump: 4.8.0-beta.1 → 4.8.0-beta.2
+
+- 2026-02-06 (Europe/Oslo)
+  - Branch: dev
   - Version: 4.8.0-beta.1
   - Summary:
     - Device types: admin list, detail, form (device_type_list, device_type_detail, device_type_form); urls, views, forms

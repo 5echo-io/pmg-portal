@@ -1,11 +1,14 @@
 {% extends "admin_app/base.html" %}
 {% load i18n %}
 
-{% block admin_title %}{% trans "Devices" %}{% endblock %}
-{% block breadcrumb_extra %}<span class="breadcrumb-sep">→</span> <span>{% trans "Devices" %}</span>{% endblock %}
+{% block admin_title %}{% trans "Device types" %}{% endblock %}
+{% block breadcrumb_extra %}
+<span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_device_list' %}">{% trans "Devices" %}</a>
+<span class="breadcrumb-sep">→</span> <span>{% trans "Device types" %}</span>
+{% endblock %}
 
 {% block admin_content %}
-<h1 class="admin-page-title">{% trans "Devices" %}</h1>
+<h1 class="admin-page-title">{% trans "Device types" %}</h1>
 
 <div class="admin-toolbar admin-toolbar--single-row">
   <form method="get" action="" class="admin-toolbar-form">
@@ -36,6 +39,7 @@
     <thead>
       <tr>
         <th>{% trans "Name" %}</th>
+        <th>{% trans "Manufacturer" %}</th>
         <th>{% trans "Category" %}</th>
         <th>{% trans "Instances" %}</th>
         <th class="admin-table-actions"></th>
@@ -44,8 +48,9 @@
     <tbody>
       {% for dt in page_obj %}
       <tr>
-        <td><strong>{{ dt.name }}</strong>{% if dt.manufacturer or dt.model %} <span class="muted">({{ dt.manufacturer|default:"" }}{% if dt.manufacturer and dt.model %} {{ dt.model }}{% elif dt.model %}{{ dt.model }}{% endif %})</span>{% endif %}</td>
-        <td>{{ dt.get_category_display }}{% if dt.subcategory %} / {{ dt.subcategory }}{% endif %}</td>
+        <td><strong>{{ dt.name }}</strong>{% if dt.model %} <span class="muted">({{ dt.model }})</span>{% endif %}</td>
+        <td>{{ dt.get_manufacturer_display|default:"—" }}</td>
+        <td>{{ dt.get_category_display_full }}</td>
         <td>{{ dt.instance_count }}</td>
         <td class="admin-table-actions">
           <a href="{% url 'admin_app:admin_device_type_detail' dt.pk %}" class="admin-btn-sm">{% trans "View" %}</a>
@@ -53,7 +58,7 @@
       </tr>
       {% empty %}
       <tr>
-        <td colspan="4">{% trans "No device types. Add a device type to get started." %}</td>
+        <td colspan="5">{% trans "No device types. Add a device type to get started." %}</td>
       </tr>
       {% endfor %}
     </tbody>

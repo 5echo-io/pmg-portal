@@ -1,0 +1,33 @@
+{% extends "admin_app/base.html" %}
+{% load i18n %}
+
+{% block admin_title %}{% if manufacturer %}{% trans "Edit manufacturer" %}{% else %}{% trans "Add manufacturer" %}{% endif %}{% endblock %}
+{% block breadcrumb_extra %}
+<span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_device_list' %}">{% trans "Devices" %}</a>
+<span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_manufacturer_list' %}">{% trans "Manufacturers" %}</a>
+<span class="breadcrumb-sep">→</span> <span>{% if manufacturer %}{% trans "Edit" %}{% else %}{% trans "Add" %}{% endif %}</span>
+{% endblock %}
+
+{% block admin_content %}
+<h1 class="admin-page-title">{% if manufacturer %}{% trans "Edit manufacturer" %}{% else %}{% trans "Add manufacturer" %}{% endif %}</h1>
+
+<form method="post" action="" class="admin-form admin-form--wide">
+  {% csrf_token %}
+  <div class="admin-form-row">
+    <div class="admin-form-field">
+      <label for="{{ form.name.id_for_label }}">{{ form.name.label }}</label>
+      {{ form.name }}
+      {% if form.name.errors %}<p class="form-error">{{ form.name.errors.0 }}</p>{% endif %}
+    </div>
+    <div class="admin-form-field">
+      <label for="{{ form.slug.id_for_label }}">{{ form.slug.label }}</label>
+      {{ form.slug }}
+      {% if form.slug.errors %}<p class="form-error">{{ form.slug.errors.0 }}</p>{% endif %}
+    </div>
+  </div>
+  <div class="admin-form-actions">
+    <button type="submit" class="form-btn form-btn-primary">{% if manufacturer %}{% trans "Save" %}{% else %}{% trans "Create" %}{% endif %}</button>
+    <a href="{% url 'admin_app:admin_manufacturer_list' %}" class="form-btn form-btn-secondary">{% trans "Cancel" %}</a>
+  </div>
+</form>
+{% endblock %}

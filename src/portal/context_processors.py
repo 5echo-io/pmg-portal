@@ -15,7 +15,8 @@ import re
 import urllib.request
 import urllib.error
 import json
-from .models import CustomerMembership, Customer, Facility
+from django.db.models import Q
+from .models import CustomerMembership, Customer, PortalUserPreference, Facility
 
 
 def language_menu(request):
@@ -91,10 +92,20 @@ def user_customers(request):
         except Customer.DoesNotExist:
             pass
     
+    # Theme preference for portal (light/dark/system)
+    portal_theme = "system"
+    if request.user and request.user.is_authenticated:
+        prefs = PortalUserPreference.objects.filter(user=request.user).filter(
+            Q(customer_id=active_customer_id) | Q(customer__isnull=True)
+        ).order_by("-customer_id").first()
+        if prefs:
+            portal_theme = prefs.theme
+
     return {
         "user_customers": user_customers_list,
         "active_customer_id": active_customer_id,
         "user_facilities": user_facilities,
+        "portal_theme": portal_theme,
     }
 
 def footer_info(request):

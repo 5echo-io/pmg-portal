@@ -22,8 +22,12 @@ Pre-release builds (alpha, beta, rc) are listed here. Only full releases (no bui
 - **Facility card**: Refactored to use fragment templates for modals (customers edit, document form, IP form, network device form, rack form); views updated to serve fragments
 - **Network device list**: Add flow with facility chooser (network_device_add_choose.html); portal facility list and app.css updates; Norwegian strings
 - **Device types & device instances**: Portal models (DeviceType, device instance FK); admin device type list/detail/form, device instance add (choose facility) and form (full + fragment); facility card device-type chooser fragment; forms, views, URLs; locale +12
+- **Devices & catalog**: Admin device categories, manufacturers, product datasheets, device landing; admin notifications and announcements; portal models (announcements, preferences, devices, manufacturer, category, datasheet, SLA); portal base, facility detail, customer home, no-customer; app.css +370
 
 ### Added
+- **Admin – Notifications & announcements**: admin_notification_list, announcement_list, announcement_form; admin_app models and migration 0001
+- **Admin – Device catalog**: device_category_list/form, manufacturer_list/form, product_datasheet_list/form; device_landing
+- **Portal**: Announcements and user preferences; migrations 0007, 0008 (devices, manufacturer, category, datasheet, SLA); facility_detail and fragments refactor; portal base, urls, views, context_processors
 - **Admin – Device types**: device_type_list.html, device_type_detail.html, device_type_form.html; list, detail, add/edit
 - **Admin – Device instances (rack devices)**: device_instance_add_choose_facility.html, device_instance_form.html, device_instance_form_fragment.html; facility_device_choose_type_fragment.html for facility card modal
 - **Portal models**: DeviceType and device instance product/type FK (migration 0006_device_type_and_product_fk)

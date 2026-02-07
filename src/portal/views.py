@@ -8,7 +8,8 @@ Last Modified: 2026-02-05
 """
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
-from django.db.models import Prefetch
+from django.urls import reverse
+from django.db.models import Prefetch, Q
 from django.contrib import messages
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_POST
@@ -21,15 +22,58 @@ import re
 import urllib.request
 import urllib.error
 import json
-from .models import CustomerMembership, Customer, Facility
+from django.utils import timezone
+from .models import (
+    CustomerMembership,
+    Customer,
+    Facility,
+    PortalLink,
+    Announcement,
+    PortalUserPreference,
+    NetworkDevice,
+    FacilityDocument,
+)
+
+
+def _get_dashboard_widgets(user, customer_id):
+    """Return list of enabled widget ids for this user/customer. Empty = use defaults."""
+    prefs = PortalUserPreference.objects.filter(
+        user=user
+    ).filter(
+        Q(customer_id=customer_id) | Q(customer__isnull=True)
+    ).order_by("-customer_id").first()  # Prefer customer-specific
+    if prefs and prefs.dashboard_widgets:
+        return prefs.dashboard_widgets
+    return PortalUserPreference.DEFAULT_WIDGETS
+
 
 def _portal_home_context(request, customer, links, active_role=None, memberships=None):
     """Build context for portal home (full page or fragment)."""
+    now = timezone.now()
+    announcements = list(
+        Announcement.objects.filter(customer=customer).filter(
+            Q(valid_from__isnull=True) | Q(valid_from__lte=now)
+        ).filter(
+            Q(valid_until__isnull=True) | Q(valid_until__gte=now)
+        ).select_related("created_by").order_by("-is_pinned", "-created_at")[:10]
+    )
+    facilities = Facility.objects.filter(customers=customer, is_active=True)
+    facilities_count = facilities.count()
+    devices_count = NetworkDevice.objects.filter(facility__customers=customer, is_active=True).count()
+    quick_stats = {
+        "facilities": facilities_count,
+        "devices": devices_count,
+        "links": len(links),
+    }
+    dashboard_widgets = _get_dashboard_widgets(request.user, customer.id)
     return {
         "customer": customer,
         "memberships": memberships or [],
         "active_role": active_role,
         "links": links,
+        "announcements": announcements,
+        "quick_stats": quick_stats,
+        "dashboard_widgets": dashboard_widgets,
     }
 
 @login_required
@@ -303,8 +347,8 @@ def facility_detail(request, slug):
     
     # Get related data
     racks = facility.racks.filter(is_active=True).order_by("name")
-    network_devices = facility.network_devices.filter(is_active=True).order_by("rack", "rack_position", "name")
-    ip_addresses = facility.ip_addresses.all().order_by("ip_address")
+    network_devices = facility.network_devices.filter(is_active=True).select_related("device_type", "rack").order_by("rack", "rack_position", "name")
+    ip_addresses = facility.ip_addresses.all().select_related("device").order_by("ip_address")
     documents = facility.documents.all().order_by("-uploaded_at")
     
     # Statistics
@@ -332,3 +376,106 @@ def facility_detail(request, slug):
         return r
     
     return render(request, "portal/facility_detail.html", context)
+
+
+@login_required
+def portal_search(request):
+    """
+    Global search for the active customer: facilities, devices, portal links, documents.
+    Returns JSON: { "facilities": [...], "devices": [...], "links": [...], "documents": [...] }
+    """
+    active_customer_id = request.session.get("active_customer_id")
+    if not active_customer_id:
+        return JsonResponse({"facilities": [], "devices": [], "links": [], "documents": []})
+
+    try:
+        customer = Customer.objects.get(pk=active_customer_id)
+    except Customer.DoesNotExist:
+        return JsonResponse({"facilities": [], "devices": [], "links": [], "documents": []})
+
+    q = (request.GET.get("q") or "").strip()
+    if not q:
+        return JsonResponse({"facilities": [], "devices": [], "links": [], "documents": []})
+
+    # Facilities (customer has access)
+    facilities = Facility.objects.filter(customers=customer, is_active=True).filter(
+        Q(name__icontains=q) | Q(description__icontains=q) | Q(address__icontains=q) | Q(city__icontains=q)
+    ).order_by("name")[:15]
+    # Network devices in customer's facilities
+    devices = NetworkDevice.objects.filter(
+        facility__customers=customer,
+        facility__is_active=True,
+        is_active=True,
+    ).filter(
+        Q(name__icontains=q) | Q(manufacturer__icontains=q) | Q(model__icontains=q) | Q(serial_number__icontains=q) | Q(description__icontains=q)
+    ).select_related("facility").order_by("facility__name", "name")[:15]
+    # Portal links
+    links = PortalLink.objects.filter(customer=customer).filter(
+        Q(title__icontains=q) | Q(description__icontains=q) | Q(url__icontains=q)
+    ).order_by("sort_order", "title")[:15]
+    # Facility documents (facilities customer has access to)
+    documents = FacilityDocument.objects.filter(
+        facility__customers=customer,
+        facility__is_active=True,
+    ).filter(
+        Q(title__icontains=q) | Q(description__icontains=q)
+    ).select_related("facility").order_by("-uploaded_at")[:10]
+
+    def facility_item(f):
+        return {"type": "facility", "id": f.id, "name": f.name, "slug": f.slug, "url": reverse("facility_detail", args=[f.slug])}
+
+    def device_item(d):
+        return {"type": "device", "id": d.id, "name": d.name, "facility": d.facility.name, "url": reverse("facility_detail", args=[d.facility.slug])}
+
+    def link_item(l):
+        return {"type": "link", "id": l.id, "title": l.title, "url": l.url}
+
+    def doc_item(doc):
+        return {"type": "document", "id": doc.id, "title": doc.title, "facility": doc.facility.name, "url": reverse("facility_detail", args=[doc.facility.slug])}
+
+    return JsonResponse({
+        "facilities": [facility_item(f) for f in facilities],
+        "devices": [device_item(d) for d in devices],
+        "links": [link_item(l) for l in links],
+        "documents": [doc_item(d) for d in documents],
+    })
+
+
+@login_required
+@require_POST
+def set_portal_preference(request):
+    """Save theme or dashboard_widgets preference. POST: theme=light|dark|system or dashboard_widgets=announcements,quick_stats,..."""
+    active_customer_id = request.session.get("active_customer_id")
+    customer_id = int(active_customer_id) if active_customer_id else None
+    theme = (request.POST.get("theme") or "").strip()
+    widgets_str = (request.POST.get("dashboard_widgets") or "").strip()
+
+    if theme and theme in dict(PortalUserPreference.THEME_CHOICES):
+        prefs, _ = PortalUserPreference.objects.get_or_create(
+            user=request.user,
+            customer_id=customer_id or None,
+            defaults={"theme": theme, "dashboard_widgets": PortalUserPreference.DEFAULT_WIDGETS},
+        )
+        if prefs.theme != theme:
+            prefs.theme = theme
+            prefs.save(update_fields=["theme"])
+        if request.headers.get("Accept", "").find("application/json") != -1:
+            return JsonResponse({"ok": True, "theme": theme})
+        return redirect(request.META.get("HTTP_REFERER", "/"))
+
+    if widgets_str:
+        widget_list = [w.strip() for w in widgets_str.split(",") if w.strip()]
+        valid = {PortalUserPreference.WIDGET_ANNOUNCEMENTS, PortalUserPreference.WIDGET_QUICK_STATS, PortalUserPreference.WIDGET_RECENT_LINKS, PortalUserPreference.WIDGET_QUICK_LINKS}
+        widget_list = [w for w in widget_list if w in valid]
+        prefs, _ = PortalUserPreference.objects.get_or_create(
+            user=request.user,
+            customer_id=customer_id or None,
+            defaults={"theme": PortalUserPreference.THEME_SYSTEM, "dashboard_widgets": widget_list or PortalUserPreference.DEFAULT_WIDGETS},
+        )
+        prefs.dashboard_widgets = widget_list or PortalUserPreference.DEFAULT_WIDGETS
+        prefs.save(update_fields=["dashboard_widgets"])
+        if request.headers.get("Accept", "").find("application/json") != -1:
+            return JsonResponse({"ok": True, "dashboard_widgets": prefs.dashboard_widgets})
+        return redirect(request.META.get("HTTP_REFERER", "/"))
+
+    return JsonResponse({"ok": False}, status=400)

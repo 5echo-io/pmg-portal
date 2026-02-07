@@ -14,6 +14,7 @@
 
 <form method="post" action="" class="admin-form admin-form--wide">
   {% csrf_token %}
+  {% if not facility %}<input type="hidden" name="facility" value="none">{% endif %}
   <div class="admin-form-row">
     <div class="admin-form-field">
       <label for="{{ form.name.id_for_label }}">{{ form.name.label }}</label>
@@ -59,6 +60,11 @@
     <label for="{{ form.description.id_for_label }}">{{ form.description.label }}</label>
     {{ form.description }}
     {% if form.description.errors %}<p class="form-error">{{ form.description.errors.0 }}</p>{% endif %}
+  </div>
+  <div class="admin-form-field">
+    <label for="{{ form.is_sla.id_for_label }}">{{ form.is_sla.label }}</label>
+    {{ form.is_sla }}
+    <p class="muted">{% trans "Mark if this instance is part of the service agreement (FDV)." %}</p>
   </div>
   <div class="admin-form-field">
     <label for="{{ form.is_active.id_for_label }}">{{ form.is_active.label }}</label>

@@ -1,0 +1,73 @@
+{% extends "admin_app/base.html" %}
+
+{% block admin_title %}Announcements{% endblock %}
+{% block breadcrumb_extra %}<span class="breadcrumb-sep">→</span> <span>Announcements</span>{% endblock %}
+
+{% block admin_content %}
+<div class="admin-page-header">
+  <h1 class="admin-page-title">Announcements</h1>
+  <a href="{% url 'admin_app:admin_announcement_add' %}" class="admin-btn-sm admin-btn-primary">Add announcement</a>
+</div>
+
+<div class="admin-toolbar">
+  <form method="get" action="" style="display: flex; gap: 8px; flex-wrap: wrap;">
+    <input type="text" name="q" value="{{ search }}" placeholder="Search…" class="form-input">
+    <select name="customer" class="form-input" style="width: auto;">
+      <option value="">All customers</option>
+      {% for c in customers %}
+      <option value="{{ c.pk }}" {% if customer_filter == c.pk|stringformat:"d" %}selected{% endif %}>{{ c.name }}</option>
+      {% endfor %}
+    </select>
+    <button type="submit" class="form-btn form-btn-secondary">Filter</button>
+  </form>
+</div>
+
+<p class="muted">{{ total_count }} announcement{{ total_count|pluralize }}</p>
+
+<div class="admin-table-wrap">
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th>Customer</th>
+        <th>Title</th>
+        <th>Pinned</th>
+        <th>Created</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for ann in page_obj %}
+      <tr>
+        <td><a href="{% url 'admin_app:admin_customer_detail' ann.customer_id %}">{{ ann.customer.name }}</a></td>
+        <td>{{ ann.title }}</td>
+        <td>{% if ann.is_pinned %}Yes{% else %}—{% endif %}</td>
+        <td>{{ ann.created_at|date:"SHORT_DATETIME_FORMAT" }}{% if ann.created_by %} by {{ ann.created_by.get_full_name|default:ann.created_by.username }}{% endif %}</td>
+        <td>
+          <a href="{% url 'admin_app:admin_announcement_edit' ann.pk %}" class="admin-btn-sm">Edit</a>
+          <form method="post" action="{% url 'admin_app:admin_announcement_delete' ann.pk %}" style="display: inline;" onsubmit="return confirm('Delete this announcement?');">
+            {% csrf_token %}
+            <button type="submit" class="admin-btn-sm form-btn-danger">Delete</button>
+          </form>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="5">No announcements found.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% if page_obj.has_other_pages %}
+<nav class="admin-pagination">
+  {% if page_obj.has_previous %}
+  <a href="?page={{ page_obj.previous_page_number }}{% if search %}&q={{ search }}{% endif %}{% if customer_filter %}&customer={{ customer_filter }}{% endif %}">Previous</a>
+  {% endif %}
+  <span class="current">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+  {% if page_obj.has_next %}
+  <a href="?page={{ page_obj.next_page_number }}{% if search %}&q={{ search }}{% endif %}{% if customer_filter %}&customer={{ customer_filter }}{% endif %}">Next</a>
+  {% endif %}
+</nav>
+{% endif %}
+{% endblock %}

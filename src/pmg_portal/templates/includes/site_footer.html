@@ -10,6 +10,7 @@ Uses footer_info context processor (app_version, copyright_year, show_changelog_
     <div class="footer-text muted">Copyright &copy; {{ copyright_year|default:"2026" }} <a href="https://5echo.io" target="_blank" rel="noopener" class="footer-link">5echo.io</a></div>
   </div>
   <div class="footer-section footer-section-right">
+    <a href="#" class="footer-link footer-link-btn" onclick="if(window.openHelpModal) window.openHelpModal(); return false;">{% trans "Help" %}</a>
     <a href="#" class="footer-link footer-link-btn" onclick="if(window.openAboutModal) window.openAboutModal(); return false;" id="footer-about-btn">
       <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>

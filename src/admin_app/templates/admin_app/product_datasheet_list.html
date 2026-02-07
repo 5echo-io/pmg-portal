@@ -1,0 +1,50 @@
+{% extends "admin_app/base.html" %}
+{% load i18n %}
+
+{% block admin_title %}{% trans "Product datasheets" %}{% endblock %}
+{% block breadcrumb_extra %}
+<span class="breadcrumb-sep">→</span> <a href="{% url 'admin_app:admin_device_list' %}">{% trans "Devices" %}</a>
+<span class="breadcrumb-sep">→</span> <span>{% trans "Product datasheets" %}</span>
+{% endblock %}
+
+{% block admin_content %}
+<h1 class="admin-page-title">{% trans "Product datasheets" %} (Produktdatablader)</h1>
+<p class="muted">{% trans "Upload PDF datasheets and link them to device types. Linked from device type detail and when creating devices." %}</p>
+
+<div class="admin-toolbar admin-toolbar--single-row">
+  <a href="{% url 'admin_app:admin_product_datasheet_upload' %}" class="admin-toolbar-add-btn">{% trans "Upload datasheet" %}</a>
+</div>
+
+<div class="admin-table-wrap">
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th>{% trans "Title" %}</th>
+        <th>{% trans "Device type" %}</th>
+        <th>{% trans "Uploaded" %}</th>
+        <th class="admin-table-actions"></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for ds in datasheets %}
+      <tr>
+        <td><strong>{{ ds.title }}</strong></td>
+        <td>{% if ds.device_type %}<a href="{% url 'admin_app:admin_device_type_detail' ds.device_type.pk %}">{{ ds.device_type.name }}</a>{% else %}—{% endif %}</td>
+        <td>{{ ds.uploaded_at|date:"Y-m-d H:i" }}{% if ds.uploaded_by %} ({{ ds.uploaded_by.get_full_name|default:ds.uploaded_by.username }}){% endif %}</td>
+        <td class="admin-table-actions">
+          {% if ds.file %}<a href="{{ ds.file.url }}" target="_blank" class="admin-btn-sm">{% trans "Download" %}</a>{% endif %}
+          <form method="post" action="{% url 'admin_app:admin_product_datasheet_delete' ds.pk %}" class="admin-inline-form" onsubmit="return confirm('{% trans "Delete this datasheet?" %}');">
+            {% csrf_token %}
+            <button type="submit" class="admin-btn-sm admin-btn-danger">{% trans "Delete" %}</button>
+          </form>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="4" class="muted">{% trans "No product datasheets yet. Upload one to link to device types." %}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

@@ -23,14 +23,19 @@ from portal.models import (
     Customer,
     CustomerMembership,
     PortalLink,
+    Announcement,
     Facility,
     Rack,
     RackSeal,
     DeviceType,
+    DeviceCategory,
+    Manufacturer,
+    ProductDatasheet,
     NetworkDevice,
     IPAddress,
     FacilityDocument,
 )
+from admin_app.models import AdminNotification
 from django.utils import timezone
 from django.utils.translation import gettext as _
 
@@ -676,6 +681,134 @@ def portal_link_edit(request, pk):
     return render(request, "admin_app/portal_link_form.html", {"form": form, "link": link})
 
 
+# ----- Announcements (staff) -----
+@staff_required
+def announcement_list(request):
+    qs = Announcement.objects.select_related("customer", "created_by").all().order_by("-created_at")
+    search = request.GET.get("q", "").strip()
+    if search:
+        qs = qs.filter(Q(title__icontains=search) | Q(body__icontains=search) | Q(customer__name__icontains=search))
+    customer_filter = request.GET.get("customer", "")
+    if customer_filter:
+        qs = qs.filter(customer_id=customer_filter)
+    paginator = Paginator(qs, 20)
+    page_obj = paginator.get_page(request.GET.get("page", 1))
+    customers = Customer.objects.all().order_by("name")
+    return render(
+        request,
+        "admin_app/announcement_list.html",
+        {"page_obj": page_obj, "total_count": paginator.count, "search": search, "customers": customers, "customer_filter": customer_filter},
+    )
+
+
+@staff_required
+def announcement_add(request):
+    from .forms import AnnouncementForm
+    customer_id = request.GET.get("customer")
+    if request.method == "POST":
+        form = AnnouncementForm(request.POST)
+        if form.is_valid():
+            ann = form.save(commit=False)
+            ann.created_by = request.user
+            ann.save()
+            messages.success(request, "Announcement created.")
+            return redirect("admin_app:admin_announcement_list")
+    else:
+        form = AnnouncementForm()
+        if customer_id:
+            try:
+                form.fields["customer"].initial = Customer.objects.get(pk=customer_id)
+            except Customer.DoesNotExist:
+                pass
+    return render(request, "admin_app/announcement_form.html", {"form": form, "announcement": None})
+
+
+@staff_required
+def announcement_edit(request, pk):
+    from .forms import AnnouncementForm
+    ann = get_object_or_404(Announcement, pk=pk)
+    if request.method == "POST":
+        form = AnnouncementForm(request.POST, instance=ann)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Announcement updated.")
+            return redirect("admin_app:admin_announcement_list")
+    else:
+        form = AnnouncementForm(instance=ann)
+    return render(request, "admin_app/announcement_form.html", {"form": form, "announcement": ann})
+
+
+@staff_required
+@require_POST
+def announcement_delete(request, pk):
+    ann = get_object_or_404(Announcement, pk=pk)
+    ann.delete()
+    messages.success(request, "Announcement deleted.")
+    return redirect("admin_app:admin_announcement_list")
+
+
+# ----- Admin notifications (staff) -----
+@staff_required
+def admin_notification_list(request):
+    """List notifications for current user (recipient) or sent by me; and create new."""
+    # Notifications to me, or broadcast (recipient=None) for all staff
+    from django.db.models import Q as DQ
+    qs = AdminNotification.objects.filter(
+        DQ(recipient=request.user) | DQ(recipient__isnull=True)
+    ).select_related("created_by", "recipient").order_by("-created_at")
+    unread_count = qs.filter(read_at__isnull=True).count()
+    paginator = Paginator(qs, 30)
+    page_obj = paginator.get_page(request.GET.get("page", 1))
+    staff_users = User.objects.filter(is_staff=True).order_by("username")
+    return render(
+        request,
+        "admin_app/admin_notification_list.html",
+        {"page_obj": page_obj, "unread_count": unread_count, "staff_users": staff_users},
+    )
+
+
+@staff_required
+@require_POST
+def admin_notification_mark_read(request, pk):
+    notif = get_object_or_404(AdminNotification, pk=pk)
+    # Only recipient can mark as read (for broadcast, recipient is None so any staff can mark — affects all; for per-user we check recipient)
+    if notif.recipient and notif.recipient != request.user:
+        return HttpResponse("Forbidden", status=403)
+    notif.read_at = timezone.now()
+    notif.save(update_fields=["read_at"])
+    if request.headers.get("Accept", "").find("application/json") != -1:
+        return JsonResponse({"ok": True})
+    return redirect("admin_app:admin_notification_list")
+
+
+@staff_required
+def admin_notification_create(request):
+    """Create a new admin notification (to a user or all staff)."""
+    if request.method == "POST":
+        recipient_id = request.POST.get("recipient", "").strip()
+        title = request.POST.get("title", "").strip()
+        message = request.POST.get("message", "").strip()
+        link = request.POST.get("link", "").strip()
+        link_label = request.POST.get("link_label", "").strip()
+        if not title:
+            messages.error(request, "Title is required.")
+            return redirect("admin_app:admin_notification_list")
+        recipient = None
+        if recipient_id:
+            recipient = get_object_or_404(User, pk=recipient_id, is_staff=True)
+        notif = AdminNotification.objects.create(
+            recipient=recipient,
+            title=title,
+            message=message,
+            link=link,
+            link_label=link_label or link,
+            created_by=request.user,
+        )
+        messages.success(request, "Notification sent.")
+        return redirect("admin_app:admin_notification_list")
+    return redirect("admin_app:admin_notification_list")
+
+
 # ----- Facilities (staff) -----
 @staff_required
 def facility_list(request):
@@ -1086,6 +1219,22 @@ def redirect_to_devices(request):
 
 
 @staff_required
+def device_landing(request):
+    """Landing page for device-related admin: types, categories, manufacturers, product datasheets."""
+    from django.db.models import Count
+    type_count = DeviceType.objects.filter(is_active=True).count()
+    category_count = DeviceCategory.objects.count()
+    manufacturer_count = Manufacturer.objects.count()
+    datasheet_count = ProductDatasheet.objects.count()
+    return render(request, "admin_app/device_landing.html", {
+        "type_count": type_count,
+        "category_count": category_count,
+        "manufacturer_count": manufacturer_count,
+        "datasheet_count": datasheet_count,
+    })
+
+
+@staff_required
 def device_type_list(request):
     """List device types (products). Table: Name, Category, View. Add device (type) button on right."""
     qs = DeviceType.objects.filter(is_active=True).order_by("category", "name")
@@ -1118,7 +1267,7 @@ def device_type_add(request):
     """Create a new device type (product)."""
     from .forms import DeviceTypeForm
     if request.method == "POST":
-        form = DeviceTypeForm(request.POST)
+        form = DeviceTypeForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
             messages.success(request, _("Device type '%(name)s' created.") % {"name": form.instance.name})
@@ -1143,34 +1292,59 @@ def device_type_detail(request, pk):
 
 
 @staff_required
+def device_type_edit(request, pk):
+    """Edit a device type (product)."""
+    from .forms import DeviceTypeForm
+    device_type = get_object_or_404(DeviceType, pk=pk)
+    if request.method == "POST":
+        form = DeviceTypeForm(request.POST, request.FILES, instance=device_type)
+        if form.is_valid():
+            form.save()
+            messages.success(request, _("Device type updated."))
+            return redirect("admin_app:admin_device_type_detail", pk=device_type.pk)
+    else:
+        form = DeviceTypeForm(instance=device_type)
+    return render(request, "admin_app/device_type_form.html", {
+        "form": form,
+        "device_type": device_type,
+    })
+
+
+@staff_required
 def device_instance_add(request, type_pk):
-    """Add an instance (NetworkDevice) of this device type. Requires facility."""
+    """Add an instance (NetworkDevice) of this device type. Facility optional (can be 'Not assigned')."""
     from .forms import NetworkDeviceForm
     device_type = get_object_or_404(DeviceType, pk=type_pk)
     facilities = Facility.objects.filter(is_active=True).order_by("name")
     facility_slug = request.GET.get("facility") or (request.POST.get("facility") if request.method == "POST" else None)
-    facility = get_object_or_404(Facility, slug=facility_slug) if facility_slug else None
+    facility = None
+    if facility_slug and facility_slug != "none":
+        facility = get_object_or_404(Facility, slug=facility_slug)
+    elif facility_slug == "none":
+        facility = None  # Explicit: not assigned to any facility
 
-    if request.method == "POST" and facility:
+    if request.method == "POST" and (facility is not None or request.POST.get("facility") == "none"):
         form = NetworkDeviceForm(request.POST, facility=facility)
         form.instance.product = device_type
+        if facility is None:
+            form.instance.facility = None
         if form.is_valid():
             form.save()
             messages.success(request, _("Device instance added."))
             in_modal = request.POST.get("in_modal") == "1"
-            if in_modal:
+            if in_modal and facility:
                 return redirect("admin_app:admin_facility_modal_close", facility_slug=facility.slug)
             return redirect("admin_app:admin_device_type_detail", pk=device_type.pk)
-    elif request.method == "POST" and not facility:
+    elif request.method == "POST":
         form = NetworkDeviceForm(request.POST, facility=None)
         form.instance.product = device_type
-        messages.error(request, _("Please select a facility."))
+        messages.error(request, _("Please select a facility or 'Not assigned'."))
     else:
-        form = NetworkDeviceForm(facility=facility) if facility else None
+        form = NetworkDeviceForm(facility=facility) if (facility is not None or facility_slug == "none") else None
         if form:
             form.instance.product = device_type
 
-    if not facility:
+    if facility is None and facility_slug != "none" and not (request.method == "POST" and request.POST.get("facility") == "none"):
         return render(request, "admin_app/device_instance_add_choose_facility.html", {
             "device_type": device_type,
             "facilities": facilities,
@@ -1223,6 +1397,120 @@ def device_instance_delete(request, type_pk, instance_pk):
     instance.save()
     messages.success(request, _("Device instance '%(name)s' removed.") % {"name": name})
     return redirect("admin_app:admin_device_type_detail", pk=device_type.pk)
+
+
+# ----- Device categories -----
+@staff_required
+def device_category_list(request):
+    """List device categories (and subcategories)."""
+    categories = DeviceCategory.objects.select_related("parent").order_by("parent__name", "name")
+    return render(request, "admin_app/device_category_list.html", {"categories": categories})
+
+
+@staff_required
+def device_category_add(request):
+    """Add a category or subcategory."""
+    from .forms import DeviceCategoryForm
+    if request.method == "POST":
+        form = DeviceCategoryForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, _("Category '%(name)s' created.") % {"name": form.instance.name})
+            return redirect("admin_app:admin_device_category_list")
+    else:
+        form = DeviceCategoryForm()
+    return render(request, "admin_app/device_category_form.html", {"form": form, "category": None})
+
+
+@staff_required
+def device_category_edit(request, pk):
+    """Edit a category."""
+    from .forms import DeviceCategoryForm
+    category = get_object_or_404(DeviceCategory, pk=pk)
+    if request.method == "POST":
+        form = DeviceCategoryForm(request.POST, instance=category)
+        if form.is_valid():
+            form.save()
+            messages.success(request, _("Category updated."))
+            return redirect("admin_app:admin_device_category_list")
+    else:
+        form = DeviceCategoryForm(instance=category)
+    return render(request, "admin_app/device_category_form.html", {"form": form, "category": category})
+
+
+# ----- Manufacturers -----
+@staff_required
+def manufacturer_list(request):
+    """List manufacturers."""
+    manufacturers = Manufacturer.objects.order_by("name")
+    return render(request, "admin_app/manufacturer_list.html", {"manufacturers": manufacturers})
+
+
+@staff_required
+def manufacturer_add(request):
+    """Add a manufacturer."""
+    from .forms import ManufacturerForm
+    if request.method == "POST":
+        form = ManufacturerForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, _("Manufacturer '%(name)s' created.") % {"name": form.instance.name})
+            return redirect("admin_app:admin_manufacturer_list")
+    else:
+        form = ManufacturerForm()
+    return render(request, "admin_app/manufacturer_form.html", {"form": form, "manufacturer": None})
+
+
+@staff_required
+def manufacturer_edit(request, pk):
+    """Edit a manufacturer."""
+    from .forms import ManufacturerForm
+    manufacturer = get_object_or_404(Manufacturer, pk=pk)
+    if request.method == "POST":
+        form = ManufacturerForm(request.POST, instance=manufacturer)
+        if form.is_valid():
+            form.save()
+            messages.success(request, _("Manufacturer updated."))
+            return redirect("admin_app:admin_manufacturer_list")
+    else:
+        form = ManufacturerForm(instance=manufacturer)
+    return render(request, "admin_app/manufacturer_form.html", {"form": form, "manufacturer": manufacturer})
+
+
+# ----- Product datasheets -----
+@staff_required
+def product_datasheet_list(request):
+    """List product datasheets (under Portal Management)."""
+    datasheets = ProductDatasheet.objects.select_related("device_type", "uploaded_by").order_by("-uploaded_at")
+    return render(request, "admin_app/product_datasheet_list.html", {"datasheets": datasheets})
+
+
+@staff_required
+def product_datasheet_upload(request):
+    """Upload a product datasheet; optionally link to device type."""
+    from .forms import ProductDatasheetForm
+    if request.method == "POST":
+        form = ProductDatasheetForm(request.POST, request.FILES)
+        if form.is_valid():
+            obj = form.save(commit=False)
+            obj.uploaded_by = request.user
+            obj.save()
+            messages.success(request, _("Datasheet '%(title)s' uploaded.") % {"title": obj.title})
+            return redirect("admin_app:admin_product_datasheet_list")
+    else:
+        form = ProductDatasheetForm()
+    return render(request, "admin_app/product_datasheet_form.html", {"form": form})
+
+
+@staff_required
+@require_POST
+def product_datasheet_delete(request, pk):
+    """Delete a product datasheet."""
+    datasheet = get_object_or_404(ProductDatasheet, pk=pk)
+    title = datasheet.title
+    datasheet.delete()
+    messages.success(request, _("Datasheet '%(title)s' deleted.") % {"title": title})
+    return redirect("admin_app:admin_product_datasheet_list")
 
 
 @staff_required

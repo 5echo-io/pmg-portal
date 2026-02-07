@@ -11,7 +11,15 @@
   {% endfor %}
 </div>
 {% endif %}
-<h1>{% trans "No customer access" %}</h1>
-<p class="muted">
-  {% trans "Your account is active, but you are not assigned to any customer yet. Please contact an admin." %}
-</p>
+<div class="error-recovery-panel panel">
+  <h1>{% trans "No customer access" %}</h1>
+  <p class="muted">
+    {% trans "Your account is active, but you are not assigned to any customer yet." %}
+  </p>
+  <p class="error-recovery-suggestion">
+    {% trans "Contact your administrator or try logging out and back in." %}
+  </p>
+  <div class="error-recovery-actions">
+    <a href="/account/logout/" class="form-btn form-btn-secondary">{% trans "Log out" %}</a>
+  </div>
+</div>

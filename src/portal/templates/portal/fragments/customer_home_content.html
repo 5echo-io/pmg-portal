@@ -21,19 +21,75 @@
   </div>
 </div>
 
-<div class="panel">
-  <h2>{% trans "Quick links" %}</h2>
+<div class="dashboard-widgets" data-widgets="{{ dashboard_widgets|join:',' }}">
+  {% if "announcements" in dashboard_widgets and announcements %}
+  <div class="dashboard-widget dashboard-widget-announcements panel">
+    <h2>{% trans "Announcements" %}</h2>
+    <ul class="announcement-list">
+      {% for ann in announcements %}
+      <li class="announcement-item {% if ann.is_pinned %}announcement-item--pinned{% endif %}">
+        <div class="announcement-title">{{ ann.title }}</div>
+        <div class="announcement-meta muted">
+          {% if ann.created_by %}{{ ann.created_by.get_full_name|default:ann.created_by.username }}{% endif %}
+          · {{ ann.created_at|date:"SHORT_DATE_FORMAT" }}
+          {% if ann.is_pinned %}<span class="announcement-pin-badge">{% trans "Pinned" %}</span>{% endif %}
+        </div>
+        <div class="announcement-body">{{ ann.body|safe|linebreaks }}</div>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
 
-  {% if links %}
-  <ul class="list">
-    {% for item in links %}
-    <li class="list-item">
-      <div class="list-title"><a href="{{ item.url }}" target="_blank" rel="noreferrer">{{ item.title }}</a></div>
-      {% if item.description %}<div class="muted">{{ item.description }}</div>{% endif %}
-    </li>
-    {% endfor %}
-  </ul>
-  {% else %}
-  <p class="muted">{% trans "No links yet. An admin can add links for this customer in the admin panel." %}</p>
+  {% if "quick_stats" in dashboard_widgets and quick_stats %}
+  <div class="dashboard-widget dashboard-widget-stats panel">
+    <h2>{% trans "Quick stats" %}</h2>
+    <div class="quick-stats-grid">
+      <a href="{% url 'facility_list' %}" class="quick-stat-card">
+        <span class="quick-stat-value">{{ quick_stats.facilities }}</span>
+        <span class="quick-stat-label">{% trans "Facilities" %}</span>
+      </a>
+      <div class="quick-stat-card">
+        <span class="quick-stat-value">{{ quick_stats.devices }}</span>
+        <span class="quick-stat-label">{% trans "Devices" %}</span>
+      </div>
+      <div class="quick-stat-card">
+        <span class="quick-stat-value">{{ quick_stats.links }}</span>
+        <span class="quick-stat-label">{% trans "Links" %}</span>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  {% if "recent_links" in dashboard_widgets and links %}
+  <div class="dashboard-widget dashboard-widget-recent panel">
+    <h2>{% trans "Recent links" %}</h2>
+    <ul class="list">
+      {% for item in links|slice:":5" %}
+      <li class="list-item">
+        <div class="list-title"><a href="{{ item.url }}" target="_blank" rel="noreferrer">{{ item.title }}</a></div>
+        {% if item.description %}<div class="muted">{{ item.description }}</div>{% endif %}
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  {% if "quick_links" in dashboard_widgets %}
+  <div class="dashboard-widget dashboard-widget-links panel">
+    <h2>{% trans "Quick links" %}</h2>
+    {% if links %}
+    <ul class="list">
+      {% for item in links %}
+      <li class="list-item">
+        <div class="list-title"><a href="{{ item.url }}" target="_blank" rel="noreferrer">{{ item.title }}</a></div>
+        {% if item.description %}<div class="muted">{{ item.description }}</div>{% endif %}
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p class="muted">{% trans "No links yet. An admin can add links for this customer in the admin panel." %}</p>
+    {% endif %}
+  </div>
   {% endif %}
 </div>

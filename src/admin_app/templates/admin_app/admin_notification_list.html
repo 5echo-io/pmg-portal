@@ -1,0 +1,101 @@
+{% extends "admin_app/base.html" %}
+
+{% block admin_title %}Notifications{% endblock %}
+{% block breadcrumb_extra %}<span class="breadcrumb-sep">→</span> <span>Notifications</span>{% endblock %}
+
+{% block admin_content %}
+<div class="admin-page-header">
+  <h1 class="admin-page-title">Admin notifications</h1>
+  <button type="button" class="admin-btn-sm admin-btn-primary" onclick="document.getElementById('create-notification-form').style.display = document.getElementById('create-notification-form').style.display ? '' : 'block'; this.style.display = 'none'; document.getElementById('create-notification-cancel').style.display = 'inline-block';">New notification</button>
+  {% if unread_count %}<span class="admin-badge">{{ unread_count }} unread</span>{% endif %}
+</div>
+
+<div id="create-notification-form" class="panel" style="display: none; margin-bottom: 20px;">
+  <h2>Send notification</h2>
+  <form method="post" action="{% url 'admin_app:admin_notification_create' %}" class="admin-form">
+    {% csrf_token %}
+    <div class="admin-form-field">
+      <label for="notif-recipient">To</label>
+      <select name="recipient" id="notif-recipient" class="form-input" style="width: auto;">
+        <option value="">All staff</option>
+        {% for u in staff_users %}
+        <option value="{{ u.pk }}">{{ u.get_full_name|default:u.username }} ({{ u.email }})</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="admin-form-field">
+      <label for="notif-title">Title</label>
+      <input type="text" name="title" id="notif-title" class="form-input" required maxlength="200" placeholder="Notification title">
+    </div>
+    <div class="admin-form-field">
+      <label for="notif-message">Message</label>
+      <textarea name="message" id="notif-message" class="form-input" rows="3" placeholder="Optional message"></textarea>
+    </div>
+    <div class="admin-form-field">
+      <label for="notif-link">Link (optional)</label>
+      <input type="url" name="link" id="notif-link" class="form-input" placeholder="https://…">
+    </div>
+    <div class="admin-form-field">
+      <label for="notif-link-label">Link label (optional)</label>
+      <input type="text" name="link_label" id="notif-link-label" class="form-input" maxlength="100" placeholder="View details">
+    </div>
+    <div class="admin-form-actions">
+      <button type="submit" class="form-btn form-btn-primary">Send</button>
+      <button type="button" id="create-notification-cancel" class="form-btn form-btn-secondary" style="display: none;" onclick="document.getElementById('create-notification-form').style.display = 'none'; document.querySelector('.admin-page-header .admin-btn-sm.admin-btn-primary').style.display = 'inline-block'; this.style.display = 'none';">Cancel</button>
+    </div>
+  </form>
+</div>
+
+<div class="admin-table-wrap">
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>To</th>
+        <th>From</th>
+        <th>Date</th>
+        <th>Read</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for n in page_obj %}
+      <tr class="{% if not n.read_at %}admin-notification-unread{% endif %}">
+        <td><strong>{{ n.title }}</strong>{% if n.message %}<br><span class="muted">{{ n.message|truncatewords:15 }}</span>{% endif %}</td>
+        <td>{% if n.recipient %}{{ n.recipient.get_full_name|default:n.recipient.username }}{% else %}All staff{% endif %}</td>
+        <td>{% if n.created_by %}{{ n.created_by.get_full_name|default:n.created_by.username }}{% else %}—{% endif %}</td>
+        <td>{{ n.created_at|date:"SHORT_DATETIME_FORMAT" }}</td>
+        <td>{% if n.read_at %}{{ n.read_at|date:"SHORT_DATE_FORMAT" }}{% else %}—{% endif %}</td>
+        <td>
+          {% if n.link %}<a href="{{ n.link }}" target="_blank" rel="noopener" class="admin-btn-sm">Open link</a>{% endif %}
+          {% if not n.read_at %}
+          {% if not n.recipient or n.recipient == request.user %}
+          <form method="post" action="{% url 'admin_app:admin_notification_mark_read' n.pk %}" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" class="admin-btn-sm">Mark read</button>
+          </form>
+          {% endif %}
+          {% endif %}
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="6">No notifications.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% if page_obj.has_other_pages %}
+<nav class="admin-pagination">
+  {% if page_obj.has_previous %}
+  <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+  {% endif %}
+  <span class="current">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+  {% if page_obj.has_next %}
+  <a href="?page={{ page_obj.next_page_number }}">Next</a>
+  {% endif %}
+</nav>
+{% endif %}
+{% endblock %}
