@@ -64,6 +64,7 @@ if [ "$NEED_UPDATE" = "true" ]; then
   sudo apt-get install -y gettext libjpeg-dev libpng-dev zlib1g-dev pkg-config libcairo2-dev libpango-1.0-0 libpangocairo-1.0-0 libgdk-pixbuf2.0-0 libcairo2
 fi
 # WeasyPrint (servicerapport PDF / Document templates): require Pango, Cairo, GdkPixbuf at runtime
+echo "Installing WeasyPrint runtime libraries (Pango, Cairo, GdkPixbuf)..."
 sudo apt-get update -y
 sudo apt-get install -y --no-install-recommends libpango-1.0-0 libpangocairo-1.0-0 libgdk-pixbuf2.0-0 libcairo2
 

@@ -515,15 +515,28 @@ def facility_service_log_pdf(request, slug, log_id):
         doc.write_pdf(buf, stylesheets=stylesheets)
         buf.seek(0)
     except OSError as e:
-        if "pango" in str(e).lower() or "cairo" in str(e).lower() or "cannot load library" in str(e).lower():
-            messages.error(
-                request,
-                "PDF generation failed: missing system libraries (Pango/Cairo). "
-                "Ask the server administrator to run: sudo apt-get install -y libpango-1.0-0 libpangocairo-1.0-0 libgdk-pixbuf2.0-0 libcairo2",
-            )
-        else:
-            messages.error(request, "PDF generation failed.")
-        return redirect("facility_service_log_detail", slug=slug, log_id=log_id)
+        # Fallback to xhtml2pdf when WeasyPrint fails (e.g. missing Pango/Cairo on server)
+        from xhtml2pdf import pisa
+        doc_html = (
+            f'<!DOCTYPE html><html><head><meta charset="utf-8"/>'
+            + (f"<style>{template.css_content}</style>" if template.css_content else "")
+            + "</head><body>"
+            + html_str
+            + "</body></html>"
+        )
+        buf = BytesIO()
+        pisa_status = pisa.CreatePDF(doc_html.encode("utf-8"), dest=buf, encoding="utf-8")
+        if pisa_status.err:
+            if "pango" in str(e).lower() or "cairo" in str(e).lower() or "cannot load library" in str(e).lower():
+                messages.error(
+                    request,
+                    "PDF generation failed: missing system libraries (Pango/Cairo). "
+                    "Ask the server administrator to run: sudo apt-get install -y libpango-1.0-0 libpangocairo-1.0-0 libgdk-pixbuf2.0-0 libcairo2",
+                )
+            else:
+                messages.error(request, "PDF generation failed.")
+            return redirect("facility_service_log_detail", slug=slug, log_id=log_id)
+        buf.seek(0)
     filename = f"servicerapport-{service_log.service_id}-{timezone.now().strftime('%Y%m%d')}.pdf"
     response = HttpResponse(buf.getvalue(), content_type="application/pdf")
     response["Content-Disposition"] = f'attachment; filename="{filename}"'

@@ -2406,24 +2406,42 @@ def document_template_delete(request, pk):
 
 
 def _render_pdf_from_template(template, context):
-    """Render HTML from template (Django template) with context, then WeasyPrint to PDF. Returns bytes."""
+    """Render HTML from template (Django template) with context, then WeasyPrint to PDF. Returns bytes. Falls back to xhtml2pdf if WeasyPrint fails (e.g. missing Pango)."""
     from django.template import Template, Context
     from io import BytesIO
+    t = Template(template.html_content)
+    html_str = t.render(Context(context))
     try:
         from weasyprint import HTML, CSS
     except ImportError:
-        return None
-    t = Template(template.html_content)
-    html_str = t.render(Context(context))
-    buf = BytesIO()
+        pass
+    else:
+        buf = BytesIO()
+        try:
+            doc = HTML(string=html_str)
+            stylesheets = [CSS(string=template.css_content)] if template.css_content else []
+            doc.write_pdf(buf, stylesheets=stylesheets)
+            buf.seek(0)
+            return buf.getvalue()
+        except OSError:
+            pass
+    # Fallback: xhtml2pdf (no Pango/Cairo required)
     try:
-        doc = HTML(string=html_str)
-        stylesheets = [CSS(string=template.css_content)] if template.css_content else []
-        doc.write_pdf(buf, stylesheets=stylesheets)
-        buf.seek(0)
-        return buf.getvalue()
-    except OSError:
+        from xhtml2pdf import pisa
+    except ImportError:
         return None
+    doc_html = (
+        "<!DOCTYPE html><html><head><meta charset=\"utf-8\"/>"
+        + (f"<style>{template.css_content}</style>" if template.css_content else "")
+        + "</head><body>"
+        + html_str
+        + "</body></html>"
+    )
+    buf = BytesIO()
+    if pisa.CreatePDF(doc_html.encode("utf-8"), dest=buf, encoding="utf-8").err:
+        return None
+    buf.seek(0)
+    return buf.getvalue()
 
 
 @staff_required
