@@ -11,6 +11,14 @@ Last Modified: 2026-02-06
 
 - 2026-02-07 (Europe/Oslo)
   - Branch: dev
+  - Version: 4.8.0-beta.20
+  - Summary:
+    - Locale: remove 2 duplicate msgid (Type, All) in nb django.po so compilemessages succeeds
+    - Version bump: 4.8.0-beta.19 → 4.8.0-beta.20
+  - Migration note: If update fails on portal.0014 with "relation ... already exists", migration 0014 may have been auto-generated on the server by makemigrations. If 0012 and 0013 are already applied and the app works, you can mark 0014 as applied: `cd /opt/pmg-portal/src && sudo -E .venv/bin/python manage.py migrate --fake portal 0014` (only if 0014 exists under portal/migrations/).
+
+- 2026-02-07 (Europe/Oslo)
+  - Branch: dev
   - Version: 4.8.0-beta.19
   - Summary:
     - Admin: ServiceTypeAdmin search_fields (fix E040); register NetworkDevice (NetworkDeviceAdmin) for ServiceLogDeviceAdmin autocomplete (fix E039)

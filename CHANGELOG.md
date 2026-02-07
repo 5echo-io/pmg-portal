@@ -17,6 +17,7 @@ This project follows Semantic Versioning (SemVer).
 Pre-release builds (alpha, beta, rc) are listed here. Only full releases (no build suffix) get a dedicated version section below.
 
 ### Fixed
+- **compilemessages**: Removed 2 more duplicate msgid in nb django.po (Type, All); msgfmt succeeds.
 - **Admin E040/E039**: ServiceTypeAdmin now has search_fields (name, slug) for ServiceLogAdmin autocomplete; NetworkDevice registered in portal admin (NetworkDeviceAdmin) so ServiceLogDeviceAdmin.autocomplete_fields for device works; fixes migrate/update on server.
 - **compilemessages**: Removed 2 more duplicate msgid in nb django.po (Search customers…, Inactive); msgfmt succeeds.
 - **compilemessages**: Removed 12 duplicate msgid entries in locale nb django.po (Customers, Devices, Facilities, No users found., Edit, Search users, Confirm restore, Product datasheets, Warning/This action, Created, by, and one other); msgfmt succeeds.

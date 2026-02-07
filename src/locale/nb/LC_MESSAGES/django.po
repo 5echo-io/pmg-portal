@@ -1014,12 +1014,6 @@ msgstr "Rediger servicelogg"
 msgid "Er du sikker på at du vil slette denne serviceloggføringen?"
 msgstr "Er du sikker på at du vil slette denne serviceloggføringen?"
 
-msgid "Type"
-msgstr "Type"
-
-msgid "All"
-msgstr "Alle"
-
 msgid "SLA deadline"
 msgstr "SLA-frist"
 
