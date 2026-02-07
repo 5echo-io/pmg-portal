@@ -364,6 +364,29 @@ def facility_detail(request, slug):
             pass
     service_types = ServiceType.objects.filter(is_active=True).order_by("sort_order", "name")
 
+    # Unique product datasheets for device types used at this facility (alphabetical by title)
+    from portal.models import ProductDatasheet
+    device_type_ids = list(
+        facility.network_devices.filter(is_active=True)
+        .exclude(product_id__isnull=True)
+        .values_list("product_id", flat=True)
+        .distinct()
+    )
+    facility_datasheets = []
+    if device_type_ids:
+        seen = set()
+        for ds in (
+            ProductDatasheet.objects.filter(device_type_id__in=device_type_ids)
+            .select_related("device_type")
+            .order_by("title")
+        ):
+            if ds.device_type_id in seen:
+                continue
+            seen.add(ds.device_type_id)
+            if ds.device_type and ds.device_type.slug:
+                facility_datasheets.append(ds)
+    facility_datasheets.sort(key=lambda d: (d.title or "").lower())
+
     # Statistics
     stats = {
         "racks_count": racks.count(),
@@ -384,6 +407,7 @@ def facility_detail(request, slug):
         "service_logs": service_logs,
         "service_types": service_types,
         "service_type_filter": service_type_filter,
+        "facility_datasheets": facility_datasheets,
         "stats": stats,
     }
     

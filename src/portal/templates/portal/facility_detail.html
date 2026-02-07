@@ -51,47 +51,43 @@
     <div class="facility-portal-overview">
       <h2 class="facility-portal-overview-title">{% trans "Oversikt" %}</h2>
       {% if facility.description %}
-      <div class="panel" style="margin-bottom: 16px;">
-        <p style="white-space: pre-wrap; margin: 0;">{{ facility.description }}</p>
+      <div class="facility-overview-description">
+        <p>{{ facility.description }}</p>
       </div>
       {% endif %}
       <div class="facility-overview-grid">
-        <div class="panel">
-          <h3>{% trans "Racks" %}</h3>
-          <p class="facility-stat-number">{{ racks|length }}</p>
-          <p class="muted">{% trans "Active racks" %}</p>
+        <div class="facility-overview-item">
+          <span class="facility-overview-num">{{ racks|length }}</span>
+          <span class="facility-overview-label">{% trans "Racks" %}</span>
         </div>
-        <div class="panel">
-          <h3>{% trans "Network" %}</h3>
-          <p class="facility-stat-number">{{ ip_addresses|length }}</p>
-          <p class="muted">{% trans "IP addresses" %}</p>
+        <div class="facility-overview-item">
+          <span class="facility-overview-num">{{ ip_addresses|length }}</span>
+          <span class="facility-overview-label">{% trans "Network" %}</span>
         </div>
-        <div class="panel">
-          <h3>{% trans "Devices" %}</h3>
-          <p class="facility-stat-number">{{ network_devices|length }}</p>
-          <p class="muted">{% trans "Enheter" %}</p>
+        <div class="facility-overview-item">
+          <span class="facility-overview-num">{{ network_devices|length }}</span>
+          <span class="facility-overview-label">{% trans "Devices" %}</span>
         </div>
-        <div class="panel">
-          <h3>{% trans "Documents" %}</h3>
-          <p class="facility-stat-number">{{ documents|length }}</p>
-          <p class="muted">{% trans "Uploaded documents" %}</p>
+        <div class="facility-overview-item">
+          <span class="facility-overview-num">{{ documents|length }}</span>
+          <span class="facility-overview-label">{% trans "Documents" %}</span>
         </div>
-        <div class="panel">
-          <h3>{% trans "Servicelogg" %}</h3>
-          <p class="facility-stat-number">{{ service_logs|length }}</p>
-          <p class="muted">{% trans "Service log entries" %}</p>
+        <div class="facility-overview-item">
+          <span class="facility-overview-num">{{ service_logs|length }}</span>
+          <span class="facility-overview-label">{% trans "Servicelogg" %}</span>
         </div>
       </div>
     </div>
 
-    <!-- Sidemenu + content (Racks, Nettverk, Enheter, Dokumenter, Servicelogg) -->
+    <!-- Sidemenu + content (Racks, Nettverk, Enheter, Dokumenter, Servicelogg, Produktdatablader) -->
     <div class="facility-card-body">
       <nav class="facility-card-sidemenu" aria-label="{% trans 'Facility sections' %}">
-        <button type="button" class="facility-sidemenu-item active" data-tab="racks">{% trans "Racks" %} ({{ racks|length }})</button>
-        <button type="button" class="facility-sidemenu-item" data-tab="network">{% trans "Nettverk" %} ({{ ip_addresses|length }})</button>
-        <button type="button" class="facility-sidemenu-item" data-tab="devices">{% trans "Enheter" %} ({{ network_devices|length }})</button>
-        <button type="button" class="facility-sidemenu-item" data-tab="documents">{% trans "Dokumenter" %} ({{ documents|length }})</button>
-        <button type="button" class="facility-sidemenu-item" data-tab="servicelogg">{% trans "Servicelogg" %} ({{ service_logs|length }})</button>
+        <a href="{% url 'facility_detail' facility.slug %}#racks" class="facility-sidemenu-item active" data-tab="racks">{% trans "Racks" %} ({{ racks|length }})</a>
+        <a href="{% url 'facility_detail' facility.slug %}#network" class="facility-sidemenu-item" data-tab="network">{% trans "Nettverk" %} ({{ ip_addresses|length }})</a>
+        <a href="{% url 'facility_detail' facility.slug %}#devices" class="facility-sidemenu-item" data-tab="devices">{% trans "Enheter" %} ({{ network_devices|length }})</a>
+        <a href="{% url 'facility_detail' facility.slug %}#documents" class="facility-sidemenu-item" data-tab="documents">{% trans "Dokumenter" %} ({{ documents|length }})</a>
+        <a href="{% url 'facility_detail' facility.slug %}#servicelogg" class="facility-sidemenu-item" data-tab="servicelogg">{% trans "Servicelogg" %} ({{ service_logs|length }})</a>
+        <a href="{% url 'facility_detail' facility.slug %}#produktdatablader" class="facility-sidemenu-item" data-tab="produktdatablader">{% trans "Product datasheets" %} ({{ facility_datasheets|length }})</a>
       </nav>
 
       <div class="facility-card-content">
@@ -288,45 +284,131 @@
           <p class="muted">{% trans "No service log entries for this facility." %}</p>
           {% endif %}
         </div>
+
+        <!-- Produktdatablader -->
+        <div class="customer-tab-panel" id="tab-produktdatablader">
+          <div class="customer-section-header">
+            <h2>{% trans "Product datasheets" %}</h2>
+          </div>
+          {% if facility_datasheets %}
+          <div class="facility-datasheets-toolbar">
+            <label for="facility-datasheets-search" class="facility-datasheets-search-label">{% trans "Search" %}</label>
+            <input type="search" id="facility-datasheets-search" class="facility-datasheets-search-input" placeholder="{% trans 'Search by product name…' %}" autocomplete="off" aria-label="{% trans 'Search datasheets' %}">
+            <span class="facility-datasheets-count" id="facility-datasheets-count" aria-live="polite"></span>
+          </div>
+          <ul class="facility-datasheets-list" id="facility-datasheets-list">
+            {% for ds in facility_datasheets %}
+            <li class="facility-datasheet-row" data-name="{{ ds.title }}">
+              <span class="facility-datasheet-title">{{ ds.title }}</span>
+              <span class="facility-datasheet-actions">
+                <a href="{% url 'datasheet_by_slug' ds.device_type.slug %}" class="facility-datasheet-btn" hx-get="{% url 'datasheet_by_slug' ds.device_type.slug %}" hx-target="#main-content" hx-push-url="true">{% trans "View" %}</a>
+                <a href="{% url 'datasheet_pdf' ds.device_type.slug %}" class="facility-datasheet-btn facility-datasheet-btn--secondary" target="_blank" rel="noopener">{% trans "Download PDF" %}</a>
+              </span>
+            </li>
+            {% endfor %}
+          </ul>
+          <p class="facility-datasheets-empty muted" id="facility-datasheets-empty" hidden>{% trans "No datasheets match your search." %}</p>
+          {% else %}
+          <p class="muted">{% trans "No product datasheets for devices at this facility." %}</p>
+          {% endif %}
+        </div>
       </div>
     </div>
   </div>
 </div>
 
 <style>
-.facility-portal-overview { margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--line, #e5e7eb); }
-.facility-portal-overview-title { margin: 0 0 16px 0; font-size: 1.125rem; font-weight: 600; }
-.facility-card-body { display: flex; gap: 0 24px; align-items: flex-start; margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--line, #e5e7eb); }
+.facility-portal-overview { margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--line, #e5e7eb); }
+.facility-portal-overview-title { margin: 0 0 12px 0; font-size: 0.9375rem; font-weight: 600; color: var(--muted, #6b7280); }
+.facility-overview-description { margin-bottom: 12px; }
+.facility-overview-description p { margin: 0; font-size: 0.875rem; line-height: 1.5; color: var(--text); white-space: pre-wrap; }
+.facility-overview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; }
+.facility-overview-item {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 2px;
+  padding: 10px 12px; background: var(--card, #fff); border: 1px solid var(--line, #e5e7eb); border-radius: 8px;
+}
+.facility-overview-num { font-size: 1.25rem; font-weight: 600; color: var(--text); line-height: 1.2; }
+.facility-overview-label { font-size: 0.75rem; color: var(--muted, #6b7280); }
+.facility-card-body { display: flex; gap: 0 24px; align-items: flex-start; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--line, #e5e7eb); }
 .facility-card-sidemenu { flex-shrink: 0; width: 180px; display: flex; flex-direction: column; gap: 0; margin: 0; padding: 0; border-right: 1px solid var(--line, #e5e7eb); padding-right: 16px; }
-.facility-sidemenu-item { display: block; width: 100%; padding: 10px 12px; margin: 0; text-align: left; font-size: 13px; font-weight: 500; color: var(--muted, #6b7280); background: transparent; border: none; border-radius: 0; cursor: pointer; transition: all 0.15s; font-family: inherit; }
+.facility-sidemenu-item { display: block; width: 100%; padding: 8px 12px; margin: 0; text-align: left; font-size: 0.8125rem; font-weight: 500; color: var(--muted, #6b7280); background: transparent; border: none; border-radius: 6px; cursor: pointer; transition: all 0.15s; font-family: inherit; text-decoration: none; box-sizing: border-box; }
 .facility-sidemenu-item:hover { color: var(--text, #111); background: rgba(0,0,0,0.04); }
 .facility-sidemenu-item.active { color: #3b82f6; background: rgba(59,130,246,0.1); }
 .facility-card-content { flex: 1; min-width: 0; }
 .customer-tab-panel { display: none; }
 .customer-tab-panel.active { display: block; }
-.customer-section-header { margin-bottom: 16px; }
-.customer-section-header h2 { margin: 0; font-size: 1rem; font-weight: 600; }
+.customer-section-header { margin-bottom: 12px; }
+.customer-section-header h2 { margin: 0; font-size: 0.9375rem; font-weight: 600; }
 .servicelogg-header { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
 .servicelogg-type-filter { display: flex; align-items: center; gap: 8px; }
 .servicelogg-type-label { margin: 0; font-size: 13px; font-weight: 500; color: var(--muted, #6b7280); }
 .servicelogg-type-select { padding: 8px 12px; border-radius: 8px; border: 1px solid var(--line, #e5e7eb); background: var(--card, #fff); color: var(--text, #111); font-size: 14px; font-family: inherit; min-width: 160px; }
 .servicelogg-type-select:focus { outline: none; border-color: #3b82f6; }
+.facility-datasheets-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 12px; }
+.facility-datasheets-search-label { font-size: 0.8125rem; color: var(--muted); }
+.facility-datasheets-search-input { width: 100%; max-width: 280px; padding: 6px 10px; font-size: 0.875rem; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--text); }
+.facility-datasheets-search-input:focus { outline: 2px solid var(--line); outline-offset: 2px; }
+.facility-datasheets-count { font-size: 0.8125rem; color: var(--muted); }
+.facility-datasheets-list { list-style: none; padding: 0; margin: 0; }
+.facility-datasheet-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+.facility-datasheet-row.hidden { display: none; }
+.facility-datasheet-title { font-size: 0.875rem; font-weight: 500; }
+.facility-datasheet-actions { display: flex; gap: 8px; flex-shrink: 0; }
+.facility-datasheet-btn { font-size: 0.8125rem; padding: 4px 10px; border-radius: 6px; text-decoration: none; background: var(--btn); color: var(--text); border: 1px solid var(--line); transition: background 0.2s, color 0.2s; }
+.facility-datasheet-btn:hover { background: var(--btnHover); }
+.facility-datasheet-btn--secondary { background: transparent; }
+.facility-datasheets-empty { margin-top: 8px; }
 </style>
 
 <script>
 (function() {
-  const sidemenuItems = document.querySelectorAll('.facility-sidemenu-item');
-  const panels = document.querySelectorAll('.facility-card-content .customer-tab-panel');
-  sidemenuItems.forEach(function(item) {
-    item.addEventListener('click', function() {
-      const targetTab = this.dataset.tab;
-      sidemenuItems.forEach(function(i) { i.classList.remove('active'); });
-      panels.forEach(function(p) { p.classList.remove('active'); });
-      this.classList.add('active');
-      var panel = document.getElementById('tab-' + targetTab);
-      if (panel) panel.classList.add('active');
+  var hashToTab = { racks: 'racks', network: 'network', devices: 'devices', documents: 'documents', servicelogg: 'servicelogg', produktdatablader: 'produktdatablader' };
+  function getHashTab() {
+    var h = (window.location.hash || '').replace(/^#/, '');
+    return hashToTab[h] || 'racks';
+  }
+  function setActiveTab(tabId) {
+    var sidemenuItems = document.querySelectorAll('.facility-sidemenu-item');
+    var panels = document.querySelectorAll('.facility-card-content .customer-tab-panel');
+    sidemenuItems.forEach(function(i) { i.classList.toggle('active', i.dataset.tab === tabId); });
+    panels.forEach(function(p) { p.classList.toggle('active', p.id === 'tab-' + tabId); });
+  }
+  function applyHash() {
+    setActiveTab(getHashTab());
+  }
+  document.querySelectorAll('.facility-sidemenu-item').forEach(function(item) {
+    item.addEventListener('click', function(e) {
+      e.preventDefault();
+      var tab = this.dataset.tab;
+      if (history.replaceState) history.replaceState(null, '', this.getAttribute('href') || ('#' + tab));
+      else window.location.hash = tab;
+      setActiveTab(tab);
     });
   });
+  window.addEventListener('hashchange', applyHash);
+  applyHash();
+
+  var searchEl = document.getElementById('facility-datasheets-search');
+  var listEl = document.getElementById('facility-datasheets-list');
+  var countEl = document.getElementById('facility-datasheets-count');
+  var emptyEl = document.getElementById('facility-datasheets-empty');
+  if (searchEl && listEl) {
+    function filterDatasheets() {
+      var q = (searchEl.value || '').toLowerCase().trim();
+      var rows = listEl.querySelectorAll('.facility-datasheet-row');
+      var visible = 0;
+      rows.forEach(function(row) {
+        var name = (row.getAttribute('data-name') || '').toLowerCase();
+        var show = !q || name.indexOf(q) !== -1;
+        row.classList.toggle('hidden', !show);
+        if (show) visible++;
+      });
+      if (countEl) countEl.textContent = q ? (visible + ' / ' + rows.length) : '';
+      if (emptyEl) emptyEl.hidden = visible > 0;
+    }
+    searchEl.addEventListener('input', filterDatasheets);
+    searchEl.addEventListener('change', filterDatasheets);
+  }
 })();
 </script>
 {% endblock %}

@@ -634,6 +634,9 @@ msgstr "Søk i datablad"
 msgid "No datasheets match your search."
 msgstr "Ingen datablad matcher søket ditt."
 
+msgid "No product datasheets for devices at this facility."
+msgstr "Ingen produktdatablad for enheter på dette anlegget."
+
 msgid "No product datasheets available yet."
 msgstr "Ingen produktdatablad tilgjengelig ennå."
 

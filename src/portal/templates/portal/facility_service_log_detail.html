@@ -23,8 +23,9 @@
         <p class="customer-card-slug" style="margin: 0;">{{ facility.name }} — {{ service_log.service_id }}</p>
       </div>
       <div class="customer-card-header-actions">
-        <a href="{% url 'facility_service_log_detail' facility.slug service_log.pk %}?print=1" target="_blank" class="admin-btn admin-btn-secondary">🖨 {% trans "Print report" %}</a>
-        <a href="{% url 'facility_detail' facility.slug %}" class="admin-btn admin-btn-secondary">← {% trans "Back to facility" %}</a>
+        <a href="{% url 'facility_service_log_detail' facility.slug service_log.pk %}?print=1" target="_blank" rel="noopener" class="customer-card-icon-btn" title="{% trans 'Print report' %}" aria-label="{% trans 'Print report' %}">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/></svg>
+        </a>
       </div>
     </div>
 
@@ -228,9 +229,10 @@
 .sr-print-list { margin: 0 0 10px 0; padding-left: 20px; }
 .sr-print-footer { margin-top: 24px; padding-top: 10px; border-top: 1px solid #999; font-size: 9pt; color: #666; }
 @media print {
+  html, body { background: #fff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   body * { visibility: hidden; }
   .servicerapport-print-document, .servicerapport-print-document * { visibility: visible; }
-  .servicerapport-print-document { position: absolute; left: 0; top: 0; width: 100%; padding: 16mm; max-width: none; }
+  .servicerapport-print-document { position: absolute; left: 0; top: 0; width: 100%; padding: 16mm; max-width: none; background: #fff !important; }
   .sr-print-table td { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
 </style>

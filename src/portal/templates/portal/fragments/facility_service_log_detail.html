@@ -18,8 +18,9 @@
         <p class="customer-card-slug" style="margin: 0;">{{ facility.name }} — {{ service_log.service_id }}</p>
       </div>
       <div class="customer-card-header-actions">
-        <a href="{% url 'facility_service_log_detail' facility.slug service_log.pk %}?print=1" target="_blank" class="admin-btn admin-btn-secondary">🖨 {% trans "Print report" %}</a>
-        <a href="{% url 'facility_detail' facility.slug %}" hx-get="{% url 'facility_detail' facility.slug %}" hx-target="#main-content" hx-push-url="true" class="admin-btn admin-btn-secondary">← {% trans "Back to facility" %}</a>
+        <a href="{% url 'facility_service_log_detail' facility.slug service_log.pk %}?print=1" target="_blank" rel="noopener" class="customer-card-icon-btn" title="{% trans 'Print report' %}" aria-label="{% trans 'Print report' %}">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/></svg>
+        </a>
       </div>
     </div>
 
