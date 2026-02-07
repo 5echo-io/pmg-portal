@@ -87,19 +87,19 @@
   min-width: 140px;
   max-width: 200px;
   position: sticky;
-  top: 1rem;
+  top: calc(56px + 24px);
   align-self: flex-start;
-  max-height: calc(100vh - 2rem);
+  max-height: calc(100vh - 56px - 48px);
   overflow-y: auto;
   background: var(--bg);
   z-index: 5;
   padding-right: 0;
+  padding-top: 8px;
 }
 .datasheet-toc {
   padding: 12px 0;
   border-right: 1px solid var(--line, #d1d5db);
-  padding-right: 56px;
-  margin-right: 0;
+  padding-right: 80px;
 }
 .datasheet-main-col {
   flex: 1;
@@ -148,21 +148,19 @@
 .datasheet-title { font-size: 1.75rem; margin: 0 0 0.5rem 0; }
 .datasheet-meta { color: var(--muted); font-size: 0.9rem; margin: 0; }
 
-/* Action buttons: visible icons, same height, vertically centered */
+/* Action buttons: same height, vertically centered with each other */
 .datasheet-actions {
   display: flex;
   gap: 8px;
   flex-shrink: 0;
-  align-items: center;
+  align-items: stretch;
   overflow: visible;
 }
 .datasheet-action-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 40px;
   width: 40px;
-  min-height: 40px;
   height: 40px;
   padding: 0;
   border-radius: 8px;
@@ -174,10 +172,17 @@
   transition: background 0.2s, border-color 0.2s, color 0.2s;
   position: relative;
   box-sizing: border-box;
+  flex-shrink: 0;
+  font: inherit;
   line-height: 0;
-  vertical-align: middle;
 }
-.datasheet-action-btn svg { stroke: currentColor; flex-shrink: 0; display: block; }
+.datasheet-action-btn svg {
+  stroke: currentColor;
+  flex-shrink: 0;
+  display: block;
+  width: 20px;
+  height: 20px;
+}
 .datasheet-action-btn:hover {
   background: var(--btnHover);
   border-color: var(--line);

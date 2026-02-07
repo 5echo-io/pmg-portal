@@ -11,6 +11,13 @@ Last Modified: 2026-02-06
 
 - 2026-02-07 (Europe/Oslo)
   - Branch: dev
+  - Version: 4.8.0-beta.22
+  - Summary:
+    - Admin: facility_card, facility_service_log_export_pdf; portal: datasheet_detail, facility_service_log_detail (layout/content)
+    - Version bump: 4.8.0-beta.21 → 4.8.0-beta.22
+
+- 2026-02-07 (Europe/Oslo)
+  - Branch: dev
   - Version: 4.8.0-beta.21
   - Summary:
     - scripts/run_manage.sh: wrapper that loads .env and runs manage.py (fix manual commands missing POSTGRES_DB); update.sh migration message and SETUP_GUIDE, FILE_LOCATIONS, BUILDLOG updated

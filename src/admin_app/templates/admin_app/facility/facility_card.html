@@ -280,7 +280,6 @@
           <a href="{% url 'admin_app:admin_facility_service_log_add' facility.slug %}" class="admin-toolbar-add-btn admin-toolbar-add-btn--fit">{% trans "Ny servicerapport" %}</a>
           <a href="{% url 'admin_app:admin_facility_service_log_export' facility.slug %}?format=xlsx" class="admin-btn-sm">Excel</a>
           <a href="{% url 'admin_app:admin_facility_service_log_export' facility.slug %}?format=pdf" class="admin-btn-sm">PDF</a>
-          <a href="{% url 'admin_app:admin_service_type_list' %}" class="admin-btn-sm">{% trans "Service types" %}</a>
         </div>
       </div>
       {% if service_logs %}

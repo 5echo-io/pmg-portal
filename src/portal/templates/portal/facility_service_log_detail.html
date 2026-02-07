@@ -128,59 +128,74 @@
 
 {% if print_mode %}
 <div class="servicerapport-print-document" id="servicerapport-print-content">
-  <div class="servicerapport-print-header">
-    <h1 class="servicerapport-print-title">{% trans "Servicerapport" %}</h1>
-    <p class="servicerapport-print-subtitle">{{ service_log.service_id }}{% if service_log.asset_name %} {{ service_log.asset_name }}{% endif %} | {{ service_log.performed_at|date:"Y-m-d" }}</p>
-    {% if service_log.asset_name or service_log.asset_id %}<p class="servicerapport-print-asset">{% if service_log.asset_name %}{{ service_log.asset_name }}{% endif %}{% if service_log.asset_id %} {{ service_log.asset_id }}{% endif %}</p>{% endif %}
-    {% if facility.address %}<p>{{ facility.address }}</p>{% endif %}
-    {% if service_log.customer_name %}<p>{{ service_log.customer_name }}</p>{% endif %}
-    {% if service_log.customer_address %}<p>{{ service_log.customer_address }}</p>{% endif %}
-    {% if service_log.customer_org_numbers %}<p>{{ service_log.customer_org_numbers }}</p>{% endif %}
-    {% if service_log.contract_number %}<p>{% trans "Avtalenummer" %}: {{ service_log.contract_number }}</p>{% endif %}
-    {% if service_log.asset_id %}<p>Asset ID: {{ service_log.asset_id }}</p>{% endif %}
-    {% if service_log.supplier_name %}<p>{% trans "Leverandøren" %}: {{ service_log.supplier_name }}{% if service_log.supplier_org_number %} {{ service_log.supplier_org_number }}{% endif %}</p>{% endif %}
-    {% if service_log.customer_name %}<p>{% trans "Kunden" %}: {{ service_log.customer_name }}{% if service_log.customer_org_numbers %} {{ service_log.customer_org_numbers }}{% endif %}</p>{% endif %}
-  </div>
-  <div class="servicerapport-print-section">
-    <h2>{% trans "Sammendrag" %}</h2>
-    {% if service_log.background %}<h3>{% trans "Bakgrunn" %}</h3><div class="servicerapport-print-text">{{ service_log.background|linebreaks }}</div>{% endif %}
-    {% if service_log.summary %}<h3>{% trans "Oppsummering" %}</h3><div class="servicerapport-print-text">{{ service_log.summary|linebreaks }}</div>{% endif %}
-  </div>
-  <div class="servicerapport-print-section">
-    <h2>{% trans "Rapport" %}</h2>
-    <div class="servicerapport-print-text">{% if service_log.description %}{{ service_log.description|linebreaks }}{% else %}—{% endif %}</div>
-  </div>
-  {% if service_log.findings_observations %}
-  <div class="servicerapport-print-section">
-    <h2>{% trans "Funn og observasjoner" %}</h2>
-    <div class="servicerapport-print-text">{{ service_log.findings_observations|linebreaks }}</div>
-  </div>
+  <table class="sr-print-table sr-print-table-main">
+    <tr>
+      <td class="sr-print-title-cell">{% trans "Servicerapport" %} {{ service_log.service_id }}{% if service_log.asset_name %} {{ service_log.asset_name }}{% endif %}</td>
+      <td class="sr-print-meta-cell">
+        <span class="sr-print-meta-line">{{ service_log.performed_at|date:"Y-m-d" }}{% if service_log.technician_employee_no %} {{ service_log.technician_employee_no }}{% endif %} {{ facility.name }}</span>
+        {% if facility.address %}<span class="sr-print-meta-line">{{ facility.address }}</span>{% endif %}
+        {% if service_log.customer_name %}<span class="sr-print-meta-line">{{ service_log.customer_name }}{% if service_log.customer_address %} {{ service_log.customer_address }}{% endif %}{% if service_log.customer_org_numbers %} {{ service_log.customer_org_numbers }}{% endif %}</span>{% endif %}
+        {% if service_log.contract_number or service_log.asset_id %}<span class="sr-print-meta-line">{% if service_log.contract_number %}{% trans "Avtalenummer" %}: {{ service_log.contract_number }}{% endif %}{% if service_log.contract_number and service_log.asset_id %} {% endif %}{% if service_log.asset_id %}Asset ID: {{ service_log.asset_id }}{% endif %}</span>{% endif %}
+      </td>
+    </tr>
+  </table>
+  <table class="sr-print-table sr-print-table-parties">
+    <tr>
+      <td>{% trans "Leverandøren" %}: {% if service_log.supplier_name %}{{ service_log.supplier_name }}{% if service_log.supplier_org_number %} {{ service_log.supplier_org_number }}{% endif %}{% else %}—{% endif %}</td>
+      <td>{% trans "Kunden" %}: {% if service_log.customer_name %}{{ service_log.customer_name }}{% if service_log.customer_org_numbers %} {{ service_log.customer_org_numbers }}{% endif %}{% else %}—{% endif %}</td>
+    </tr>
+    <tr class="sr-print-sign-row">
+      <td><span class="sr-print-sign-line">_____________________________</span> <em>Sign. {% trans "Leverandøren" %}</em></td>
+      <td><span class="sr-print-sign-line">_____________________________</span> <em>Sign. {% trans "Kunden" %}</em></td>
+    </tr>
+  </table>
+
+  <h2 class="sr-print-h2">{% trans "Sammendrag" %}</h2>
+  <div class="sr-print-underline"></div>
+  {% if service_log.background %}
+  <h3 class="sr-print-h3">{% trans "Bakgrunn" %}</h3>
+  <div class="sr-print-text">{{ service_log.background|linebreaks }}</div>
   {% endif %}
-  {% if service_log.conclusion %}
-  <div class="servicerapport-print-section">
-    <h2>{% trans "Konklusjon" %}</h2>
-    <div class="servicerapport-print-text">{{ service_log.conclusion|linebreaks }}</div>
-  </div>
+  {% if service_log.summary %}
+  <h3 class="sr-print-h3">{% trans "Oppsummering" %}</h3>
+  <div class="sr-print-text">{{ service_log.summary|linebreaks }}</div>
   {% endif %}
-  {% if service_log.recommendations_immediate or service_log.recommendations_long_term %}
-  <div class="servicerapport-print-section">
-    <h2>{% trans "Anbefalinger" %}</h2>
-    {% if service_log.recommendations_immediate %}<h3>{% trans "Umiddelbare tiltak" %}</h3><div class="servicerapport-print-text">{{ service_log.recommendations_immediate|linebreaks }}</div>{% endif %}
-    {% if service_log.recommendations_long_term %}<h3>{% trans "Langsiktige tiltak" %}</h3><div class="servicerapport-print-text">{{ service_log.recommendations_long_term|linebreaks }}</div>{% endif %}
-  </div>
+
+  <h2 class="sr-print-h2">{% trans "Rapport" %}</h2>
+  <div class="sr-print-underline"></div>
+  <div class="sr-print-text">{% if service_log.description %}{{ service_log.description|linebreaks }}{% else %}—{% endif %}</div>
+
+  <h2 class="sr-print-h2">{% trans "Funn og observasjoner" %}</h2>
+  <div class="sr-print-underline"></div>
+  <div class="sr-print-text">{% if service_log.findings_observations %}{{ service_log.findings_observations|linebreaks }}{% else %}—{% endif %}</div>
+
+  <h2 class="sr-print-h2">{% trans "Konklusjon" %}</h2>
+  <div class="sr-print-underline"></div>
+  <div class="sr-print-text">{% if service_log.conclusion %}{{ service_log.conclusion|linebreaks }}{% else %}—{% endif %}</div>
+
+  <h2 class="sr-print-h2">{% trans "Anbefalinger" %}</h2>
+  <div class="sr-print-underline"></div>
+  {% if service_log.recommendations_immediate %}
+  <h3 class="sr-print-h3">{% trans "Umiddelbare tiltak" %}</h3>
+  <div class="sr-print-text">{{ service_log.recommendations_immediate|linebreaks }}</div>
   {% endif %}
+  {% if service_log.recommendations_long_term %}
+  <h3 class="sr-print-h3">{% trans "Langsiktige tiltak" %}</h3>
+  <div class="sr-print-text">{{ service_log.recommendations_long_term|linebreaks }}</div>
+  {% endif %}
+  {% if not service_log.recommendations_immediate and not service_log.recommendations_long_term %}
+  <div class="sr-print-text">—</div>
+  {% endif %}
+
+  <h2 class="sr-print-h2">{% trans "Vedlegg" %}</h2>
+  <div class="sr-print-underline"></div>
   {% if service_log.attachments.all %}
-  <div class="servicerapport-print-section">
-    <h2>{% trans "Vedlegg" %}</h2>
-    <ul>{% for att in service_log.attachments.all %}<li>{{ att.title|default:att.file.name }}</li>{% endfor %}</ul>
-  </div>
+  <ul class="sr-print-list">{% for att in service_log.attachments.all %}<li>{{ att.title|default:att.file.name }}</li>{% endfor %}</ul>
   {% else %}
-  <div class="servicerapport-print-section">
-    <h2>{% trans "Vedlegg" %}</h2>
-    <p>{% trans "None" %}</p>
-  </div>
+  <p class="sr-print-text">{% trans "None" %}</p>
   {% endif %}
-  <p class="servicerapport-print-footer">{% trans "Servicerapport" %}: {{ service_log.service_id }} | {{ facility.name }} | {{ service_log.performed_at|date:"d.m.Y" }}</p>
+
+  <p class="sr-print-footer">{% trans "Servicerapport" %}: {{ service_log.service_id }} | {{ facility.name }} | {{ service_log.performed_at|date:"d.m.Y" }}</p>
 </div>
 <script>window.onload = function() { window.print(); }</script>
 {% endif %}
@@ -195,20 +210,28 @@
 .servicerapport-print-view .customer-card-header,
 .servicerapport-print-view .panel { display: none !important; }
 .servicerapport-print-view .servicerapport-print-document { display: block !important; }
-.servicerapport-print-document { max-width: 800px; margin: 0 auto; padding: 24px; font-family: Georgia, serif; font-size: 11pt; line-height: 1.5; color: #111; }
-.servicerapport-print-document .servicerapport-print-title { font-size: 18pt; margin: 0 0 4px 0; }
-.servicerapport-print-document .servicerapport-print-subtitle { font-size: 12pt; margin: 0 0 16px 0; color: #333; }
-.servicerapport-print-document .servicerapport-print-header { margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #ccc; }
-.servicerapport-print-document .servicerapport-print-header p { margin: 4px 0; font-size: 10pt; }
-.servicerapport-print-document .servicerapport-print-section { margin-bottom: 20px; }
-.servicerapport-print-document .servicerapport-print-section h2 { font-size: 12pt; margin: 16px 0 8px 0; border-bottom: 1px solid #ccc; padding-bottom: 4px; }
-.servicerapport-print-document .servicerapport-print-section h3 { font-size: 11pt; margin: 12px 0 4px 0; }
-.servicerapport-print-document .servicerapport-print-text { white-space: pre-wrap; }
-.servicerapport-print-document .servicerapport-print-footer { margin-top: 32px; padding-top: 12px; border-top: 1px solid #ccc; font-size: 9pt; color: #666; }
+
+/* PDF-style servicerapport (matches RQ-2690 template) */
+.servicerapport-print-document { max-width: 210mm; margin: 0 auto; padding: 16mm; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 10pt; line-height: 1.4; color: #000; }
+.sr-print-table { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
+.sr-print-table td { vertical-align: top; padding: 6px 10px; border: 1px solid #000; font-size: 10pt; }
+.sr-print-table-main .sr-print-title-cell { font-weight: bold; font-size: 12pt; width: 45%; }
+.sr-print-table-main .sr-print-meta-cell { font-size: 9pt; color: #333; }
+.sr-print-meta-line { display: block; margin-bottom: 2px; }
+.sr-print-table-parties td { width: 50%; font-size: 9pt; }
+.sr-print-sign-row td { padding-top: 20px; font-size: 9pt; color: #333; }
+.sr-print-sign-line { display: inline-block; min-width: 180px; border-bottom: 1px solid #000; margin-right: 8px; }
+.sr-print-h2 { font-size: 12pt; font-weight: bold; margin: 18px 0 4px 0; }
+.sr-print-underline { border-bottom: 1px solid #000; margin-bottom: 10px; }
+.sr-print-h3 { font-size: 11pt; font-weight: bold; margin: 12px 0 4px 0; }
+.sr-print-text { margin: 0 0 10px 0; white-space: pre-wrap; }
+.sr-print-list { margin: 0 0 10px 0; padding-left: 20px; }
+.sr-print-footer { margin-top: 24px; padding-top: 10px; border-top: 1px solid #999; font-size: 9pt; color: #666; }
 @media print {
   body * { visibility: hidden; }
   .servicerapport-print-document, .servicerapport-print-document * { visibility: visible; }
-  .servicerapport-print-document { position: absolute; left: 0; top: 0; width: 100%; padding: 0; }
+  .servicerapport-print-document { position: absolute; left: 0; top: 0; width: 100%; padding: 16mm; max-width: none; }
+  .sr-print-table td { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
 </style>
 {% endblock %}

@@ -26,6 +26,7 @@ Pre-release builds (alpha, beta, rc) are listed here. Only full releases (no bui
 - **compilemessages**: Removed duplicate msgid entries in locale nb django.po so msgfmt succeeds on update; update.sh shows clearer error when compilemessages fails.
 
 ### Changed
+- **Admin & portal**: facility_card, facility_service_log_export_pdf; portal datasheet_detail og facility_service_log_detail (layout/innhold).
 - **Install wizard / manuelle Django-kommandoer**: Nytt skript `scripts/run_manage.sh` som laster .env og kjører manage.py (fiks for «Missing environment variable: POSTGRES_DB» ved manuell kjøring). update.sh viser run_manage.sh i migrasjonsfeilmelding; SETUP_GUIDE og FILE_LOCATIONS oppdatert.
 - **Portal**: facility_detail, facility_service_log_detail og fragments; datasheet_detail; views; locale +15.
 - **Servicelogg utvidelser**: ServiceLog-utvidelser (migrasjon 0012, 0013); ServiceType, ServiceRapport, ServiceVisit, vedlegg, PDF-eksport; admin facility service visit/rapport/attachment/export; portal facility service log detail og datasheet-oppdateringer; locale +153; docs SERVICEDESK_PLUS_INTEGRATION.md; requirements +1
