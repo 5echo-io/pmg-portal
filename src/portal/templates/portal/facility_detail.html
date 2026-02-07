@@ -16,6 +16,24 @@
 
   <!-- Facility card (same layout as admin) -->
   <div class="customer-card-container">
+    {% if facility_announcements %}
+    <div class="systemmeldinger-panel panel systemmeldinger-panel--facility">
+      <h2 class="systemmeldinger-panel-title">{% trans "Systemmeldinger" %}</h2>
+      <ul class="announcement-list">
+        {% for ann in facility_announcements %}
+        <li class="announcement-item {% if ann.is_pinned %}announcement-item--pinned{% endif %}">
+          <div class="announcement-title">{{ ann.title }}</div>
+          <div class="announcement-meta muted">
+            {% if ann.created_by %}{{ ann.created_by.get_full_name|default:ann.created_by.username }}{% endif %}
+            · {{ ann.created_at|date:"SHORT_DATE_FORMAT" }}
+            {% if ann.is_pinned %}<span class="announcement-pin-badge">{% trans "Pinned" %}</span>{% endif %}
+          </div>
+          <div class="announcement-body">{{ ann.body|safe|linebreaks }}</div>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
     <div class="customer-card-header">
       <div class="customer-card-logo-section">
         <div class="facility-logo-with-overlay">
@@ -442,7 +460,7 @@
 .facility-overview-description { margin-bottom: 12px; }
 .facility-overview-description p { margin: 0; font-size: 0.875rem; line-height: 1.5; color: var(--text); white-space: pre-wrap; }
 .facility-logo-with-overlay { position: relative; width: 100%; border-radius: 12px; overflow: hidden; }
-.facility-serviceavtale-overlay { position: absolute; bottom: 0; left: 0; right: 0; padding: 8px; display: flex; justify-content: center; align-items: center; background: rgba(0,0,0,0.45); border-radius: 0 0 12px 12px; pointer-events: none; }
+.facility-serviceavtale-overlay { position: absolute; bottom: 0; left: 0; right: 0; padding: 8px; display: flex; justify-content: center; align-items: center; border-radius: 0 0 12px 12px; pointer-events: none; }
 .facility-serviceavtale-overlay .facility-serviceavtale-badge { width: 100%; justify-content: center; }
 .facility-overview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
 .facility-overview-item {

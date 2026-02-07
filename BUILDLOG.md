@@ -15,6 +15,20 @@ Chronological log of builds and releases (newest first). Each entry: date, branc
 
 - 2026-02-10 (Europe/Oslo)
   - Branch: dev
+  - Version: 5.0.0-beta.1
+  - Summary:
+    - Portal: Serviceavtale-indikator – fjernet sort/grå overlay bak serviceavtale-badge over anleggsbildet (facility_detail.html, facility_detail_content.html). CHANGELOG og BUILDLOG oppdatert.
+  - (No version bump)
+
+- 2026-02-10 (Europe/Oslo)
+  - Branch: dev
+  - Version: 5.0.0-beta.1 (MAJOR)
+  - Summary:
+    - Roller og tilganger (MAJOR): is_staff avledes fra rolle (Administrator eller høyere); feltet «Is staff» fjernet fra brukerskjemaer. Første bruker ved install wizard opprettes som Owner av første tenant (ikke superuser); Platform admin kun for SaaS-oppsett. Migrering: høyeste rolle (admin) → Owner, member → User; deretter sync is_staff for alle brukere (0022, 0023). portal.roles: compute_is_staff, sync_user_is_staff; signal på CustomerMembership syncer user.is_staff. VERSION 4.9.0-beta.5 → 5.0.0-beta.1.
+  - Version bump: 4.9.0-beta.5 → 5.0.0-beta.1 (MAJOR 4→5)
+
+- 2026-02-10 (Europe/Oslo)
+  - Branch: dev
   - Version: 4.9.0-beta.4
   - Summary:
     - Announcements: optional facility FK (general vs facility-specific); form field and validation; portal dashboard only general, facility_announcements on facility page; admin list/tab columns Facility/Visning. Portal contacts name not bold. Admin facility tab "Kunder" → "Tilgang".

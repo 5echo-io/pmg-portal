@@ -12,6 +12,52 @@ Last Modified: 2026-02-10
 All notable changes to this project will be documented in this file.
 This project follows Semantic Versioning (SemVer).
 
+## [Unreleased]
+
+_(Ingen endringer ennå.)_
+
+---
+
+## [5.0.0-beta.1] - 2026-02-10 (MAJOR)
+
+### Versjonsberegning (SemVer)
+
+- **MAJOR 5**: Brytende endringer i roller og tilgang: is_staff avledes fra rolle (ikke lenger synlig felt), første bruker ved install er Owner (ikke superuser), migrering setter høyeste rolle til Owner og synkroniserer is_staff.
+- **MINOR 0**: Første release i 5.x.
+- **PATCH 0**: Første release i 5.0-minor.
+- **BUILD 1**: Første beta i 5.0.0-linjen. Vi er fortsatt i beta.
+
+### Added
+
+#### Roller og tilganger (roles hierarchy)
+- **Standardroller (ikke slettbare som type)**: Platform admin (is_superuser), Super admin (UserProfile.system_role), Owner, Administrator, User. Se hierarki under.
+- **UserProfile**: Ny modell (1:1 med User) for systemrolle `super_admin`. Platform admin = `User.is_superuser` (endres i brukerredigering eller Django admin).
+- **portal.roles**: Hjelpefunksjoner for nivå og tilgang: `get_effective_level`, `can_see_user`, `can_edit_user`, `can_delete_user`, `can_edit_owner_membership`, `get_assignable_tenant_roles`, `can_create_delete_tenants`, `can_access_system_settings`, `compute_is_staff`, `sync_user_is_staff`.
+- **Tenant-roller (CustomerMembership)**: Utvidet fra member/admin til Owner, Administrator, User. Ved oppdatering: **høyeste rolle (tidligere admin) → Owner**, resten (member) → User.
+- **is_staff avledet fra rolle**: `compute_is_staff` / `sync_user_is_staff`; staff = Platform admin, Super admin, eller tenant-rolle Owner/Administrator. Signal på CustomerMembership oppdaterer user.is_staff automatisk.
+
+### Changed
+
+#### Roller og tilganger
+- **«Is staff» fjernet fra skjemaer**: Feltet vises ikke lenger; staff tilgang baserer seg på om personen er Administrator eller høyere (Owner, Administrator, Super admin, Platform admin).
+- **Install wizard – første bruker = Owner**: Ved ny install opprettes ingen superuser som standard. Den første brukeren (DEFAULT_ADMIN_EMAIL / DEFAULT_ADMIN_PASSWORD) opprettes som **Owner** av første tenant (kunde). Hvis ingen kunde finnes, opprettes «Default» (slug: default). Platform admin (superuser) er kun for SaaS-oppsett (f.eks. manuelt eller egen prosess for å få tilgang til å opprette tenants).
+- **Migrering ved oppdatering**: Tidligere «admin» (høyest rolle) → **Owner**; «member» → **User**. Deretter synkroniseres `is_staff` for alle brukere ut fra roller (migrering 0023).
+- **Brukerliste (admin)**: Krever platform admin eller super admin. Platform admins er usynlige for ikke–platform-admins i listen.
+- **Bruker redigering/sletting**: Kun brukere med høyere eller lik rolle kan redigere/slette; ingen kan slette seg selv. Super admin kan ikke endre/slette platform admin.
+- **Kundetilgang (Customer access)**: Roller begrenses til det aktøren selv kan tildele. Kun owner eller høyere kan redigere owner-medlemskap.
+- **Opprette/slette kunder (tenants)**: Kun platform administrator kan opprette eller slette kunder.
+- **Systeminnstillinger (backup, system customize)**: Forblir kun for platform administrator (superuser).
+- **Django admin (portal)**: CustomerMembership bruker ROLE_OWNER/ROLE_ADMINISTRATOR. UserProfile registrert for å sette Super Admin.
+
+#### Hierarki (kort)
+- **Platform admin**: Se og styre alle tenants, overstyre roller, opprette/slette tenants, globale innstillinger. Synlig kun for andre platform admins. Kun for SaaS-oppsett.
+- **Super admin**: Nesten som platform admin; kan ikke gjøre kritiske endringer eller endre/slette platform admin.
+- **Owner**: Eier tenant; kan ikke slettes eller endres av andre enn owner selv; kan overføre owner til andre. Første bruker ved install er Owner.
+- **Administrator**: Mest mulig, men ikke systeminnstillinger; kan ikke slette brukere med høyere rolle.
+- **User**: Vanlig bruker.
+
+---
+
 ## [4.9.0-beta.1] - 2026-02-07
 
 ### Versjonsberegning (SemVer)
@@ -90,9 +136,43 @@ This project follows Semantic Versioning (SemVer).
 
 ---
 
+## [4.9.0-beta.5] - 2026-02-10
+
+### Added
+
+#### Kunngjøringer (announcements)
+- **Systemmeldinger i kundekort**: Ny boks «Systemmeldinger» øverst på dashboard (portal home) som alltid viser kunngjøringer for valgt kunde (generelle, uten anlegg). Tidligere kun synlig som valgfri widget.
+- **Systemmeldinger på anleggskort**: På anleggssiden vises nå en «Systemmeldinger»-boks øverst i anleggskortet når det finnes kunngjøringer for anlegget (eller generelle for kunden).
+- **Opprett kunngjøring – tydelig valg**: Skjemaet har innledende forklaring: velg anlegg for visning på anleggssiden for alle med tilgang; la anlegg stå tomt for visning på dashboard for valgt kunde.
+
+#### Tabeller – global nedtrekksmeny for handlinger
+- **Global tabell-dropdown**: Tabeller med mer enn to handlinger bruker nå en felles nedtrekksmeny (som på /admin/product-datasheets/): avatar-lignende design, høy z-index (9999), lukkes ved klikk utenfor. Felles CSS i app.css og init-script i admin base.
+- **Ikoner og hover**: Menypunktene har ikoner; fargede (fare-)knapper får rød bakgrunn ved hover.
+
+#### Anleggsoversikt (/facilities/)
+- **Venstre kant etter status**: Hver anleggsboks har 4px venstre kant: grønn når alt er ok (standard), eller etikettens farge når anlegg har statusetikett. Design som fargekantene på /admin/server/system-customize/.
+- **Statusetikett på kort**: Valgt statusetikett vises som badge på anleggskortet (kode + navn, med etikettens farge).
+
+#### Anlegg – statusetiketter (labels)
+- **FacilityStatusLabel**: Ny modell med kode, navn, farge og sortering. 11 forhåndsdefinerte etiketter i migrering 0020: 01 Under utbygging, 02 Kontroll nødvendig, 03 Periodisk kontroll utløpt, 04 Kontroll ikke gyldig, 05 Anbefalt ikke bruk, 06 Ute av drift, 07 Service nødvendig, 08 Kontrollert (årstall), 09 Godkjent (årstall), 10 Ikke kontrollpliktig, 11 Demontert – hver med egen farge.
+- **Facility.status_label**: Valgfri FK på anlegg; velges i admin (både Django admin og admin_app facility-skjema). Overstyrer statusfarge i anleggsoversikten.
+- **Django admin**: FacilityStatusLabel kan redigeres (navn, farge) under Portal. Facility viser status_label i liste og i feltsett.
+
+### Changed
+
+- **Dashboard-widget «Announcements»**: Fjernet som egen widget; kunngjøringer vises nå alltid øverst i «Systemmeldinger»-boksen.
+- **Product datasheets-liste**: Bruker global dropdown med ikoner (View, Edit, Download PDF, Delete) og fare-hover; inline style/script fjernet.
+
+---
+
 ## [Unreleased]
 
 Pre-release builds (alpha, beta, rc) are listed here. Only full releases (without build suffix) get their own version section below.
+
+### Fixed
+
+#### Portal
+- **Serviceavtale-indikator**: Fjernet sort/grå overlay (bakgrunn) bak serviceavtale-badge over anleggsbildet. Badge (Serviceavtale / Ingen serviceavtale) vises nå uten mørk stripe; kun badge og tekst over bildet (facility_detail.html, facility_detail_content.html).
 
 ---
 
